@@ -2,17 +2,10 @@ import type { Metadata } from "next";
 import { Work_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "../components/theme-provider";
-import { AppSidebar } from "@/components/app-sidebar";
-import { Separator } from "@/components/ui/separator";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { ModeToggle } from "@/components/theme-toggle";
 import { Toaster } from "sonner";
 import QueryProvider from "@/components/QueryProvider";
 import { Footer } from "@/components/Footer";
+import { TopNavbar } from "@/components/top-navbar";
 
 const robotoMono = Work_Sans({
   variable: "--font-work-sans",
@@ -22,15 +15,21 @@ const robotoMono = Work_Sans({
 export const metadata: Metadata = {
   title: {
     default: "Thu Rein Htet - A Developer form Myanmar",
-    template: "%s | Thu Rein Htet Portfolio",
+    template: "%s | Thu Rein Htet's Portfolio",
   },
   description:
     "Full-Stack Next.js Developer specializing in React, TypeScript, and modern web applications. Building scalable solutions with clean code and exceptional user experiences.",
   keywords: [
     "Thu Rein Htet",
     "Myanmar Web Developer",
+    "Myanmar Mobile Developer",
+    "React Developer",
+    "React Native Developer",
     "Next.js",
     "React",
+    "React Native",
+    "Node.js",
+    "Express.js",
     "TypeScript",
     "Web Developer",
     "Frontend",
@@ -88,26 +87,12 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <SidebarProvider defaultOpen={false}>
-              <AppSidebar />
-              <SidebarInset>
-                <header className="sticky top-0 left-0 right-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b bg-background dark:border-slate-700">
-                  <div className="flex items-center gap-2 px-3 flex-1">
-                    <SidebarTrigger />
-                    <Separator orientation="vertical" className="mr-2 h-4" />
-
-                    <div className="ml-auto">
-                      <ModeToggle />
-                    </div>
-                  </div>
-                </header>
-                <main className="min-h-screen mx-auto px-4 md:px-6 lg:px-8">
-                  {children}
-                  <Toaster />
-                </main>
-                <Footer />
-              </SidebarInset>
-            </SidebarProvider>
+            <TopNavbar />
+            <main className="min-h-screen px-4 md:px-6 lg:px-8 pt-4 md:pt-6">
+              {children}
+              <Toaster />
+            </main>
+            <Footer />
           </ThemeProvider>
         </QueryProvider>
       </body>

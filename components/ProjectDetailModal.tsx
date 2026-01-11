@@ -50,7 +50,7 @@ export function ProjectDetailModal({
           {/* Project Description */}
           <div className="space-y-3">
             <h3 className="text-lg font-semibold">Overview</h3>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed text-lg">
               {project.description}
             </p>
           </div>
@@ -66,7 +66,7 @@ export function ProjectDetailModal({
                 {project.objectives.map((contribution, index) => (
                   <li key={index} className="flex items-start gap-2">
                     <Dot className="h-4 w-4 mt-1 flex-shrink-0" />
-                    <span className="text-muted-foreground">
+                    <span className="text-muted-foreground text-lg">
                       {contribution}
                     </span>
                   </li>
@@ -86,7 +86,9 @@ export function ProjectDetailModal({
                 {project.challenges.map((challenge, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <Dot className="h-4 w-4 mt-1 flex-shrink-0" />
-                    <span className="text-muted-foreground">{challenge}</span>
+                    <span className="text-muted-foreground text-lg">
+                      {challenge}
+                    </span>
                   </li>
                 ))}
               </ul>

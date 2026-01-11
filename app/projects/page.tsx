@@ -13,12 +13,7 @@ import { BiWorld } from "react-icons/bi";
 import { motion } from "framer-motion";
 import { ProjectDetailModal } from "@/components/ProjectDetailModal";
 
-const categories = [
-  "All",
-  "Web",
-  "Mobile",
-  "Free Style",
-];
+const categories = ["All", "Web", "Mobile", "Free Style"];
 
 export default function ProjectsPage() {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -83,7 +78,7 @@ export default function ProjectsPage() {
                     <h3 className="font-bold text-lg sm:text-xl line-clamp-1 mb-3">
                       {project.title}
                     </h3>
-                    <p className="text-muted-foreground flex-1 text-sm sm:text-base line-clamp-2 leading-relaxed">
+                    <p className="text-muted-foreground flex-1 text-md sm:text-lg line-clamp-3 leading-relaxed">
                       {project.description}
                     </p>
                     <div className="flex flex-wrap gap-2 mt-4">
@@ -91,13 +86,13 @@ export default function ProjectsPage() {
                         <Badge
                           key={tech}
                           variant="secondary"
-                          className="text-xs px-2 sm:px-3 py-1"
+                          className="text-sm px-2 sm:px-3 py-1"
                         >
                           {tech}
                         </Badge>
                       ))}
                     </div>
-                    {/* Mobile: Stack buttons vertically with better spacing */}
+                    {/* Mobile: Stack buttons vertically */}
                     <div className="flex flex-col gap-3 mt-5">
                       <div className="flex gap-2 w-full">
                         <Button

@@ -134,7 +134,7 @@ export const projects = [
     isGitHub: true,
     isLiveDemo: false,
     upcoming: true,
-    expectedCompletion: "December 2025",
+    expectedCompletion: "",
     github: "https://github.com/Thureinhtet99/expense-tracker",
     liveDemo: "",
   },
