@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { AlertTriangle, Home, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,15 +26,13 @@ export default function NotFound() {
           </p>
         </CardContent>
         <CardFooter className="flex gap-3 pt-2">
-          <Button asChild variant="outline" size="sm">
-            <Link href="javascript:history.back()">
-              <ArrowLeft className="h-4 w-4" />
-              Go Back
-            </Link>
+          <Button variant="outline" onClick={() => history.back()}>
+            <ArrowLeft className="h-4 w-4" />
+            Go Back
           </Button>
-          <Button asChild variant="default" size="sm">
+          <Button asChild variant="default">
             <Link href="/">
-              <Home className="mr-2 h-4 w-4" />
+              <Home className="h-4 w-4" />
               Home
             </Link>
           </Button>

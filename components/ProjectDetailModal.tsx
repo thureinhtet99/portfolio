@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { ProjectDetailModalType } from "@/types";
+import { ProjectDetailModalType } from "@/types/index.type";
 
 export function ProjectDetailModal({
   project,

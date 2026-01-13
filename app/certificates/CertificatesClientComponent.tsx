@@ -1,28 +1,26 @@
-import { APP_CONFIG } from "@/config/app-config";
-import CertificatesClientComponent from "./CertificatesClientComponent";
+"use client";
 
-async function getCertificates() {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/${APP_CONFIG.ROUTE.CERTIFICATES}`, {
-      cache: 'no-store',
-    });
-    const data = await response.json();
-    if (data.success && data.data) {
-      return data.data;
-    }
-    return [];
-  } catch (error) {
-    console.error("Failed to load certificates:", error);
-    return [];
-  }
-}
+import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import { Award, ExternalLink } from "lucide-react";
+import { motion } from "framer-motion";
 
-export default async function CertificatesPage() {
-  const certificates = await getCertificates();
+type Certificate = {
+  id: string;
+  title: string;
+  issuer: string;
+  issueDate: string;
+  credentialId?: string;
+  credentialUrl?: string;
+  image?: string;
+};
 
-  return <CertificatesClientComponent certificates={certificates} />;
-}
+type Props = {
+  certificates: Certificate[];
+};
+
+export default function CertificatesClientComponent({ certificates }: Props) {
   return (
     <>
       <motion.div
@@ -62,7 +60,7 @@ export default async function CertificatesPage() {
                       variant="secondary"
                       className="bg-white/90 dark:bg-slate-800/90 text-slate-900 dark:text-slate-100 backdrop-blur-sm border-0 text-xs lg:text-sm px-2 py-1 lg:px-3 lg:py-1.5"
                     >
-                      {certificate.date}
+                      {certificate.issueDate}
                     </Badge>
                   </div>
                 </div>
@@ -81,7 +79,7 @@ export default async function CertificatesPage() {
                       variant="secondary"
                       className="bg-white dark:bg-slate-700 text-xs lg:text-sm px-2 py-1 lg:px-3 lg:py-1.5"
                     >
-                      {certificate.date}
+                      {certificate.issueDate}
                     </Badge>
                   </div>
                 </div>
@@ -92,22 +90,14 @@ export default async function CertificatesPage() {
                   <h3 className="text-lg lg:text-xl font-bold text-slate-900 dark:text-slate-100 mb-2 line-clamp-2 leading-tight">
                     {certificate.title}
                   </h3>
-                  {certificate.description && (
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                      {certificate.description}
-                    </p>
-                  )}
-                  {certificate.skills && certificate.skills.length > 0 && (
+                  {certificate.credentialId && (
                     <div className="flex flex-wrap gap-1.5 mb-3">
-                      {certificate.skills.map((skill) => (
-                        <Badge
-                          key={skill}
-                          variant="outline"
-                          className="text-xs px-2 py-1"
-                        >
-                          {skill}
-                        </Badge>
-                      ))}
+                      <Badge
+                        variant="outline"
+                        className="text-xs px-2 py-1"
+                      >
+                        ID: {certificate.credentialId}
+                      </Badge>
                     </div>
                   )}
                 </div>
@@ -122,9 +112,9 @@ export default async function CertificatesPage() {
                       {certificate.issuer}
                     </span>
                   </div>
-                  {certificate.verificationUrl ? (
+                  {certificate.credentialUrl ? (
                     <Link
-                      href={certificate.verificationUrl}
+                      href={certificate.credentialUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-1.5 lg:gap-2 px-3 py-2 lg:px-4 lg:py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-md lg:rounded-lg text-xs lg:text-sm font-medium transition-colors flex-shrink-0 w-full sm:w-auto"

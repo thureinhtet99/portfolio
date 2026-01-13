@@ -7,18 +7,25 @@ import { CircleUserRound, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/theme-toggle";
 import { motion, AnimatePresence } from "framer-motion";
+import { APP_CONFIG } from "@/config/app-config";
+import { useSession } from "@/lib/auth-client";
+import { Skeleton } from "./ui/skeleton";
 
 const navLinks = [
-  { title: "Home", url: "/" },
-  { title: "Timeline", url: "/timeline" },
-  { title: "Projects", url: "/projects" },
-  { title: "Certificates", url: "/certificates" },
-  { title: "Contact", url: "/contact" },
+  { title: "Home", url: APP_CONFIG.ROUTE.HOME },
+  { title: APP_CONFIG.ROUTE.TIMELINE, url: `/${APP_CONFIG.ROUTE.TIMELINE}` },
+  { title: APP_CONFIG.ROUTE.PROJECTS, url: `/${APP_CONFIG.ROUTE.PROJECTS}` },
+  {
+    title: APP_CONFIG.ROUTE.CERTIFICATES,
+    url: `/${APP_CONFIG.ROUTE.CERTIFICATES}`,
+  },
+  { title: APP_CONFIG.ROUTE.CONTACT, url: `/${APP_CONFIG.ROUTE.CONTACT}` },
 ];
 
 export function TopNavbar() {
   const [isOpen, setIsOpen] = React.useState(false);
   const pathname = usePathname();
+  const { data: session, isPending } = useSession();
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -48,7 +55,15 @@ export function TopNavbar() {
           >
             <CircleUserRound size={40} className="text-primary" />
             <div className="hidden sm:block">
-              <h3 className="font-semibold text-2xl">Thu Rein Htet</h3>
+              <h3 className="font-semibold text-2xl">
+                {isPending ? (
+                  <Skeleton className="h-6 w-[200px]" />
+                ) : !session ? (
+                  "username"
+                ) : (
+                  session.user?.name
+                )}
+              </h3>
             </div>
           </Link>
         </div>
@@ -59,7 +74,7 @@ export function TopNavbar() {
             <Link
               key={link.url}
               href={link.url}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`px-4 py-2 rounded-lg text-sm capitalize font-medium transition-all ${
                 pathname === link.url
                   ? "bg-primary/10 text-primary"
                   : "hover:bg-muted/50 hover:text-foreground"
