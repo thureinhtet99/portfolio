@@ -1,0 +1,33 @@
+services:
+  my-portfolio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: my-portfolio
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
+      - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
+      - NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=${NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+      - NEXT_PUBLIC_CLOUDINARY_API_KEY=${NEXT_PUBLIC_CLOUDINARY_API_KEY}
+      - NEXT_PUBLIC_CLOUDINARY_API_SECRET=${NEXT_PUBLIC_CLOUDINARY_API_SECRET}
+      - NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=${NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+      - GMAIL_EMAIL=${GMAIL_EMAIL}
+      - GMAIL_APP_PASSWORD=${GMAIL_APP_PASSWORD}
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+      - BETTER_AUTH_URL=${BETTER_AUTH_URL}
+    volumes:
+      # Persist the SQLite database
+      - ./local.db:/app/local.db
+      # Persist uploaded files if any
+      - ./public:/app/public
+    networks:
+      - portfolio-network
+
+networks:
+  portfolio-network:
+    driver: bridge
