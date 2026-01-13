@@ -1,19 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { skills } from "@/data/skills";
 import {
-  Laptop,
   Calendar,
   MapPin,
-  ChevronLeft,
-  ChevronRight,
   GraduationCap,
   Briefcase,
+  Clock,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { WorkDisplayType, EducationDisplayType } from "@/types/index.type";
@@ -24,24 +19,6 @@ type Props = {
 };
 
 export default function TimelineClientComponent({ work, education }: Props) {
-  // Pagination state for skills
-  const [currentSkillsPage, setCurrentSkillsPage] = useState(1);
-  const skillsPerPage = 15;
-
-  // Pagination logic for skills
-  const totalSkillsPages = Math.ceil(skills.length / skillsPerPage);
-  const startIndex = (currentSkillsPage - 1) * skillsPerPage;
-  const endIndex = startIndex + skillsPerPage;
-  const currentSkills = skills.slice(startIndex, endIndex);
-
-  const goToPreviousSkillsPage = () => {
-    setCurrentSkillsPage((prev) => Math.max(prev - 1, 1));
-  };
-
-  const goToNextSkillsPage = () => {
-    setCurrentSkillsPage((prev) => Math.min(prev + 1, totalSkillsPages));
-  };
-
   return (
     <div>
       {/* Experience and Education with Tabs */}
@@ -69,170 +46,132 @@ export default function TimelineClientComponent({ work, education }: Props) {
             </TabsList>
 
             <TabsContent value="work" className="space-y-6">
-              {work.map((exp, index) => (
-                <motion.div
-                  key={exp.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
-                  className="relative pl-8 pb-8 border-l-2 border-primary/20 last:pb-0"
-                >
-                  <div className="absolute -left-2 top-0 w-4 h-4 rounded-full bg-primary border-4 border-background" />
+              {work.length > 0 ? (
+                work.map((exp, index) => (
+                  <motion.div
+                    key={exp.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    className="relative pl-8 pb-8 border-l-2 border-primary/20 last:pb-0"
+                  >
+                    <div className="absolute -left-2 top-0 w-4 h-4 rounded-full bg-primary border-4 border-background" />
 
-                  <div className="space-y-3">
-                    <div className="flex flex-wrap items-start justify-between gap-2">
-                      <div className="flex-1">
-                        <h3 className="text-2xl font-bold capitalize">
-                          {exp.title}
-                        </h3>
-                        {exp.company && (
-                          <p className="text-muted-foreground">{exp.company}</p>
-                        )}
-                      </div>
-                      <Badge variant="secondary" className="text-md">
-                        {exp.type}
-                      </Badge>
-                    </div>
-
-                    <div className="flex flex-wrap gap-10 text-sm text-muted-foreground">
-                      {exp.location && (
-                        <span className="flex items-center gap-1">
-                          <MapPin className="w-4 h-4" />
-                          {exp.location}
-                        </span>
-                      )}
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        {exp.period}
-                      </span>
-                    </div>
-
-                    <p className="text-muted-foreground leading-relaxed text-lg">
-                      {exp.description}
-                    </p>
-
-                    {exp.achievements && exp.achievements.length > 0 && (
-                      <div className="space-y-2">
-                        <p className="font-semibold text-lg">
-                          Key Achievements:
-                        </p>
-                        <ul className="list-disc list-inside space-y-1 text-lg text-muted-foreground">
-                          {exp.achievements.map((achievement, i) => (
-                            <li key={i}>{achievement}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    <div className="flex flex-wrap gap-2">
-                      {exp.technologies?.map((tech) => (
-                        <Badge key={tech} variant="outline" className="text-sm">
-                          {tech}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-
-              {/* Skills Section */}
-              <Card className="border-0 shadow-none">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-4xl">
-                    <Laptop className="w-8 h-8" />
-                    Technical Skills
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    {/* Skills Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-                      {currentSkills.map((skill) => (
-                        <div
-                          key={`${skill.name}-${currentSkillsPage}`}
-                          className="flex flex-col items-center gap-2 p-4 rounded-lg border bg-card"
-                        >
-                          <div className="text-3xl flex-shrink-0">
-                            {skill.icon}
-                          </div>
-                          <div className="text-center w-full">
-                            <p className="font-medium text-sm leading-tight break-words hyphens-auto">
-                              {skill.name}
+                    <div className="space-y-3">
+                      <div className="flex flex-wrap items-start justify-between gap-2">
+                        <div className="flex-1">
+                          <h3 className="text-2xl font-bold capitalize">
+                            {exp.title}
+                          </h3>
+                          {exp.company && (
+                            <p className="text-muted-foreground">
+                              {exp.company}
                             </p>
-                          </div>
+                          )}
                         </div>
-                      ))}
-                    </div>
+                        <Badge variant="secondary" className="text-md">
+                          {exp.type}
+                        </Badge>
+                      </div>
 
-                    {/* Pagination Controls */}
-                    <div className="flex items-center justify-center pt-4">
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={goToPreviousSkillsPage}
-                          disabled={currentSkillsPage === 1}
-                          className="flex items-center gap-1"
-                        >
-                          <ChevronLeft className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={goToNextSkillsPage}
-                          disabled={currentSkillsPage === totalSkillsPages}
-                          className="flex items-center gap-1"
-                        >
-                          <ChevronRight className="w-4 h-4" />
-                        </Button>
+                      <div className="flex flex-wrap gap-10 text-sm text-muted-foreground">
+                        {exp.location && (
+                          <span className="flex items-center gap-1">
+                            <MapPin className="w-4 h-4" />
+                            {exp.location}
+                          </span>
+                        )}
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-4 h-4" />
+                          {exp.period}
+                        </span>
+                      </div>
+
+                      <p className="text-muted-foreground leading-relaxed text-lg">
+                        {exp.description}
+                      </p>
+
+                      {exp.achievements && exp.achievements.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="font-semibold text-lg">
+                            Key Achievements:
+                          </p>
+                          <ul className="list-disc list-inside space-y-1 text-lg text-muted-foreground">
+                            {exp.achievements.map((achievement, i) => (
+                              <li key={i}>{achievement}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      <div className="flex flex-wrap gap-2">
+                        {exp.technologies?.map((tech) => (
+                          <Badge
+                            key={tech}
+                            variant="outline"
+                            className="text-sm"
+                          >
+                            {tech}
+                          </Badge>
+                        ))}
                       </div>
                     </div>
+                  </motion.div>
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <div className="bg-slate-100 dark:bg-slate-800 rounded-full p-4 mb-4">
+                    <Clock className="h-6 w-6 text-muted-foreground" />
                   </div>
-                </CardContent>
-              </Card>
+                  <h3 className="text-lg font-semibold mb-2">
+                    No current work experiences
+                  </h3>
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="education" className="space-y-6">
-              {education.map((exp, index) => (
-                <motion.div
-                  key={exp.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
-                  className="relative pl-8 pb-8 border-l-2 border-primary/20 last:pb-0"
-                >
-                  <div className="absolute -left-2 top-0 w-4 h-4 rounded-full bg-primary border-4 border-background" />
+              {education.length > 0 ? (
+                education.map((exp, index) => (
+                  <motion.div
+                    key={exp.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    className="relative pl-8 pb-8 border-l-2 border-primary/20 last:pb-0"
+                  >
+                    <div className="absolute -left-2 top-0 w-4 h-4 rounded-full bg-primary border-4 border-background" />
 
-                  <div className="space-y-3">
-                    <div className="flex flex-wrap items-start justify-between gap-2">
-                      <div className="flex-1">
-                        <h3 className="text-2xl font-bold">{exp.degree}</h3>
-                        {exp.institution && (
-                          <p className="text-muted-foreground">
-                            {exp.institution}
-                          </p>
-                        )}
+                    <div className="space-y-3">
+                      <div className="flex flex-wrap items-start justify-between gap-2">
+                        <div className="flex-1">
+                          <h3 className="text-2xl font-bold">{exp.degree}</h3>
+                          {exp.institution && (
+                            <p className="text-muted-foreground">
+                              {exp.institution}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="flex flex-wrap gap-10 text-sm text-muted-foreground">
-                      {exp.location && (
+                      <div className="flex flex-wrap gap-10 text-sm text-muted-foreground">
+                        {exp.location && (
+                          <span className="flex items-center gap-1">
+                            <MapPin className="w-4 h-4" />
+                            {exp.location}
+                          </span>
+                        )}
                         <span className="flex items-center gap-1">
-                          <MapPin className="w-4 h-4" />
-                          {exp.location}
+                          <Calendar className="w-4 h-4" />
+                          {exp.period}
                         </span>
-                      )}
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        {exp.period}
-                      </span>
-                    </div>
+                      </div>
 
-                    <p className="text-muted-foreground leading-relaxed text-lg">
-                      {exp.description}
-                    </p>
+                      <p className="text-muted-foreground leading-relaxed text-lg">
+                        {exp.description}
+                      </p>
 
-                    {/* {exp.achievements && exp.achievements.length > 0 && (
+                      {/* {exp.achievements && exp.achievements.length > 0 && (
                       <div className="space-y-2">
                         <p className="font-semibold text-lg">
                           Key Achievements:
@@ -244,9 +183,19 @@ export default function TimelineClientComponent({ work, education }: Props) {
                         </ul>
                       </div>
                     )} */}
+                    </div>
+                  </motion.div>
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <div className="bg-slate-100 dark:bg-slate-800 rounded-full p-4 mb-4">
+                    <Clock className="h-6 w-6 text-muted-foreground" />
                   </div>
-                </motion.div>
-              ))}
+                  <h3 className="text-lg font-semibold mb-2">
+                    No current education 
+                  </h3>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </CardContent>

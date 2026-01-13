@@ -14,5 +14,5 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24, // 1 day
   },
   secret: process.env.BETTER_AUTH_SECRET || "change-this-to-a-random-secret",
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL: process.env.NEXT_PUBLIC_BASE_URL || process.env.BETTER_AUTH_URL || "http://localhost:3000",
 });
