@@ -1,6 +1,6 @@
 import { APP_CONFIG } from "@/config/app-config";
 import HomeClientComponent from "./HomeClientComponent";
-import { ProjectResponseType } from "@/types/index.type";
+import { ProjectType } from "@/types/index.type";
 
 async function getSettings() {
   try {
@@ -21,7 +21,7 @@ async function getSettings() {
   }
 }
 
-async function getProjects(): Promise<ProjectResponseType[]> {
+async function getProjects(): Promise<ProjectType[]> {
   try {
     const baseUrl = APP_CONFIG.BASE_URL;
     const response = await fetch(
@@ -32,9 +32,7 @@ async function getProjects(): Promise<ProjectResponseType[]> {
     );
     const data = await response.json();
     if (data.success && data.data) {
-      return data.data
-        .filter((p: ProjectResponseType) => p.featured)
-        .slice(0, 2);
+      return data.data.filter((p: ProjectType) => p.featured).slice(0, 2);
     }
     return [];
   } catch (error) {

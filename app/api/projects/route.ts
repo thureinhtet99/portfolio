@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/client";
 import { project } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+  api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET,
+});
 
 // GET - Fetch all projects
 export async function GET() {
@@ -54,6 +61,7 @@ export async function POST(req: NextRequest) {
       liveUrl,
       objectives,
       keyChallenges,
+      featured,
     } = body;
 
     if (!title) {
@@ -76,7 +84,7 @@ export async function POST(req: NextRequest) {
       liveUrl: liveUrl || null,
       objectives: objectives ? JSON.stringify(objectives) : null,
       keyChallenges: keyChallenges ? JSON.stringify(keyChallenges) : null,
-      featured: false,
+      featured: featured || false,
       order: 0,
       createdAt: now,
       updatedAt: now,
@@ -124,6 +132,7 @@ export async function PUT(req: NextRequest) {
       liveUrl,
       objectives,
       keyChallenges,
+      featured,
     } = body;
 
     if (!id || !title) {
@@ -144,6 +153,7 @@ export async function PUT(req: NextRequest) {
         liveUrl: liveUrl || null,
         objectives: objectives ? JSON.stringify(objectives) : null,
         keyChallenges: keyChallenges ? JSON.stringify(keyChallenges) : null,
+        featured: featured !== undefined ? featured : false,
         updatedAt: new Date(),
       })
       .where(eq(project.id, id));
@@ -181,6 +191,46 @@ export async function DELETE(req: NextRequest) {
         { success: false, error: "Project ID is required" },
         { status: 400 }
       );
+    }
+
+    // Get the project to retrieve image URL before deleting
+    const projectData = await db
+      .select()
+      .from(project)
+      .where(eq(project.id, id))
+      .all();
+
+    if (projectData.length === 0) {
+      return NextResponse.json(
+        { success: false, error: "Project not found" },
+        { status: 404 }
+      );
+    }
+
+    const imageUrl = projectData[0].image;
+
+    // Delete image from Cloudinary if it exists
+    if (imageUrl) {
+      try {
+        // Extract public_id from Cloudinary URL
+        const urlParts = imageUrl.split("/");
+        const uploadIndex = urlParts.indexOf("upload");
+        if (uploadIndex !== -1 && uploadIndex < urlParts.length - 1) {
+          // Get everything after 'upload/v{version}/'
+          const publicIdWithExtension = urlParts
+            .slice(uploadIndex + 2)
+            .join("/");
+          const publicId = publicIdWithExtension.split(".")[0];
+
+          await cloudinary.uploader.destroy(publicId);
+        }
+      } catch (cloudinaryError) {
+        console.error(
+          "Failed to delete image from Cloudinary:",
+          cloudinaryError
+        );
+        // Continue with project deletion even if Cloudinary deletion fails
+      }
     }
 
     await db.delete(project).where(eq(project.id, id));

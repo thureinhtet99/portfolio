@@ -22,7 +22,7 @@ import { useState, useEffect, useMemo } from "react";
 import { BiWorld } from "react-icons/bi";
 import { ProjectDetailModal } from "@/components/ProjectDetailModal";
 import { StaticImageData } from "next/image";
-import { ProjectResponseType } from "@/types/index.type";
+import { ProjectType } from "@/types/index.type";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 type Props = {
@@ -31,7 +31,7 @@ type Props = {
   aboutMe: string;
   intro: string;
   roles: string;
-  featuredProjects: ProjectResponseType[];
+  featuredProjects: ProjectType[];
   profileImage: StaticImageData | string | null;
   resume: string | null;
 };

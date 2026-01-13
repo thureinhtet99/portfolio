@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { ProjectType } from "@/types/index.type";
 import {
   FolderGit2,
@@ -21,6 +22,7 @@ import { toast } from "sonner";
 import { APP_CONFIG } from "@/config/app-config";
 import DeleteConfirmBox from "@/components/DeleteConfirmBox";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function ProjectsSection() {
   const [projects, setProjects] = useState<ProjectType[]>([]);
@@ -39,6 +41,7 @@ export default function ProjectsSection() {
     objectives: "",
     keyChallenges: "",
     image: "",
+    featured: false,
   });
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -112,6 +115,7 @@ export default function ProjectsSection() {
           ? formData.keyChallenges.split("\n").filter((item) => item.trim())
           : undefined,
         image: imageUrl || undefined,
+        featured: formData.featured,
       };
 
       const response = await fetch(`/api/${APP_CONFIG.ROUTE.PROJECTS}`, {
@@ -152,6 +156,7 @@ export default function ProjectsSection() {
         ? project.keyChallenges.join("\n")
         : "",
       image: project.image || "",
+      featured: project.featured || false,
     });
     setImagePreview(project.image || null);
     setIsAdding(false);
@@ -207,6 +212,7 @@ export default function ProjectsSection() {
           ? formData.keyChallenges.split("\n").filter((item) => item.trim())
           : undefined,
         image: imageUrl || undefined,
+        featured: formData.featured,
       };
 
       const response = await fetch(`/api/${APP_CONFIG.ROUTE.PROJECTS}`, {
@@ -278,6 +284,7 @@ export default function ProjectsSection() {
       objectives: "",
       keyChallenges: "",
       image: "",
+      featured: false,
     });
     setImagePreview(null);
     setImageFile(null);
@@ -396,6 +403,7 @@ function ProjectForm({
     objectives: string;
     keyChallenges: string;
     image: string;
+    featured: boolean;
   };
   setFormData: (data: {
     title: string;
@@ -406,6 +414,7 @@ function ProjectForm({
     objectives: string;
     keyChallenges: string;
     image: string;
+    featured: boolean;
   }) => void;
   imagePreview: string | null;
   setImagePreview: (preview: string | null) => void;
@@ -566,6 +575,23 @@ function ProjectForm({
             rows={4}
           />
         </div>
+        <div className="flex items-center justify-between space-x-2 p-4 rounded-lg border">
+          <div className="space-y-0.5">
+            <Label htmlFor="featured" className="text-base font-medium">
+              Featured Project
+            </Label>
+            <p className="text-sm text-muted-foreground">
+              Display this project on the homepage
+            </p>
+          </div>
+          <Switch
+            id="featured"
+            checked={formData.featured}
+            onCheckedChange={(checked) =>
+              setFormData({ ...formData, featured: checked })
+            }
+          />
+        </div>
         <div className="flex gap-2">
           <Button
             onClick={onSave}
@@ -622,9 +648,11 @@ function ProjectCard({
           {/* Header */}
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-base sm:text-lg capitalize break-words">
-                {project.title}
-              </h3>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="font-semibold text-base sm:text-lg capitalize break-words">
+                  {project.title}
+                </h3>
+              </div>
             </div>
             <div className="flex gap-1 shrink-0">
               <Button
@@ -647,34 +675,40 @@ function ProjectCard({
           </div>
 
           {/* Links */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-4">
+            {project.featured && (
+              <Badge variant="secondary" className="capitalize text-xs">
+                Featured
+              </Badge>
+            )}
             {project.githubUrl && (
               <a
                 href={project.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                className="inline-flex items-center gap-1 text-xs text-primary transition-colors"
               >
                 <Github className="h-3.5 w-3.5" />
                 GitHub
               </a>
             )}
+
             {project.liveUrl && (
-              <a
+              <Link
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                className="inline-flex items-center gap-1 text-xs text-primary transition-colors"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
-                Live Demo
-              </a>
+                Live
+              </Link>
             )}
           </div>
 
           {/* Description */}
           {project.description && (
-            <p className="text-sm text-muted-foreground leading-relaxed break-words">
+            <p className="text-muted-foreground leading-relaxed break-words">
               {project.description}
             </p>
           )}

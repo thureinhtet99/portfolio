@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/client";
 import { setting } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+  api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET,
+});
 
 // GET - Fetch a setting by key
 export async function GET(req: NextRequest) {
@@ -58,7 +65,38 @@ export async function POST(req: NextRequest) {
       .select()
       .from(setting)
       .where(eq(setting.key, key))
-      .limit(1);
+      .limit(1)
+      .all();
+
+    // Delete old file from Cloudinary if updating profileImage or resume
+    if (existing.length > 0 && (key === "profileImage" || key === "resume")) {
+      const oldValue = existing[0].value;
+      if (oldValue && value && oldValue !== value) {
+        try {
+          // Extract public_id from Cloudinary URL
+          const urlParts = oldValue.split("/");
+          const uploadIndex = urlParts.indexOf("upload");
+          if (uploadIndex !== -1 && uploadIndex < urlParts.length - 1) {
+            const publicIdWithExtension = urlParts
+              .slice(uploadIndex + 2)
+              .join("/");
+            const publicId = publicIdWithExtension.split(".")[0];
+
+            // For PDFs, need to specify resource_type
+            const resourceType = key === "resume" ? "raw" : "image";
+            await cloudinary.uploader.destroy(publicId, {
+              resource_type: resourceType,
+            });
+          }
+        } catch (cloudinaryError) {
+          console.error(
+            "Failed to delete old file from Cloudinary:",
+            cloudinaryError
+          );
+          // Continue with update even if Cloudinary deletion fails
+        }
+      }
+    }
 
     if (existing.length > 0) {
       // Update existing

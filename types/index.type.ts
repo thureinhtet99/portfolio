@@ -48,24 +48,7 @@ export type VerificationType = {
   updatedAt: Date | null;
 };
 
-// Portfolio Types
 export type ProjectType = {
-  id: string;
-  title: string;
-  description: string | null;
-  image: string | null;
-  technologies: string | null; // JSON string
-  githubUrl: string | null;
-  liveUrl: string | null;
-  objectives: string | null; // JSON array
-  keyChallenges: string | null; // JSON array
-  featured: boolean;
-  order: number;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-export type ProjectResponseType = {
   id: string;
   title: string;
   description?: string;
@@ -81,51 +64,13 @@ export type ProjectResponseType = {
 export type CertificateType = {
   id: string;
   title: string;
-  issuer: string;
-  issueDate: string;
-  credentialId: string | null;
-  credentialUrl: string | null;
-  image: string | null;
-  order: number;
-  createdAt: Date;
-  updatedAt: Date;
+  issuer?: string;
+  issueDate?: string;
+  credentialId?: string;
+  credentialUrl?: string;
+  image?: string;
 };
 
-export type ExperienceType = {
-  id: string;
-  title: string;
-  company: string;
-  location: string | null;
-  period: string | null;
-  description: string | null;
-  keyAchievements: string | null; // JSON array
-  techStacks: string | null; // JSON array
-  role: string | null; // 'remote', 'on-site', or 'internship'
-  order: number;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-export type EducationType = {
-  id: string;
-  degree: string | null;
-  institution: string;
-  location: string | null;
-  period: string | null;
-  description: string | null;
-  order: number;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-export type SettingType = {
-  id: string;
-  key: string;
-  value: string;
-  updatedAt: Date;
-};
-
-// API Response Types
 export type WorkType = {
   id: string;
   type: "work";
@@ -139,7 +84,7 @@ export type WorkType = {
   technologies?: string[];
 };
 
-export type EducationResponseType = {
+export type EducationType = {
   id: string;
   type: "education";
   degree?: string;
@@ -149,7 +94,14 @@ export type EducationResponseType = {
   description?: string;
 };
 
-export type TimelineType = WorkType | EducationResponseType;
+export type SettingType = {
+  id: string;
+  key: string;
+  value: string;
+  updatedAt: Date;
+};
+
+export type TimelineType = WorkType | EducationType;
 
 // Display Types for Components
 export type WorkDisplayType = {
@@ -172,16 +124,6 @@ export type EducationDisplayType = {
   period?: string;
   description?: string;
   achievements: string[];
-};
-
-export type CertificateResponseType = {
-  id: string;
-  title: string;
-  issuer?: string;
-  issueDate?: string;
-  credentialId?: string;
-  credentialUrl?: string;
-  image?: string;
 };
 
 // Component Props Types
