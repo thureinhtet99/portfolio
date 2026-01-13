@@ -78,7 +78,7 @@ export type WorkType = {
   company: string;
   location?: string;
   period?: string;
-  role?: string;
+  role?: "" | "remote" | "on-site" | "internship";
   description?: string;
   achievements?: string[];
   technologies?: string[];

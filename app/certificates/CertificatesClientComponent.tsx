@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Award, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
+import { formatDate } from "@/utils/formate-date";
 
 type Certificate = {
   id: string;
@@ -60,7 +61,7 @@ export default function CertificatesClientComponent({ certificates }: Props) {
                       variant="secondary"
                       className="bg-white/90 dark:bg-slate-800/90 text-slate-900 dark:text-slate-100 backdrop-blur-sm border-0 text-xs lg:text-sm px-2 py-1 lg:px-3 lg:py-1.5"
                     >
-                      {certificate.issueDate}
+                      {formatDate(certificate.issueDate)}
                     </Badge>
                   </div>
                 </div>
@@ -79,7 +80,7 @@ export default function CertificatesClientComponent({ certificates }: Props) {
                       variant="secondary"
                       className="bg-white dark:bg-slate-700 text-xs lg:text-sm px-2 py-1 lg:px-3 lg:py-1.5"
                     >
-                      {certificate.issueDate}
+                      {formatDate(certificate.issueDate)}
                     </Badge>
                   </div>
                 </div>
@@ -92,10 +93,7 @@ export default function CertificatesClientComponent({ certificates }: Props) {
                   </h3>
                   {certificate.credentialId && (
                     <div className="flex flex-wrap gap-1.5 mb-3">
-                      <Badge
-                        variant="outline"
-                        className="text-xs px-2 py-1"
-                      >
+                      <Badge variant="outline" className="text-xs px-2 py-1">
                         ID: {certificate.credentialId}
                       </Badge>
                     </div>

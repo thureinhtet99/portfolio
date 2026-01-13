@@ -2,6 +2,8 @@ import { APP_CONFIG } from "@/config/app-config";
 import HomeClientComponent from "./HomeClientComponent";
 import { ProjectType } from "@/types/index.type";
 
+export const dynamic = 'force-dynamic';
+
 async function getSettings() {
   try {
     const baseUrl = APP_CONFIG.BASE_URL;

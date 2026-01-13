@@ -1,12 +1,14 @@
 import { APP_CONFIG } from "@/config/app-config";
 import TimelineClientComponent from "./TimelineClientComponent";
 import {
-  EducationResponseType,
+  EducationType,
   TimelineType,
   WorkType,
   WorkDisplayType,
   EducationDisplayType,
 } from "@/types/index.type";
+
+export const dynamic = "force-dynamic";
 
 async function getTimelines(): Promise<TimelineType[]> {
   try {
@@ -17,7 +19,7 @@ async function getTimelines(): Promise<TimelineType[]> {
         cache: "no-store",
       }
     );
-    const data = await response.json();    
+    const data = await response.json();
     if (data.success && data.data) {
       return data.data;
     }
@@ -47,7 +49,7 @@ export default async function Timelines() {
     }));
 
   const education: EducationDisplayType[] = timelines
-    .filter((t): t is EducationResponseType => t.type === "education")
+    .filter((t): t is EducationType => t.type === "education")
     .map((edu) => ({
       id: edu.id,
       degree: edu.degree || "Degree",

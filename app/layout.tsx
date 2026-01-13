@@ -6,6 +6,8 @@ import { Toaster } from "sonner";
 import QueryProvider from "@/components/QueryProvider";
 import { Footer } from "@/components/Footer";
 import { TopNavbar } from "@/components/top-navbar";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 const robotoMono = Work_Sans({
   variable: "--font-work-sans",
@@ -89,7 +91,9 @@ export default function RootLayout({
           >
             <TopNavbar />
             <main className="min-h-screen px-4 md:px-6 lg:px-8 pt-4 md:pt-6">
-              {children}
+              <Suspense fallback={<Loading />}>
+                {children}
+              </Suspense>
               <Toaster />
             </main>
             <Footer />

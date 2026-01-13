@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/client";
 import { certificate } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { v2 as cloudinary } from "cloudinary";
 
 // GET - Fetch all certificates
 export async function GET() {
@@ -145,6 +146,46 @@ export async function DELETE(req: NextRequest) {
         { success: false, error: "Certificate ID is required" },
         { status: 400 }
       );
+    }
+
+    // Get the certificate to retrieve image URL before deleting
+    const certificateData = await db
+      .select()
+      .from(certificate)
+      .where(eq(certificate.id, id))
+      .all();
+
+    if (certificateData.length === 0) {
+      return NextResponse.json(
+        { success: false, error: "Certificate not found" },
+        { status: 404 }
+      );
+    }
+
+    const imageUrl = certificateData[0].image;
+
+    // Delete image from Cloudinary if it exists
+    if (imageUrl) {
+      try {
+        // Extract public_id from Cloudinary URL
+        const urlParts = imageUrl.split("/");
+        const uploadIndex = urlParts.indexOf("upload");
+        if (uploadIndex !== -1 && uploadIndex < urlParts.length - 1) {
+          // Get everything after 'upload/v{version}/'
+          const publicIdWithExtension = urlParts
+            .slice(uploadIndex + 2)
+            .join("/");
+          const publicId = publicIdWithExtension.split(".")[0];
+
+          await cloudinary.uploader.destroy(publicId);
+        }
+      } catch (cloudinaryError) {
+        console.error(
+          "Failed to delete image from Cloudinary:",
+          cloudinaryError
+        );
+        // Continue with project deletion even if Cloudinary deletion fails
+      }
     }
 
     await db.delete(certificate).where(eq(certificate.id, id));

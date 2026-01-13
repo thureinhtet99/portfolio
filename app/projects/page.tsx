@@ -1,6 +1,8 @@
 import { APP_CONFIG } from "@/config/app-config";
 import ProjectsClientComponent from "./ProjectsClientComponent";
 
+export const dynamic = 'force-dynamic';
+
 async function getProjects() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";

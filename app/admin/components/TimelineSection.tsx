@@ -115,19 +115,38 @@ export default function TimelinesSection() {
 
   const handleEdit = (timeline: TimelineType) => {
     setEditingId(timeline.id);
-    setFormData({
-      title: timeline.title,
-      company: timeline.company,
-      period: timeline.period || "",
-      location: timeline.location || "",
-      description: timeline.description || "",
-      keyAchievements: timeline.keyAchievements
-        ? timeline.keyAchievements.join("\n")
-        : "",
-      techStacks: timeline.techStacks ? timeline.techStacks.join(", ") : "",
-      role: timeline.role || "",
-      type: timeline.type,
-    });
+
+    if (timeline.type === "work") {
+      setFormData({
+        title: timeline.title,
+        company: timeline.company,
+        period: timeline.period || "",
+        location: timeline.location || "",
+        description: timeline.description || "",
+        keyAchievements: timeline.achievements
+          ? timeline.achievements.join("\n")
+          : "",
+        techStacks: timeline.technologies
+          ? timeline.technologies.join(", ")
+          : "",
+        role: timeline.role || "",
+        type: timeline.type,
+      });
+    } else {
+      // Education type
+      setFormData({
+        title: timeline.degree || "",
+        company: timeline.institution,
+        period: timeline.period || "",
+        location: timeline.location || "",
+        description: timeline.description || "",
+        keyAchievements: "",
+        techStacks: "",
+        role: "",
+        type: timeline.type,
+      });
+    }
+
     setActiveTimelineTab(timeline.type);
     setIsAdding(false);
   };
@@ -591,6 +610,11 @@ function TimelineCard({
   onDelete: (id: string) => void;
   isEditing?: boolean;
 }) {
+  const displayTitle =
+    timeline.type === "work" ? timeline.title : timeline.degree || "Degree";
+  const displayCompany =
+    timeline.type === "work" ? timeline.company : timeline.institution;
+
   return (
     <Card
       className={`hover:shadow-md transition-shadow ${
@@ -603,10 +627,10 @@ function TimelineCard({
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-base sm:text-lg capitalize break-words">
-                {timeline.title}
+                {displayTitle}
               </h3>
               <p className="text-sm text-muted-foreground mt-1 break-words">
-                {timeline.company}
+                {displayCompany}
               </p>
             </div>
             <div className="flex gap-1 shrink-0">
@@ -632,7 +656,7 @@ function TimelineCard({
           {/* Badges */}
           <div className="flex flex-wrap gap-2">
             {timeline.period && (
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="outline" className="text-xs">
                 {timeline.period}
               </Badge>
             )}
@@ -641,7 +665,7 @@ function TimelineCard({
                 {timeline.location}
               </Badge>
             )}
-            {timeline.role && timeline.type === "work" && (
+            {timeline.type === "work" && timeline.role && (
               <Badge
                 variant="default"
                 className={`text-xs ${
@@ -669,12 +693,12 @@ function TimelineCard({
 
           {/* Key Achievements */}
           {timeline.type === "work" &&
-            timeline.keyAchievements &&
-            timeline.keyAchievements.length > 0 && (
+            timeline.achievements &&
+            timeline.achievements.length > 0 && (
               <div className="mt-1">
                 <p className="text-sm font-medium mb-2">Key Achievements:</p>
                 <ul className="list-disc list-inside space-y-1.5 text-sm">
-                  {timeline.keyAchievements.map((achievement, idx) => (
+                  {timeline.achievements.map((achievement, idx) => (
                     <li
                       key={idx}
                       className="text-muted-foreground break-words leading-relaxed"
@@ -688,14 +712,14 @@ function TimelineCard({
 
           {/* Tech Stacks */}
           {timeline.type === "work" &&
-            timeline.techStacks &&
-            timeline.techStacks.length > 0 && (
+            timeline.technologies &&
+            timeline.technologies.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mt-1">
-                {timeline.techStacks.map((tech, idx) => (
+                {timeline.technologies.map((tech, idx) => (
                   <Badge
                     key={idx}
-                    variant="default"
-                    className="capitalize text-xs"
+                    variant="secondary"
+                    className="text-xs capitalize"
                   >
                     {tech}
                   </Badge>
