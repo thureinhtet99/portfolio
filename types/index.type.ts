@@ -90,7 +90,6 @@ export type EducationType = {
   institution: string;
   location?: string;
   period: string;
-  description?: string;
 };
 
 export type SettingType = {
@@ -120,7 +119,6 @@ export type EducationDisplayType = {
   institution: string;
   location?: string;
   period?: string;
-  description?: string;
   achievements: string[];
 };
 

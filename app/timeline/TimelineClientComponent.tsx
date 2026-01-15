@@ -87,10 +87,6 @@ export default function TimelineClientComponent({ work, education }: Props) {
                         </span>
                       </div>
 
-                      <p className="text-muted-foreground leading-relaxed text-lg">
-                        {exp.description}
-                      </p>
-
                       {exp.achievements && exp.achievements.length > 0 && (
                         <div className="space-y-2">
                           <p className="font-semibold text-lg">
@@ -166,23 +162,6 @@ export default function TimelineClientComponent({ work, education }: Props) {
                           {exp.period}
                         </span>
                       </div>
-
-                      <p className="text-muted-foreground leading-relaxed text-lg">
-                        {exp.description}
-                      </p>
-
-                      {/* {exp.achievements && exp.achievements.length > 0 && (
-                      <div className="space-y-2">
-                        <p className="font-semibold text-lg">
-                          Key Achievements:
-                        </p>
-                        <ul className="list-disc list-inside space-y-1 text-lg text-muted-foreground">
-                          {exp.achievements.map((achievement, i) => (
-                            <li key={i}>{achievement}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )} */}
                     </div>
                   </motion.div>
                 ))
@@ -192,7 +171,7 @@ export default function TimelineClientComponent({ work, education }: Props) {
                     <Clock className="h-6 w-6 text-muted-foreground" />
                   </div>
                   <h3 className="text-lg font-semibold mb-2">
-                    No current education 
+                    No current education
                   </h3>
                 </div>
               )}

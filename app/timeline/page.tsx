@@ -55,7 +55,6 @@ export default async function Timelines() {
       institution: edu.institution,
       location: edu.location,
       period: edu.period,
-      description: edu.description,
       achievements: [],
     }));
 
