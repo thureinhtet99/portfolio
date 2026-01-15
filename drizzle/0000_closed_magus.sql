@@ -30,11 +30,10 @@ CREATE TABLE `certificate` (
 --> statement-breakpoint
 CREATE TABLE `education` (
 	`id` text PRIMARY KEY NOT NULL,
-	`title` text,
+	`degree` text,
 	`institution` text NOT NULL,
 	`location` text,
 	`period` text,
-	`description` text,
 	`order` integer DEFAULT 0 NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL
@@ -46,7 +45,6 @@ CREATE TABLE `work` (
 	`company` text NOT NULL,
 	`location` text,
 	`period` text,
-	`description` text,
 	`key_achievements` text,
 	`tech_stacks` text,
 	`role` text,

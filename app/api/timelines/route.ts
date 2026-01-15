@@ -15,11 +15,10 @@ export async function GET() {
       company: exp.company,
       location: exp.location,
       period: exp.period,
-      description: exp.description,
-      keyAchievements: exp.keyAchievements
+      achievements: exp.keyAchievements
         ? JSON.parse(exp.keyAchievements)
         : undefined,
-      techStacks: exp.techStacks ? JSON.parse(exp.techStacks) : undefined,
+      technologies: exp.techStacks ? JSON.parse(exp.techStacks) : undefined,
       role: exp.role as "remote" | "on-site" | "internship" | undefined,
       type: "work" as const,
       order: exp.order,
@@ -30,10 +29,9 @@ export async function GET() {
     const formattedEducations = educations.map((edu) => ({
       id: edu.id,
       degree: edu.degree,
-      company: edu.institution,
+      institution: edu.institution,
       location: edu.location,
       period: edu.period,
-      description: edu.description,
       type: "education" as const,
       order: edu.order,
       createdAt: edu.createdAt,
@@ -90,7 +88,7 @@ export async function POST(req: NextRequest) {
       // Insert into education table
       const insertData = {
         id,
-        title: title || null,
+        degree: title || null,
         institution: company,
         location: location || null,
         period: period || null,
@@ -211,7 +209,6 @@ export async function PUT(req: NextRequest) {
           institution: company,
           location: location || null,
           period: period || null,
-          description: description || null,
           updatedAt: new Date(),
         })
         .where(eq(education.id, id));
@@ -237,7 +234,6 @@ export async function PUT(req: NextRequest) {
           company,
           location: location || null,
           period: period || null,
-          description: description || "",
           keyAchievements: keyAchievements
             ? JSON.stringify(keyAchievements)
             : null,

@@ -14,6 +14,8 @@ import {
   Upload,
   X,
   Calendar,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -246,6 +248,86 @@ export default function CertificatesSection() {
     }
   };
 
+  const moveUp = async (index: number) => {
+    if (index === 0) return;
+
+    const newCertificates = [...certificates];
+    [newCertificates[index], newCertificates[index - 1]] = [
+      newCertificates[index - 1],
+      newCertificates[index],
+    ];
+
+    // Update order values
+    const updatedCertificates = newCertificates.map((cert, idx) => ({
+      id: cert.id,
+      order: idx,
+    }));
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/${APP_CONFIG.ROUTE.CERTIFICATES}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ certificates: updatedCertificates }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        await loadCertificates();
+        toast.success("Order updated successfully!");
+      } else {
+        throw new Error(data.error || "Failed to update order");
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to update order";
+      toast.error(errorMessage);
+      console.error("Update order error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const moveDown = async (index: number) => {
+    if (index === certificates.length - 1) return;
+
+    const newCertificates = [...certificates];
+    [newCertificates[index], newCertificates[index + 1]] = [
+      newCertificates[index + 1],
+      newCertificates[index],
+    ];
+
+    // Update order values
+    const updatedCertificates = newCertificates.map((cert, idx) => ({
+      id: cert.id,
+      order: idx,
+    }));
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/${APP_CONFIG.ROUTE.CERTIFICATES}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ certificates: updatedCertificates }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        await loadCertificates();
+        toast.success("Order updated successfully!");
+      } else {
+        throw new Error(data.error || "Failed to update order");
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to update order";
+      toast.error(errorMessage);
+      console.error("Update order error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       title: "",
@@ -315,13 +397,17 @@ export default function CertificatesSection() {
             ))
           ) : (
             <>
-              {certificates.map((certificate) => (
+              {certificates.map((certificate, index) => (
                 <CertificateCard
                   key={certificate.id}
                   certificate={certificate}
                   onEdit={handleEdit}
                   onDelete={openDeleteDialog}
+                  onMoveUp={() => moveUp(index)}
+                  onMoveDown={() => moveDown(index)}
                   isEditing={editingId === certificate.id}
+                  isFirst={index === 0}
+                  isLast={index === certificates.length - 1}
                 />
               ))}
               {certificates.length === 0 && (
@@ -540,12 +626,20 @@ function CertificateCard({
   certificate,
   onEdit,
   onDelete,
+  onMoveUp,
+  onMoveDown,
   isEditing,
+  isFirst,
+  isLast,
 }: {
   certificate: CertificateType;
   onEdit: (certificate: CertificateType) => void;
   onDelete: (id: string) => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
   isEditing?: boolean;
+  isFirst?: boolean;
+  isLast?: boolean;
 }) {
   return (
     <Card
@@ -578,6 +672,26 @@ function CertificateCard({
               </p>
             </div>
             <div className="flex gap-1 shrink-0">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={onMoveUp}
+                disabled={isFirst}
+                className="h-9 w-9 p-0"
+                title="Move up"
+              >
+                <ArrowUp className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={onMoveDown}
+                disabled={isLast}
+                className="h-9 w-9 p-0"
+                title="Move down"
+              >
+                <ArrowDown className="h-4 w-4" />
+              </Button>
               <Button
                 size="sm"
                 variant="ghost"

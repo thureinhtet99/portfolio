@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1768246420758,
-      "tag": "0000_great_the_watchers",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1768248701943,
-      "tag": "0001_perfect_famine",
+      "when": 1768505504677,
+      "tag": "0000_closed_magus",
       "breakpoints": true
     }
   ]

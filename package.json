@@ -1,6 +1,6 @@
 {
-  "name": "my-portfolio-nextjs",
-  "version": "1.0.0",
+  "name": "my-portfolio",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -12,8 +12,7 @@
     "db:push": "drizzle-kit push",
     "db:drop": "drizzle-kit drop",
     "db:studio": "drizzle-kit studio",
-    "auth:generate": "npx @better-auth/cli generate",
-    "seed:admin": "tsx scripts/seed-admin.ts"
+    "auth:generate": "npx @better-auth/cli generate"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",

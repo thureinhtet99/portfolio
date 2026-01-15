@@ -79,7 +79,6 @@ export type WorkType = {
   location?: string;
   period?: string;
   role?: "" | "remote" | "on-site" | "internship";
-  description?: string;
   achievements?: string[];
   technologies?: string[];
 };
@@ -111,7 +110,6 @@ export type WorkDisplayType = {
   location?: string;
   period?: string;
   type: string;
-  description?: string;
   achievements: string[];
   technologies: string[];
 };
@@ -148,4 +146,10 @@ export type DeleteConfirmBoxType = {
   setDeleteDialogOpen: Dispatch<SetStateAction<boolean>>;
   isLoading: boolean;
   handleDelete: () => void;
+};
+
+export type FooterType = {
+  githubURL: string | "";
+  facebookURL: string | "";
+  linkedInURL: string | "";
 };

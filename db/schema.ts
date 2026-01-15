@@ -93,7 +93,6 @@ export const experience = sqliteTable("work", {
   company: text("company").notNull(),
   location: text("location"),
   period: text("period"),
-  description: text("description"),
   keyAchievements: text("key_achievements"), // JSON array
   techStacks: text("tech_stacks"), // JSON array
   role: text("role"), // 'remote', 'on-site', or 'internship'
@@ -104,11 +103,10 @@ export const experience = sqliteTable("work", {
 
 export const education = sqliteTable("education", {
   id: text("id").primaryKey(),
-  degree: text("title"), // Degree/Title (optional)
+  degree: text("degree"), // Degree/Title (optional)
   institution: text("institution").notNull(),
   location: text("location"),
   period: text("period"),
-  description: text("description"), // Optional for education
   order: integer("order").notNull().default(0),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),

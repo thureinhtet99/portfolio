@@ -52,7 +52,6 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { key, value } = body;
-
     if (!key || value === undefined) {
       return NextResponse.json(
         { error: "Key and value are required" },

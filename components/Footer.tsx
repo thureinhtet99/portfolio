@@ -25,7 +25,7 @@ export async function Footer() {
 
   const facebookURL = settings.facebookUrl || "";
   const githubURL = settings.githubUrl || "";
-  const linkedInURL = settings.linkedInUrl || "";
+  const linkedInURL = settings.linkedinUrl || "";
 
   return (
     <FooterClientComponent

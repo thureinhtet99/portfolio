@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "d705064c-fa06-4968-9948-2cfb39b24bbb",
+  "id": "c0a8573f-1111-47ef-baa9-e066accf37a6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -210,8 +210,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "title": {
-          "name": "title",
+        "degree": {
+          "name": "degree",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -233,13 +233,6 @@
         },
         "period": {
           "name": "period",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "description": {
-          "name": "description",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -307,13 +300,6 @@
         },
         "period": {
           "name": "period",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "description": {
-          "name": "description",
           "type": "text",
           "primaryKey": false,
           "notNull": false,

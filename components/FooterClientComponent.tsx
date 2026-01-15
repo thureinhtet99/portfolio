@@ -5,18 +5,13 @@ import { FaGithub, FaLinkedin, FaFacebook } from "react-icons/fa";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSession } from "@/lib/auth-client";
 import { Skeleton } from "./ui/skeleton";
-
-type Props = {
-  githubURL: string | "";
-  facebookURL: string | "";
-  linkedInURL: string | "";
-};
+import { FooterType } from "@/types/index.type";
 
 export function FooterClientComponent({
   githubURL,
   facebookURL,
   linkedInURL,
-}: Props) {
+}: FooterType) {
   const currentYear = new Date().getFullYear();
   const isMobile = useIsMobile();
   const { data: session, isPending } = useSession();
@@ -67,8 +62,8 @@ export function FooterClientComponent({
                   "username"
                 ) : (
                   session.user?.name
-                )}.{" "}
-                All rights reserved.
+                )}
+                . All rights reserved.
               </h4>
             </div>
           </div>
@@ -116,8 +111,8 @@ export function FooterClientComponent({
                   "username"
                 ) : (
                   session.user?.name
-                )}.{" "}
-                All rights reserved.
+                )}
+                . All rights reserved.
               </h4>
             </div>
           </div>

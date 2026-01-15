@@ -24,6 +24,7 @@ import SettingsSection from "./components/SettingsSection";
 import TimelinesSection from "./components/TimelineSection";
 import ProjectsSection from "./components/ProjectSection";
 import CertificatesSection from "./components/CertificateSection";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function AdminDashboard() {
   const { data: session, isPending } = useSession();
@@ -52,6 +53,7 @@ export default function AdminDashboard() {
           toast.success("Logged in successfully!");
         },
         onError: (ctx) => {
+          setIsLoading(false);
           toast.error("Invalid credentials");
           console.error(ctx.error);
         },
@@ -80,9 +82,11 @@ export default function AdminDashboard() {
       <div className="min-h-screen flex items-center justify-center">
         <Card className="w-full max-w-md shadow-xl border-0">
           <CardContent className="p-8">
-            <div className="flex flex-col items-center gap-4">
-              <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-              <p className="text-muted-foreground">Loading...</p>
+            <div className="flex items-center justify-center">
+              <div className="flex flex-col items-center gap-4">
+                <Spinner className="size-8" />
+                <p className="text-sm text-muted-foreground">Loading...</p>
+              </div>
             </div>
           </CardContent>
         </Card>

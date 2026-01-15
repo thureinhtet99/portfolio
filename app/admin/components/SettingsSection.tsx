@@ -496,10 +496,17 @@ export default function SettingsSection() {
               onCheckedChange={handleAvailableToggle}
             />
           </div>
-          {available && (
+          {available ? (
             <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900 rounded-lg">
               <Circle className="h-4 w-4 fill-green-500 text-green-500" />
               <span className="text-sm text-green-700 dark:text-green-400 font-medium">
+                Currently showing as available on homepage
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-lg">
+              <Circle className="h-4 w-4 fill-red-500 text-red-500" />
+              <span className="text-sm text-red-700 dark:text-red-400 font-medium">
                 Currently showing as available on homepage
               </span>
             </div>

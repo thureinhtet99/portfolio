@@ -12,6 +12,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { APP_CONFIG } from "@/config/app-config";
 import DeleteConfirmBox from "@/components/DeleteConfirmBox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function TimelinesSection() {
   const [timelines, setTimelines] = useState<TimelineType[]>([]);
@@ -29,7 +36,6 @@ export default function TimelinesSection() {
     company: "",
     period: "",
     location: "",
-    description: "",
     keyAchievements: "" as string,
     techStacks: "" as string,
     role: "" as "remote" | "on-site" | "internship" | "",
@@ -40,6 +46,13 @@ export default function TimelinesSection() {
   useEffect(() => {
     loadTimelines();
   }, []);
+
+  // Reset form and close add/edit mode when switching between work and education tabs
+  useEffect(() => {
+    resetForm();
+    setIsAdding(false);
+    setEditingId(null);
+  }, [activeTimelineTab]);
 
   const loadTimelines = async () => {
     try {
@@ -72,7 +85,6 @@ export default function TimelinesSection() {
         company: formData.company,
         period: formData.period,
         location: formData.location,
-        description: formData.description,
         ...(activeTimelineTab === "work" && {
           keyAchievements: formData.keyAchievements
             ? formData.keyAchievements.split("\n").filter((item) => item.trim())
@@ -122,7 +134,6 @@ export default function TimelinesSection() {
         company: timeline.company,
         period: timeline.period || "",
         location: timeline.location || "",
-        description: timeline.description || "",
         keyAchievements: timeline.achievements
           ? timeline.achievements.join("\n")
           : "",
@@ -139,7 +150,6 @@ export default function TimelinesSection() {
         company: timeline.institution,
         period: timeline.period || "",
         location: timeline.location || "",
-        description: timeline.description || "",
         keyAchievements: "",
         techStacks: "",
         role: "",
@@ -165,7 +175,6 @@ export default function TimelinesSection() {
         company: formData.company,
         period: formData.period,
         location: formData.location,
-        description: formData.description,
         ...(activeTimelineTab === "work" && {
           keyAchievements: formData.keyAchievements
             ? formData.keyAchievements.split("\n").filter((item) => item.trim())
@@ -248,7 +257,6 @@ export default function TimelinesSection() {
       company: "",
       period: "",
       location: "",
-      description: "",
       keyAchievements: "",
       techStacks: "",
       role: "",
@@ -435,7 +443,6 @@ function TimelineForm({
     company: string;
     period: string;
     location: string;
-    description: string;
     keyAchievements: string;
     techStacks: string;
     role: "remote" | "on-site" | "internship" | "";
@@ -446,7 +453,6 @@ function TimelineForm({
     company: string;
     period: string;
     location: string;
-    description: string;
     keyAchievements: string;
     techStacks: string;
     role: "remote" | "on-site" | "internship" | "";
@@ -524,41 +530,28 @@ function TimelineForm({
           {activeTimelineTab === "work" && (
             <div className="space-y-2">
               <Label>Work Mode</Label>
-              <select
+              <Select
                 value={formData.role}
-                onChange={(e) =>
+                onValueChange={(value) =>
                   setFormData({
                     ...formData,
-                    role: e.target.value as
-                      | "remote"
-                      | "on-site"
-                      | "internship"
-                      | "",
+                    role: value as "remote" | "on-site" | "internship" | "",
                   })
                 }
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
-                <option value="" disabled selected>
-                  Select work mode
-                </option>
-                <option value="remote">Remote</option>
-                <option value="on-site">On-site</option>
-                <option value="internship">Internship</option>
-              </select>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select work mode" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="remote">Remote</SelectItem>
+                  <SelectItem value="on-site">On-site</SelectItem>
+                  <SelectItem value="internship">Internship</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           )}
         </div>
-        <div className="space-y-2">
-          <Label>Description</Label>
-          <Textarea
-            value={formData.description}
-            onChange={(e) =>
-              setFormData({ ...formData, description: e.target.value })
-            }
-            placeholder="Describe your role and responsibilities"
-            rows={3}
-          />
-        </div>
+
         {activeTimelineTab === "work" && (
           <>
             <div className="space-y-2">
@@ -613,7 +606,7 @@ function TimelineCard({
   const displayTitle =
     timeline.type === "work" ? timeline.title : timeline.degree || "Degree";
   const displayCompany =
-    timeline.type === "work" ? timeline.company : timeline.institution;
+    timeline.type === "work" ? timeline.company : timeline.institution || "Company";
 
   return (
     <Card
@@ -683,13 +676,6 @@ function TimelineCard({
               </Badge>
             )}
           </div>
-
-          {/* Description */}
-          {timeline.description && (
-            <p className="text-sm text-muted-foreground leading-relaxed break-words">
-              {timeline.description}
-            </p>
-          )}
 
           {/* Key Achievements */}
           {timeline.type === "work" &&

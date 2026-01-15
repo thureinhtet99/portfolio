@@ -1,13 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/client";
 import { certificate } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 import { v2 as cloudinary } from "cloudinary";
 
 // GET - Fetch all certificates
 export async function GET() {
   try {
-    const certificates = await db.select().from(certificate).all();
+    const certificates = await db
+      .select()
+      .from(certificate)
+      .orderBy(asc(certificate.order))
+      .all();
 
     return NextResponse.json({
       success: true,
@@ -130,6 +134,42 @@ export async function PUT(req: NextRequest) {
     console.error("Failed to update certificate:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update certificate" },
+      { status: 500 }
+    );
+  }
+}
+
+// PATCH - Update certificate order
+export async function PATCH(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { certificates: updatedCertificates } = body;
+
+    if (!updatedCertificates || !Array.isArray(updatedCertificates)) {
+      return NextResponse.json(
+        { success: false, error: "Invalid certificates data" },
+        { status: 400 }
+      );
+    }
+
+    // Update order for each certificate
+    await Promise.all(
+      updatedCertificates.map((cert: { id: string; order: number }) =>
+        db
+          .update(certificate)
+          .set({ order: cert.order, updatedAt: new Date() })
+          .where(eq(certificate.id, cert.id))
+      )
+    );
+
+    return NextResponse.json({
+      success: true,
+      message: "Certificate order updated successfully",
+    });
+  } catch (error) {
+    console.error("Failed to update certificate order:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to update certificate order" },
       { status: 500 }
     );
   }

@@ -43,7 +43,6 @@ export default async function Timelines() {
       location: exp.location,
       period: exp.period,
       type: exp.role || "Remote",
-      description: exp.description,
       achievements: exp.achievements || [],
       technologies: exp.technologies || [],
     }));
