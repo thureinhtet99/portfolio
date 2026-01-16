@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/client";
 import { project } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 import { v2 as cloudinary } from "cloudinary";
 
 cloudinary.config({
@@ -13,7 +13,11 @@ cloudinary.config({
 // GET - Fetch all projects
 export async function GET() {
   try {
-    const projects = await db.select().from(project).all();
+    const projects = await db
+      .select()
+      .from(project)
+      .orderBy(asc(project.order))
+      .all();
 
     const formattedProjects = projects.map((proj) => ({
       id: proj.id,
@@ -175,6 +179,42 @@ export async function PUT(req: NextRequest) {
     console.error("Failed to update project:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update project" },
+      { status: 500 }
+    );
+  }
+}
+
+// PATCH - Update project order
+export async function PATCH(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { projects: updatedProjects } = body;
+
+    if (!updatedProjects || !Array.isArray(updatedProjects)) {
+      return NextResponse.json(
+        { success: false, error: "Invalid projects data" },
+        { status: 400 }
+      );
+    }
+
+    // Update order for each project
+    await Promise.all(
+      updatedProjects.map((proj: { id: string; order: number }) =>
+        db
+          .update(project)
+          .set({ order: proj.order, updatedAt: new Date() })
+          .where(eq(project.id, proj.id))
+      )
+    );
+
+    return NextResponse.json({
+      success: true,
+      message: "Project order updated successfully",
+    });
+  } catch (error) {
+    console.error("Failed to update project order:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to update project order" },
       { status: 500 }
     );
   }

@@ -1,13 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/client";
 import { experience, education } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 
 // GET - Fetch all timelines (both work experience and education)
 export async function GET() {
   try {
-    const experiences = await db.select().from(experience).all();
-    const educations = await db.select().from(education).all();
+    const experiences = await db
+      .select()
+      .from(experience)
+      .orderBy(asc(experience.order))
+      .all();
+    const educations = await db
+      .select()
+      .from(education)
+      .orderBy(asc(education.order))
+      .all();
 
     const formattedExperiences = experiences.map((exp) => ({
       id: exp.id,
@@ -28,7 +36,6 @@ export async function GET() {
 
     const formattedEducations = educations.map((edu) => ({
       id: edu.id,
-      degree: edu.degree,
       institution: edu.institution,
       location: edu.location,
       period: edu.period,
@@ -205,7 +212,6 @@ export async function PUT(req: NextRequest) {
       await db
         .update(education)
         .set({
-          degree: title || null,
           institution: company,
           location: location || null,
           period: period || null,
@@ -263,6 +269,50 @@ export async function PUT(req: NextRequest) {
     console.error("Failed to update timeline:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update timeline" },
+      { status: 500 }
+    );
+  }
+}
+
+// PATCH - Update timeline order
+export async function PATCH(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { timelines: updatedTimelines } = body;
+
+    if (!updatedTimelines || !Array.isArray(updatedTimelines)) {
+      return NextResponse.json(
+        { success: false, error: "Invalid timelines data" },
+        { status: 400 }
+      );
+    }
+
+    // Update order for each timeline
+    await Promise.all(
+      updatedTimelines.map((timeline: { id: string; order: number }) => {
+        const isEducation = timeline.id.startsWith("education_");
+        if (isEducation) {
+          return db
+            .update(education)
+            .set({ order: timeline.order, updatedAt: new Date() })
+            .where(eq(education.id, timeline.id));
+        } else {
+          return db
+            .update(experience)
+            .set({ order: timeline.order, updatedAt: new Date() })
+            .where(eq(experience.id, timeline.id));
+        }
+      })
+    );
+
+    return NextResponse.json({
+      success: true,
+      message: "Timeline order updated successfully",
+    });
+  } catch (error) {
+    console.error("Failed to update timeline order:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to update timeline order" },
       { status: 500 }
     );
   }

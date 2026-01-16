@@ -141,7 +141,6 @@ export default function TimelineClientComponent({ work, education }: Props) {
                     <div className="space-y-3">
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <div className="flex-1">
-                          <h3 className="text-2xl font-bold">{exp.degree}</h3>
                           {exp.institution && (
                             <p className="text-muted-foreground">
                               {exp.institution}

@@ -16,6 +16,8 @@ import {
   Github,
   Upload,
   X,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -274,6 +276,86 @@ export default function ProjectsSection() {
     }
   };
 
+  const moveUp = async (index: number) => {
+    if (index === 0) return;
+
+    const newProjects = [...projects];
+    [newProjects[index], newProjects[index - 1]] = [
+      newProjects[index - 1],
+      newProjects[index],
+    ];
+
+    // Update order values
+    const updatedProjects = newProjects.map((project, idx) => ({
+      id: project.id,
+      order: idx,
+    }));
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/${APP_CONFIG.ROUTE.PROJECTS}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ projects: updatedProjects }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        await loadProjects();
+        toast.success("Order updated successfully!");
+      } else {
+        throw new Error(data.error || "Failed to update order");
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to update order";
+      toast.error(errorMessage);
+      console.error("Update order error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const moveDown = async (index: number) => {
+    if (index === projects.length - 1) return;
+
+    const newProjects = [...projects];
+    [newProjects[index], newProjects[index + 1]] = [
+      newProjects[index + 1],
+      newProjects[index],
+    ];
+
+    // Update order values
+    const updatedProjects = newProjects.map((project, idx) => ({
+      id: project.id,
+      order: idx,
+    }));
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/${APP_CONFIG.ROUTE.PROJECTS}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ projects: updatedProjects }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        await loadProjects();
+        toast.success("Order updated successfully!");
+      } else {
+        throw new Error(data.error || "Failed to update order");
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to update order";
+      toast.error(errorMessage);
+      console.error("Update order error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       title: "",
@@ -347,13 +429,17 @@ export default function ProjectsSection() {
             ))
           ) : (
             <>
-              {projects.map((project) => (
+              {projects.map((project, idx) => (
                 <ProjectCard
                   key={project.id}
                   project={project}
                   onEdit={handleEdit}
                   onDelete={openDeleteDialog}
+                  onMoveUp={() => moveUp(idx)}
+                  onMoveDown={() => moveDown(idx)}
                   isEditing={editingId === project.id}
+                  isFirst={idx === 0}
+                  isLast={idx === projects.length - 1}
                 />
               ))}
               {projects.length === 0 && (
@@ -618,12 +704,20 @@ function ProjectCard({
   project,
   onEdit,
   onDelete,
+  onMoveUp,
+  onMoveDown,
   isEditing,
+  isFirst,
+  isLast,
 }: {
   project: ProjectType;
   onEdit: (project: ProjectType) => void;
   onDelete: (id: string) => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
   isEditing?: boolean;
+  isFirst?: boolean;
+  isLast?: boolean;
 }) {
   return (
     <Card
@@ -655,6 +749,24 @@ function ProjectCard({
               </div>
             </div>
             <div className="flex gap-1 shrink-0">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={onMoveUp}
+                disabled={isFirst}
+                className="h-9 w-9 p-0"
+              >
+                <ArrowUp className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={onMoveDown}
+                disabled={isLast}
+                className="h-9 w-9 p-0"
+              >
+                <ArrowDown className="h-4 w-4" />
+              </Button>
               <Button
                 size="sm"
                 variant="ghost"

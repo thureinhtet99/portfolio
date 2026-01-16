@@ -4,7 +4,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TimelineType } from "@/types/index.type";
-import { Calendar, Edit, Plus, Save, Trash2 } from "lucide-react";
+import {
+  Calendar,
+  Edit,
+  Plus,
+  Save,
+  Trash2,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import countries from "@/data/countries.json";
@@ -146,7 +154,7 @@ export default function TimelinesSection() {
     } else {
       // Education type
       setFormData({
-        title: timeline.degree || "",
+        title: "",
         company: timeline.institution,
         period: timeline.period || "",
         location: timeline.location || "",
@@ -162,7 +170,11 @@ export default function TimelinesSection() {
   };
 
   const handleUpdate = async () => {
-    if (!formData.title || !formData.company || !editingId) {
+    if (
+      !formData.company ||
+      (activeTimelineTab === "work" && !formData.title) ||
+      !editingId
+    ) {
       toast.error("Please fill in required fields");
       return;
     }
@@ -246,6 +258,90 @@ export default function TimelinesSection() {
         error instanceof Error ? error.message : "Failed to delete timeline";
       toast.error(errorMessage);
       console.error("Delete timeline error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const moveUp = async (index: number, type: "work" | "education") => {
+    const targetTimelines =
+      type === "work" ? workTimelines : educationTimelines;
+    if (index === 0) return;
+
+    const newTimelines = [...targetTimelines];
+    [newTimelines[index], newTimelines[index - 1]] = [
+      newTimelines[index - 1],
+      newTimelines[index],
+    ];
+
+    // Update order values
+    const updatedTimelines = newTimelines.map((timeline, idx) => ({
+      id: timeline.id,
+      order: idx,
+    }));
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/${APP_CONFIG.ROUTE.TIMELINES}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ timelines: updatedTimelines }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        await loadTimelines();
+        toast.success("Order updated successfully!");
+      } else {
+        throw new Error(data.error || "Failed to update order");
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to update order";
+      toast.error(errorMessage);
+      console.error("Update order error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const moveDown = async (index: number, type: "work" | "education") => {
+    const targetTimelines =
+      type === "work" ? workTimelines : educationTimelines;
+    if (index === targetTimelines.length - 1) return;
+
+    const newTimelines = [...targetTimelines];
+    [newTimelines[index], newTimelines[index + 1]] = [
+      newTimelines[index + 1],
+      newTimelines[index],
+    ];
+
+    // Update order values
+    const updatedTimelines = newTimelines.map((timeline, idx) => ({
+      id: timeline.id,
+      order: idx,
+    }));
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/${APP_CONFIG.ROUTE.TIMELINES}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ timelines: updatedTimelines }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        await loadTimelines();
+        toast.success("Order updated successfully!");
+      } else {
+        throw new Error(data.error || "Failed to update order");
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to update order";
+      toast.error(errorMessage);
+      console.error("Update order error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -335,13 +431,17 @@ export default function TimelinesSection() {
                 ))
               ) : (
                 <>
-                  {workTimelines.map((timeline) => (
+                  {workTimelines.map((timeline, idx) => (
                     <TimelineCard
                       key={timeline.id}
                       timeline={timeline}
                       onEdit={handleEdit}
                       onDelete={openDeleteDialog}
+                      onMoveUp={() => moveUp(idx, "work")}
+                      onMoveDown={() => moveDown(idx, "work")}
                       isEditing={editingId === timeline.id}
+                      isFirst={idx === 0}
+                      isLast={idx === workTimelines.length - 1}
                     />
                   ))}
                   {workTimelines.length === 0 && (
@@ -396,13 +496,17 @@ export default function TimelinesSection() {
                 ))
               ) : (
                 <>
-                  {educationTimelines.map((timeline) => (
+                  {educationTimelines.map((timeline, idx) => (
                     <TimelineCard
                       key={timeline.id}
                       timeline={timeline}
                       onEdit={handleEdit}
                       onDelete={openDeleteDialog}
+                      onMoveUp={() => moveUp(idx, "education")}
+                      onMoveDown={() => moveDown(idx, "education")}
                       isEditing={editingId === timeline.id}
+                      isFirst={idx === 0}
+                      isLast={idx === educationTimelines.length - 1}
                     />
                   ))}
                   {educationTimelines.length === 0 && (
@@ -467,22 +571,22 @@ function TimelineForm({
     <Card className="border-0 shadow-none">
       <CardContent className="pt-6 space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label>
-              {activeTimelineTab === "work" ? "Title *" : "Degree/Title"}
-            </Label>
-            <Input
-              value={formData.title}
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
-              placeholder={
-                activeTimelineTab === "work"
-                  ? "e.g. Full Stack Developer"
-                  : "e.g. Bachelor of Computer Science"
-              }
-            />
-          </div>
+          {activeTimelineTab === "work" && (
+            <div className="space-y-2">
+              <Label>Title *</Label>
+              <Input
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+                placeholder={
+                  activeTimelineTab === "work"
+                    ? "e.g. Full Stack Developer"
+                    : "e.g. Bachelor of Computer Science"
+                }
+              />
+            </div>
+          )}
           <div className="space-y-2">
             <Label>
               {activeTimelineTab === "work"
@@ -596,17 +700,25 @@ function TimelineCard({
   timeline,
   onEdit,
   onDelete,
+  onMoveUp,
+  onMoveDown,
   isEditing,
+  isFirst,
+  isLast,
 }: {
   timeline: TimelineType;
   onEdit: (timeline: TimelineType) => void;
   onDelete: (id: string) => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
   isEditing?: boolean;
+  isFirst?: boolean;
+  isLast?: boolean;
 }) {
   const displayTitle =
-    timeline.type === "work" ? timeline.title : timeline.degree || "Degree";
+    timeline.type === "work" ? timeline.title : timeline.institution;
   const displayCompany =
-    timeline.type === "work" ? timeline.company : timeline.institution || "Company";
+    timeline.type === "work" ? timeline.company : undefined;
 
   return (
     <Card
@@ -622,11 +734,31 @@ function TimelineCard({
               <h3 className="font-semibold text-base sm:text-lg capitalize break-words">
                 {displayTitle}
               </h3>
-              <p className="text-sm text-muted-foreground mt-1 break-words">
-                {displayCompany}
-              </p>
+              {displayCompany && (
+                <p className="text-sm text-muted-foreground mt-1 break-words">
+                  {displayCompany}
+                </p>
+              )}
             </div>
             <div className="flex gap-1 shrink-0">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={onMoveUp}
+                disabled={isFirst}
+                className="h-9 w-9 p-0"
+              >
+                <ArrowUp className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={onMoveDown}
+                disabled={isLast}
+                className="h-9 w-9 p-0"
+              >
+                <ArrowDown className="h-4 w-4" />
+              </Button>
               <Button
                 size="sm"
                 variant="ghost"

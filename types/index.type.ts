@@ -86,7 +86,6 @@ export type WorkType = {
 export type EducationType = {
   id: string;
   type: "education";
-  degree?: string;
   institution: string;
   location?: string;
   period: string;
@@ -115,7 +114,6 @@ export type WorkDisplayType = {
 
 export type EducationDisplayType = {
   id: string;
-  degree: string;
   institution: string;
   location?: string;
   period?: string;

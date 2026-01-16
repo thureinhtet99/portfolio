@@ -103,7 +103,6 @@ export const experience = sqliteTable("work", {
 
 export const education = sqliteTable("education", {
   id: text("id").primaryKey(),
-  degree: text("degree"), // Degree/Title (optional)
   institution: text("institution").notNull(),
   location: text("location"),
   period: text("period"),

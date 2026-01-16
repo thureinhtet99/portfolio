@@ -51,7 +51,6 @@ export default async function Timelines() {
     .filter((t): t is EducationType => t.type === "education")
     .map((edu) => ({
       id: edu.id,
-      degree: edu.degree || "Degree",
       institution: edu.institution,
       location: edu.location,
       period: edu.period,
