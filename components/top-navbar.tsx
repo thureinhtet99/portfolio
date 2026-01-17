@@ -123,7 +123,7 @@ export function TopNavbar() {
                   <Link
                     key={link.url}
                     href={link.url}
-                    className={`block px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    className={`block px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all ${
                       pathname === link.url
                         ? "bg-primary/10 text-primary"
                         : "hover:bg-muted/50 hover:text-foreground"

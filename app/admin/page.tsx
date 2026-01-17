@@ -18,7 +18,6 @@ import { useRouter } from "next/navigation";
 import { adminMenuItems } from "@/data/admin/menu-items";
 import { useSession, signIn, signOut } from "@/lib/auth-client";
 import { toast } from "sonner";
-import Link from "next/link";
 import { APP_CONFIG } from "@/config/app-config";
 import SettingsSection from "./components/SettingsSection";
 import TimelinesSection from "./components/TimelineSection";
@@ -57,7 +56,7 @@ export default function AdminDashboard() {
           toast.error("Invalid credentials");
           console.error(ctx.error);
         },
-      }
+      },
     );
   };
 
@@ -157,18 +156,6 @@ export default function AdminDashboard() {
                 {isLoading ? "Logging in..." : "Login to Dashboard"}
               </Button>
             </form>
-
-            <div className="mt-4 text-center">
-              <p className="text-sm text-muted-foreground">
-                Don&apos;t have an account?{" "}
-                <Link
-                  href={`/${APP_CONFIG.ROUTE.ADMIN}/${APP_CONFIG.AUTH.REGISTER}`}
-                  className="text-primary hover:underline font-medium"
-                >
-                  Create here
-                </Link>
-              </p>
-            </div>
           </CardContent>
         </Card>
       </div>
