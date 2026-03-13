@@ -7,12 +7,22 @@ import path from "path";
 import fs from "fs";
 
 // Use LibSQL (Turso) for production/Vercel, SQLite for local development
-const isProduction =
-  process.env.NODE_ENV === "production" || process.env.TURSO_DATABASE_URL;
+const isProduction = process.env.NODE_ENV === "production";
+const shouldUseTurso = isProduction && !!process.env.TURSO_DATABASE_URL;
+
+const resolveSqlitePath = () => {
+  const rawUrl = process.env.DATABASE_URL;
+  if (!rawUrl) return path.join(process.cwd(), "local.db");
+
+  const normalized = rawUrl.startsWith("file:") ? rawUrl.slice(5) : rawUrl;
+  return path.isAbsolute(normalized)
+    ? normalized
+    : path.join(process.cwd(), normalized);
+};
 
 let db: ReturnType<typeof drizzleLibSQL> | ReturnType<typeof drizzleSQLite>;
 
-if (isProduction && process.env.TURSO_DATABASE_URL) {
+if (shouldUseTurso) {
   // Production: Use LibSQL/Turso (works on Vercel)
   const client = createClient({
     url: process.env.TURSO_DATABASE_URL!,
@@ -21,11 +31,7 @@ if (isProduction && process.env.TURSO_DATABASE_URL) {
   db = drizzleLibSQL(client, { schema });
 } else {
   // Local development: Use SQLite
-  const dbPath = process.env.DATABASE_URL
-    ? path.isAbsolute(process.env.DATABASE_URL)
-      ? process.env.DATABASE_URL
-      : path.join(process.cwd(), process.env.DATABASE_URL)
-    : path.join(process.cwd(), "local.db");
+  const dbPath = resolveSqlitePath();
 
   // Ensure the directory exists
   const dbDir = path.dirname(dbPath);

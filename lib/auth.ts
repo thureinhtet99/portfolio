@@ -4,7 +4,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
-    provider: process.env.TURSO_DATABASE_URL ? "sqlite" : "sqlite", // LibSQL is compatible with sqlite dialect
+    provider: "sqlite", // LibSQL/Turso is sqlite-compatible at adapter level
   }),
   emailAndPassword: {
     enabled: true,
@@ -14,5 +14,8 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24, // 1 day
   },
   secret: process.env.BETTER_AUTH_SECRET || "change-this-to-a-random-secret",
-  baseURL: process.env.NEXT_PUBLIC_BASE_URL || process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL:
+    process.env.BETTER_AUTH_URL ||
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    "http://localhost:3000",
 });

@@ -3,13 +3,11 @@
 import * as React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { CircleUserRound, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/theme-toggle";
 import { motion, AnimatePresence } from "framer-motion";
 import { APP_CONFIG } from "@/config/app-config";
-import { useSession } from "@/lib/auth-client";
-import { Skeleton } from "./ui/skeleton";
 
 const navLinks = [
   { title: "Home", url: APP_CONFIG.ROUTE.HOME },
@@ -25,7 +23,6 @@ const navLinks = [
 export function TopNavbar() {
   const [isOpen, setIsOpen] = React.useState(false);
   const pathname = usePathname();
-  const { data: session, isPending } = useSession();
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -46,34 +43,22 @@ export function TopNavbar() {
 
   return (
     <>
-      <header className="sticky top-0 left-0 right-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 left-0 right-0 z-50 shadow-xs bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
         <div className="app-shell flex h-[4.5rem] items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             <Link
               href="/"
               className="flex items-center gap-3 transition-opacity hover:opacity-85"
             >
-              <div className="flex size-11 items-center justify-center rounded-2xl border border-border/70 bg-card/80 shadow-sm">
-                <CircleUserRound size={24} className="text-primary" />
-              </div>
               <div className="hidden sm:block">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                  Portfolio
-                </p>
                 <h3 className="text-lg font-semibold tracking-[-0.03em]">
-                  {isPending ? (
-                    <Skeleton className="h-5 w-[160px]" />
-                  ) : !session ? (
-                    "username"
-                  ) : (
-                    session.user?.name
-                  )}
+                  TRH
                 </h3>
               </div>
             </Link>
           </div>
 
-          <nav className="hidden md:flex items-center gap-2 rounded-full border border-border/70 bg-card/80 p-1 shadow-sm">
+          <nav className="hidden md:flex items-center gap-2 p-1">
             {navLinks.map((link) => (
               <Link
                 key={link.url}

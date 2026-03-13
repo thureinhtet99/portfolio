@@ -55,7 +55,7 @@ export default function AdminDashboard() {
         },
         onError: (ctx) => {
           setIsLoading(false);
-          toast.error("Invalid credentials");
+          toast.error(ctx.error.message || "Login failed");
           console.error(ctx.error);
         },
       },

@@ -20,7 +20,7 @@ export function FooterClientComponent({
   ].filter((item) => item.href);
 
   return (
-    <footer className="mt-12 border-t border-border/70 bg-background/70">
+    <footer className="mt-12 bg-background/70">
       <div className="app-shell px-4 py-6 sm:px-6 lg:px-8">
         <div className="surface-panel flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <div>
