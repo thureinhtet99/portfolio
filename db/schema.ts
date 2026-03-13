@@ -68,6 +68,7 @@ export const project = sqliteTable("project", {
   liveUrl: text("live_url"),
   objectives: text("objectives"), // JSON array
   keyChallenges: text("key_challenges"), // JSON array
+  demoCredentials: text("demo_credentials"), // JSON array
   featured: integer("featured", { mode: "boolean" }).notNull().default(false),
   order: integer("order").notNull().default(0),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),

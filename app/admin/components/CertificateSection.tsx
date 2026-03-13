@@ -31,7 +31,7 @@ export default function CertificatesSection() {
   const [certificatesLoading, setCertificatesLoading] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [certificateToDelete, setCertificateToDelete] = useState<string | null>(
-    null
+    null,
   );
   const [formData, setFormData] = useState({
     title: "",
@@ -226,7 +226,7 @@ export default function CertificatesSection() {
     try {
       const response = await fetch(
         `/api/${APP_CONFIG.ROUTE.CERTIFICATES}?id=${certificateToDelete}`,
-        { method: "DELETE" }
+        { method: "DELETE" },
       );
 
       const data = await response.json();
@@ -348,7 +348,7 @@ export default function CertificatesSection() {
   };
 
   return (
-    <Card className="border-0 shadow-none">
+    <Card className="surface-panel">
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle className="flex items-center gap-2">
@@ -497,7 +497,7 @@ function CertificateForm({
   };
 
   return (
-    <Card className="border-0 shadow-none">
+    <Card className="surface-panel">
       <CardContent className="pt-6 space-y-4">
         {/* Image Upload Section */}
         <div className="space-y-2">

@@ -46,56 +46,65 @@ export function TopNavbar() {
 
   return (
     <>
-      {/* Top Navbar */}
-      <header className="sticky top-0 left-0 right-0 z-50 flex h-16 items-center justify-between px-4 md:px-6 lg:px-8 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex items-center gap-3">
-          <Link
-            href="/"
-            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
-          >
-            <CircleUserRound size={40} className="text-primary" />
-            <div className="hidden sm:block">
-              <h3 className="font-semibold text-2xl">
-                {isPending ? (
-                  <Skeleton className="h-6 w-[200px]" />
-                ) : !session ? (
-                  "username"
-                ) : (
-                  session.user?.name
-                )}
-              </h3>
-            </div>
-          </Link>
-        </div>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-1">
-          {navLinks.map((link) => (
+      <header className="sticky top-0 left-0 right-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
+        <div className="app-shell flex h-[4.5rem] items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3">
             <Link
-              key={link.url}
-              href={link.url}
-              className={`px-4 py-2 rounded-lg text-sm capitalize font-medium transition-all ${
-                pathname === link.url
-                  ? "bg-primary/10 text-primary"
-                  : "hover:bg-muted/50 hover:text-foreground"
-              }`}
+              href="/"
+              className="flex items-center gap-3 transition-opacity hover:opacity-85"
             >
-              {link.title}
+              <div className="flex size-11 items-center justify-center rounded-2xl border border-border/70 bg-card/80 shadow-sm">
+                <CircleUserRound size={24} className="text-primary" />
+              </div>
+              <div className="hidden sm:block">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                  Portfolio
+                </p>
+                <h3 className="text-lg font-semibold tracking-[-0.03em]">
+                  {isPending ? (
+                    <Skeleton className="h-5 w-[160px]" />
+                  ) : !session ? (
+                    "username"
+                  ) : (
+                    session.user?.name
+                  )}
+                </h3>
+              </div>
             </Link>
-          ))}
-        </nav>
+          </div>
 
-        <div className="flex items-center gap-2">
-          <ModeToggle />
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
-            className="md:hidden"
-          >
-            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
+          <nav className="hidden md:flex items-center gap-2 rounded-full border border-border/70 bg-card/80 p-1 shadow-sm">
+            {navLinks.map((link) => (
+              <Link
+                key={link.url}
+                href={link.url}
+                className={`rounded-full px-4 py-2 text-sm font-medium capitalize transition-all ${
+                  pathname === link.url
+                    ? "bg-primary text-primary-foreground shadow-[0_10px_25px_-18px_rgba(37,99,235,0.9)]"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                }`}
+              >
+                {link.title}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-2">
+            <ModeToggle />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleMenu}
+              aria-label="Toggle menu"
+              className="md:hidden"
+            >
+              {isOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -108,7 +117,7 @@ export function TopNavbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.1 }}
-              className="md:hidden fixed inset-0 z-40 bg-background/80 backdrop-blur-sm top-16"
+              className="fixed inset-0 top-[4.5rem] z-40 bg-background/70 backdrop-blur-sm md:hidden"
               onClick={toggleMenu}
             />
             <motion.nav
@@ -116,22 +125,24 @@ export function TopNavbar() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: "-100%", opacity: 0 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="md:hidden fixed top-16 left-0 right-0 z-40 max-h-[calc(100vh-4rem)] overflow-y-auto bg-background border-b shadow-lg"
+              className="fixed left-0 right-0 top-[4.5rem] z-40 border-b border-border/70 bg-background/95 shadow-lg md:hidden"
             >
-              <div className="p-6 space-y-2">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.url}
-                    href={link.url}
-                    className={`block px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all ${
-                      pathname === link.url
-                        ? "bg-primary/10 text-primary"
-                        : "hover:bg-muted/50 hover:text-foreground"
-                    }`}
-                  >
-                    {link.title}
-                  </Link>
-                ))}
+              <div className="app-shell px-4 py-5 sm:px-6">
+                <div className="surface-panel-muted p-2">
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.url}
+                      href={link.url}
+                      className={`block rounded-2xl px-4 py-3 text-sm font-medium capitalize transition-all ${
+                        pathname === link.url
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:bg-background/70 hover:text-foreground"
+                      }`}
+                    >
+                      {link.title}
+                    </Link>
+                  ))}
+                </div>
               </div>
             </motion.nav>
           </>

@@ -1,10 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff, Lock, LogOut, Mail } from "lucide-react";
+import { toast } from "sonner";
+
+import { adminMenuItems } from "@/data/admin/menu-items";
+import { useSession, signIn, signOut } from "@/lib/auth-client";
+import { APP_CONFIG } from "@/config/app-config";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -13,17 +18,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { LogOut, Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { adminMenuItems } from "@/data/admin/menu-items";
-import { useSession, signIn, signOut } from "@/lib/auth-client";
-import { toast } from "sonner";
-import { APP_CONFIG } from "@/config/app-config";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
+
+import CertificatesSection from "./components/CertificateSection";
+import ProjectsSection from "./components/ProjectSection";
 import SettingsSection from "./components/SettingsSection";
 import TimelinesSection from "./components/TimelineSection";
-import ProjectsSection from "./components/ProjectSection";
-import CertificatesSection from "./components/CertificateSection";
-import { Spinner } from "@/components/ui/spinner";
 
 export default function AdminDashboard() {
   const { data: session, isPending } = useSession();
@@ -78,8 +80,8 @@ export default function AdminDashboard() {
 
   if (isPending) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="w-full max-w-md shadow-xl border-0">
+      <div className="flex min-h-screen items-center justify-center">
+        <Card className="surface-panel w-full max-w-md">
           <CardContent className="p-8">
             <div className="flex items-center justify-center">
               <div className="flex flex-col items-center gap-4">
@@ -95,10 +97,10 @@ export default function AdminDashboard() {
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted/10">
-        <Card className="w-full max-w-md shadow-xl border-0">
+      <div className="flex min-h-screen items-center justify-center">
+        <Card className="surface-panel w-full max-w-md">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center font-bold">
+            <CardTitle className="text-center text-2xl font-bold">
               Admin Portal
             </CardTitle>
             <p className="text-center text-sm text-muted-foreground">
@@ -110,7 +112,7 @@ export default function AdminDashboard() {
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
@@ -122,10 +124,11 @@ export default function AdminDashboard() {
                   />
                 </div>
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
@@ -137,8 +140,8 @@ export default function AdminDashboard() {
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    onClick={() => setShowPassword((current) => !current)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -148,9 +151,10 @@ export default function AdminDashboard() {
                   </button>
                 </div>
               </div>
+
               <Button
                 type="submit"
-                className="w-full h-11"
+                className="h-11 w-full"
                 disabled={isLoading}
               >
                 {isLoading ? "Logging in..." : "Login to Dashboard"}
@@ -163,90 +167,90 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/10">
-      <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-6">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold">Admin Dashboard</h1>
-            <p className="text-muted-foreground mt-1">
-              Welcome back, <b>{session.user?.name || session.user?.email}</b>
-            </p>
-          </div>
-          <Button
-            variant="outline"
-            onClick={() => setLogoutDialogOpen(true)}
-            className="w-full md:w-auto"
-          >
-            <LogOut className="h-4 w-4 mr-2" />
-            Logout
-          </Button>
+    <div className="mx-auto w-full max-w-7xl space-y-6 py-2 md:py-4">
+      <div className="surface-panel flex flex-col gap-4 px-6 py-6 md:flex-row md:items-center md:justify-between md:px-8">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            Admin Workspace
+          </p>
+          <h1 className="mt-2 text-3xl font-bold tracking-[-0.03em] md:text-4xl">
+            Admin Dashboard
+          </h1>
+          <p className="mt-1 text-muted-foreground">
+            Welcome back, <b>{session.user?.name || session.user?.email}</b>
+          </p>
         </div>
 
-        <div className="grid md:grid-cols-4 gap-6">
-          {/* Sidebar */}
-          <Card className="md:col-span-1 h-fit">
-            <CardHeader>
-              <CardTitle className="text-lg">Menu</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <nav className="space-y-1">
-                {adminMenuItems.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => setActiveTab(item.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all ${
-                      activeTab === item.id
-                        ? "bg-primary/10 text-primary border-l-4 border-primary"
-                        : "hover:bg-muted/50"
-                    }`}
-                  >
-                    {item.icon}
-                    {item.label}
-                  </button>
-                ))}
-              </nav>
-            </CardContent>
-          </Card>
-
-          {/* Main Content */}
-          <div className="md:col-span-3">
-            {activeTab === "settings" && <SettingsSection />}
-            {activeTab === "timelines" && <TimelinesSection />}
-            {activeTab === "projects" && <ProjectsSection />}
-            {activeTab === "certificates" && <CertificatesSection />}
-          </div>
-        </div>
-
-        {/* Logout Confirmation Dialog */}
-        <Dialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirm Logout</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to logout? You will need to login again to
-                access the admin dashboard.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setLogoutDialogOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={handleLogout}
-                disabled={isLoading}
-              >
-                <LogOut className="h-4 w-4" />
-                {isLoading ? "Logging out..." : "Logout"}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <Button
+          variant="outline"
+          onClick={() => setLogoutDialogOpen(true)}
+          className="w-full md:w-auto"
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          Logout
+        </Button>
       </div>
+
+      <div className="grid gap-6 md:grid-cols-4">
+        <Card className="surface-panel h-fit md:col-span-1">
+          <CardHeader>
+            <CardTitle className="text-lg">Menu</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <nav className="space-y-1 px-3 pb-3">
+              {adminMenuItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={`w-full flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all ${
+                    activeTab === item.id
+                      ? "bg-primary text-primary-foreground shadow-[0_14px_30px_-22px_rgba(37,99,235,0.9)]"
+                      : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
+                  }`}
+                >
+                  {item.icon}
+                  {item.label}
+                </button>
+              ))}
+            </nav>
+          </CardContent>
+        </Card>
+
+        <div className="md:col-span-3">
+          {activeTab === "settings" && <SettingsSection />}
+          {activeTab === "timelines" && <TimelinesSection />}
+          {activeTab === "projects" && <ProjectsSection />}
+          {activeTab === "certificates" && <CertificatesSection />}
+        </div>
+      </div>
+
+      <Dialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Logout</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to logout? You will need to login again to
+              access the admin dashboard.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setLogoutDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleLogout}
+              disabled={isLoading}
+            >
+              <LogOut className="h-4 w-4" />
+              {isLoading ? "Logging out..." : "Logout"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

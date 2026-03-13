@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { APP_CONFIG } from "@/config/app-config";
-import { Label } from "@radix-ui/react-label";
 import {
   FileText,
   MapPin,
@@ -13,12 +13,13 @@ import {
   Github,
   Facebook,
   Linkedin,
-  Link,
+  Link as LinkIcon,
   MessageSquare,
   Briefcase,
   Circle,
 } from "lucide-react";
 import Image from "next/image";
+import NextLink from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import countries from "@/data/countries.json";
@@ -48,7 +49,7 @@ export default function SettingsSection() {
       if (data.success && data.data) {
         setResidence(data.data.residence || "Myanmar");
         setAvailable(
-          data.data.available === "true" || data.data.available === true
+          data.data.available === "true" || data.data.available === true,
         );
         setResumeUrl(data.data.resume || null);
         setGithubUrl(data.data.githubUrl || "");
@@ -86,7 +87,7 @@ export default function SettingsSection() {
 
   const handleSaveProfileImage = async () => {
     const fileInput = document.getElementById(
-      "profile-image"
+      "profile-image",
     ) as HTMLInputElement;
     const file = fileInput?.files?.[0];
     if (!file) {
@@ -139,12 +140,22 @@ export default function SettingsSection() {
 
   const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && file.type === "application/pdf") {
-      setResumeFile(file);
-      toast.success("Resume selected");
-    } else {
-      toast.error("Please select a PDF file");
+    if (!file) {
+      return;
     }
+
+    if (file.type !== "application/pdf") {
+      toast.error("Please select a PDF file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Resume must be smaller than 5MB");
+      return;
+    }
+
+    setResumeFile(file);
+    toast.success("Resume selected");
   };
 
   const handleSaveResume = async () => {
@@ -183,6 +194,7 @@ export default function SettingsSection() {
       const saveData = await saveRes.json();
       if (saveData.success) {
         setResumeUrl(uploadData.url);
+        setResumeFile(null);
         toast.success("Resume uploaded successfully!");
       }
     } catch (error) {
@@ -235,7 +247,7 @@ export default function SettingsSection() {
       const data = await response.json();
       if (data.success) {
         toast.success(
-          `Availability status ${checked ? "enabled" : "disabled"}!`
+          `Availability status ${checked ? "enabled" : "disabled"}!`,
         );
       } else {
         throw new Error("Failed to save");
@@ -277,10 +289,8 @@ export default function SettingsSection() {
       ];
 
       const responses = await Promise.all(promises);
-      const allSuccess = responses.every(async (res) => {
-        const data = await res.json();
-        return data.success;
-      });
+      const results = await Promise.all(responses.map((res) => res.json()));
+      const allSuccess = results.every((data) => data.success);
 
       if (allSuccess) {
         toast.success("Social links updated successfully!");
@@ -317,10 +327,8 @@ export default function SettingsSection() {
       ];
 
       const responses = await Promise.all(promises);
-      const allSuccess = responses.every(async (res) => {
-        const data = await res.json();
-        return data.success;
-      });
+      const results = await Promise.all(responses.map((res) => res.json()));
+      const allSuccess = results.every((data) => data.success);
 
       if (allSuccess) {
         toast.success("About & Intro updated successfully!");
@@ -362,7 +370,7 @@ export default function SettingsSection() {
   return (
     <div className="space-y-6">
       {/* Profile Picture */}
-      <Card className="border-0 shadow-none">
+      <Card className="surface-panel">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
@@ -428,7 +436,7 @@ export default function SettingsSection() {
       </Card>
 
       {/* Roles */}
-      <Card>
+      <Card className="surface-panel">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Briefcase className="h-5 w-5" />
@@ -470,7 +478,7 @@ export default function SettingsSection() {
       </Card>
 
       {/* Available for Work */}
-      <Card>
+      <Card className="surface-panel">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Circle className="h-5 w-5" />
@@ -507,7 +515,7 @@ export default function SettingsSection() {
             <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-lg">
               <Circle className="h-4 w-4 fill-red-500 text-red-500" />
               <span className="text-sm text-red-700 dark:text-red-400 font-medium">
-                Currently showing as available on homepage
+                Currently hidden on homepage
               </span>
             </div>
           )}
@@ -515,7 +523,7 @@ export default function SettingsSection() {
       </Card>
 
       {/* Residence */}
-      <Card>
+      <Card className="surface-panel">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <MapPin className="h-5 w-5" />
@@ -559,7 +567,7 @@ export default function SettingsSection() {
       </Card>
 
       {/* Resume Upload */}
-      <Card>
+      <Card className="surface-panel">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
@@ -568,19 +576,21 @@ export default function SettingsSection() {
         </CardHeader>
         <CardContent className="space-y-4">
           {resumeUrl && (
-            <div className="p-4 bg-muted/50 rounded-lg">
+            <div className="surface-panel-muted p-4">
               <p className="text-sm text-muted-foreground mb-2">
                 Current Resume:
               </p>
-              <a
-                href={resumeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline flex items-center gap-2"
-              >
-                <FileText className="h-4 w-4" />
-                View Resume
-              </a>
+              <Button asChild variant="outline" className="border-border/70">
+                <NextLink
+                  href="/api/resume"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2"
+                >
+                  <FileText className="h-4 w-4" />
+                  View Resume
+                </NextLink>
+              </Button>
             </div>
           )}
           <div className="space-y-2 flex items-center justify-center">
@@ -623,7 +633,7 @@ export default function SettingsSection() {
       </Card>
 
       {/* About Me & Intro */}
-      <Card>
+      <Card className="surface-panel">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <MessageSquare className="h-5 w-5" />
@@ -680,10 +690,10 @@ export default function SettingsSection() {
       </Card>
 
       {/* Social Links */}
-      <Card>
+      <Card className="surface-panel">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Link className="h-5 w-5" />
+            <LinkIcon className="h-5 w-5" />
             Social Links
           </CardTitle>
         </CardHeader>

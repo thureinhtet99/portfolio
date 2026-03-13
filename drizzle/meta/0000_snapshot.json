@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "95c1299b-b16a-43dd-88c2-58f41f8d689a",
+  "id": "9fea3b82-9de4-4127-938b-a08581ec90a9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -409,6 +409,13 @@
         },
         "key_challenges": {
           "name": "key_challenges",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "demo_credentials": {
+          "name": "demo_credentials",
           "type": "text",
           "primaryKey": false,
           "notNull": false,

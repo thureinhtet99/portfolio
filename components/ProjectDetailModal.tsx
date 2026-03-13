@@ -20,6 +20,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { ProjectDetailModalType } from "@/types/index.type";
+import { ProjectCredentialsPanel } from "@/components/project-credentials-panel";
 
 export function ProjectDetailModal({
   project,
@@ -28,15 +29,17 @@ export function ProjectDetailModal({
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{project.title}</DialogTitle>
+      <DialogContent className="max-w-5xl overflow-hidden border-border/70 bg-background/95 p-0 shadow-[0_28px_80px_-38px_rgba(15,23,42,0.45)] backdrop-blur-xl">
+        <DialogHeader className="border-b border-border/70 px-6 py-5 sm:px-8">
+          <DialogTitle className="text-2xl font-semibold tracking-[-0.03em]">
+            {project.title}
+          </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-10">
+        <div className="max-h-[82vh] space-y-10 overflow-y-auto px-6 py-6 sm:px-8 sm:py-8">
           {/* Project Image */}
           {project.image && (
-            <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
+            <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-br from-primary/10 via-background to-secondary/60">
               <Image
                 src={project.image}
                 alt={project.title}
@@ -49,8 +52,10 @@ export function ProjectDetailModal({
 
           {/* Project Description */}
           <div className="space-y-3">
-            <h3 className="text-lg font-semibold">Overview</h3>
-            <p className="text-muted-foreground leading-relaxed text-lg">
+            <h3 className="text-lg font-semibold tracking-[-0.02em]">
+              Overview
+            </h3>
+            <p className="text-lg leading-relaxed text-muted-foreground">
               {project.description}
             </p>
           </div>
@@ -97,7 +102,9 @@ export function ProjectDetailModal({
 
           {/* Tech Stack */}
           <div className="space-y-3">
-            <h3 className="text-lg font-semibold">Technologies Used</h3>
+            <h3 className="text-lg font-semibold tracking-[-0.02em]">
+              Technologies Used
+            </h3>
             <div className="flex flex-wrap gap-2">
               {project.techStacks.map((tech) => (
                 <Badge key={tech} variant="secondary" className="text-sm">
@@ -107,10 +114,12 @@ export function ProjectDetailModal({
             </div>
           </div>
 
+          <ProjectCredentialsPanel credentials={project.demoCredentials} />
+
           <Separator />
 
           {/* Action Buttons */}
-          <div className="flex gap-4 pt-2">
+          <div className="flex flex-col gap-3 pt-2 sm:flex-row">
             {project.isGitHub && (
               <Button asChild variant="outline" className="flex-1">
                 <Link

@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { ProjectType } from "@/types/index.type";
+import { DemoCredentialType, ProjectType } from "@/types/index.type";
 import {
   FolderGit2,
   Plus,
@@ -25,6 +25,58 @@ import { APP_CONFIG } from "@/config/app-config";
 import DeleteConfirmBox from "@/components/DeleteConfirmBox";
 import Image from "next/image";
 import Link from "next/link";
+import { ProjectCredentialsPanel } from "@/components/project-credentials-panel";
+
+type ProjectFormState = {
+  title: string;
+  description: string;
+  technologies: string;
+  githubUrl: string;
+  liveUrl: string;
+  objectives: string;
+  keyChallenges: string;
+  image: string;
+  demoUserEmail: string;
+  demoUserPassword: string;
+  demoAdminEmail: string;
+  demoAdminPassword: string;
+  featured: boolean;
+};
+
+const createEmptyForm = (): ProjectFormState => ({
+  title: "",
+  description: "",
+  technologies: "",
+  githubUrl: "",
+  liveUrl: "",
+  objectives: "",
+  keyChallenges: "",
+  image: "",
+  demoUserEmail: "",
+  demoUserPassword: "",
+  demoAdminEmail: "",
+  demoAdminPassword: "",
+  featured: false,
+});
+
+const hasPartialCredential = (email: string, password: string) =>
+  (email.trim() && !password.trim()) || (!email.trim() && password.trim());
+
+const getDemoCredentialsFromForm = (
+  formData: ProjectFormState,
+): DemoCredentialType[] =>
+  [
+    {
+      role: "User",
+      email: formData.demoUserEmail.trim(),
+      password: formData.demoUserPassword.trim(),
+    },
+    {
+      role: "Admin",
+      email: formData.demoAdminEmail.trim(),
+      password: formData.demoAdminPassword.trim(),
+    },
+  ].filter((credential) => credential.email && credential.password);
 
 export default function ProjectsSection() {
   const [projects, setProjects] = useState<ProjectType[]>([]);
@@ -34,17 +86,7 @@ export default function ProjectsSection() {
   const [projectsLoading, setProjectsLoading] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    technologies: "",
-    githubUrl: "",
-    liveUrl: "",
-    objectives: "",
-    keyChallenges: "",
-    image: "",
-    featured: false,
-  });
+  const [formData, setFormData] = useState<ProjectFormState>(createEmptyForm());
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -71,6 +113,14 @@ export default function ProjectsSection() {
   const handleAdd = async () => {
     if (!formData.title) {
       toast.error("Please enter a title");
+      return;
+    }
+
+    if (
+      hasPartialCredential(formData.demoUserEmail, formData.demoUserPassword) ||
+      hasPartialCredential(formData.demoAdminEmail, formData.demoAdminPassword)
+    ) {
+      toast.error("Complete both email and password for each demo account");
       return;
     }
 
@@ -116,6 +166,7 @@ export default function ProjectsSection() {
         keyChallenges: formData.keyChallenges
           ? formData.keyChallenges.split("\n").filter((item) => item.trim())
           : undefined,
+        demoCredentials: getDemoCredentialsFromForm(formData),
         image: imageUrl || undefined,
         featured: formData.featured,
       };
@@ -158,6 +209,22 @@ export default function ProjectsSection() {
         ? project.keyChallenges.join("\n")
         : "",
       image: project.image || "",
+      demoUserEmail:
+        project.demoCredentials?.find(
+          (credential) => credential.role.toLowerCase() === "user",
+        )?.email || "",
+      demoUserPassword:
+        project.demoCredentials?.find(
+          (credential) => credential.role.toLowerCase() === "user",
+        )?.password || "",
+      demoAdminEmail:
+        project.demoCredentials?.find(
+          (credential) => credential.role.toLowerCase() === "admin",
+        )?.email || "",
+      demoAdminPassword:
+        project.demoCredentials?.find(
+          (credential) => credential.role.toLowerCase() === "admin",
+        )?.password || "",
       featured: project.featured || false,
     });
     setImagePreview(project.image || null);
@@ -167,6 +234,14 @@ export default function ProjectsSection() {
   const handleUpdate = async () => {
     if (!formData.title || !editingId) {
       toast.error("Please enter a title");
+      return;
+    }
+
+    if (
+      hasPartialCredential(formData.demoUserEmail, formData.demoUserPassword) ||
+      hasPartialCredential(formData.demoAdminEmail, formData.demoAdminPassword)
+    ) {
+      toast.error("Complete both email and password for each demo account");
       return;
     }
 
@@ -213,6 +288,7 @@ export default function ProjectsSection() {
         keyChallenges: formData.keyChallenges
           ? formData.keyChallenges.split("\n").filter((item) => item.trim())
           : undefined,
+        demoCredentials: getDemoCredentialsFromForm(formData),
         image: imageUrl || undefined,
         featured: formData.featured,
       };
@@ -254,7 +330,7 @@ export default function ProjectsSection() {
     try {
       const response = await fetch(
         `/api/${APP_CONFIG.ROUTE.PROJECTS}?id=${projectToDelete}`,
-        { method: "DELETE" }
+        { method: "DELETE" },
       );
 
       const data = await response.json();
@@ -357,17 +433,7 @@ export default function ProjectsSection() {
   };
 
   const resetForm = () => {
-    setFormData({
-      title: "",
-      description: "",
-      technologies: "",
-      githubUrl: "",
-      liveUrl: "",
-      objectives: "",
-      keyChallenges: "",
-      image: "",
-      featured: false,
-    });
+    setFormData(createEmptyForm());
     setImagePreview(null);
     setImageFile(null);
   };
@@ -379,7 +445,7 @@ export default function ProjectsSection() {
   };
 
   return (
-    <Card className="border-0 shadow-none">
+    <Card className="surface-panel">
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle className="flex items-center gap-2">
@@ -399,10 +465,8 @@ export default function ProjectsSection() {
             setFormData={setFormData}
             imagePreview={imagePreview}
             setImagePreview={setImagePreview}
-            imageFile={imageFile}
             setImageFile={setImageFile}
             isUploading={isUploading}
-            setIsUploading={setIsUploading}
             onSave={editingId ? handleUpdate : handleAdd}
             onCancel={handleCancel}
             isLoading={isLoading}
@@ -471,43 +535,19 @@ function ProjectForm({
   setFormData,
   imagePreview,
   setImagePreview,
-  // imageFile,
   setImageFile,
   isUploading,
-  // setIsUploading,
   onSave,
   onCancel,
   isLoading,
   isEditing,
 }: {
-  formData: {
-    title: string;
-    description: string;
-    technologies: string;
-    githubUrl: string;
-    liveUrl: string;
-    objectives: string;
-    keyChallenges: string;
-    image: string;
-    featured: boolean;
-  };
-  setFormData: (data: {
-    title: string;
-    description: string;
-    technologies: string;
-    githubUrl: string;
-    liveUrl: string;
-    objectives: string;
-    keyChallenges: string;
-    image: string;
-    featured: boolean;
-  }) => void;
+  formData: ProjectFormState;
+  setFormData: (data: ProjectFormState) => void;
   imagePreview: string | null;
   setImagePreview: (preview: string | null) => void;
-  imageFile: File | null;
   setImageFile: (file: File | null) => void;
   isUploading: boolean;
-  setIsUploading: (uploading: boolean) => void;
   onSave: () => void;
   onCancel: () => void;
   isLoading?: boolean;
@@ -535,7 +575,7 @@ function ProjectForm({
   };
 
   return (
-    <Card className="border-0 shadow-none">
+    <Card className="surface-panel border border-dashed border-border/70 bg-background/60 shadow-none">
       <CardContent className="pt-6 space-y-4">
         {/* Image Upload Section */}
         <div className="space-y-2">
@@ -660,6 +700,93 @@ function ProjectForm({
             placeholder="• Challenge 1&#10;• Challenge 2&#10;• Challenge 3"
             rows={4}
           />
+        </div>
+        <div className="surface-panel-muted p-4 sm:p-5">
+          <div className="mb-4">
+            <h4 className="text-base font-semibold tracking-[-0.02em]">
+              Demo Access
+            </h4>
+            <p className="mt-1 text-sm text-muted-foreground">
+              These credentials are optional and will be shown publicly on the
+              project card and detail view.
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border border-border/70 bg-background/80 p-4">
+              <div className="mb-3">
+                <p className="text-sm font-medium">Standard User</p>
+                <p className="text-xs text-muted-foreground">
+                  General browsing account for visitors.
+                </p>
+              </div>
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label>User Email</Label>
+                  <Input
+                    value={formData.demoUserEmail}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        demoUserEmail: e.target.value,
+                      })
+                    }
+                    placeholder="user@example.com"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>User Password</Label>
+                  <Input
+                    value={formData.demoUserPassword}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        demoUserPassword: e.target.value,
+                      })
+                    }
+                    placeholder="demo-password"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border/70 bg-background/80 p-4">
+              <div className="mb-3">
+                <p className="text-sm font-medium">Admin User</p>
+                <p className="text-xs text-muted-foreground">
+                  Elevated account for testing admin flows.
+                </p>
+              </div>
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label>Admin Email</Label>
+                  <Input
+                    value={formData.demoAdminEmail}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        demoAdminEmail: e.target.value,
+                      })
+                    }
+                    placeholder="admin@example.com"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Admin Password</Label>
+                  <Input
+                    value={formData.demoAdminPassword}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        demoAdminPassword: e.target.value,
+                      })
+                    }
+                    placeholder="admin-password"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div className="flex items-center justify-between space-x-2 p-4 rounded-lg border">
           <div className="space-y-0.5">
@@ -839,6 +966,12 @@ function ProjectCard({
               ))}
             </div>
           )}
+
+          <ProjectCredentialsPanel
+            credentials={project.demoCredentials}
+            compact
+            className="mt-1"
+          />
 
           {/* Objectives */}
           {project.objectives && project.objectives.length > 0 && (

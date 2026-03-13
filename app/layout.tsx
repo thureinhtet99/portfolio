@@ -16,7 +16,7 @@ const robotoMono = Work_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "Thu Rein Htet - A Developer form Myanmar",
+    default: "Thu Rein Htet - A Developer from Myanmar",
     template: "%s | Thu Rein Htet's Portfolio",
   },
   description:
@@ -24,9 +24,9 @@ export const metadata: Metadata = {
   keywords: [
     "Thu Rein Htet",
     "Myanmar Web Developer",
-    "Myanmar Mobile Developer",
     "React Developer",
     "React Native Developer",
+    "Typescript Developer",
     "Next.js",
     "React",
     "React Native",
@@ -42,13 +42,13 @@ export const metadata: Metadata = {
   creator: "Thu Rein Htet",
   publisher: "Thu Rein Htet",
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://thureinhtet.com"
+    process.env.NEXT_PUBLIC_SITE_URL || "https://thureinhtet.com",
   ),
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "/",
-    title: "Thu Rein Htet - Web Developer",
+    title: "Thu Rein Htet - A Developer from Myanmar",
     description:
       "A web developer specializing in React, Next.js, TypeScript, and modern web applications.",
     siteName: "Thu Rein Htet Portfolio",
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
         url: "/me.jpg",
         width: 1200,
         height: 630,
-        alt: "Thu Rein Htet - Web Developer",
+        alt: "Thu Rein Htet - A Developer from Myanmar",
       },
     ],
   },
@@ -90,10 +90,8 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <TopNavbar />
-            <main className="min-h-screen px-4 md:px-6 lg:px-8 pt-4 md:pt-6">
-              <Suspense fallback={<Loading />}>
-                {children}
-              </Suspense>
+            <main className="min-h-screen px-4 pb-10 pt-4 sm:px-6 sm:pt-6 lg:px-8">
+              <Suspense fallback={<Loading />}>{children}</Suspense>
               <Toaster />
             </main>
             <Footer />

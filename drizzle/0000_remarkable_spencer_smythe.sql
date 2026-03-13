@@ -62,6 +62,7 @@ CREATE TABLE `project` (
 	`live_url` text,
 	`objectives` text,
 	`key_challenges` text,
+	`demo_credentials` text,
 	`featured` integer DEFAULT false NOT NULL,
 	`order` integer DEFAULT 0 NOT NULL,
 	`created_at` integer NOT NULL,

@@ -48,6 +48,12 @@ export type VerificationType = {
   updatedAt: Date | null;
 };
 
+export type DemoCredentialType = {
+  role: string;
+  email: string;
+  password: string;
+};
+
 export type ProjectType = {
   id: string;
   title: string;
@@ -58,6 +64,7 @@ export type ProjectType = {
   liveUrl?: string;
   objectives?: string[];
   keyChallenges?: string[];
+  demoCredentials?: DemoCredentialType[];
   featured?: boolean;
 };
 
@@ -133,6 +140,7 @@ export type ProjectDetailModalType = {
     isLiveDemo: boolean;
     github: string;
     liveDemo: string;
+    demoCredentials?: DemoCredentialType[];
   };
   children: ReactNode;
 };

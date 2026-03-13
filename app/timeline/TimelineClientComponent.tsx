@@ -25,7 +25,6 @@ export default function TimelineClientComponent({ work, education }: Props) {
       <Card className="border-0 shadow-none">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-4xl">
-            <Calendar className="w-8 h-8" />
             Timeline
           </CardTitle>
         </CardHeader>

@@ -241,7 +241,7 @@ export default function TimelinesSection() {
         `/api/${APP_CONFIG.ROUTE.TIMELINES}?id=${timelineToDelete}`,
         {
           method: "DELETE",
-        }
+        },
       );
 
       const data = await response.json();
@@ -370,7 +370,7 @@ export default function TimelinesSection() {
   const educationTimelines = timelines.filter((t) => t.type === "education");
 
   return (
-    <Card className="border-0 shadow-none">
+    <Card className="surface-panel">
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle className="flex items-center gap-2">
@@ -568,7 +568,7 @@ function TimelineForm({
   isEditing?: boolean;
 }) {
   return (
-    <Card className="border-0 shadow-none">
+    <Card className="surface-panel">
       <CardContent className="pt-6 space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
           {activeTimelineTab === "work" && (
@@ -797,8 +797,8 @@ function TimelineCard({
                   timeline.role === "remote"
                     ? "bg-blue-500 hover:bg-blue-600"
                     : timeline.role === "on-site"
-                    ? "bg-green-500 hover:bg-green-600"
-                    : "bg-purple-500 hover:bg-purple-600"
+                      ? "bg-green-500 hover:bg-green-600"
+                      : "bg-purple-500 hover:bg-purple-600"
                 }`}
               >
                 {timeline.role === "on-site"

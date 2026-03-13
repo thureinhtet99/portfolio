@@ -33,6 +33,9 @@ export async function GET() {
       keyChallenges: proj.keyChallenges
         ? JSON.parse(proj.keyChallenges)
         : undefined,
+      demoCredentials: proj.demoCredentials
+        ? JSON.parse(proj.demoCredentials)
+        : undefined,
       featured: proj.featured,
       order: proj.order,
       createdAt: proj.createdAt,
@@ -47,7 +50,7 @@ export async function GET() {
     console.error("Failed to fetch projects:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch projects" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -65,13 +68,14 @@ export async function POST(req: NextRequest) {
       liveUrl,
       objectives,
       keyChallenges,
+      demoCredentials,
       featured,
     } = body;
 
     if (!title) {
       return NextResponse.json(
         { success: false, error: "Title is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -88,6 +92,11 @@ export async function POST(req: NextRequest) {
       liveUrl: liveUrl || null,
       objectives: objectives ? JSON.stringify(objectives) : null,
       keyChallenges: keyChallenges ? JSON.stringify(keyChallenges) : null,
+      demoCredentials: demoCredentials
+        ? demoCredentials.length > 0
+          ? JSON.stringify(demoCredentials)
+          : null
+        : null,
       featured: featured || false,
       order: 0,
       createdAt: now,
@@ -107,6 +116,7 @@ export async function POST(req: NextRequest) {
         liveUrl,
         objectives,
         keyChallenges,
+        demoCredentials,
       },
     });
   } catch (error) {
@@ -117,7 +127,7 @@ export async function POST(req: NextRequest) {
         error:
           error instanceof Error ? error.message : "Failed to create project",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -136,13 +146,14 @@ export async function PUT(req: NextRequest) {
       liveUrl,
       objectives,
       keyChallenges,
+      demoCredentials,
       featured,
     } = body;
 
     if (!id || !title) {
       return NextResponse.json(
         { success: false, error: "ID and title are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -157,6 +168,11 @@ export async function PUT(req: NextRequest) {
         liveUrl: liveUrl || null,
         objectives: objectives ? JSON.stringify(objectives) : null,
         keyChallenges: keyChallenges ? JSON.stringify(keyChallenges) : null,
+        demoCredentials: demoCredentials
+          ? demoCredentials.length > 0
+            ? JSON.stringify(demoCredentials)
+            : null
+          : null,
         featured: featured !== undefined ? featured : false,
         updatedAt: new Date(),
       })
@@ -173,13 +189,14 @@ export async function PUT(req: NextRequest) {
         liveUrl,
         objectives,
         keyChallenges,
+        demoCredentials,
       },
     });
   } catch (error) {
     console.error("Failed to update project:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update project" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -193,7 +210,7 @@ export async function PATCH(req: NextRequest) {
     if (!updatedProjects || !Array.isArray(updatedProjects)) {
       return NextResponse.json(
         { success: false, error: "Invalid projects data" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -203,8 +220,8 @@ export async function PATCH(req: NextRequest) {
         db
           .update(project)
           .set({ order: proj.order, updatedAt: new Date() })
-          .where(eq(project.id, proj.id))
-      )
+          .where(eq(project.id, proj.id)),
+      ),
     );
 
     return NextResponse.json({
@@ -215,7 +232,7 @@ export async function PATCH(req: NextRequest) {
     console.error("Failed to update project order:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update project order" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -229,7 +246,7 @@ export async function DELETE(req: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { success: false, error: "Project ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -243,7 +260,7 @@ export async function DELETE(req: NextRequest) {
     if (projectData.length === 0) {
       return NextResponse.json(
         { success: false, error: "Project not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -267,7 +284,7 @@ export async function DELETE(req: NextRequest) {
       } catch (cloudinaryError) {
         console.error(
           "Failed to delete image from Cloudinary:",
-          cloudinaryError
+          cloudinaryError,
         );
         // Continue with project deletion even if Cloudinary deletion fails
       }
@@ -283,7 +300,7 @@ export async function DELETE(req: NextRequest) {
     console.error("Failed to delete project:", error);
     return NextResponse.json(
       { success: false, error: "Failed to delete project" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

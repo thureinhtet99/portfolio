@@ -1,15 +1,8 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { MoveRight, Clock } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { FaGithub } from "react-icons/fa";
-import { BiWorld } from "react-icons/bi";
+import { Clock } from "lucide-react";
 import { motion } from "framer-motion";
-import { ProjectDetailModal } from "@/components/ProjectDetailModal";
+import { ProjectShowcaseCard } from "@/components/project-showcase-card";
 
 type Project = {
   id: string;
@@ -35,137 +28,36 @@ export default function ProjectsClientComponent({ projects }: Props) {
   return (
     <>
       <motion.div
-        className="mx-auto space-y-20 py-4"
+        className="page-shell"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2 }}
       >
-        {/* Current Projects */}
         <div>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
-            <h2 className="text-4xl font-bold">Projects</h2>
+          <div className="surface-panel mb-10 px-6 py-6 sm:px-8">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              Portfolio Work
+            </p>
+            <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h2 className="section-heading">Projects</h2>
+                <p className="section-copy mt-2">
+                  Selected products, experiments, and client work with the key
+                  context needed to evaluate each build quickly.
+                </p>
+              </div>
+            </div>
           </div>
 
           {currentProjects.length > 0 ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {currentProjects.map((project) => (
-                <Card
-                  key={project.title}
-                  className="group hover:shadow-xl border-0 transition-all duration-300 flex flex-col h-full overflow-hidden"
-                >
-                  <div className="relative aspect-video w-full overflow-hidden bg-accent">
-                    {project.image && (
-                      <Image
-                        src={project.image}
-                        alt={project.title}
-                        fill
-                        className="object-contain"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                      />
-                    )}
-                  </div>
-                  <div className="px-4 sm:px-6 pb-4 sm:pb-6 flex flex-col flex-1">
-                    <h3 className="font-bold text-lg sm:text-xl line-clamp-1 mb-3">
-                      {project.title}
-                    </h3>
-                    <p className="text-muted-foreground flex-1 text-md sm:text-lg line-clamp-3 leading-relaxed">
-                      {project.description}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mt-4">
-                      {project.technologies?.map((tech) => (
-                        <Badge
-                          key={tech}
-                          variant="secondary"
-                          className="text-sm px-2 sm:px-3 py-1"
-                        >
-                          {tech}
-                        </Badge>
-                      ))}
-                    </div>
-                    {/* Mobile: Stack buttons vertically */}
-                    <div className="flex flex-col gap-3 mt-5">
-                      <div className="flex gap-2 w-full">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          disabled={!project.githubUrl}
-                          asChild={!!project.githubUrl}
-                          className="flex-1 hover:text-primary hover:bg-transparent h-10"
-                        >
-                          {project.githubUrl ? (
-                            <Link
-                              href={project.githubUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center justify-center gap-1"
-                            >
-                              <FaGithub className="h-4 w-4" />
-                              Code
-                            </Link>
-                          ) : (
-                            <span className="flex items-center justify-center gap-1">
-                              <FaGithub className="h-4 w-4" />
-                              Code
-                            </span>
-                          )}
-                        </Button>
-                        <Button
-                          size="sm"
-                          disabled={!project.liveUrl}
-                          asChild={!!project.liveUrl}
-                          className="flex-1 hover:text-primary hover:bg-transparent h-10"
-                          variant="ghost"
-                        >
-                          {project.liveUrl ? (
-                            <Link
-                              href={project.liveUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center justify-center gap-1"
-                            >
-                              <BiWorld className="h-4 w-4" />
-                              Visit
-                            </Link>
-                          ) : (
-                            <span className="flex items-center justify-center gap-1">
-                              <BiWorld className="h-4 w-4" />
-                              Visit
-                            </span>
-                          )}
-                        </Button>
-                      </div>
-                      <ProjectDetailModal
-                        project={{
-                          image: project.image,
-                          title: project.title,
-                          description: project.description || "",
-                          objectives: project.objectives || [],
-                          challenges: project.keyChallenges || [],
-                          techStacks: project.technologies || [],
-                          isGitHub: !!project.githubUrl,
-                          isLiveDemo: !!project.liveUrl,
-                          github: project.githubUrl || "",
-                          liveDemo: project.liveUrl || "",
-                        }}
-                      >
-                        <Button
-                          size="sm"
-                          className="w-full text-primary hover:text-blue-800 dark:hover:text-blue-200 h-10"
-                          variant="ghost"
-                        >
-                          <span className="flex items-center justify-center gap-2">
-                            View Details <MoveRight className="h-4 w-4" />
-                          </span>
-                        </Button>
-                      </ProjectDetailModal>
-                    </div>
-                  </div>
-                </Card>
+                <ProjectShowcaseCard key={project.id} project={project} />
               ))}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-8 text-center">
-              <div className="bg-slate-100 dark:bg-slate-800 rounded-full p-4 mb-4">
+              <div className="mb-4 rounded-full bg-slate-100 p-4 dark:bg-slate-800">
                 <Clock className="h-6 w-6 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-semibold mb-2">

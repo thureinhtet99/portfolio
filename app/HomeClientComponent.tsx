@@ -3,8 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import ReactMarkdown from "react-markdown";
 import {
   HardDriveDownload,
@@ -16,14 +14,12 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import { FaGithub } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useState, useEffect, useMemo } from "react";
-import { BiWorld } from "react-icons/bi";
-import { ProjectDetailModal } from "@/components/ProjectDetailModal";
 import { StaticImageData } from "next/image";
 import { ProjectType } from "@/types/index.type";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ProjectShowcaseCard } from "@/components/project-showcase-card";
 
 type Props = {
   residence: string;
@@ -86,19 +82,21 @@ export default function HomeClientComponent({
   }, [currentText, isDeleting, currentRoleIndex, rolesList]);
 
   return (
-    <div className="max-w-6xl mx-auto py-2 space-y-20">
-      {/* Hero Section */}
+    <div className="page-shell">
       <section
         id="hero-section"
-        className="min-h-[calc(100vh-8rem)] flex items-center justify-center relative"
+        className="surface-panel relative flex min-h-[calc(100vh-8rem)] items-center justify-center overflow-hidden px-6 py-16 sm:px-10"
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="space-y-6 max-w-2xl mx-auto text-center"
+          className="mx-auto max-w-3xl space-y-6 text-center"
         >
           <div className="space-y-2">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              Thu Rein Htet
+            </p>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold">
               Hey guys!
             </h1>
@@ -144,13 +142,12 @@ export default function HomeClientComponent({
             {resume && (
               <Button variant="outline" asChild size="lg">
                 <Link
-                  href={resume}
+                  href="/api/resume"
                   target="_blank"
-                  download={false}
                   className="flex items-center gap-2"
                 >
                   <HardDriveDownload className="h-5 w-5" />
-                  Download CV
+                  View Resume
                 </Link>
               </Button>
             )}
@@ -184,19 +181,17 @@ export default function HomeClientComponent({
         </motion.div>
       </section>
 
-      {/* About Section */}
       <section
         id="about-section"
-        className="min-h-[calc(100vh-8rem)] flex items-center justify-center space-y-20"
+        className="surface-panel min-h-[calc(100vh-8rem)] px-6 py-14 sm:px-10"
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center space-y-6"
+          className="space-y-6 text-center"
         >
-          {/* Profile Picture - Top on Mobile */}
           <div className="flex justify-center mb-6">
             {profileImage && (
               <motion.div
@@ -220,8 +215,8 @@ export default function HomeClientComponent({
             )}
           </div>
 
-          <h2 className="text-3xl sm:text-4xl font-bold">About Me</h2>
-          <div className="text-muted-foreground max-w-3xl text-lg mx-auto leading-relaxed">
+          <h2 className="section-heading">About Me</h2>
+          <div className="mx-auto max-w-3xl text-lg leading-relaxed text-muted-foreground">
             {aboutMe && (
               <div
                 className={`prose prose-lg dark:prose-invert ${
@@ -266,7 +261,7 @@ export default function HomeClientComponent({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-3xl sm:text-4xl sm:text-center font-bold"
+            className="section-heading sm:text-center"
           >
             Featured Projects
           </motion.h2>
@@ -280,129 +275,20 @@ export default function HomeClientComponent({
         </div>
 
         {featuredProjects.length > 0 ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {featuredProjects.slice(0, 2).map((project, index) => (
               <motion.div
-                key={project.title}
+                key={project.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <Card className="group hover:shadow-xl transition-all duration-300 flex flex-col h-full overflow-hidden">
-                  <div className="relative aspect-video w-full bg-accent overflow-hidden">
-                    {project.image && (
-                      <Image
-                        src={project.image}
-                        alt={project.title}
-                        fill
-                        className="object-contain"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                      />
-                    )}
-                  </div>
-
-                  <div className="p-6 flex flex-col flex-1">
-                    <h3 className="font-bold text-xl mb-3">{project.title}</h3>
-                    <p className="text-muted-foreground flex-1 text-md line-clamp-2 leading-relaxed mb-4">
-                      {project.description}
-                    </p>
-
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {Array.isArray(project.technologies) &&
-                        project.technologies.slice(0, 4).map((tech: string) => (
-                          <Badge
-                            key={tech}
-                            variant="secondary"
-                            className="text-sm"
-                          >
-                            {tech}
-                          </Badge>
-                        ))}
-                      {Array.isArray(project.technologies) &&
-                        project.technologies.length > 4 && (
-                          <Badge variant="outline" className="text-sm">
-                            +{project.technologies.length - 4} more
-                          </Badge>
-                        )}
-                    </div>
-
-                    <div className="flex gap-3 flex-wrap">
-                      <Button
-                        variant="outline"
-                        disabled={!project.githubUrl}
-                        asChild={!!project.githubUrl}
-                      >
-                        {project.githubUrl ? (
-                          <Link
-                            href={project.githubUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-1"
-                          >
-                            <FaGithub className="h-4 w-4" />
-                            Code
-                          </Link>
-                        ) : (
-                          <span className="flex items-center gap-1">
-                            <FaGithub className="h-4 w-4" />
-                            Code
-                          </span>
-                        )}
-                      </Button>
-
-                      <Button
-                        disabled={!project.liveUrl}
-                        asChild={!!project.liveUrl}
-                        variant="outline"
-                      >
-                        {project.liveUrl ? (
-                          <Link
-                            href={project.liveUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-1"
-                          >
-                            <BiWorld className="h-4 w-4" />
-                            Visit
-                          </Link>
-                        ) : (
-                          <span className="flex items-center gap-1">
-                            <BiWorld className="h-4 w-4" />
-                            Visit
-                          </span>
-                        )}
-                      </Button>
-
-                      <ProjectDetailModal
-                        project={{
-                          image: project.image || undefined,
-                          title: project.title,
-                          description: project.description || "",
-                          objectives: Array.isArray(project.objectives)
-                            ? project.objectives
-                            : [],
-                          challenges: Array.isArray(project.keyChallenges)
-                            ? project.keyChallenges
-                            : [],
-                          techStacks: Array.isArray(project.technologies)
-                            ? project.technologies
-                            : [],
-                          isGitHub: !!project.githubUrl,
-                          isLiveDemo: !!project.liveUrl,
-                          github: project.githubUrl || "",
-                          liveDemo: project.liveUrl || "",
-                        }}
-                      >
-                        <Button variant="outline">
-                          <span className="flex items-center gap-1">
-                            View details <MoveRight className="h-4 w-4" />
-                          </span>
-                        </Button>
-                      </ProjectDetailModal>
-                    </div>
-                  </div>
-                </Card>
+                <ProjectShowcaseCard
+                  project={project}
+                  techLimit={4}
+                  descriptionLines={2}
+                />
               </motion.div>
             ))}
           </div>

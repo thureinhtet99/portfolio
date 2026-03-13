@@ -1,12 +1,7 @@
-import Wda from "@/public/project-images/wda.png";
-import Academic from "@/public/project-images/academic-center.png";
-import NarutoVerse from "@/public/project-images/narutoverse.png";
-import Sms from "@/public/project-images/student_management_system.png";
-
 export const projects = [
   // Last 2 projects are featured projects
   {
-    image: Wda,
+    image: "",
     title: "Win Dental Academy",
     description:
       "Win Dental Academy is a cutting-edge digital learning management system specifically designed for dental education and professional development. This comprehensive platform serves as a centralized hub for dental institutions and professionals, offering an intuitive course catalog system and dynamic news updates. The platform features admin panel with full CRUD operations, enabling seamless content management and user administration. Built with modern web technologies, it provides an exceptional user experience with responsive design, secure authentication, and scalable architecture to support growing educational institutions in the dental field.",
@@ -35,7 +30,7 @@ export const projects = [
     liveDemo: "https://windentalacademy.com/",
   },
   {
-    image: Sms,
+    image: "",
     title: "Student Management System",
     description:
       "An educational management platform with secure authentication, comprehensive database relations between each roles, real-time student tracking, grade analytics, and administrative dashboard for institutional operations.",
@@ -61,7 +56,7 @@ export const projects = [
     liveDemo: "",
   },
   {
-    image: Academic,
+    image: "",
     title: "Academic Center",
     description:
       "A modern e-learning ecosystem built with React and Laravel, featuring progressive course structures, interactive assignments.",
@@ -86,7 +81,7 @@ export const projects = [
     liveDemo: "",
   },
   {
-    image: NarutoVerse,
+    image: "",
     title: "Narutoverse",
     description:
       "An immersive anime fan portal showcasing detailed character encyclopedias, story timeline visualizations, and interactive naruto anime world exploration with stunning visual design.",
