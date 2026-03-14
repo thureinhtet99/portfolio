@@ -94,14 +94,14 @@ export default function HomeClientComponent({
           className="mx-auto max-w-3xl space-y-6 text-center"
         >
           <div className="space-y-2">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-              Thu Rein Htet
-            </p>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
               Hey guys!
             </h1>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold">
-              I&apos;m
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
+              I&apos;m{" "}
+              <span className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-muted-foreground">
+                Thu Rein Htet
+              </span>
             </h1>
             <p className="text-xl text-muted-foreground capitalize min-h-[1.75rem]">
               {currentText}
@@ -117,16 +117,16 @@ export default function HomeClientComponent({
             )}
           </div>
 
-          <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
+          <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
             <span className="flex items-center gap-1">
               <MapPin className="h-4 w-4 me-1" />
               {residence}
             </span>
             <span className="flex items-center gap-1">
               <Circle
-                className={`h-2 w-2 me-1 ${
+                className={`h-2 w-2 me-1 animate-ping ${
                   available
-                    ? "fill-foreground text-foreground"
+                    ? "fill-green-500 text-foreground"
                     : "fill-foreground/25 text-foreground/60"
                 }`}
               />
@@ -135,14 +135,19 @@ export default function HomeClientComponent({
           </div>
 
           <div className="flex flex-wrap gap-3 pt-4 justify-center">
-            <Button asChild size="lg">
+            <Button asChild size="lg" className="rounded-lg">
               <Link href="/contact" className="flex items-center gap-2">
                 <Mail className="h-5 w-5" />
                 Get in Touch
               </Link>
             </Button>
             {resume && (
-              <Button variant="outline" asChild size="lg">
+              <Button
+                variant="outline"
+                asChild
+                size="lg"
+                className="rounded-lg"
+              >
                 <Link
                   href="/api/resume"
                   target="_blank"

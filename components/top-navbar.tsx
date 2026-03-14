@@ -70,7 +70,7 @@ export function TopNavbar() {
                 className={`rounded-lg px-4 py-2 text-sm font-medium capitalize transition-all ${
                   pathname === link.url
                     ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    : "text-muted-foreground hover:bg-card-foreground/10 hover:text-foreground"
                 }`}
               >
                 {link.title}

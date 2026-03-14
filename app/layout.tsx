@@ -10,7 +10,7 @@ import { Suspense } from "react";
 import Loading from "./loading";
 
 const geistSans = Inter({
-  variable: "--font-geist-sans",
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
