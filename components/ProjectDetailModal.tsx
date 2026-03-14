@@ -9,14 +9,8 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import {
-  ExternalLink,
-  Github,
-  AlertTriangle,
-  Dot,
-  TargetIcon,
-} from "lucide-react";
+import { ExternalLink, AlertTriangle, Dot, TargetIcon } from "lucide-react";
+import { FaGithub } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 import { ProjectDetailModalType } from "@/types/index.type";
@@ -29,8 +23,8 @@ export function ProjectDetailModal({
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-5xl overflow-hidden border-border/70 bg-background/95 p-0 shadow-[0_28px_80px_-38px_rgba(34,34,34,0.45)] backdrop-blur-xl">
-        <DialogHeader className="border-b border-border/70 px-6 py-5 sm:px-8">
+      <DialogContent className="max-w-5xl overflow-hidden bg-background/95 p-0 shadow-[0_28px_80px_-38px_rgba(34,34,34,0.45)] backdrop-blur-xl">
+        <DialogHeader className="px-6 py-5 sm:px-8">
           <DialogTitle className="text-2xl font-semibold tracking-[-0.03em]">
             {project.title}
           </DialogTitle>
@@ -39,7 +33,7 @@ export function ProjectDetailModal({
         <div className="max-h-[82vh] space-y-10 overflow-y-auto px-6 py-6 sm:px-8 sm:py-8">
           {/* Project Image */}
           {project.image && (
-            <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-br from-primary/10 via-background to-secondary/60">
+            <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-background to-secondary/60">
               <Image
                 src={project.image}
                 alt={project.title}
@@ -107,7 +101,11 @@ export function ProjectDetailModal({
             </h3>
             <div className="flex flex-wrap gap-2">
               {project.techStacks.map((tech) => (
-                <Badge key={tech} variant="secondary" className="text-sm">
+                <Badge
+                  key={tech}
+                  variant="secondary"
+                  className="text-sm bg-accent-foreground/10"
+                >
                   {tech}
                 </Badge>
               ))}
@@ -116,25 +114,25 @@ export function ProjectDetailModal({
 
           <ProjectCredentialsPanel credentials={project.demoCredentials} />
 
-          <Separator />
+          {/* <Separator /> */}
 
           {/* Action Buttons */}
           <div className="flex flex-col gap-3 pt-2 sm:flex-row">
             {project.isGitHub && (
-              <Button asChild variant="outline" className="flex-1">
+              <Button asChild variant="secondary" className="flex-1 rounded-lg">
                 <Link
                   href={project.github}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2"
                 >
-                  <Github className="h-4 w-4" />
+                  <FaGithub className="h-4 w-4" />
                   View Code
                 </Link>
               </Button>
             )}
             {project.isLiveDemo && (
-              <Button asChild className="flex-1">
+              <Button asChild className="flex-1 rounded-lg">
                 <Link
                   href={project.liveDemo}
                   target="_blank"

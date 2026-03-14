@@ -96,7 +96,7 @@ export default function Contact() {
                         <Input
                           placeholder="Enter your name"
                           {...field}
-                          className="h-10"
+                          className="h-10 border border-border/10"
                         />
                       </FormControl>
                       <FormMessage className="text-xs sm:text-sm" />
@@ -116,7 +116,7 @@ export default function Contact() {
                         <Input
                           placeholder="Enter your email"
                           {...field}
-                          className="h-10"
+                          className="h-10 border border-border/10"
                         />
                       </FormControl>
                       <FormMessage className="text-xs sm:text-sm" />
@@ -141,7 +141,7 @@ export default function Contact() {
                       <Input
                         placeholder="What is this about?"
                         {...field}
-                        className="h-10"
+                        className="h-10 border border-border/10"
                       />
                     </FormControl>
                     <FormMessage className="text-xs sm:text-sm" />
@@ -160,7 +160,7 @@ export default function Contact() {
                     <FormControl>
                       <Textarea
                         placeholder="Your message here..."
-                        className="min-h-[80px] sm:min-h-[100px] resize-y"
+                        className="min-h-[80px] sm:min-h-[100px] resize-y border border-border/10"
                         {...field}
                       />
                     </FormControl>

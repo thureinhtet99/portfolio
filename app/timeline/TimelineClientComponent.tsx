@@ -30,14 +30,17 @@ export default function TimelineClientComponent({ work, education }: Props) {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="work" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="work" className="flex items-center gap-2">
+            <TabsList className="grid w-full grid-cols-2 gap-2 mt-4 mb-10">
+              <TabsTrigger
+                value="work"
+                className="flex items-center gap-2 cursor-pointer hover:border border-border/10"
+              >
                 <Briefcase className="w-4 h-4" />
-                Work Experience
+                Experiences
               </TabsTrigger>
               <TabsTrigger
                 value="education"
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 cursor-pointer hover:border border-border/10"
               >
                 <GraduationCap className="w-4 h-4" />
                 Education
@@ -56,7 +59,7 @@ export default function TimelineClientComponent({ work, education }: Props) {
                   >
                     <div className="absolute -left-2 top-0 w-4 h-4 rounded-full bg-primary border-4 border-background" />
 
-                    <div className="space-y-3">
+                    <div className="space-y-6">
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <div className="flex-1">
                           <h3 className="text-2xl font-bold capitalize">
@@ -70,7 +73,7 @@ export default function TimelineClientComponent({ work, education }: Props) {
                         </div>
                         <Badge
                           variant="secondary"
-                          className="text-md capitalize"
+                          className="text-md capitalize text-muted-foreground"
                         >
                           {exp.type}
                         </Badge>
@@ -78,12 +81,12 @@ export default function TimelineClientComponent({ work, education }: Props) {
 
                       <div className="flex flex-wrap gap-10 text-sm text-muted-foreground">
                         {exp.location && (
-                          <span className="flex items-center gap-1">
+                          <span className="flex items-center gap-1 text-muted-foreground">
                             <MapPin className="w-4 h-4" />
                             {exp.location}
                           </span>
                         )}
-                        <span className="flex items-center gap-1">
+                        <span className="flex items-center gap-1 text-muted-foreground">
                           <Calendar className="w-4 h-4" />
                           {exp.period}
                         </span>
@@ -96,7 +99,9 @@ export default function TimelineClientComponent({ work, education }: Props) {
                           </p>
                           <ul className="list-disc list-inside space-y-1 text-lg text-muted-foreground">
                             {exp.achievements.map((achievement, i) => (
-                              <li key={i}>{achievement}</li>
+                              <li key={i} className="text-muted-foreground">
+                                {achievement}
+                              </li>
                             ))}
                           </ul>
                         </div>
@@ -106,8 +111,8 @@ export default function TimelineClientComponent({ work, education }: Props) {
                         {exp.technologies?.map((tech) => (
                           <Badge
                             key={tech}
-                            variant="outline"
-                            className="text-sm"
+                            variant="secondary"
+                            className="text-sm bg-muted-foreground/10"
                           >
                             {tech}
                           </Badge>
@@ -140,7 +145,7 @@ export default function TimelineClientComponent({ work, education }: Props) {
                   >
                     <div className="absolute -left-2 top-0 w-4 h-4 rounded-full bg-primary border-4 border-background" />
 
-                    <div className="space-y-3">
+                    <div className="space-y-6">
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <div className="flex-1">
                           {exp.institution && (

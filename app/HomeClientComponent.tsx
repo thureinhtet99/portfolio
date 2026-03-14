@@ -273,7 +273,7 @@ export default function HomeClientComponent({
             Featured Projects
           </motion.h2>
           {featuredProjects.length > 0 && (
-            <Button variant="outline" asChild>
+            <Button variant="outline" asChild className="rounded-lg">
               <Link href="/projects" className="flex items-center gap-2">
                 View All <MoveRight className="h-4 w-4" />
               </Link>

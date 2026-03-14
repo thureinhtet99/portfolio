@@ -26,11 +26,15 @@ export default function NotFound() {
           </p>
         </CardContent>
         <CardFooter className="flex gap-3 pt-2">
-          <Button variant="outline" onClick={() => history.back()}>
+          <Button
+            className="rounded-lg"
+            variant="outline"
+            onClick={() => history.back()}
+          >
             <ArrowLeft className="h-4 w-4" />
             Go Back
           </Button>
-          <Button asChild variant="default">
+          <Button asChild className="rounded-lg" variant="default">
             <Link href="/">
               <Home className="h-4 w-4" />
               Home

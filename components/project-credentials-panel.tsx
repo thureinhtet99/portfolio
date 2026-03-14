@@ -1,11 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, KeyRound, Mail } from "lucide-react";
+import { Check, ChevronDown, Copy, KeyRound } from "lucide-react";
 import { toast } from "sonner";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { DemoCredentialType } from "@/types/index.type";
 
@@ -20,33 +24,24 @@ type CredentialRowProps = {
   value: string;
   copied: boolean;
   onCopy: () => void;
-  icon: React.ReactNode;
 };
 
-function CredentialRow({
-  label,
-  value,
-  copied,
-  onCopy,
-  icon,
-}: CredentialRowProps) {
+function CredentialRow({ label, value, copied, onCopy }: CredentialRowProps) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-secondary/35 px-3 py-2.5">
-      <div className="min-w-0">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-          {label}
-        </p>
-        <div className="mt-1 flex items-center gap-2 text-sm text-foreground">
-          <span className="text-muted-foreground">{icon}</span>
-          <span className="truncate font-mono text-[13px]">{value}</span>
-        </div>
-      </div>
+    <div className="flex items-center gap-1.5 rounded-lg">
+      <p className="w-12 shrink-0 text-[10px] text-muted-foreground sm:w-16 sm:text-[11px]">
+        {label}
+      </p>
+      <p className="min-w-0 flex-1 truncate font-mono text-[11px] text-foreground sm:text-xs">
+        {value}
+      </p>
       <Button
         type="button"
         variant="ghost"
         size="sm"
         onClick={onCopy}
-        className="h-8 shrink-0 px-2.5 text-xs text-muted-foreground hover:text-foreground"
+        className="h-6 w-6 shrink-0 p-0 text-muted-foreground hover:text-foreground sm:h-7 sm:w-7"
+        aria-label={`Copy ${label}`}
       >
         {copied ? (
           <Check className="h-3.5 w-3.5" />
@@ -64,6 +59,7 @@ export function ProjectCredentialsPanel({
   className,
 }: ProjectCredentialsPanelProps) {
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(!compact);
 
   if (!credentials.length) {
     return null;
@@ -84,87 +80,107 @@ export function ProjectCredentialsPanel({
   };
 
   return (
-    <div
+    <Collapsible
+      open={isOpen}
+      onOpenChange={setIsOpen}
       className={cn(
-        "rounded-2xl border border-border/70 bg-secondary/45 p-4 backdrop-blur-sm",
+        "relative rounded-lg border-border/10 p-1.5 data-[state=open]:z-20 data-[state=open]:border sm:p-2",
+        compact ? "w-auto min-w-0 shrink-0" : "w-full",
         className,
       )}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            Demo Access
-          </p>
-          {!compact && (
-            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-              Use these accounts to explore protected parts of the project.
+      <CollapsibleTrigger
+        asChild
+        className="flex cursor-pointer items-center rounded-lg p-1 hover:bg-accent-foreground/4"
+      >
+        <div className="flex w-full items-center justify-between">
+          <div className="min-w-0">
+            <p className="text-xs font-medium flex items-center gap-2 text-muted-foreground">
+              <KeyRound className="h-4 w-4 text-muted-foreground" />
+              <span className="truncate">
+                {compact ? "Access" : "Demo Access"}
+              </span>
             </p>
-          )}
+            {!compact && (
+              <p className="mt-1 text-xs text-muted-foreground">
+                Use these accounts to explore the project.
+              </p>
+            )}
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className={cn(
+              "h-7 shrink-0 text-[11px] text-muted-foreground cursor-pointer hover:text-foreground",
+              compact ? "px-1.5" : "px-2",
+            )}
+            aria-label={isOpen ? "Hide credentials" : "Show credentials"}
+          >
+            <ChevronDown
+              className={cn(
+                "h-3.5 w-3.5 transition-transform",
+                isOpen && "rotate-180",
+              )}
+            />
+          </Button>
         </div>
-        <KeyRound className="h-4 w-4 text-primary" />
-      </div>
+      </CollapsibleTrigger>
 
-      <div className={cn("mt-4 grid gap-3", !compact && "md:grid-cols-2")}>
-        {credentials.map((credential) => {
-          const credentialKey = `${credential.role}-${credential.email}`;
+      <CollapsibleContent
+        className={cn(
+          compact &&
+            "absolute right-0 top-[calc(100%+0.35rem)] z-30 w-[min(92vw,22rem)] max-w-[calc(100vw-1rem)] origin-top-right rounded-xl bg-card/95 p-2.5 shadow-[0_22px_48px_-30px_rgba(34,34,34,0.55)] backdrop-blur-sm",
+        )}
+      >
+        <div
+          className={cn(
+            compact
+              ? "grid max-h-[min(62vh,25rem)] gap-2 overflow-y-auto pr-0.5"
+              : "mt-2.5 grid gap-2",
+            !compact && "md:grid-cols-2",
+          )}
+        >
+          {credentials.map((credential) => {
+            const credentialKey = `${credential.role}-${credential.email}`;
 
-          return (
-            <div
-              key={credentialKey}
-              className="rounded-2xl border border-border/70 bg-background/90 p-3 shadow-sm"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <Badge
-                  variant="outline"
-                  className="rounded-full border-primary/20 bg-primary/5 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary"
-                >
-                  {credential.role}
-                </Badge>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() =>
-                    copyValue(
-                      `Email: ${credential.email}\nPassword: ${credential.password}`,
-                      `${credentialKey}-all`,
-                    )
-                  }
-                  className="h-8 px-2.5 text-xs text-muted-foreground hover:text-foreground"
-                >
-                  {copiedKey === `${credentialKey}-all` ? (
-                    <Check className="h-3.5 w-3.5" />
-                  ) : (
-                    <Copy className="h-3.5 w-3.5" />
-                  )}
-                  Copy Login
-                </Button>
+            return (
+              <div
+                key={credentialKey}
+                className="rounded-lg border border-border/20 bg-background/60 p-2 sm:p-2.5"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                    {credential.role}
+                  </p>
+                </div>
+
+                <div className="mt-1.5 space-y-1.5 sm:mt-2 sm:space-y-2">
+                  <CredentialRow
+                    label="Email"
+                    value={credential.email}
+                    copied={copiedKey === `${credentialKey}-email`}
+                    onCopy={() =>
+                      copyValue(credential.email, `${credentialKey}-email`)
+                    }
+                  />
+                  <CredentialRow
+                    label="Password"
+                    value={credential.password}
+                    copied={copiedKey === `${credentialKey}-password`}
+                    onCopy={() =>
+                      copyValue(
+                        credential.password,
+                        `${credentialKey}-password`,
+                      )
+                    }
+                  />
+                </div>
               </div>
-
-              <div className="mt-3 space-y-2">
-                <CredentialRow
-                  label="Email"
-                  value={credential.email}
-                  copied={copiedKey === `${credentialKey}-email`}
-                  onCopy={() =>
-                    copyValue(credential.email, `${credentialKey}-email`)
-                  }
-                  icon={<Mail className="h-3.5 w-3.5" />}
-                />
-                <CredentialRow
-                  label="Password"
-                  value={credential.password}
-                  copied={copiedKey === `${credentialKey}-password`}
-                  onCopy={() =>
-                    copyValue(credential.password, `${credentialKey}-password`)
-                  }
-                  icon={<KeyRound className="h-3.5 w-3.5" />}
-                />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+            );
+          })}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
