@@ -46,21 +46,20 @@ export default function SettingsSection() {
     try {
       const response = await fetch(`/api/${APP_CONFIG.ROUTE.SETTINGS}`);
       const data = await response.json();
+
       if (data.success && data.data) {
+        setImagePreview(data.data.profileImage || null);
+        setResumeUrl(data.data.resume || null);
         setResidence(data.data.residence || "Myanmar");
         setAvailable(
           data.data.available === "true" || data.data.available === true,
         );
-        setResumeUrl(data.data.resume || null);
         setGithubUrl(data.data.githubUrl || "");
         setFacebookUrl(data.data.facebookUrl || "");
         setLinkedinUrl(data.data.linkedinUrl || "");
         setAboutMe(data.data.aboutMe || "");
         setIntro(data.data.intro || "");
         setRoles(data.data.roles || "");
-        if (data.data.profileImage) {
-          setImagePreview(data.data.profileImage);
-        }
       }
     } catch (error) {
       console.error("Failed to load settings:", error);
@@ -505,16 +504,16 @@ export default function SettingsSection() {
             />
           </div>
           {available ? (
-            <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900 rounded-lg">
-              <Circle className="h-4 w-4 fill-green-500 text-green-500" />
-              <span className="text-sm text-green-700 dark:text-green-400 font-medium">
+            <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/60 p-3">
+              <Circle className="h-4 w-4 fill-foreground text-foreground" />
+              <span className="text-sm font-medium text-foreground">
                 Currently showing as available on homepage
               </span>
             </div>
           ) : (
-            <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-lg">
-              <Circle className="h-4 w-4 fill-red-500 text-red-500" />
-              <span className="text-sm text-red-700 dark:text-red-400 font-medium">
+            <div className="flex items-center gap-2 rounded-lg border border-border bg-background p-3">
+              <Circle className="h-4 w-4 fill-foreground/25 text-foreground/60" />
+              <span className="text-sm font-medium text-muted-foreground">
                 Currently hidden on homepage
               </span>
             </div>

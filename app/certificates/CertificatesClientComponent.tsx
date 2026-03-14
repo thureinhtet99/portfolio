@@ -36,7 +36,7 @@ export default function CertificatesClientComponent({ certificates }: Props) {
               {certificates.map((certificate) => (
                 <div
                   key={certificate.title}
-                  className="group bg-white dark:bg-slate-800 rounded-xl lg:rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-xl transition-all duration-300"
+                  className="group bg-card rounded-xl lg:rounded-2xl shadow-sm border border-border overflow-hidden hover:shadow-xl transition-all duration-300"
                 >
                   {certificate.image ? (
                     <div className="aspect-[16/10] relative overflow-hidden">
@@ -47,11 +47,11 @@ export default function CertificatesClientComponent({ certificates }: Props) {
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-foreground/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       <div className="absolute top-3 right-3 lg:top-4 lg:right-4">
                         <Badge
                           variant="secondary"
-                          className="bg-white/90 dark:bg-slate-800/90 text-slate-900 dark:text-slate-100 backdrop-blur-sm border-0 text-xs lg:text-sm px-2 py-1 lg:px-3 lg:py-1.5"
+                          className="bg-background/90 text-foreground backdrop-blur-sm border border-border/70 text-xs lg:text-sm px-2 py-1 lg:px-3 lg:py-1.5"
                         >
                           {formatDate(certificate.issueDate)}
                         </Badge>
@@ -63,14 +63,14 @@ export default function CertificatesClientComponent({ certificates }: Props) {
                         <div className="p-2.5 lg:p-3 bg-primary/10 rounded-full mb-3 lg:mb-4 mx-auto w-fit">
                           <Award className="h-5 w-5 lg:h-6 lg:w-6 text-primary" />
                         </div>
-                        <h2 className="text-lg lg:text-xl font-semibold text-slate-900 dark:text-slate-100 line-clamp-2 px-2">
+                        <h2 className="text-lg lg:text-xl font-semibold text-foreground line-clamp-2 px-2">
                           {certificate.title}
                         </h2>
                       </div>
                       <div className="absolute top-3 right-3 lg:top-4 lg:right-4">
                         <Badge
                           variant="secondary"
-                          className="bg-white dark:bg-slate-700 text-xs lg:text-sm px-2 py-1 lg:px-3 lg:py-1.5"
+                          className="text-xs lg:text-sm px-2 py-1 lg:px-3 lg:py-1.5"
                         >
                           {formatDate(certificate.issueDate)}
                         </Badge>
@@ -80,7 +80,7 @@ export default function CertificatesClientComponent({ certificates }: Props) {
 
                   <div className="p-4 lg:p-6">
                     <div className="mb-3 lg:mb-4">
-                      <h3 className="text-lg lg:text-xl font-bold text-slate-900 dark:text-slate-100 mb-2 line-clamp-2 leading-tight">
+                      <h3 className="text-lg lg:text-xl font-bold text-foreground mb-2 line-clamp-2 leading-tight">
                         {certificate.title}
                       </h3>
                       {certificate.credentialId && (
@@ -95,7 +95,7 @@ export default function CertificatesClientComponent({ certificates }: Props) {
                       )}
                     </div>
 
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 lg:gap-4 pt-3 lg:pt-4 border-t border-slate-200 dark:border-slate-700">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 lg:gap-4 pt-3 lg:pt-4 border-t border-border">
                       <div className="flex items-center text-muted-foreground">
                         <span className="text-xs lg:text-sm font-medium">
                           Issued by
@@ -127,7 +127,7 @@ export default function CertificatesClientComponent({ certificates }: Props) {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-8 text-center">
-              <div className="bg-slate-100 dark:bg-slate-800 rounded-full p-4 mb-4">
+              <div className="bg-muted rounded-full p-4 mb-4">
                 <Clock className="h-6 w-6 text-muted-foreground" />
               </div>
               <h3 className="text-lg font-semibold mb-2">

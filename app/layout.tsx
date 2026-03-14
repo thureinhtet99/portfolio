@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Work_Sans } from "next/font/google";
+import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "../components/theme-provider";
 import { Toaster } from "sonner";
@@ -9,8 +9,13 @@ import { TopNavbar } from "@/components/top-navbar";
 import { Suspense } from "react";
 import Loading from "./loading";
 
-const robotoMono = Work_Sans({
-  variable: "--font-work-sans",
+const geistSans = Inter({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -81,11 +86,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${robotoMono.className} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`}
+      >
         <QueryProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="light"
+            defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
           >

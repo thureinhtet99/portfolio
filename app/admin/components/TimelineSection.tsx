@@ -791,16 +791,7 @@ function TimelineCard({
               </Badge>
             )}
             {timeline.type === "work" && timeline.role && (
-              <Badge
-                variant="default"
-                className={`text-xs ${
-                  timeline.role === "remote"
-                    ? "bg-blue-500 hover:bg-blue-600"
-                    : timeline.role === "on-site"
-                      ? "bg-green-500 hover:bg-green-600"
-                      : "bg-purple-500 hover:bg-purple-600"
-                }`}
-              >
+              <Badge variant="default" className="text-xs">
                 {timeline.role === "on-site"
                   ? "On-site"
                   : timeline.role.charAt(0).toUpperCase() +

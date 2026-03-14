@@ -204,7 +204,7 @@ export default function AdminDashboard() {
                   onClick={() => setActiveTab(item.id)}
                   className={`w-full flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all ${
                     activeTab === item.id
-                      ? "bg-primary text-primary-foreground shadow-[0_14px_30px_-22px_rgba(37,99,235,0.9)]"
+                      ? "bg-primary text-primary-foreground shadow-[0_14px_30px_-22px_rgba(34,34,34,0.55)]"
                       : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
                   }`}
                 >

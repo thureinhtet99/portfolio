@@ -36,7 +36,7 @@ export function ProjectShowcaseCard({
   return (
     <Card
       className={cn(
-        "group flex h-full flex-col overflow-hidden border-border/70 bg-card/95 transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_85px_-44px_rgba(37,99,235,0.42)]",
+        "group flex h-full flex-col overflow-hidden border-border/70 bg-card/95 transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_85px_-44px_rgba(34,34,34,0.35)]",
         className,
       )}
     >

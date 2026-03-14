@@ -68,7 +68,10 @@ export default function TimelineClientComponent({ work, education }: Props) {
                             </p>
                           )}
                         </div>
-                        <Badge variant="secondary" className="text-md">
+                        <Badge
+                          variant="secondary"
+                          className="text-md capitalize"
+                        >
                           {exp.type}
                         </Badge>
                       </div>
@@ -115,7 +118,7 @@ export default function TimelineClientComponent({ work, education }: Props) {
                 ))
               ) : (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <div className="bg-slate-100 dark:bg-slate-800 rounded-full p-4 mb-4">
+                  <div className="bg-muted rounded-full p-4 mb-4">
                     <Clock className="h-6 w-6 text-muted-foreground" />
                   </div>
                   <h3 className="text-lg font-semibold mb-2">
@@ -165,7 +168,7 @@ export default function TimelineClientComponent({ work, education }: Props) {
                 ))
               ) : (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <div className="bg-slate-100 dark:bg-slate-800 rounded-full p-4 mb-4">
+                  <div className="bg-muted rounded-full p-4 mb-4">
                     <Clock className="h-6 w-6 text-muted-foreground" />
                   </div>
                   <h3 className="text-lg font-semibold mb-2">

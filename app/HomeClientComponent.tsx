@@ -125,8 +125,10 @@ export default function HomeClientComponent({
             <span className="flex items-center gap-1">
               <Circle
                 className={`h-2 w-2 me-1 ${
-                  available ? "fill-green-500" : "fill-red-500"
-                } ${available ? "text-green-500" : "text-red-500"}`}
+                  available
+                    ? "fill-foreground text-foreground"
+                    : "fill-foreground/25 text-foreground/60"
+                }`}
               />
               {available ? "Available for work" : "Not available for work"}
             </span>
@@ -294,7 +296,7 @@ export default function HomeClientComponent({
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <div className="bg-slate-100 dark:bg-slate-800 rounded-full p-4 mb-4">
+            <div className="bg-muted rounded-full p-4 mb-4">
               <Clock className="h-6 w-6 text-muted-foreground" />
             </div>
             <h3 className="text-lg font-semibold mb-2">No featured projects</h3>

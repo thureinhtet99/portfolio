@@ -29,7 +29,7 @@ export function ProjectDetailModal({
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-5xl overflow-hidden border-border/70 bg-background/95 p-0 shadow-[0_28px_80px_-38px_rgba(15,23,42,0.45)] backdrop-blur-xl">
+      <DialogContent className="max-w-5xl overflow-hidden border-border/70 bg-background/95 p-0 shadow-[0_28px_80px_-38px_rgba(34,34,34,0.45)] backdrop-blur-xl">
         <DialogHeader className="border-b border-border/70 px-6 py-5 sm:px-8">
           <DialogTitle className="text-2xl font-semibold tracking-[-0.03em]">
             {project.title}
@@ -84,7 +84,7 @@ export function ProjectDetailModal({
           {project.challenges && project.challenges.length > 0 && (
             <div className="space-y-3">
               <h3 className="text-lg font-semibold flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-amber-500" />
+                <AlertTriangle className="h-5 w-5 text-primary" />
                 Key Challenges Solved
               </h3>
               <ul className="space-y-2">
