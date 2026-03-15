@@ -9,7 +9,6 @@ import {
   Mail,
   MoveRight,
   MapPin,
-  Circle,
   Clock,
   ChevronDown,
   ChevronUp,
@@ -123,11 +122,11 @@ export default function HomeClientComponent({
               {residence}
             </span>
             <span className="flex items-center gap-1">
-              <Circle
-                className={`h-2 w-2 me-1 animate-ping ${
+              <div
+                className={`h-2 w-2 me-1 rounded-full animate-ping transition-colors ${
                   available
-                    ? "fill-green-500 text-foreground"
-                    : "fill-foreground/25 text-foreground/60"
+                    ? "bg-green-500 text-foreground"
+                    : "bg-foreground/25 text-foreground/60"
                 }`}
               />
               {available ? "Available for work" : "Not available for work"}

@@ -84,14 +84,14 @@ export function ProjectCredentialsPanel({
       open={isOpen}
       onOpenChange={setIsOpen}
       className={cn(
-        "relative rounded-lg border-border/10 p-1.5 data-[state=open]:z-20 data-[state=open]:border sm:p-2",
+        "relative rounded-lg hover:bg-accent-foreground/4 border border-border/20 data-[state=open]:z-20 data-[state=open]:border sm:ps-3",
         compact ? "w-auto min-w-0 shrink-0" : "w-full",
         className,
       )}
     >
       <CollapsibleTrigger
         asChild
-        className="flex cursor-pointer items-center rounded-lg p-1 hover:bg-accent-foreground/4"
+        className="flex cursor-pointer items-center rounded-lg"
       >
         <div className="flex w-full items-center justify-between">
           <div className="min-w-0">
@@ -110,7 +110,7 @@ export function ProjectCredentialsPanel({
           <Button
             type="button"
             variant="ghost"
-            size="sm"
+            size="icon"
             className={cn(
               "h-7 shrink-0 text-[11px] text-muted-foreground cursor-pointer hover:text-foreground",
               compact ? "px-1.5" : "px-2",
@@ -147,7 +147,7 @@ export function ProjectCredentialsPanel({
             return (
               <div
                 key={credentialKey}
-                className="rounded-lg border border-border/20 bg-background/60 p-2 sm:p-2.5"
+                className="rounded-lg bg-background/60 p-2 sm:p-2.5"
               >
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
@@ -155,7 +155,7 @@ export function ProjectCredentialsPanel({
                   </p>
                 </div>
 
-                <div className="mt-1.5 space-y-1.5 sm:mt-2 sm:space-y-2">
+                <div className="mt-1.5 sm:mt-2">
                   <CredentialRow
                     label="Email"
                     value={credential.email}
