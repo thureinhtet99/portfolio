@@ -12,12 +12,12 @@ export const dynamic = "force-dynamic";
 
 async function getTimelines(): Promise<TimelineType[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const baseUrl = APP_CONFIG.BASE_URL;
     const response = await fetch(
       `${baseUrl}/api/${APP_CONFIG.ROUTE.TIMELINES}`,
       {
         cache: "no-store",
-      }
+      },
     );
     const data = await response.json();
     if (data.success && data.data) {

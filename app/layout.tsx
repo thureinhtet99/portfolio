@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { TopNavbar } from "@/components/top-navbar";
 import { Suspense } from "react";
 import Loading from "./loading";
+import { getSiteUrl } from "@/lib/base-url";
 
 const geistSans = Inter({
   variable: "--font-inter",
@@ -46,9 +47,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Thu Rein Htet" }],
   creator: "Thu Rein Htet",
   publisher: "Thu Rein Htet",
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://thureinhtet.com",
-  ),
+  metadataBase: new URL(getSiteUrl()),
   openGraph: {
     type: "website",
     locale: "en_US",
