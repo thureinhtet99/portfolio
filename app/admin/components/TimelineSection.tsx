@@ -35,7 +35,10 @@ export default function TimelinesSection() {
   const [isLoading, setIsLoading] = useState(false);
   const [timelinesLoading, setTimelinesLoading] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [timelineToDelete, setTimelineToDelete] = useState<string | null>(null);
+  const [timelineToDelete, setTimelineToDelete] = useState<{
+    id: string;
+    type: "work" | "education";
+  } | null>(null);
   const [activeTimelineTab, setActiveTimelineTab] = useState<
     "work" | "education"
   >("work");
@@ -222,8 +225,8 @@ export default function TimelinesSection() {
     }
   };
 
-  const openDeleteDialog = (id: string) => {
-    setTimelineToDelete(id);
+  const openDeleteDialog = (id: string, type: "work" | "education") => {
+    setTimelineToDelete({ id, type });
     setDeleteDialogOpen(true);
   };
 
@@ -233,7 +236,7 @@ export default function TimelinesSection() {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `/api/${APP_CONFIG.ROUTE.TIMELINES}?id=${timelineToDelete}`,
+        `/api/${APP_CONFIG.ROUTE.TIMELINES}?id=${timelineToDelete.id}&type=${timelineToDelete.type}`,
         {
           method: "DELETE",
         },
@@ -654,6 +657,19 @@ function TimelineForm({
         {activeTimelineTab === "work" && (
           <>
             <div className="space-y-2">
+              <Label>Tech Stacks</Label>
+              <Input
+                value={formData.techStacks}
+                onChange={(e) =>
+                  setFormData({ ...formData, techStacks: e.target.value })
+                }
+                placeholder="e.g. Next.js, TypeScript, Drizzle"
+              />
+              <p className="text-xs text-muted-foreground">
+                Separate technologies with commas.
+              </p>
+            </div>
+            <div className="space-y-2">
               <Label>Description</Label>
               <Textarea
                 value={formData.description}
@@ -662,17 +678,6 @@ function TimelineForm({
                 }
                 placeholder="Briefly describe your responsibilities and impact"
                 rows={4}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Tech Stacks (comma separated)</Label>
-              <Textarea
-                value={formData.techStacks}
-                onChange={(e) =>
-                  setFormData({ ...formData, techStacks: e.target.value })
-                }
-                placeholder="e.g. React, Node.js, MongoDB, Docker"
-                rows={2}
               />
             </div>
           </>
@@ -703,7 +708,7 @@ function TimelineCard({
 }: {
   timeline: TimelineType;
   onEdit: (timeline: TimelineType) => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: string, type: "work" | "education") => void;
   onMoveUp: () => void;
   onMoveDown: () => void;
   isEditing?: boolean;
@@ -765,7 +770,7 @@ function TimelineCard({
               <Button
                 size="sm"
                 variant="ghost"
-                onClick={() => onDelete(timeline.id)}
+                onClick={() => onDelete(timeline.id, timeline.type)}
                 className="h-9 w-9 p-0"
               >
                 <Trash2 className="h-4 w-4 text-destructive" />

@@ -96,7 +96,6 @@ export const experience = sqliteTable("work", {
   period: text("period"),
   description: text("description"),
   keyAchievements: text("key_achievements"), // JSON array
-  techStacks: text("tech_stacks"), // JSON array
   role: text("role"), // 'remote', 'on-site', or 'internship'
   order: integer("order").notNull().default(0),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),

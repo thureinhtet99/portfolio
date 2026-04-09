@@ -115,7 +115,7 @@ export type WorkDisplayType = {
   company: string;
   location?: string;
   period?: string;
-  type: string;
+  role?: "remote" | "on-site" | "internship";
   description?: string;
 };
 

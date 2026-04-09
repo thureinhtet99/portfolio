@@ -85,10 +85,12 @@ export default function TimelineClientComponent({ work, education }: Props) {
                           </span>
                         )}
 
-                        <span className="flex items-center gap-1 text-muted-foreground capitalize">
-                          <Briefcase className="w-4 h-4" />
-                          {exp.type}
-                        </span>
+                        {exp.role && (
+                          <span className="flex items-center gap-1 text-muted-foreground capitalize">
+                            <Briefcase className="w-4 h-4" />
+                            {exp.role}
+                          </span>
+                        )}
                       </div>
 
                       {exp.description && (

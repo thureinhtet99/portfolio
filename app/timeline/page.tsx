@@ -42,7 +42,7 @@ export default async function Timelines() {
       company: exp.company,
       location: exp.location,
       period: exp.period,
-      type: exp.role || "remote",
+      role: exp.role || undefined,
       description:
         exp.description ||
         (exp.achievements && exp.achievements.length > 0

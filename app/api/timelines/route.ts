@@ -27,7 +27,6 @@ export async function GET() {
       achievements: exp.keyAchievements
         ? JSON.parse(exp.keyAchievements)
         : undefined,
-      technologies: exp.techStacks ? JSON.parse(exp.techStacks) : undefined,
       role: exp.role as "remote" | "on-site" | "internship" | undefined,
       type: "work" as const,
       order: exp.order,
@@ -267,7 +266,6 @@ export async function PUT(req: NextRequest) {
           keyAchievements: legacyAchievements
             ? JSON.stringify(legacyAchievements)
             : null,
-          techStacks: techStacks ? JSON.stringify(techStacks) : null,
           role: role || null,
           updatedAt: new Date(),
         })
