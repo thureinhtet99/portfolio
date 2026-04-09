@@ -44,7 +44,7 @@ export default function TimelinesSection() {
     company: "",
     period: "",
     location: "",
-    keyAchievements: "" as string,
+    description: "" as string,
     techStacks: "" as string,
     role: "" as "remote" | "on-site" | "internship" | "",
     type: "work" as "work" | "education",
@@ -94,9 +94,7 @@ export default function TimelinesSection() {
         period: formData.period,
         location: formData.location,
         ...(activeTimelineTab === "work" && {
-          keyAchievements: formData.keyAchievements
-            ? formData.keyAchievements.split("\n").filter((item) => item.trim())
-            : undefined,
+          description: formData.description || undefined,
           techStacks: formData.techStacks
             ? formData.techStacks
                 .split(",")
@@ -142,9 +140,8 @@ export default function TimelinesSection() {
         company: timeline.company,
         period: timeline.period || "",
         location: timeline.location || "",
-        keyAchievements: timeline.achievements
-          ? timeline.achievements.join("\n")
-          : "",
+        description:
+          timeline.description || timeline.achievements?.join("\n") || "",
         techStacks: timeline.technologies
           ? timeline.technologies.join(", ")
           : "",
@@ -158,7 +155,7 @@ export default function TimelinesSection() {
         company: timeline.institution,
         period: timeline.period || "",
         location: timeline.location || "",
-        keyAchievements: "",
+        description: "",
         techStacks: "",
         role: "",
         type: timeline.type,
@@ -188,9 +185,7 @@ export default function TimelinesSection() {
         period: formData.period,
         location: formData.location,
         ...(activeTimelineTab === "work" && {
-          keyAchievements: formData.keyAchievements
-            ? formData.keyAchievements.split("\n").filter((item) => item.trim())
-            : undefined,
+          description: formData.description || undefined,
           techStacks: formData.techStacks
             ? formData.techStacks
                 .split(",")
@@ -353,7 +348,7 @@ export default function TimelinesSection() {
       company: "",
       period: "",
       location: "",
-      keyAchievements: "",
+      description: "",
       techStacks: "",
       role: "",
       type: "work",
@@ -547,7 +542,7 @@ function TimelineForm({
     company: string;
     period: string;
     location: string;
-    keyAchievements: string;
+    description: string;
     techStacks: string;
     role: "remote" | "on-site" | "internship" | "";
     type: "work" | "education";
@@ -557,7 +552,7 @@ function TimelineForm({
     company: string;
     period: string;
     location: string;
-    keyAchievements: string;
+    description: string;
     techStacks: string;
     role: "remote" | "on-site" | "internship" | "";
     type: "work" | "education";
@@ -659,13 +654,13 @@ function TimelineForm({
         {activeTimelineTab === "work" && (
           <>
             <div className="space-y-2">
-              <Label>Key Achievements (one per line)</Label>
+              <Label>Description</Label>
               <Textarea
-                value={formData.keyAchievements}
+                value={formData.description}
                 onChange={(e) =>
-                  setFormData({ ...formData, keyAchievements: e.target.value })
+                  setFormData({ ...formData, description: e.target.value })
                 }
-                placeholder="• Achievement 1&#10;• Achievement 2&#10;• Achievement 3"
+                placeholder="Briefly describe your responsibilities and impact"
                 rows={4}
               />
             </div>
@@ -800,24 +795,11 @@ function TimelineCard({
             )}
           </div>
 
-          {/* Key Achievements */}
-          {timeline.type === "work" &&
-            timeline.achievements &&
-            timeline.achievements.length > 0 && (
-              <div className="mt-1">
-                <p className="text-sm font-medium mb-2">Key Achievements:</p>
-                <ul className="list-disc list-inside space-y-1.5 text-sm">
-                  {timeline.achievements.map((achievement, idx) => (
-                    <li
-                      key={idx}
-                      className="text-muted-foreground break-words leading-relaxed"
-                    >
-                      {achievement}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+          {timeline.type === "work" && timeline.description && (
+            <p className="text-sm leading-relaxed text-muted-foreground mt-1 break-words">
+              {timeline.description}
+            </p>
+          )}
 
           {/* Tech Stacks */}
           {timeline.type === "work" &&

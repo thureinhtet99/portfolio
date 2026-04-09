@@ -130,3 +130,21 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .page-shell {
+    @apply mx-auto w-full max-w-full space-y-6;
+  }
+
+  .surface-panel {
+    @apply rounded-2xl bg-card/90;
+  }
+
+  .surface-panel-muted {
+    @apply rounded-xl border border-border/20 bg-muted/60;
+  }
+
+  .section-heading {
+    @apply text-2xl font-semibold tracking-tight sm:text-3xl;
+  }
+}

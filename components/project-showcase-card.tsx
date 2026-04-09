@@ -35,7 +35,7 @@ export function ProjectShowcaseCard({
   return (
     <Card
       className={cn(
-        "group flex h-full rounded-lg flex-col overflow-hidden border-border/20 bg-card/95 transition duration-300 hover:shadow-[0_28px_85px_-44px_rgba(34,34,34,0.35)]",
+        "group flex h-full flex-col overflow-hidden rounded-lg border border-border/20 bg-card/95 transition duration-300 hover:shadow-[0_28px_85px_-44px_rgba(34,34,34,0.35)] dark:hover:shadow-[0_28px_85px_-44px_rgba(255,255,255,0.2)]",
         className,
       )}
     >
@@ -51,7 +51,7 @@ export function ProjectShowcaseCard({
         )}
       </div>
 
-      <div className="flex flex-1 flex-col p-4 sm:p-6">
+      <div className="flex flex-1 flex-col p-4 sm:p-5 lg:p-6">
         <div className="relative z-10 flex items-start justify-between gap-2 sm:gap-3">
           <div className="min-w-0 flex-1">
             <h3 className="break-words text-lg font-semibold tracking-[-0.03em] text-foreground sm:text-xl lg:text-2xl">
@@ -170,7 +170,7 @@ export function ProjectShowcaseCard({
               demoCredentials: project.demoCredentials || [],
             }}
           >
-            <Button className="h-10 rounded-lg sm:h-11">
+            <Button className="h-10 w-full rounded-lg sm:h-11">
               <span className="flex items-center justify-center gap-2">
                 View Details
                 <MoveRight className="h-4 w-4" />

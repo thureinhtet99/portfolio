@@ -42,9 +42,12 @@ export default async function Timelines() {
       company: exp.company,
       location: exp.location,
       period: exp.period,
-      type: exp.role || "Remote",
-      achievements: exp.achievements || [],
-      technologies: exp.technologies || [],
+      type: exp.role || "remote",
+      description:
+        exp.description ||
+        (exp.achievements && exp.achievements.length > 0
+          ? exp.achievements.join("\n")
+          : undefined),
     }));
 
   const education: EducationDisplayType[] = timelines
@@ -54,7 +57,6 @@ export default async function Timelines() {
       institution: edu.institution,
       location: edu.location,
       period: edu.period,
-      achievements: [],
     }));
 
   return <TimelineClientComponent work={work} education={education} />;

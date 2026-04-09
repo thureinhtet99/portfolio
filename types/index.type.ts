@@ -86,6 +86,7 @@ export type WorkType = {
   location?: string;
   period?: string;
   role?: "" | "remote" | "on-site" | "internship";
+  description?: string;
   achievements?: string[];
   technologies?: string[];
 };
@@ -115,8 +116,7 @@ export type WorkDisplayType = {
   location?: string;
   period?: string;
   type: string;
-  achievements: string[];
-  technologies: string[];
+  description?: string;
 };
 
 export type EducationDisplayType = {
@@ -124,7 +124,6 @@ export type EducationDisplayType = {
   institution: string;
   location?: string;
   period?: string;
-  achievements: string[];
 };
 
 // Component Props Types

@@ -23,6 +23,7 @@ export async function GET() {
       company: exp.company,
       location: exp.location,
       period: exp.period,
+      description: exp.description,
       achievements: exp.keyAchievements
         ? JSON.parse(exp.keyAchievements)
         : undefined,
@@ -53,7 +54,7 @@ export async function GET() {
     console.error("Failed to fetch timelines:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch timelines" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -69,22 +70,34 @@ export async function POST(req: NextRequest) {
       period,
       description,
       keyAchievements,
+      achievements,
       techStacks,
       role,
       type,
     } = body;
 
+    const legacyAchievements =
+      keyAchievements ??
+      (Array.isArray(achievements) ? achievements : undefined);
+
+    const normalizedDescription =
+      typeof description === "string" && description.trim().length > 0
+        ? description.trim()
+        : legacyAchievements && legacyAchievements.length > 0
+          ? legacyAchievements.join("\n")
+          : null;
+
     if (!company || !type) {
       return NextResponse.json(
         { success: false, error: "Company/Institution and type are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (type === "work" && !title) {
       return NextResponse.json(
         { success: false, error: "Title is required for work experience" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -95,11 +108,9 @@ export async function POST(req: NextRequest) {
       // Insert into education table
       const insertData = {
         id,
-        degree: title || null,
         institution: company,
         location: location || null,
         period: period || null,
-        description: description || null,
         order: 0,
         createdAt: now,
         updatedAt: now,
@@ -115,7 +126,7 @@ export async function POST(req: NextRequest) {
           company,
           location,
           period,
-          description,
+          description: normalizedDescription,
           type,
         },
       });
@@ -127,9 +138,9 @@ export async function POST(req: NextRequest) {
         company,
         location: location || null,
         period: period || null,
-        description: description || "",
-        keyAchievements: keyAchievements
-          ? JSON.stringify(keyAchievements)
+        description: normalizedDescription,
+        keyAchievements: legacyAchievements
+          ? JSON.stringify(legacyAchievements)
           : null,
         techStacks: techStacks ? JSON.stringify(techStacks) : null,
         role: role || null,
@@ -148,8 +159,8 @@ export async function POST(req: NextRequest) {
           company,
           location,
           period,
-          description,
-          keyAchievements,
+          description: normalizedDescription,
+          keyAchievements: legacyAchievements,
           techStacks,
           role,
           type,
@@ -168,7 +179,7 @@ export async function POST(req: NextRequest) {
         error:
           error instanceof Error ? error.message : "Failed to create timeline",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -185,10 +196,22 @@ export async function PUT(req: NextRequest) {
       period,
       description,
       keyAchievements,
+      achievements,
       techStacks,
       role,
       type,
     } = body;
+
+    const legacyAchievements =
+      keyAchievements ??
+      (Array.isArray(achievements) ? achievements : undefined);
+
+    const normalizedDescription =
+      typeof description === "string" && description.trim().length > 0
+        ? description.trim()
+        : legacyAchievements && legacyAchievements.length > 0
+          ? legacyAchievements.join("\n")
+          : null;
 
     if (!id || !company || !type) {
       return NextResponse.json(
@@ -196,14 +219,14 @@ export async function PUT(req: NextRequest) {
           success: false,
           error: "ID, company/institution, and type are required",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (type === "work" && !title) {
       return NextResponse.json(
         { success: false, error: "Title is required for work experience" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -227,7 +250,7 @@ export async function PUT(req: NextRequest) {
           company,
           location,
           period,
-          description,
+          description: normalizedDescription,
           type,
         },
       });
@@ -240,8 +263,9 @@ export async function PUT(req: NextRequest) {
           company,
           location: location || null,
           period: period || null,
-          keyAchievements: keyAchievements
-            ? JSON.stringify(keyAchievements)
+          description: normalizedDescription,
+          keyAchievements: legacyAchievements
+            ? JSON.stringify(legacyAchievements)
             : null,
           techStacks: techStacks ? JSON.stringify(techStacks) : null,
           role: role || null,
@@ -257,8 +281,8 @@ export async function PUT(req: NextRequest) {
           company,
           location,
           period,
-          description,
-          keyAchievements,
+          description: normalizedDescription,
+          keyAchievements: legacyAchievements,
           techStacks,
           role,
           type,
@@ -269,7 +293,7 @@ export async function PUT(req: NextRequest) {
     console.error("Failed to update timeline:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update timeline" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -283,7 +307,7 @@ export async function PATCH(req: NextRequest) {
     if (!updatedTimelines || !Array.isArray(updatedTimelines)) {
       return NextResponse.json(
         { success: false, error: "Invalid timelines data" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -302,7 +326,7 @@ export async function PATCH(req: NextRequest) {
             .set({ order: timeline.order, updatedAt: new Date() })
             .where(eq(experience.id, timeline.id));
         }
-      })
+      }),
     );
 
     return NextResponse.json({
@@ -313,7 +337,7 @@ export async function PATCH(req: NextRequest) {
     console.error("Failed to update timeline order:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update timeline order" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -328,7 +352,7 @@ export async function DELETE(req: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { success: false, error: "Timeline ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -349,7 +373,7 @@ export async function DELETE(req: NextRequest) {
     console.error("Failed to delete timeline:", error);
     return NextResponse.json(
       { success: false, error: "Failed to delete timeline" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
