@@ -48,6 +48,7 @@ export default function TimelinesSection() {
     period: "",
     location: "",
     description: "" as string,
+    keyAchievements: "" as string,
     role: "" as "remote" | "on-site" | "internship" | "",
     type: "work" as "work" | "education",
   });
@@ -97,6 +98,12 @@ export default function TimelinesSection() {
         location: formData.location,
         ...(activeTimelineTab === "work" && {
           description: formData.description || undefined,
+          keyAchievements: formData.keyAchievements
+            ? formData.keyAchievements
+                .split("\n")
+                .map((achievement) => achievement.trim())
+                .filter((achievement) => achievement.length > 0)
+            : undefined,
           role: formData.role || undefined,
         }),
         type: activeTimelineTab,
@@ -136,8 +143,8 @@ export default function TimelinesSection() {
         company: timeline.company,
         period: timeline.period || "",
         location: timeline.location || "",
-        description:
-          timeline.description || timeline.achievements?.join("\n") || "",
+        description: timeline.description || "",
+        keyAchievements: timeline.achievements?.join("\n") || "",
         role: timeline.role || "",
         type: timeline.type,
       });
@@ -149,6 +156,7 @@ export default function TimelinesSection() {
         period: timeline.period || "",
         location: timeline.location || "",
         description: "",
+        keyAchievements: "",
         role: "",
         type: timeline.type,
       });
@@ -178,6 +186,12 @@ export default function TimelinesSection() {
         location: formData.location,
         ...(activeTimelineTab === "work" && {
           description: formData.description || undefined,
+          keyAchievements: formData.keyAchievements
+            ? formData.keyAchievements
+                .split("\n")
+                .map((achievement) => achievement.trim())
+                .filter((achievement) => achievement.length > 0)
+            : undefined,
           role: formData.role || undefined,
         }),
         type: activeTimelineTab,
@@ -335,6 +349,7 @@ export default function TimelinesSection() {
       period: "",
       location: "",
       description: "",
+      keyAchievements: "",
       role: "",
       type: "work",
     });
@@ -528,6 +543,7 @@ function TimelineForm({
     period: string;
     location: string;
     description: string;
+    keyAchievements: string;
     role: "remote" | "on-site" | "internship" | "";
     type: "work" | "education";
   };
@@ -537,6 +553,7 @@ function TimelineForm({
     period: string;
     location: string;
     description: string;
+    keyAchievements: string;
     role: "remote" | "on-site" | "internship" | "";
     type: "work" | "education";
   }) => void;
@@ -646,6 +663,22 @@ function TimelineForm({
                 placeholder="Briefly describe your responsibilities and impact"
                 rows={4}
               />
+            </div>
+            <div className="space-y-2">
+              <Label>Key Achievements</Label>
+              <Textarea
+                value={formData.keyAchievements}
+                onChange={(e) =>
+                  setFormData({ ...formData, keyAchievements: e.target.value })
+                }
+                placeholder={
+                  "One achievement per line\nBuilt reusable components\nImproved page performance by 30%"
+                }
+                rows={4}
+              />
+              <p className="text-xs text-muted-foreground">
+                Enter one achievement per line.
+              </p>
             </div>
           </>
         )}
@@ -772,6 +805,21 @@ function TimelineCard({
               {timeline.description}
             </p>
           )}
+
+          {timeline.type === "work" &&
+            timeline.achievements &&
+            timeline.achievements.length > 0 && (
+              <div className="space-y-1 mt-1">
+                {timeline.achievements.map((achievement, idx) => (
+                  <p
+                    key={idx}
+                    className="text-sm leading-relaxed text-muted-foreground break-words"
+                  >
+                    - {achievement}
+                  </p>
+                ))}
+              </div>
+            )}
         </div>
       </CardContent>
     </Card>

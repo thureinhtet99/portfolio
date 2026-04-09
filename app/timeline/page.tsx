@@ -43,11 +43,8 @@ export default async function Timelines() {
       location: exp.location,
       period: exp.period,
       role: exp.role || undefined,
-      description:
-        exp.description ||
-        (exp.achievements && exp.achievements.length > 0
-          ? exp.achievements.join("\n")
-          : undefined),
+      description: exp.description || undefined,
+      achievements: exp.achievements,
     }));
 
   const education: EducationDisplayType[] = timelines

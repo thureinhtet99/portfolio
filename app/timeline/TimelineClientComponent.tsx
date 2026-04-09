@@ -98,6 +98,25 @@ export default function TimelineClientComponent({ work, education }: Props) {
                           {exp.description}
                         </p>
                       )}
+
+                      {exp.achievements && exp.achievements.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium sm:text-base">
+                            Key Achievements
+                          </p>
+                          <ul className="list-disc space-y-1 pl-5 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                            {exp.achievements.map(
+                              (achievement, achievementIndex) => (
+                                <li
+                                  key={`${exp.id}-achievement-${achievementIndex}`}
+                                >
+                                  {achievement}
+                                </li>
+                              ),
+                            )}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 ))

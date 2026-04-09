@@ -116,6 +116,7 @@ export type WorkDisplayType = {
   period?: string;
   role?: "remote" | "on-site" | "internship";
   description?: string;
+  achievements?: string[];
 };
 
 export type EducationDisplayType = {
