@@ -88,7 +88,6 @@ export type WorkType = {
   role?: "" | "remote" | "on-site" | "internship";
   description?: string;
   achievements?: string[];
-  technologies?: string[];
 };
 
 export type EducationType = {

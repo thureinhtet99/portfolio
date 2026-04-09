@@ -48,7 +48,6 @@ export default function TimelinesSection() {
     period: "",
     location: "",
     description: "" as string,
-    techStacks: "" as string,
     role: "" as "remote" | "on-site" | "internship" | "",
     type: "work" as "work" | "education",
   });
@@ -98,12 +97,6 @@ export default function TimelinesSection() {
         location: formData.location,
         ...(activeTimelineTab === "work" && {
           description: formData.description || undefined,
-          techStacks: formData.techStacks
-            ? formData.techStacks
-                .split(",")
-                .map((tech) => tech.trim())
-                .filter((tech) => tech)
-            : undefined,
           role: formData.role || undefined,
         }),
         type: activeTimelineTab,
@@ -145,9 +138,6 @@ export default function TimelinesSection() {
         location: timeline.location || "",
         description:
           timeline.description || timeline.achievements?.join("\n") || "",
-        techStacks: timeline.technologies
-          ? timeline.technologies.join(", ")
-          : "",
         role: timeline.role || "",
         type: timeline.type,
       });
@@ -159,7 +149,6 @@ export default function TimelinesSection() {
         period: timeline.period || "",
         location: timeline.location || "",
         description: "",
-        techStacks: "",
         role: "",
         type: timeline.type,
       });
@@ -189,12 +178,6 @@ export default function TimelinesSection() {
         location: formData.location,
         ...(activeTimelineTab === "work" && {
           description: formData.description || undefined,
-          techStacks: formData.techStacks
-            ? formData.techStacks
-                .split(",")
-                .map((tech) => tech.trim())
-                .filter((tech) => tech)
-            : undefined,
           role: formData.role || undefined,
         }),
         type: activeTimelineTab,
@@ -352,7 +335,6 @@ export default function TimelinesSection() {
       period: "",
       location: "",
       description: "",
-      techStacks: "",
       role: "",
       type: "work",
     });
@@ -546,7 +528,6 @@ function TimelineForm({
     period: string;
     location: string;
     description: string;
-    techStacks: string;
     role: "remote" | "on-site" | "internship" | "";
     type: "work" | "education";
   };
@@ -556,7 +537,6 @@ function TimelineForm({
     period: string;
     location: string;
     description: string;
-    techStacks: string;
     role: "remote" | "on-site" | "internship" | "";
     type: "work" | "education";
   }) => void;
@@ -656,19 +636,6 @@ function TimelineForm({
 
         {activeTimelineTab === "work" && (
           <>
-            <div className="space-y-2">
-              <Label>Tech Stacks</Label>
-              <Input
-                value={formData.techStacks}
-                onChange={(e) =>
-                  setFormData({ ...formData, techStacks: e.target.value })
-                }
-                placeholder="e.g. Next.js, TypeScript, Drizzle"
-              />
-              <p className="text-xs text-muted-foreground">
-                Separate technologies with commas.
-              </p>
-            </div>
             <div className="space-y-2">
               <Label>Description</Label>
               <Textarea
@@ -805,23 +772,6 @@ function TimelineCard({
               {timeline.description}
             </p>
           )}
-
-          {/* Tech Stacks */}
-          {timeline.type === "work" &&
-            timeline.technologies &&
-            timeline.technologies.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mt-1">
-                {timeline.technologies.map((tech, idx) => (
-                  <Badge
-                    key={idx}
-                    variant="secondary"
-                    className="text-xs capitalize"
-                  >
-                    {tech}
-                  </Badge>
-                ))}
-              </div>
-            )}
         </div>
       </CardContent>
     </Card>

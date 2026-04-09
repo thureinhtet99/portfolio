@@ -70,7 +70,6 @@ export async function POST(req: NextRequest) {
       description,
       keyAchievements,
       achievements,
-      techStacks,
       role,
       type,
     } = body;
@@ -141,7 +140,6 @@ export async function POST(req: NextRequest) {
         keyAchievements: legacyAchievements
           ? JSON.stringify(legacyAchievements)
           : null,
-        techStacks: techStacks ? JSON.stringify(techStacks) : null,
         role: role || null,
         order: 0,
         createdAt: now,
@@ -160,7 +158,6 @@ export async function POST(req: NextRequest) {
           period,
           description: normalizedDescription,
           keyAchievements: legacyAchievements,
-          techStacks,
           role,
           type,
         },
@@ -196,7 +193,6 @@ export async function PUT(req: NextRequest) {
       description,
       keyAchievements,
       achievements,
-      techStacks,
       role,
       type,
     } = body;
@@ -281,7 +277,6 @@ export async function PUT(req: NextRequest) {
           period,
           description: normalizedDescription,
           keyAchievements: legacyAchievements,
-          techStacks,
           role,
           type,
         },
