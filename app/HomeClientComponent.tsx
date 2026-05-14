@@ -19,6 +19,7 @@ import { StaticImageData } from "next/image";
 import { ProjectType } from "@/types/index.type";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ProjectShowcaseCard } from "@/components/project-showcase-card";
+import profileImg from "@/public/profile.svg";
 
 type Props = {
   residence: string;
@@ -206,16 +207,15 @@ export default function HomeClientComponent({
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
-                className="relative h-32 w-32 md:h-40 md:w-40"
+                className="relative h-50 w-50 md:h-100 md:w-100"
               >
-                <div className="absolute inset-0 rounded-full overflow-hidden border-4 border-primary/20 shadow-lg">
+                <div className="absolute inset-0  overflow-hidden ">
                   <Image
-                    src={profileImage}
+                    src={profileImg}
                     alt="Thu Rein Htet"
                     fill
                     className="object-cover"
                     priority
-                    sizes="160px"
                   />
                 </div>
               </motion.div>

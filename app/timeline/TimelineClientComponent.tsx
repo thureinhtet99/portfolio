@@ -2,15 +2,10 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Calendar,
-  MapPin,
-  GraduationCap,
-  Briefcase,
-  Clock,
-} from "lucide-react";
+import { Calendar, MapPin, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 import { WorkDisplayType, EducationDisplayType } from "@/types/index.type";
+import { Badge } from "@/components/ui/badge";
 
 type Props = {
   work: WorkDisplayType[];
@@ -33,14 +28,12 @@ export default function TimelineClientComponent({ work, education }: Props) {
                 value="work"
                 className="flex min-h-11 items-center gap-2 border rounded-lg border-border/20 px-4 cursor-pointer data-[state=active]:shadow-accent-foreground"
               >
-                <Briefcase className="w-4 h-4" />
                 Experiences
               </TabsTrigger>
               <TabsTrigger
                 value="education"
                 className="flex min-h-11 items-center gap-2 border rounded-lg border-border/20 px-4 cursor-pointer data-[state=active]:shadow-accent-foreground"
               >
-                <GraduationCap className="w-4 h-4" />
                 Education
               </TabsTrigger>
             </TabsList>
@@ -60,37 +53,32 @@ export default function TimelineClientComponent({ work, education }: Props) {
                     <div className="space-y-4 sm:space-y-6">
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <div className="flex-1">
-                          <h3 className="text-xl font-bold capitalize sm:text-2xl">
-                            {exp.title}
-                          </h3>
+                          <div className="flex items-center justify-between">
+                            <h3 className="text-xl font-bold capitalize sm:text-2xl">
+                              {exp.title}
+                            </h3>
+                            <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground sm:gap-x-8 sm:text-sm">
+                              {exp.location && (
+                                <Badge className="capitalize">
+                                  {exp.location}
+                                </Badge>
+                              )}
+                              {exp.period && (
+                                <Badge className="capitalize">
+                                  {exp.period}
+                                </Badge>
+                              )}
+                              {exp.role && (
+                                <Badge className="capitalize">{exp.role}</Badge>
+                              )}
+                            </div>
+                          </div>
                           {exp.company && (
                             <p className="text-sm text-muted-foreground sm:text-base">
                               {exp.company}
                             </p>
                           )}
                         </div>
-                      </div>
-
-                      <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground sm:gap-x-8 sm:text-sm">
-                        {exp.location && (
-                          <span className="flex items-center gap-1 text-muted-foreground">
-                            <MapPin className="w-4 h-4" />
-                            {exp.location}
-                          </span>
-                        )}
-                        {exp.period && (
-                          <span className="flex items-center gap-1 text-muted-foreground">
-                            <Calendar className="w-4 h-4" />
-                            {exp.period}
-                          </span>
-                        )}
-
-                        {exp.role && (
-                          <span className="flex items-center gap-1 text-muted-foreground capitalize">
-                            <Briefcase className="w-4 h-4" />
-                            {exp.role}
-                          </span>
-                        )}
                       </div>
 
                       {exp.description && (
