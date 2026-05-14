@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, AlertTriangle, Dot, TargetIcon } from "lucide-react";
+import { ExternalLink, Dot } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
@@ -46,7 +46,7 @@ export function ProjectDetailModal({
 
           {/* Project Description */}
           <div className="space-y-3">
-            <h3 className="text-lg font-semibold tracking-[-0.02em]">
+            <h3 className="text-2xl font-semibold tracking-[-0.02em]">
               Overview
             </h3>
             <p className="text-lg leading-relaxed text-muted-foreground">
@@ -57,8 +57,7 @@ export function ProjectDetailModal({
           {/* Technical Contributions */}
           {project.objectives && project.objectives.length > 0 && (
             <div className="space-y-3">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <TargetIcon className="h-5 w-5 text-primary" />
+              <h3 className="text-2xl font-semibold flex items-center gap-2">
                 Objectives
               </h3>
               <ul className="space-y-2">
@@ -77,8 +76,7 @@ export function ProjectDetailModal({
           {/* Challenges */}
           {project.challenges && project.challenges.length > 0 && (
             <div className="space-y-3">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-primary" />
+              <h3 className="text-2xl font-semibold flex items-center gap-2">
                 Key Challenges Solved
               </h3>
               <ul className="space-y-2">
@@ -96,7 +94,7 @@ export function ProjectDetailModal({
 
           {/* Tech Stack */}
           <div className="space-y-3">
-            <h3 className="text-lg font-semibold tracking-[-0.02em]">
+            <h3 className="text-2xl font-semibold tracking-[-0.02em]">
               Technologies Used
             </h3>
             <div className="flex flex-wrap gap-2">
@@ -119,7 +117,11 @@ export function ProjectDetailModal({
           {/* Action Buttons */}
           <div className="flex flex-col gap-3 pt-2 sm:flex-row">
             {project.isGitHub && (
-              <Button asChild variant="secondary" className="flex-1 rounded-lg">
+              <Button
+                asChild
+                variant="outline"
+                className="flex-1 rounded-lg border-border/20 h-10"
+              >
                 <Link
                   href={project.github}
                   target="_blank"
@@ -127,12 +129,12 @@ export function ProjectDetailModal({
                   className="flex items-center gap-2"
                 >
                   <FaGithub className="h-4 w-4" />
-                  View Code
+                  Code
                 </Link>
               </Button>
             )}
             {project.isLiveDemo && (
-              <Button asChild className="flex-1 rounded-lg">
+              <Button asChild className="flex-1 rounded-lg h-10">
                 <Link
                   href={project.liveDemo}
                   target="_blank"
@@ -140,7 +142,7 @@ export function ProjectDetailModal({
                   className="flex items-center gap-2"
                 >
                   <ExternalLink className="h-4 w-4" />
-                  Visit Live Site
+                  Live
                 </Link>
               </Button>
             )}

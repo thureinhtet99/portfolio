@@ -58,7 +58,7 @@ export default function HomeClientComponent({
   useEffect(() => {
     if (rolesList.length === 0) return;
     const role = rolesList[currentRoleIndex];
-    const typingSpeed = isDeleting ? 50 : 100;
+    const typingSpeed = isDeleting ? 10 : 20;
 
     const timer = setTimeout(() => {
       if (!isDeleting) {
@@ -94,10 +94,10 @@ export default function HomeClientComponent({
           className="relative z-10 mx-auto max-w-3xl space-y-6 text-center"
         >
           <div className="space-y-3">
-            <h1 className="text-3xl font-bold sm:text-4xl lg:text-5xl">
-              Hey guys!
+            <h1 className="text-2xl font-bold sm:text-3xl lg:text-4xl">
+              Hi folks...
             </h1>
-            <h1 className="text-3xl font-bold sm:text-4xl lg:text-5xl">
+            <h1 className="text-2xl font-bold sm:text-3xl lg:text-4xl">
               I&apos;m{" "}
               <span className="text-4xl font-semibold text-muted-foreground sm:text-5xl lg:text-6xl">
                 Thu Rein Htet
@@ -125,9 +125,7 @@ export default function HomeClientComponent({
             <span className="flex items-center gap-1">
               <div
                 className={`h-2.5 w-2.5 me-1 rounded-full transition-colors ${
-                  available
-                    ? "bg-foreground"
-                    : "bg-foreground/25 text-foreground/60"
+                  available ? "bg-green-500" : "bg-red-500"
                 }`}
               />
               {available ? "Available for work" : "Not available for work"}
@@ -146,7 +144,7 @@ export default function HomeClientComponent({
                 variant="outline"
                 asChild
                 size="lg"
-                className="w-full rounded-lg sm:w-auto"
+                className="w-full rounded-lg sm:w-auto hover:bg-black/5 dark:hover:bg-white/5"
               >
                 <Link
                   href="/api/resume"
@@ -167,7 +165,7 @@ export default function HomeClientComponent({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.5 }}
-          className="absolute bottom-4 left-1/2 z-20 hidden -translate-x-1/2 flex-col items-center gap-2 bg-background/70 px-4 text-sm text-muted-foreground backdrop-blur-sm transition-colors hover:text-foreground sm:flex"
+          className="absolute bottom-4 left-1/2 z-20 hidden -translate-x-1/2 flex-col items-center gap-2 bg-background/70 px-4 text-sm text-muted-foreground sm:flex"
           onClick={() => {
             document
               .getElementById("about-section")
@@ -185,7 +183,7 @@ export default function HomeClientComponent({
             }}
             className="inline-flex"
           >
-            <ChevronDown className="h-4 w-4" />
+            <ChevronDown className="h-5 w-5" />
           </motion.span>
         </motion.button>
       </section>

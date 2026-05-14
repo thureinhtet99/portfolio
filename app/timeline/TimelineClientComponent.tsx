@@ -31,14 +31,14 @@ export default function TimelineClientComponent({ work, education }: Props) {
             <TabsList className="mt-2 mb-6 grid h-auto w-full grid-cols-1 gap-2 rounded-xl bg-transparent p-0 sm:mb-8 sm:grid-cols-2">
               <TabsTrigger
                 value="work"
-                className="flex min-h-11 items-center gap-2 border border-border/20 px-4"
+                className="flex min-h-11 items-center gap-2 border rounded-lg border-border/20 px-4 cursor-pointer data-[state=active]:shadow-accent-foreground"
               >
                 <Briefcase className="w-4 h-4" />
                 Experiences
               </TabsTrigger>
               <TabsTrigger
                 value="education"
-                className="flex min-h-11 items-center gap-2 border border-border/20 px-4"
+                className="flex min-h-11 items-center gap-2 border rounded-lg border-border/20 px-4 cursor-pointer data-[state=active]:shadow-accent-foreground"
               >
                 <GraduationCap className="w-4 h-4" />
                 Education

@@ -22,36 +22,36 @@ type ProjectShowcaseCardProps = {
 export function ProjectShowcaseCard({
   project,
   className,
-  techLimit,
+  // techLimit,
   descriptionLines = 3,
 }: ProjectShowcaseCardProps) {
   const technologies = Array.isArray(project.technologies)
     ? project.technologies
     : [];
-  const visibleTechnologies = techLimit
-    ? technologies.slice(0, techLimit)
-    : technologies;
+  // const visibleTechnologies = techLimit
+  //   ? technologies.slice(0, techLimit)
+  //   : technologies;
 
   return (
     <Card
       className={cn(
-        "group flex h-full flex-col overflow-hidden rounded-lg border border-border/20 bg-card/95 transition duration-300 hover:shadow-[0_28px_85px_-44px_rgba(34,34,34,0.35)] dark:hover:shadow-[0_28px_85px_-44px_rgba(255,255,255,0.2)]",
+        "group flex h-full flex-col rounded-lg border-0 bg-card/95 transition duration-300 hover:shadow-xs dark:hover:shadow-xs py-0",
         className,
       )}
     >
-      <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-primary/10 via-background to-secondary/70">
+      <div className="relative aspect-video w-full overflow-hidden rounded-lg">
         {project.image && (
           <Image
             src={project.image}
             alt={project.title}
             fill
-            className="object-contain transition duration-500 group-hover:scale-[1.05]"
+            className="object-cover rounded-lg transition duration-500 group-hover:scale-[1.05]"
             sizes="(max-width: 768px) 100vw, 50vw"
           />
         )}
       </div>
 
-      <div className="flex flex-1 flex-col p-4 sm:p-5 lg:p-6">
+      <div className="flex flex-1 flex-col p-2 sm:p-3 lg:p-4">
         <div className="relative z-10 flex items-start justify-between gap-2 sm:gap-3">
           <div className="min-w-0 flex-1">
             <h3 className="break-words text-lg font-semibold tracking-[-0.03em] text-foreground sm:text-xl lg:text-2xl">
@@ -59,8 +59,8 @@ export function ProjectShowcaseCard({
             </h3>
             {project.featured && (
               <Badge
-                variant="outline"
-                className="mt-3 rounded-full border-primary/20 bg-primary/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary"
+                variant="secondary"
+                className="mt-2 rounded-lg bg-accent-foreground/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-primary"
               >
                 Featured
               </Badge>
@@ -75,34 +75,12 @@ export function ProjectShowcaseCard({
 
         <p
           className={cn(
-            "mt-3 flex-1 text-sm leading-6 text-muted-foreground sm:mt-4 sm:text-base sm:leading-7",
+            "mt-2 flex-1 text-sm leading-6 text-muted-foreground sm:mt-4 sm:text-base sm:leading-7",
             descriptionLines === 2 ? "line-clamp-2" : "line-clamp-3",
           )}
         >
           {project.description}
         </p>
-
-        {visibleTechnologies.length > 0 && (
-          <div className="mt-5 flex flex-wrap gap-2">
-            {visibleTechnologies.map((tech) => (
-              <Badge
-                key={tech}
-                variant="secondary"
-                className="max-w-full rounded-lg bg-accent-foreground/10 px-3 py-1 text-xs font-medium"
-              >
-                {tech}
-              </Badge>
-            ))}
-            {techLimit && technologies.length > techLimit && (
-              <Badge
-                variant="outline"
-                className="rounded-full px-3 py-1 text-xs"
-              >
-                +{technologies.length - techLimit} more
-              </Badge>
-            )}
-          </div>
-        )}
 
         <div className="mt-5 flex flex-col gap-3">
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -117,7 +95,7 @@ export function ProjectShowcaseCard({
                   href={project.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2"
+                  className="flex items-center justify-center gap-2 hover:bg-black/5 dark:hover:bg-white/5"
                 >
                   <FaGithub className="h-4 w-4" />
                   Code
@@ -141,15 +119,15 @@ export function ProjectShowcaseCard({
                   href={project.liveUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2"
+                  className="flex items-center justify-center gap-2 hover:bg-black/5 dark:hover:bg-white/5"
                 >
                   <ExternalLink className="h-4 w-4" />
-                  Visit
+                  Live
                 </Link>
               ) : (
                 <span className="flex items-center justify-center gap-2">
                   <ExternalLink className="h-4 w-4" />
-                  Visit
+                  Live
                 </span>
               )}
             </Button>
@@ -170,7 +148,10 @@ export function ProjectShowcaseCard({
               demoCredentials: project.demoCredentials || [],
             }}
           >
-            <Button className="h-10 w-full rounded-lg sm:h-11">
+            <Button
+              type="button"
+              className="h-10 w-full cursor-pointer rounded-lg sm:h-11"
+            >
               <span className="flex items-center justify-center gap-2">
                 View Details
                 <MoveRight className="h-4 w-4" />
