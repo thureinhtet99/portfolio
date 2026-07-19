@@ -67,6 +67,12 @@ Start
 Read AGENTS.md
  │
  ▼
+Read PROGRESS.md
+ │
+ ▼
+Read DESIGN_SYSTEM.md
+ │
+ ▼
 Read PROJECT_MAP.md
  │
  ▼
