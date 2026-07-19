@@ -100,7 +100,7 @@ export default function AdminDashboard() {
       <div className="flex min-h-screen items-center justify-center">
         <Card className="surface-panel w-full max-w-md">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-center text-2xl font-bold">
+            <CardTitle className="text-center text-2xl font-bold tracking-[-0.02em]">
               Admin Portal
             </CardTitle>
             <p className="text-center text-sm text-muted-foreground">

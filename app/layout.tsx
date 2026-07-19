@@ -5,7 +5,7 @@ import { ThemeProvider } from "../components/theme-provider";
 import { Toaster } from "sonner";
 import QueryProvider from "@/components/QueryProvider";
 import { Footer } from "@/components/Footer";
-import { TopNavbar } from "@/components/top-navbar";
+import { TopNavbarWrapper } from "@/components/TopNavbarWrapper";
 import { Suspense } from "react";
 import Loading from "./loading";
 import { getSiteUrl } from "@/lib/base-url";
@@ -26,19 +26,21 @@ export const metadata: Metadata = {
     template: "%s | Thu Rein Htet's Portfolio",
   },
   description:
-    "Full-Stack Next.js Developer specializing in React, TypeScript, and modern web applications. Building scalable solutions with clean code and exceptional user experiences.",
+    "Software developer who enjoys building modern web, mobile and software applications using React, Next.js. Focusing on creating clean, efficient, and user-friendly solutions using modern technologies. My goal is to turn ideas into functional and scalable digital products.",
   keywords: [
     "Thu Rein Htet",
     "Myanmar Web Developer",
     "React Developer",
     "React Native Developer",
     "Typescript Developer",
+    "TypeScript",
+    "JavaScript",
     "Next.js",
     "React",
     "React Native",
     "Node.js",
     "Express.js",
-    "TypeScript",
+    "Expo",
     "Web Developer",
     "Frontend",
     "Backend",
@@ -52,16 +54,16 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "/",
-    title: "Thu Rein Htet - A Developer from Myanmar",
+    title: "Thu Rein Htet - Software Developer from Myanmar",
     description:
-      "A web developer specializing in React, Next.js, TypeScript, and modern web applications.",
+      "Software developer who enjoys building modern web, mobile and software applications using React, Next.js. My goal is to turn ideas into functional and scalable digital products.",
     siteName: "Thu Rein Htet Portfolio",
     images: [
       {
-        url: "/me.jpg",
+        url: "@/public/TRH.png",
         width: 1200,
         height: 630,
-        alt: "Thu Rein Htet - A Developer from Myanmar",
+        alt: "Thu Rein Htet - Software Developer from Myanmar",
       },
     ],
   },
@@ -91,12 +93,11 @@ export default function RootLayout({
         <QueryProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="dark"
-            enableSystem
+            defaultTheme="light"
             disableTransitionOnChange
           >
-            <TopNavbar />
-            <main className="min-h-screen px-4 pb-10 pt-4 sm:px-6 sm:pt-6 lg:px-8">
+            <TopNavbarWrapper />
+            <main className="min-h-screen p-4 pb-[calc(7rem+env(safe-area-inset-bottom))] sm:px-6 lg:px-8">
               <Suspense fallback={<Loading />}>{children}</Suspense>
               <Toaster />
             </main>

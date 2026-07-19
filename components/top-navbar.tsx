@@ -3,140 +3,180 @@
 import * as React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Award, Home, Mail, Code, FlaskConical, Share2 } from "lucide-react";
+import { FaGithub, FaFacebook, FaLinkedin } from "react-icons/fa";
 import { ModeToggle } from "@/components/theme-toggle";
-import { motion, AnimatePresence } from "framer-motion";
 import { APP_CONFIG } from "@/config/app-config";
-import Image from "next/image";
-import me from "@/public/TRH.png";
+
+type SocialLink = {
+  href: string;
+  label: "GitHub" | "Facebook" | "LinkedIn";
+};
 
 const navLinks = [
-  { title: "Home", url: APP_CONFIG.ROUTE.HOME },
-  { title: APP_CONFIG.ROUTE.TIMELINE, url: `/${APP_CONFIG.ROUTE.TIMELINE}` },
-  { title: APP_CONFIG.ROUTE.PROJECTS, url: `/${APP_CONFIG.ROUTE.PROJECTS}` },
+  { title: "Home", url: APP_CONFIG.ROUTE.HOME, icon: Home },
+  {
+    title: APP_CONFIG.ROUTE.TIMELINE,
+    url: `/${APP_CONFIG.ROUTE.TIMELINE}`,
+    icon: FlaskConical,
+  },
+  {
+    title: APP_CONFIG.ROUTE.PROJECTS,
+    url: `/${APP_CONFIG.ROUTE.PROJECTS}`,
+    icon: Code,
+  },
   {
     title: APP_CONFIG.ROUTE.CERTIFICATES,
     url: `/${APP_CONFIG.ROUTE.CERTIFICATES}`,
+    icon: Award,
   },
-  { title: APP_CONFIG.ROUTE.CONTACT, url: `/${APP_CONFIG.ROUTE.CONTACT}` },
+  {
+    title: APP_CONFIG.ROUTE.CONTACT,
+    url: `/${APP_CONFIG.ROUTE.CONTACT}`,
+    icon: Mail,
+  },
 ];
 
-export function TopNavbar() {
-  const [isOpen, setIsOpen] = React.useState(false);
+export function TopNavbar({
+  socialLinks = [],
+}: {
+  socialLinks?: SocialLink[];
+}) {
   const pathname = usePathname();
+  const [socialOpen, setSocialOpen] = React.useState(false);
+  const wrapperRef = React.useRef<HTMLDivElement>(null);
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const iconByLabel = {
+    GitHub: FaGithub,
+    Facebook: FaFacebook,
+    LinkedIn: FaLinkedin,
+  } as const;
 
   React.useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
-
-  React.useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
+    const handler = (e: MouseEvent) => {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(e.target as Node)
+      ) {
+        setSocialOpen(false);
+      }
     };
-  }, [isOpen]);
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const socialIcons = socialLinks.map((socialLink) => {
+    const Icon = iconByLabel[socialLink.label];
+    return (
+      <Link
+        key={socialLink.label}
+        href={socialLink.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={socialLink.label}
+        className="flex h-10 w-10 items-center justify-center rounded-full text-background/80 transition-colors hover:bg-background/15 hover:text-background"
+      >
+        <Icon className="h-5 w-5" />
+      </Link>
+    );
+  });
 
   return (
-    <>
-      <header className="sticky top-0 left-0 right-0 z-50 shadow-xs bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
-        <div className="app-shell flex h-[4.5rem] items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="flex items-center gap-3 transition-opacity hover:opacity-85"
-            >
-              <div className="hidden sm:block">
-                <Image
-                  src={me}
-                  alt="Thu Rein Htet"
-                  className="size-10 rounded-lg"
-                />
-              </div>
-            </Link>
-          </div>
+    <header className="fixed inset-x-0 bottom-4 z-50 px-4 sm:px-6 lg:px-8">
+      <div
+        ref={wrapperRef}
+        className="relative mx-auto flex w-full max-w-3xl items-center justify-center"
+      >
+        {/* Main nav pill */}
+        <nav className="relative mx-auto flex w-full max-w-md items-center gap-2 rounded-2xl border border-border/40 bg-foreground/90 px-4 py-2 text-background shadow-[0_12px_30px_rgba(0,0,0,0.12)] backdrop-blur-xl">
+          <div className="flex flex-1 items-center justify-center gap-2 overflow-x-auto scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            {navLinks.map((link) => {
+              const Icon = link.icon;
+              const isActive = pathname === link.url;
+              return (
+                <Link
+                  key={link.url}
+                  href={link.url}
+                  aria-label={link.title}
+                  className={`flex h-12 w-12 shrink-0 flex-col items-center justify-center gap-0.5 rounded-full text-[0.65rem] font-medium leading-none transition-all ${
+                    isActive
+                      ? "bg-background text-foreground"
+                      : "text-background/80 hover:bg-background/10 hover:text-background"
+                  }`}
+                >
+                  <Icon className="h-6 w-6" />
+                </Link>
+              );
+            })}
 
-          <nav className="hidden md:flex items-center gap-2 p-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.url}
-                href={link.url}
-                className={`rounded-lg px-4 py-2 text-sm font-medium capitalize transition-all ${
-                  pathname === link.url
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-card-foreground/10 hover:text-foreground"
-                }`}
-              >
-                {link.title}
-              </Link>
-            ))}
-          </nav>
+            {socialLinks.length > 0 && (
+              <>
+                <div className="h-8 w-px shrink-0 bg-background/20" />
 
-          <div className="flex items-center gap-2">
-            <ModeToggle />
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleMenu}
-              aria-label="Toggle menu"
-              className="md:hidden"
-            >
-              {isOpen ? (
-                <X className="h-5 w-5" />
-              ) : (
-                <Menu className="h-5 w-5" />
-              )}
-            </Button>
-          </div>
-        </div>
-      </header>
+                {/* Toggle button — wraps a relative container so the popup anchors to it */}
+                <ModeToggle className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-background/80 transition-all hover:bg-background/10 hover:text-background" />
+                <div className="relative shrink-0">
+                  {/* Mobile: vertical popup above the toggle button */}
+                  <div
+                    className={`
+                      absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2
+                      flex flex-col items-center gap-1
+                      rounded-2xl border border-border/40 bg-foreground/90 px-2 py-2
+                      shadow-[0_8px_24px_rgba(0,0,0,0.15)] backdrop-blur-xl
+                      transition-all duration-300 origin-bottom
+                      lg:hidden
+                      ${
+                        socialOpen
+                          ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
+                          : "opacity-0 scale-90 translate-y-2 pointer-events-none"
+                      }
+                    `}
+                  >
+                    {socialIcons}
+                  </div>
 
-      {/* Mobile Navigation Dropdown */}
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.1 }}
-              className="fixed inset-0 top-[4.5rem] z-40 bg-background/70 backdrop-blur-sm md:hidden"
-              onClick={toggleMenu}
-            />
-            <motion.nav
-              initial={{ y: "-100%", opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: "-100%", opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed left-0 right-0 top-[4.5rem] z-40  bg-background/95 shadow-xs md:hidden"
-            >
-              <div className="app-shell px-4 py-5 sm:px-6">
-                <div className="surface-panel-muted p-2">
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.url}
-                      href={link.url}
-                      className={`block rounded-lg px-4 py-3 text-sm font-medium capitalize transition-all ${
-                        pathname === link.url
-                          ? "bg-primary text-primary-foreground"
-                          : "text-muted-foreground hover:bg-background/70 hover:text-foreground"
+                  <button
+                    onClick={() => setSocialOpen((prev) => !prev)}
+                    aria-label="Toggle social links"
+                    aria-expanded={socialOpen}
+                    className={`flex h-12 w-12 items-center justify-center rounded-full transition-all ${
+                      socialOpen
+                        ? "bg-background/15 text-background"
+                        : "text-background/70 hover:bg-background/10 hover:text-background"
+                    }`}
+                  >
+                    <Share2
+                      className={`h-5 w-5 transition-transform duration-300 ${
+                        socialOpen ? "rotate-45" : ""
                       }`}
-                    >
-                      {link.title}
-                    </Link>
-                  ))}
+                    />
+                  </button>
                 </div>
-              </div>
-            </motion.nav>
-          </>
+              </>
+            )}
+          </div>
+        </nav>
+
+        {/* Desktop: floating pill to the right */}
+        {socialLinks.length > 0 && (
+          <div
+            className={`
+              absolute right-0 hidden items-center gap-2 rounded-2xl
+              border border-border/40 bg-foreground/90 p-1 text-background
+              shadow-[0_12px_30px_rgba(0,0,0,0.12)] backdrop-blur-xl
+              transition-all duration-300 origin-left
+              lg:flex
+              ${
+                socialOpen
+                  ? "opacity-100 translate-x-0 scale-100 pointer-events-auto"
+                  : "opacity-0 -translate-x-2 scale-95 pointer-events-none"
+              }
+            `}
+          >
+            {socialIcons}
+          </div>
         )}
-      </AnimatePresence>
-    </>
+      </div>
+    </header>
   );
 }

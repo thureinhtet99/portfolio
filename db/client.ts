@@ -8,7 +8,22 @@ import fs from "fs";
 
 // Use LibSQL (Turso) for production/Vercel, SQLite for local development
 const isProduction = process.env.NODE_ENV === "production";
-const shouldUseTurso = isProduction && !!process.env.TURSO_DATABASE_URL;
+const tursoUrl = process.env.TURSO_DATABASE_URL;
+const tursoAuthToken = process.env.TURSO_AUTH_TOKEN;
+
+if (isProduction && !tursoUrl) {
+  throw new Error(
+    "Missing TURSO_DATABASE_URL in production. Refusing to fall back to local SQLite.",
+  );
+}
+
+if (isProduction && !tursoAuthToken) {
+  throw new Error(
+    "Missing TURSO_AUTH_TOKEN in production. Set Turso credentials for production runtime.",
+  );
+}
+
+const shouldUseTurso = isProduction;
 
 const resolveSqlitePath = () => {
   const rawUrl = process.env.DATABASE_URL;
@@ -25,8 +40,8 @@ let db: ReturnType<typeof drizzleLibSQL> | ReturnType<typeof drizzleSQLite>;
 if (shouldUseTurso) {
   // Production: Use LibSQL/Turso (works on Vercel)
   const client = createClient({
-    url: process.env.TURSO_DATABASE_URL!,
-    authToken: process.env.TURSO_AUTH_TOKEN,
+    url: tursoUrl!,
+    authToken: tursoAuthToken,
   });
   db = drizzleLibSQL(client, { schema });
 } else {

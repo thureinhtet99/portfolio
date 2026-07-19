@@ -1,8 +1,9 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { motion } from "framer-motion";
+import { cardReveal } from "@/lib/motion";
 import { Clock } from "lucide-react";
-import { ProjectShowcaseCard } from "@/components/project-showcase-card";
+import { ProjectShowcaseCard } from "./project-showcase-card";
 
 type Project = {
   id: string;
@@ -21,23 +22,21 @@ type Props = {
   projects: Project[];
 };
 
-export default function ProjectsClientComponent({ projects }: Props) {
+export default function ProjectsView({ projects }: Props) {
   // For now, all projects from DB are current (not upcoming)
   const currentProjects = projects;
 
   return (
-    <div>
-      <Card className="border-0 shadow-none">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-4xl">
-            Projects
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+    <div className="page-shell">
+      <div className="space-y-4">
+        <h1 className="section-heading">Projects</h1>
+        <div>
           {currentProjects.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              {currentProjects.map((project) => (
-                <ProjectShowcaseCard key={project.id} project={project} />
+              {currentProjects.map((project, index) => (
+                <motion.div key={project.id} {...cardReveal(index)}>
+                  <ProjectShowcaseCard project={project} />
+                </motion.div>
               ))}
             </div>
           ) : (
@@ -50,8 +49,8 @@ export default function ProjectsClientComponent({ projects }: Props) {
               </h3>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

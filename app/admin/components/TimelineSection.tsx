@@ -35,7 +35,10 @@ export default function TimelinesSection() {
   const [isLoading, setIsLoading] = useState(false);
   const [timelinesLoading, setTimelinesLoading] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [timelineToDelete, setTimelineToDelete] = useState<string | null>(null);
+  const [timelineToDelete, setTimelineToDelete] = useState<{
+    id: string;
+    type: "work" | "education";
+  } | null>(null);
   const [activeTimelineTab, setActiveTimelineTab] = useState<
     "work" | "education"
   >("work");
@@ -44,8 +47,8 @@ export default function TimelinesSection() {
     company: "",
     period: "",
     location: "",
+    description: "" as string,
     keyAchievements: "" as string,
-    techStacks: "" as string,
     role: "" as "remote" | "on-site" | "internship" | "",
     type: "work" as "work" | "education",
   });
@@ -94,14 +97,12 @@ export default function TimelinesSection() {
         period: formData.period,
         location: formData.location,
         ...(activeTimelineTab === "work" && {
+          description: formData.description || undefined,
           keyAchievements: formData.keyAchievements
-            ? formData.keyAchievements.split("\n").filter((item) => item.trim())
-            : undefined,
-          techStacks: formData.techStacks
-            ? formData.techStacks
-                .split(",")
-                .map((tech) => tech.trim())
-                .filter((tech) => tech)
+            ? formData.keyAchievements
+                .split("\n")
+                .map((achievement) => achievement.trim())
+                .filter((achievement) => achievement.length > 0)
             : undefined,
           role: formData.role || undefined,
         }),
@@ -142,12 +143,8 @@ export default function TimelinesSection() {
         company: timeline.company,
         period: timeline.period || "",
         location: timeline.location || "",
-        keyAchievements: timeline.achievements
-          ? timeline.achievements.join("\n")
-          : "",
-        techStacks: timeline.technologies
-          ? timeline.technologies.join(", ")
-          : "",
+        description: timeline.description || "",
+        keyAchievements: timeline.achievements?.join("\n") || "",
         role: timeline.role || "",
         type: timeline.type,
       });
@@ -158,8 +155,8 @@ export default function TimelinesSection() {
         company: timeline.institution,
         period: timeline.period || "",
         location: timeline.location || "",
+        description: "",
         keyAchievements: "",
-        techStacks: "",
         role: "",
         type: timeline.type,
       });
@@ -188,14 +185,12 @@ export default function TimelinesSection() {
         period: formData.period,
         location: formData.location,
         ...(activeTimelineTab === "work" && {
+          description: formData.description || undefined,
           keyAchievements: formData.keyAchievements
-            ? formData.keyAchievements.split("\n").filter((item) => item.trim())
-            : undefined,
-          techStacks: formData.techStacks
-            ? formData.techStacks
-                .split(",")
-                .map((tech) => tech.trim())
-                .filter((tech) => tech)
+            ? formData.keyAchievements
+                .split("\n")
+                .map((achievement) => achievement.trim())
+                .filter((achievement) => achievement.length > 0)
             : undefined,
           role: formData.role || undefined,
         }),
@@ -227,8 +222,8 @@ export default function TimelinesSection() {
     }
   };
 
-  const openDeleteDialog = (id: string) => {
-    setTimelineToDelete(id);
+  const openDeleteDialog = (id: string, type: "work" | "education") => {
+    setTimelineToDelete({ id, type });
     setDeleteDialogOpen(true);
   };
 
@@ -238,7 +233,7 @@ export default function TimelinesSection() {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `/api/${APP_CONFIG.ROUTE.TIMELINES}?id=${timelineToDelete}`,
+        `/api/${APP_CONFIG.ROUTE.TIMELINES}?id=${timelineToDelete.id}&type=${timelineToDelete.type}`,
         {
           method: "DELETE",
         },
@@ -353,8 +348,8 @@ export default function TimelinesSection() {
       company: "",
       period: "",
       location: "",
+      description: "",
       keyAchievements: "",
-      techStacks: "",
       role: "",
       type: "work",
     });
@@ -547,8 +542,8 @@ function TimelineForm({
     company: string;
     period: string;
     location: string;
+    description: string;
     keyAchievements: string;
-    techStacks: string;
     role: "remote" | "on-site" | "internship" | "";
     type: "work" | "education";
   };
@@ -557,8 +552,8 @@ function TimelineForm({
     company: string;
     period: string;
     location: string;
+    description: string;
     keyAchievements: string;
-    techStacks: string;
     role: "remote" | "on-site" | "internship" | "";
     type: "work" | "education";
   }) => void;
@@ -659,26 +654,31 @@ function TimelineForm({
         {activeTimelineTab === "work" && (
           <>
             <div className="space-y-2">
-              <Label>Key Achievements (one per line)</Label>
+              <Label>Description</Label>
+              <Textarea
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+                placeholder="Briefly describe your responsibilities and impact"
+                rows={4}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Key Achievements</Label>
               <Textarea
                 value={formData.keyAchievements}
                 onChange={(e) =>
                   setFormData({ ...formData, keyAchievements: e.target.value })
                 }
-                placeholder="• Achievement 1&#10;• Achievement 2&#10;• Achievement 3"
+                placeholder={
+                  "One achievement per line\nBuilt reusable components\nImproved page performance by 30%"
+                }
                 rows={4}
               />
-            </div>
-            <div className="space-y-2">
-              <Label>Tech Stacks (comma separated)</Label>
-              <Textarea
-                value={formData.techStacks}
-                onChange={(e) =>
-                  setFormData({ ...formData, techStacks: e.target.value })
-                }
-                placeholder="e.g. React, Node.js, MongoDB, Docker"
-                rows={2}
-              />
+              <p className="text-xs text-muted-foreground">
+                Enter one achievement per line.
+              </p>
             </div>
           </>
         )}
@@ -708,7 +708,7 @@ function TimelineCard({
 }: {
   timeline: TimelineType;
   onEdit: (timeline: TimelineType) => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: string, type: "work" | "education") => void;
   onMoveUp: () => void;
   onMoveDown: () => void;
   isEditing?: boolean;
@@ -770,7 +770,7 @@ function TimelineCard({
               <Button
                 size="sm"
                 variant="ghost"
-                onClick={() => onDelete(timeline.id)}
+                onClick={() => onDelete(timeline.id, timeline.type)}
                 className="h-9 w-9 p-0"
               >
                 <Trash2 className="h-4 w-4 text-destructive" />
@@ -800,38 +800,23 @@ function TimelineCard({
             )}
           </div>
 
-          {/* Key Achievements */}
+          {timeline.type === "work" && timeline.description && (
+            <p className="text-sm leading-relaxed text-muted-foreground mt-1 break-words">
+              {timeline.description}
+            </p>
+          )}
+
           {timeline.type === "work" &&
             timeline.achievements &&
             timeline.achievements.length > 0 && (
-              <div className="mt-1">
-                <p className="text-sm font-medium mb-2">Key Achievements:</p>
-                <ul className="list-disc list-inside space-y-1.5 text-sm">
-                  {timeline.achievements.map((achievement, idx) => (
-                    <li
-                      key={idx}
-                      className="text-muted-foreground break-words leading-relaxed"
-                    >
-                      {achievement}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-          {/* Tech Stacks */}
-          {timeline.type === "work" &&
-            timeline.technologies &&
-            timeline.technologies.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mt-1">
-                {timeline.technologies.map((tech, idx) => (
-                  <Badge
+              <div className="space-y-1 mt-1">
+                {timeline.achievements.map((achievement, idx) => (
+                  <p
                     key={idx}
-                    variant="secondary"
-                    className="text-xs capitalize"
+                    className="text-sm leading-relaxed text-muted-foreground break-words"
                   >
-                    {tech}
-                  </Badge>
+                    - {achievement}
+                  </p>
                 ))}
               </div>
             )}

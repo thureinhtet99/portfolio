@@ -13,19 +13,19 @@ import {
 export default function NotFound() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] px-4">
-      <Card className="max-w-md w-full border-0 shadow-none">
-        <CardHeader className="flex flex-row items-center gap-2 border-b pb-4">
-          <AlertTriangle className="h-6 w-6 text-destructive" />
+      <Card className="max-w-lg w-full border-0 shadow-none">
+        <CardHeader className="flex flex-row items-center gap-2 border-b pb-2">
+          <AlertTriangle className="h-10 w-10 text-red-500" />
           <h1 className="text-2xl font-bold">404 Not Found</h1>
         </CardHeader>
-        <CardContent className="pt-6 pb-4">
+        <CardContent className="py-4">
           <p className="text-muted-foreground">
             The page or resource you&apos;re looking for couldn&apos;t be found.
             It might have been moved, deleted, or never existed in the first
             place.
           </p>
         </CardContent>
-        <CardFooter className="flex gap-3 pt-2">
+        <CardFooter className="flex gap-3">
           <Button
             className="rounded-lg"
             variant="outline"

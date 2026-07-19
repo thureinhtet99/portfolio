@@ -40,7 +40,7 @@ function CredentialRow({ label, value, copied, onCopy }: CredentialRowProps) {
         variant="ghost"
         size="sm"
         onClick={onCopy}
-        className="h-6 w-6 shrink-0 p-0 text-muted-foreground hover:text-foreground sm:h-7 sm:w-7"
+        className="h-6 w-6 shrink-0 p-0 text-muted-foreground hover:text-foreground sm:h-7 sm:w-7 cursor-pointer"
         aria-label={`Copy ${label}`}
       >
         {copied ? (
@@ -84,7 +84,7 @@ export function ProjectCredentialsPanel({
       open={isOpen}
       onOpenChange={setIsOpen}
       className={cn(
-        "relative rounded-lg hover:bg-accent-foreground/4 border border-border/20 data-[state=open]:z-20 data-[state=open]:border sm:ps-3",
+        "relative rounded-lg bg-accent-foreground/10 data-[state=open]:z-20 data-[state=open]:border sm:ps-3",
         compact ? "w-auto min-w-0 shrink-0" : "w-full",
         className,
       )}
@@ -95,17 +95,7 @@ export function ProjectCredentialsPanel({
       >
         <div className="flex w-full items-center justify-between">
           <div className="min-w-0">
-            <p className="text-xs font-medium flex items-center gap-2 text-muted-foreground">
-              <KeyRound className="h-4 w-4 text-muted-foreground" />
-              <span className="truncate">
-                {compact ? "Access" : "Demo Access"}
-              </span>
-            </p>
-            {!compact && (
-              <p className="mt-1 text-xs text-muted-foreground">
-                Use these accounts to explore the project.
-              </p>
-            )}
+            <KeyRound className="h-4 w-4 text-muted-foreground" />
           </div>
           <Button
             type="button"
@@ -130,7 +120,7 @@ export function ProjectCredentialsPanel({
       <CollapsibleContent
         className={cn(
           compact &&
-            "absolute right-0 top-[calc(100%+0.35rem)] z-30 w-[min(92vw,22rem)] max-w-[calc(100vw-1rem)] origin-top-right rounded-xl bg-card/95 p-2.5 shadow-[0_22px_48px_-30px_rgba(34,34,34,0.55)] backdrop-blur-sm",
+            "absolute right-0 top-[calc(100%+0.35rem)] z-30 w-[min(92vw,22rem)] max-w-[calc(100vw-1rem)] origin-top-right rounded-xl bg-card/95 shadow-[0_22px_48px_-30px_rgba(34,34,34,0.55)] backdrop-blur-sm",
         )}
       >
         <div
@@ -145,10 +135,7 @@ export function ProjectCredentialsPanel({
             const credentialKey = `${credential.role}-${credential.email}`;
 
             return (
-              <div
-                key={credentialKey}
-                className="rounded-lg bg-background/60 p-2 sm:p-2.5"
-              >
+              <div key={credentialKey} className="rounded-lg p-2 sm:p-2.5">
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
                     {credential.role}
