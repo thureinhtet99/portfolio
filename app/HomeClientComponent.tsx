@@ -14,7 +14,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState, useEffect, useMemo } from "react";
+import { useState } from "react";
 import { StaticImageData } from "next/image";
 import { ProjectType } from "@/types/index.type";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -26,7 +26,6 @@ type Props = {
   available: boolean;
   aboutMe: string;
   intro: string;
-  roles: string;
   featuredProjects: ProjectType[];
   profileImage: StaticImageData | string | null;
   resume: string | null;
@@ -37,49 +36,12 @@ export default function HomeClientComponent({
   available,
   aboutMe,
   intro,
-  roles,
   featuredProjects,
   profileImage,
   resume,
 }: Props) {
-  const rolesList = useMemo(() => {
-    const parsedRoles = roles
-      .split(",")
-      .map((r) => r.trim())
-      .filter((r) => r);
-    return parsedRoles.length > 0 ? parsedRoles : [];
-  }, [roles]);
-
-  const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
-  const [currentText, setCurrentText] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const isMobile = useIsMobile();
-
-  useEffect(() => {
-    if (rolesList.length === 0) return;
-    const role = rolesList[currentRoleIndex];
-    const typingSpeed = isDeleting ? 10 : 20;
-
-    const timer = setTimeout(() => {
-      if (!isDeleting) {
-        if (currentText.length < role.length) {
-          setCurrentText(role.substring(0, currentText.length + 1));
-        } else {
-          setTimeout(() => setIsDeleting(true), 2000);
-        }
-      } else {
-        if (currentText.length > 0) {
-          setCurrentText(role.substring(0, currentText.length - 1));
-        } else {
-          setIsDeleting(false);
-          setCurrentRoleIndex((prev) => (prev + 1) % rolesList.length);
-        }
-      }
-    }, typingSpeed);
-
-    return () => clearTimeout(timer);
-  }, [currentText, isDeleting, currentRoleIndex, rolesList]);
 
   return (
     <div className="page-shell space-y-5 sm:space-y-7">
@@ -105,8 +67,8 @@ export default function HomeClientComponent({
               </span>
             </h1>
             <p className="min-h-[1.75rem] text-lg capitalize text-muted-foreground sm:text-xl">
-              {currentText}
-              <span className="animate-pulse">|</span>
+              {/* {currentText} */}Software developer
+              {/* <span className="animate-pulse">|</span> */}
             </p>
           </div>
 

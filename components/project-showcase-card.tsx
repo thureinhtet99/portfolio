@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, MoveRight } from "lucide-react";
-import { FaGithub } from "react-icons/fa";
 import { ProjectDetailModal } from "@/components/ProjectDetailModal";
 import { ProjectCredentialsPanel } from "@/components/project-credentials-panel";
 import { Badge } from "@/components/ui/badge";
