@@ -3,8 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, MoveRight } from "lucide-react";
-import { ProjectDetailModal } from "@/components/ProjectDetailModal";
-import { ProjectCredentialsPanel } from "@/components/project-credentials-panel";
+import { FaGithub } from "react-icons/fa";
+import { ProjectDetailModal } from "./project-detail-modal";
+import { ProjectCredentialsPanel } from "./project-credentials-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -34,7 +35,7 @@ export function ProjectShowcaseCard({
   return (
     <Card
       className={cn(
-        "group flex h-full flex-col rounded-lg border-0 bg-card/95 transition duration-300 hover:shadow-xs dark:hover:shadow-xs py-0",
+        "surface-panel group flex h-full flex-col py-0",
         className,
       )}
     >
@@ -53,7 +54,7 @@ export function ProjectShowcaseCard({
       <div className="flex flex-1 flex-col p-2 sm:p-3 lg:p-4">
         <div className="relative z-10 flex items-start justify-between gap-2 sm:gap-3">
           <div className="min-w-0 flex-1">
-            <h3 className="break-words text-lg font-semibold tracking-[-0.03em] text-foreground sm:text-xl lg:text-2xl">
+            <h3 className="break-words text-lg font-semibold tracking-[-0.02em] text-foreground sm:text-xl">
               {project.title}
             </h3>
             {project.featured && (

@@ -14,7 +14,7 @@ import { FaGithub } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 import { ProjectDetailModalType } from "@/types/index.type";
-import { ProjectCredentialsPanel } from "@/components/project-credentials-panel";
+import { ProjectCredentialsPanel } from "./project-credentials-panel";
 
 export function ProjectDetailModal({
   project,
@@ -98,7 +98,7 @@ export function ProjectDetailModal({
               Technologies Used
             </h3>
             <div className="flex flex-wrap gap-2">
-              {project.techStacks.map((tech) => (
+              {project.techStacks.slice(0, 4).map((tech) => (
                 <Badge
                   key={tech}
                   variant="secondary"
@@ -107,6 +107,14 @@ export function ProjectDetailModal({
                   {tech}
                 </Badge>
               ))}
+              {project.techStacks.length > 4 && (
+                <Badge
+                  variant="secondary"
+                  className="text-sm bg-accent-foreground/10"
+                >
+                  +{project.techStacks.length - 4} more
+                </Badge>
+              )}
             </div>
           </div>
 

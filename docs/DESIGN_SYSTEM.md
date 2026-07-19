@@ -1,4 +1,4 @@
-# Design System — Portfolio v3
+# Design System.md
 
 **Status:** Draft for aesthetic redesign
 **Stack:** Next.js 15 · Tailwind v4 · shadcn/ui (new-york) · Framer Motion · next-themes

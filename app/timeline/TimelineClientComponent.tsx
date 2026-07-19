@@ -17,7 +17,7 @@ export default function TimelineClientComponent({ work, education }: Props) {
     <div className="mx-auto w-full max-w-4xl">
       <Card className="border-0 shadow-none">
         <CardHeader className="px-0">
-          <CardTitle className="flex items-center gap-2 text-3xl font-semibold sm:text-4xl">
+          <CardTitle className="flex items-center gap-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
             Timeline
           </CardTitle>
         </CardHeader>
@@ -54,7 +54,7 @@ export default function TimelineClientComponent({ work, education }: Props) {
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <div className="flex-1">
                           <div className="flex items-center justify-between">
-                            <h3 className="text-xl font-bold capitalize sm:text-2xl">
+                            <h3 className="text-xl font-bold capitalize tracking-[-0.02em] sm:text-2xl">
                               {exp.title}
                             </h3>
                             <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground sm:gap-x-8 sm:text-sm">

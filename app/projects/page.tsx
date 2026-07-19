@@ -1,5 +1,5 @@
 import { APP_CONFIG } from "@/config/app-config";
-import ProjectsClientComponent from "./ProjectsClientComponent";
+import ProjectsView from "@/features/projects/components/projects-view";
 
 export const dynamic = "force-dynamic";
 
@@ -26,5 +26,5 @@ async function getProjects() {
 export default async function ProjectsPage() {
   const projectsData = await getProjects();
 
-  return <ProjectsClientComponent projects={projectsData} />;
+  return <ProjectsView projects={projectsData} />;
 }

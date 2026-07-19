@@ -66,7 +66,7 @@ export default function Contact() {
         transition={{ duration: 0.2 }}
       >
         <div className="space-y-2 text-center">
-          <h1 className="text-4xl font-bold bg-clip-text">Contact</h1>
+          <h1 className="text-4xl font-bold bg-clip-text tracking-[-0.03em]">Contact</h1>
           <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Have a question or want to work together? Send me a message and
             I&apos;ll get back to you as soon as possible.

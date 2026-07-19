@@ -43,9 +43,34 @@ async function getProjects(): Promise<ProjectType[]> {
   }
 }
 
+async function getGithubEvents(githubUrl?: string) {
+  if (!githubUrl) return [];
+  const username = githubUrl.split("/").pop();
+  if (!username) return [];
+
+  try {
+    const response = await fetch(
+      `https://api.github.com/users/${username}/events/public`,
+      {
+        next: { revalidate: 60 * 30 }, // Revalidate every 30 minutes
+      },
+    );
+    if (!response.ok) {
+      console.error("Failed to fetch GitHub events:", response.statusText);
+      return [];
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch GitHub events:", error);
+    return [];
+  }
+}
+
 export default async function Home() {
   const settings = await getSettings();
   const featuredProjects = await getProjects();
+  const githubEvents = await getGithubEvents(settings.githubUrl);
 
   const residence = settings.residence || "Myanmar";
   const available =
@@ -64,6 +89,7 @@ export default async function Home() {
       featuredProjects={featuredProjects}
       profileImage={profileImage}
       resume={resume}
+      githubEvents={githubEvents}
     />
   );
 }

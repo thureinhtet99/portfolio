@@ -13,12 +13,14 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { sectionReveal, cardReveal } from "@/lib/motion";
 import { useState } from "react";
 import { StaticImageData } from "next/image";
 import { ProjectType } from "@/types/index.type";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { ProjectShowcaseCard } from "@/components/project-showcase-card";
+import { ProjectShowcaseCard } from "@/features/projects/components/project-showcase-card";
+import { GitHubActivityWidget } from "@/features/home/components/github-activity-widget";
 import profileImg from "@/public/profile.svg";
 
 type Props = {
@@ -29,6 +31,7 @@ type Props = {
   featuredProjects: ProjectType[];
   profileImage: StaticImageData | string | null;
   resume: string | null;
+  githubEvents: any[];
 };
 
 export default function HomeClientComponent({
@@ -39,30 +42,30 @@ export default function HomeClientComponent({
   featuredProjects,
   profileImage,
   resume,
+  githubEvents,
 }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const isMobile = useIsMobile();
+  const shouldReduceMotion = useReducedMotion();
 
   return (
-    <div className="page-shell space-y-5 sm:space-y-7">
+    <div className="page-shell">
       <section
         id="hero-section"
         className="surface-panel relative flex min-h-[calc(100vh-8rem)] items-center justify-center overflow-hidden px-5 py-14 sm:px-8 sm:py-16 lg:px-10"
       >
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,34,34,0.08),transparent_55%)] dark:bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.09),transparent_55%)]" />
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          {...sectionReveal}
           className="relative z-10 mx-auto max-w-3xl space-y-6 text-center"
         >
           <div className="space-y-3">
-            <h1 className="text-2xl font-bold sm:text-3xl lg:text-4xl">
+            <h1 className="text-2xl font-bold tracking-[-0.02em] sm:text-3xl lg:text-4xl">
               Hi folks...
             </h1>
-            <h1 className="text-2xl font-bold sm:text-3xl lg:text-4xl">
+            <h1 className="text-2xl font-bold tracking-[-0.02em] sm:text-3xl lg:text-4xl">
               I&apos;m{" "}
-              <span className="text-4xl font-semibold text-muted-foreground sm:text-5xl lg:text-6xl">
+              <span className="text-4xl font-semibold tracking-[-0.03em] text-muted-foreground sm:text-5xl lg:text-6xl">
                 Thu Rein Htet
               </span>
             </h1>
@@ -87,10 +90,14 @@ export default function HomeClientComponent({
             </span>
             <span className="flex items-center gap-1">
               <div
-                className={`h-2.5 w-2.5 me-1 rounded-full transition-colors ${
+                className={`relative h-2.5 w-2.5 me-1 rounded-full transition-colors ${
                   available ? "bg-green-500" : "bg-red-500"
                 }`}
-              />
+              >
+                {available && !shouldReduceMotion && (
+                  <div className="absolute inset-0 h-full w-full animate-ping rounded-full bg-green-500" />
+                )}
+              </div>
               {available ? "Available for work" : "Not available for work"}
             </span>
           </div>
@@ -138,7 +145,7 @@ export default function HomeClientComponent({
         >
           <span>Scroll</span>
           <motion.span
-            animate={{ y: [0, 5, 0] }}
+            animate={shouldReduceMotion ? { y: 0 } : { y: [0, 5, 0] }}
             transition={{
               duration: 1.3,
               repeat: Infinity,
@@ -156,10 +163,7 @@ export default function HomeClientComponent({
         className="surface-panel min-h-[calc(100vh-8rem)] px-5 py-12 sm:px-8 sm:py-14 lg:px-10"
       >
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          {...sectionReveal}
           className="space-y-6 text-center"
         >
           <div className="flex justify-center mb-6">
@@ -218,6 +222,8 @@ export default function HomeClientComponent({
         </motion.div>
       </section>
 
+      <GitHubActivityWidget events={githubEvents} />
+
       {/* Featured Projects Section */}
       <section
         id="projects-section"
@@ -231,10 +237,7 @@ export default function HomeClientComponent({
           }`}
         >
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
+            {...sectionReveal}
             className="section-heading"
           >
             Featured Projects
@@ -253,10 +256,7 @@ export default function HomeClientComponent({
             {featuredProjects.slice(0, 2).map((project, index) => (
               <motion.div
                 key={project.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                {...cardReveal(index)}
               >
                 <ProjectShowcaseCard
                   project={project}
