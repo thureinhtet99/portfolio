@@ -28,7 +28,7 @@ Accent token pair added to `:root` / `.dark` in `app/globals.css`:
 
 ```css
 :root {
-  --accent-signal: oklch(0.64 0.19 250);       /* muted blue-violet */
+  --accent-signal: oklch(0.64 0.19 250); /* muted blue-violet */
   --accent-signal-foreground: oklch(0.98 0 0);
 }
 
@@ -72,14 +72,14 @@ Opacity is the primary tool for hierarchy here (e.g. `text-muted-foreground/70`,
 
 ### 3.1 Type scale
 
-| Role                                 | Class stack                                                         | Notes                                       |
-| ------------------------------------ | ------------------------------------------------------------------- | ------------------------------------------- |
-| Hero name/title                      | `text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-[-0.03em]` | One per page, homepage only                 |
-| Section heading (`.section-heading`) | `text-3xl sm:text-4xl font-bold tracking-[-0.03em]`                 | Defined as reusable utility class           |
-| Card title                           | `text-lg sm:text-xl font-semibold tracking-[-0.02em]`               |                                             |
-| Body / prose                         | `text-base sm:text-lg leading-relaxed text-muted-foreground`        | Markdown-rendered about/intro               |
-| Small / meta                         | `text-xs sm:text-sm text-muted-foreground`                          | Dates, tags, captions                       |
-| Monospace meta                       | `font-mono text-xs text-muted-foreground`                           | Commit hashes, status footer, timestamps    |
+| Role                                 | Class stack                                                         | Notes                                    |
+| ------------------------------------ | ------------------------------------------------------------------- | ---------------------------------------- |
+| Hero name/title                      | `text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-[-0.03em]` | One per page, homepage only              |
+| Section heading (`.section-heading`) | `text-3xl sm:text-4xl font-bold tracking-[-0.03em]`                 | Defined as reusable utility class        |
+| Card title                           | `text-lg sm:text-xl font-semibold tracking-[-0.02em]`               |                                          |
+| Body / prose                         | `text-base sm:text-lg leading-relaxed text-muted-foreground`        | Markdown-rendered about/intro            |
+| Small / meta                         | `text-xs sm:text-sm text-muted-foreground`                          | Dates, tags, captions                    |
+| Monospace meta                       | `font-mono text-xs text-muted-foreground`                           | Commit hashes, status footer, timestamps |
 
 **Tracking rule:** anything ≥ `text-2xl` gets `tracking-[-0.02em]` to `tracking-[-0.03em]` (already used in `admin/page.tsx`, `ProjectDetailModal`, `CertificateSection`, `HomeClientComponent`).
 
@@ -99,13 +99,13 @@ Prose blocks (`aboutMe`, `intro`) should stay `max-w-3xl` (already correct in `H
 
 ### 4.2 Container widths
 
-| Context                   | Max width                                            |
-| ------------------------- | ---------------------------------------------------- |
-| App shell (nav, footer)   | `max-w-7xl` — via `.app-shell` class                 |
-| Page shell                | `max-w-7xl` with `space-y-20` — via `.page-shell`    |
-| Prose / contact form      | `max-w-2xl`                                          |
-| Reading content (about)   | `max-w-3xl`                                          |
-| Project/certificate grids | `max-w-7xl`, 2-col on `lg:`                          |
+| Context                   | Max width                                         |
+| ------------------------- | ------------------------------------------------- |
+| App shell (nav, footer)   | `max-w-7xl` — via `.app-shell` class              |
+| Page shell                | `max-w-7xl` with `space-y-20` — via `.page-shell` |
+| Prose / contact form      | `max-w-2xl`                                       |
+| Reading content (about)   | `max-w-3xl`                                       |
+| Project/certificate grids | `max-w-7xl`, 2-col on `lg:`                       |
 
 ### 4.3 Radius
 
@@ -125,11 +125,21 @@ Don't invent a third shadow value. If something needs to feel "more important," 
 **Utility classes** (defined in `app/globals.css` `@layer components`):
 
 ```css
-.app-shell    { @apply mx-auto w-full max-w-7xl; }
-.page-shell   { @apply mx-auto w-full max-w-7xl space-y-20; }
-.section-heading { @apply text-3xl font-bold tracking-[-0.03em] sm:text-4xl; }
-.surface-panel { @apply rounded-[1.5rem] border border-border/70 bg-card/92 text-card-foreground shadow-[...] backdrop-blur-sm; }
-.surface-panel-muted { @apply rounded-[1.25rem] border border-border/40 bg-background/80; }
+.app-shell {
+  @apply mx-auto w-full max-w-7xl;
+}
+.page-shell {
+  @apply mx-auto w-full max-w-7xl space-y-20;
+}
+.section-heading {
+  @apply text-3xl font-bold tracking-[-0.03em] sm:text-4xl;
+}
+.surface-panel {
+  @apply rounded-[1.5rem] border border-border/70 bg-card/92 text-card-foreground shadow-[...] backdrop-blur-sm;
+}
+.surface-panel-muted {
+  @apply rounded-[1.25rem] border border-border/40 bg-background/80;
+}
 ```
 
 All five classes are defined and actively used across `HomeClientComponent`, `admin/page.tsx`, `SettingsSection`, etc.
@@ -181,7 +191,7 @@ const cardReveal = (index: number) => ({
 ### 7.1 Hero (homepage)
 
 - One `h1` for name, one supporting line for role (typing animation currently commented out — `Software developer` is static text).
-- Availability indicator: `available && !shouldReduceMotion` guard is in place for the ping animation. **Color still uses `bg-green-500`/`bg-red-500`** — should migrate to `accent-signal` per §2.1.
+- Availability indicator: `available && !shouldReduceMotion` guard is in place for the ping animation. **Color status disputed** — this section says still `bg-green-500`/`bg-red-500`, but `PROGRESS.md`'s Open Decisions table says already migrated to `accent-signal`. Read `HomeClientComponent.tsx:93-99` directly to settle it, then fix whichever doc is wrong. Should end up on `accent-signal` per §2.1 either way.
 - CTA row: 2 buttons — "Get in Touch" (primary) and "View Resume" (outline, conditional on resume data). Matches the 2-CTA rule.
 
 ### 7.2 Project / Certificate Cards
@@ -205,7 +215,7 @@ const cardReveal = (index: number) => ({
 - Format: `● All systems nominal · {commitHash} · 4,213 views` — monospace, single line.
 - Status dot uses `bg-[var(--accent-signal)]` ✅.
 - Deploy hash from `VERCEL_GIT_COMMIT_SHA` ✅.
-- View counter: **hardcoded to "4,213 views"** — not yet wired to real counter.
+- View counter: **status disputed** — this section says hardcoded to "4,213 views", but `PROGRESS.md`'s Open Decisions table says already wired to the `setting` table `siteViews` key. Read `Footer.tsx` and `app/api/settings/route.ts` directly to settle it, then fix whichever doc is wrong.
 
 ### 7.5 Resume CTA
 
@@ -235,4 +245,5 @@ Per scope: no Catppuccin-style theme family switcher, no per-accent-color picker
 1. **Accent hue** — `oklch(0.64 0.19 250)` is wired in. **Needs eyeball check** against the pure black/white palette in light + dark before locking.
 2. **Location widget** — still a decision. Recommendation: static illustrated pin. No code yet.
 3. **View counter storage** — **resolved for v1: use `setting` table with `siteViews` key.** Implementation pending.
-4. **Availability dot color** — currently `bg-green-500`/`bg-red-500`; should migrate to `accent-signal` to stay inside the two-tone system.
+4. **Availability dot color** — status disputed with `PROGRESS.md` (see §7.1 above); verify against source before assuming either doc. End state should be `accent-signal` to stay inside the two-tone system.
+5. **View counter wiring** — status disputed with `PROGRESS.md` (see §7.4 above); verify against source before assuming either doc.

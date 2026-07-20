@@ -4,7 +4,11 @@
 - Discoverability: contributors find behavior where routes/features live.
 - Ease of change: less context-switching between distant folders.
 
-## Actual Project Structure
+## v3 Target Project Structure
+
+> **This is the migration target, not the current state.** For what the repo actually
+> looks like right now, see `PROJECT_MAP.md`. The `←` arrows below show where each file
+> currently lives. Migration task list and status live in `PROGRESS.md` Phase 6.
 
 ```
 ├── app/                                        -> next.js routing, layout, metadata, route handlers
