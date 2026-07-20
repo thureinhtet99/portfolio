@@ -13,6 +13,9 @@ import {
   ChevronDown,
   ChevronUp,
   Calendar,
+  Github,
+  Linkedin,
+  Facebook,
 } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { sectionReveal, cardReveal } from "@/lib/motion";
@@ -33,7 +36,13 @@ type Props = {
   profileImage: StaticImageData | string | null;
   resume: string | null;
   githubEvents: any[];
+  githubLanguages: Record<string, number>;
   bookingUrl: string | null;
+  socialLinks: {
+    github: string | null;
+    linkedin: string | null;
+    facebook: string | null;
+  };
 };
 
 export default function HomeClientComponent({
@@ -45,7 +54,9 @@ export default function HomeClientComponent({
   profileImage,
   resume,
   githubEvents,
+  githubLanguages,
   bookingUrl,
+  socialLinks,
 }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const isMobile = useIsMobile();
@@ -86,11 +97,11 @@ export default function HomeClientComponent({
             )}
           </div>
 
-          <div className="flex flex-col items-center justify-center gap-2 text-sm text-muted-foreground sm:flex-row sm:gap-8">
-            <span className="flex items-center gap-1">
-              <MapPin className="h-4 w-4 me-1" />
-              {residence}
-            </span>
+          <div className="flex flex-col items-center justify-center gap-3 text-sm text-muted-foreground sm:flex-row sm:gap-6">
+            <div className="surface-panel-muted flex items-center gap-2 px-3 py-1.5">
+              <MapPin className="h-3.5 w-3.5 text-[var(--accent-signal)]" />
+              <span>Currently based in <span className="font-medium text-foreground">{residence}</span></span>
+            </div>
             <span className="flex items-center gap-1">
               <div
                 className={`relative h-2.5 w-2.5 me-1 rounded-full transition-colors ${
@@ -243,7 +254,7 @@ export default function HomeClientComponent({
         </motion.div>
       </section>
 
-      <GitHubActivityWidget events={githubEvents} />
+      <GitHubActivityWidget events={githubEvents} languages={githubLanguages} />
 
       {/* Featured Projects Section */}
       <section
@@ -296,6 +307,62 @@ export default function HomeClientComponent({
           </div>
         )}
       </section>
+
+      {/* Connect Section */}
+      {(socialLinks.github || socialLinks.linkedin || socialLinks.facebook) && (
+        <section
+          id="connect-section"
+          className="surface-panel px-5 py-10 sm:px-8 sm:py-12 lg:px-10"
+        >
+          <motion.div
+            {...sectionReveal}
+            className="space-y-6 text-center"
+          >
+            <h2 className="section-heading">Find Me On</h2>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              {socialLinks.github && (
+                <Button variant="outline" asChild size="lg" className="rounded-lg">
+                  <Link
+                    href={socialLinks.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2"
+                  >
+                    <Github className="h-5 w-5" />
+                    GitHub
+                  </Link>
+                </Button>
+              )}
+              {socialLinks.linkedin && (
+                <Button variant="outline" asChild size="lg" className="rounded-lg">
+                  <Link
+                    href={socialLinks.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2"
+                  >
+                    <Linkedin className="h-5 w-5" />
+                    LinkedIn
+                  </Link>
+                </Button>
+              )}
+              {socialLinks.facebook && (
+                <Button variant="outline" asChild size="lg" className="rounded-lg">
+                  <Link
+                    href={socialLinks.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2"
+                  >
+                    <Facebook className="h-5 w-5" />
+                    Facebook
+                  </Link>
+                </Button>
+              )}
+            </div>
+          </motion.div>
+        </section>
+      )}
     </div>
   );
 }

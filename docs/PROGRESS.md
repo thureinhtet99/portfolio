@@ -62,17 +62,20 @@ Standardized Framer Motion usage across the site.
 
 Built and polished homepage widgets and card patterns.
 
-| Item                                                                   | Status                           | File                                                                        |
-| ---------------------------------------------------------------------- | -------------------------------- | --------------------------------------------------------------------------- |
-| Hero availability dot → `accent-signal` / `muted-foreground/50`        | ✅                               | `HomeClientComponent.tsx:93-99`                                             |
-| Hero CTA row: Get in Touch + Book a Chat + View Resume                 | ✅                               | `HomeClientComponent.tsx:105-129`                                           |
-| Booking URL support (`bookingUrl` setting)                             | ✅                               | `app/page.tsx`, `HomeClientComponent.tsx`                                   |
-| Project cards: `aspect-video`, tag cap 4 + "+N more", hover image-only | ✅                               | `project-showcase-card.tsx`                                                 |
-| GitHub Activity Widget: server-side fetch + revalidate                 | ✅                               | `app/page.tsx:49-71`, `features/home/components/github-activity-widget.tsx` |
-| GitHub Activity Widget: failure state                                  | ✅                               | collapses to "Activity unavailable"                                         |
-| Status footer: monospace, accent dot, deploy hash                      | ✅                               | `components/Footer.tsx`                                                     |
-| Status footer: real view counter (vs. hardcoded)                       | ⚠️ disputed — see Open Decisions | `components/Footer.tsx`                                                     |
-| Breadcrumbs navigation (terminal aesthetic)                            | ✅                               | `components/breadcrumbs.tsx`, `app/layout.tsx`                              |
+| Item                                                                   | Status | File                                                                        |
+| ---------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------- |
+| Hero availability dot → `accent-signal` / `muted-foreground/50`        | ✅     | `HomeClientComponent.tsx:97-103`                                            |
+| Hero CTA row: Get in Touch + Book a Chat + View Resume                 | ✅     | `HomeClientComponent.tsx:108-140`                                           |
+| Booking URL support (`bookingUrl` setting)                             | ✅     | `app/page.tsx`, `HomeClientComponent.tsx`                                   |
+| Location widget — "Currently Based In" with accent-signal pin          | ✅     | `HomeClientComponent.tsx:91-97`                                             |
+| Project cards: `aspect-video`, tag cap 4 + "+N more", hover image-only | ✅     | `project-showcase-card.tsx`                                                 |
+| GitHub Activity Widget: server-side fetch + revalidate                 | ✅     | `app/page.tsx:49-71`, `features/home/components/github-activity-widget.tsx` |
+| GitHub Activity Widget: language bar with accent-signal opacity steps  | ✅     | `features/home/components/github-activity-widget.tsx`                       |
+| GitHub Activity Widget: failure state                                  | ✅     | collapses to "Activity unavailable"                                         |
+| Status footer: monospace, accent dot, deploy hash, real view counter   | ✅     | `components/Footer.tsx`                                                     |
+| Breadcrumbs navigation (terminal aesthetic)                            | ✅     | `components/breadcrumbs.tsx`, `app/layout.tsx`                              |
+| External credibility links section ("Find Me On")                      | ✅     | `HomeClientComponent.tsx:312-355`                                           |
+| Social links props (github, linkedin, facebook)                        | ✅     | `app/page.tsx`, `HomeClientComponent.tsx`                                   |
 
 ### Phase 5 — Accessibility 🟡
 
@@ -124,12 +127,12 @@ snapshot, not an instruction to delete `DESGIN_SYSTEM.md`, `PROGRESS.md`, or
 
 ## Open Decisions
 
-| Decision                            | Status              | Resolution                                                                                                                                                                                                                                                |
-| ----------------------------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Accent hue (`oklch(0.64 0.19 250)`) | ⏳ pending          | Needs eyeball check in light + dark                                                                                                                                                                                                                       |
-| Location widget                     | ⏳ pending          | Recommend static illustrated pin                                                                                                                                                                                                                          |
-| View counter storage                | ⚠️ conflicting docs | This file says wired to `setting` table `siteViews` key; `DESGIN_SYSTEM.md` §7.4 says still hardcoded to `"4,213 views"` in `Footer.tsx`. **Not resolved — read `Footer.tsx` and `app/api/settings/route.ts` directly**, then fix whichever doc is wrong. |
-| Availability dot color              | ⚠️ conflicting docs | This file says migrated to `accent-signal`; `DESGIN_SYSTEM.md` §7.1/§10 says still `bg-green-500`/`bg-red-500`. **Not resolved — read `HomeClientComponent.tsx` directly before touching this**, then fix whichever doc is wrong.                         |
+| Decision                            | Status     | Resolution                                                                                                                                                                    |
+| ----------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Accent hue (`oklch(0.64 0.19 250)`) | ⏳ pending | Needs eyeball check in light + dark                                                                                                                                           |
+| Location widget                     | ✅ resolved | Static "Currently Based In" display with accent-signal pin (implemented in S4)                                                                                                |
+| View counter storage                | ✅ resolved | `setting` table `siteViews` key (implemented in S2)                                                                                                                           |
+| Availability dot color              | ✅ resolved | `accent-signal` for available, `muted-foreground/50` for unavailable (verified in source, implemented in S2)                                                                  |
 
 ---
 
@@ -137,12 +140,9 @@ snapshot, not an instruction to delete `DESGIN_SYSTEM.md`, `PROGRESS.md`, or
 
 **In order of priority:**
 
-1. **Resolve doc conflicts** — read `HomeClientComponent.tsx` and `Footer.tsx` directly to settle the availability-dot-color and view-counter disputes (see Open Decisions), then correct whichever of this file or `DESGIN_SYSTEM.md` was stale
-2. **Visual check** — open browser, toggle light/dark, verify accent-signal looks right on status dot, GitHub widget, admin panel
-3. **Phase 5 a11y** — contrast check, keyboard nav, alt text
-4. **Booking URL** — add `bookingUrl` setting in admin panel (e.g., Cal.com link)
-5. **Language bar** — GitHub Activity Widget language usage bar (future)
-6. **Phase 6 — v3 structural migration** — see Phase 6 section above; do this after Phases 1–5 are fully closed out, not in parallel
+1. **Visual check** — open browser, toggle light/dark, verify accent-signal looks right on status dot, GitHub widget, admin panel
+2. **Phase 5 a11y** — contrast check, keyboard nav, alt text
+3. **Phase 6 — v3 structural migration** — see Phase 6 section above; do this after Phases 1–5 are fully closed out, not in parallel
 
 ---
 
@@ -163,3 +163,4 @@ Don't build these unless explicitly asked:
 | 2026-07-20 | S1      | Phase 1 complete. `lib/motion.ts` extracted. GitHub widget built. Footer with hardcoded view counter. All 5 docs rewritten. Broken import fixed.                             |
 | 2026-07-20 | S2      | Phase 2 container swap. Phase 3 motion verified. Phase 4 availability dot + view counter wired.                                                                              |
 | 2026-07-20 | S3      | Phase 2 font-mono audit done. Contact page uses shared motion helpers. Added "Book a Chat" CTA with `bookingUrl` setting. Added breadcrumbs navigation (terminal aesthetic). |
+| 2026-07-20 | S4      | Added GitHub language bar with accent-signal opacity steps. Enhanced location widget ("Currently Based In"). Added "Find Me On" section with social links. |

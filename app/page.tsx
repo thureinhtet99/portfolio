@@ -70,10 +70,39 @@ async function getGithubEvents(githubUrl?: string) {
   }
 }
 
+async function getGithubLanguages(githubUrl?: string) {
+  if (!githubUrl) return {};
+  const username = githubUrl.split("/").pop();
+  if (!username) return {};
+
+  try {
+    const response = await fetch(
+      `https://api.github.com/users/${username}/repos?per_page=10&sort=updated`,
+      {
+        next: { revalidate: 60 * 60 }, // Revalidate every hour
+      },
+    );
+    if (!response.ok) return {};
+    const repos = await response.json();
+
+    const languageMap: Record<string, number> = {};
+    for (const repo of repos) {
+      if (repo.language) {
+        languageMap[repo.language] = (languageMap[repo.language] || 0) + 1;
+      }
+    }
+    return languageMap;
+  } catch (error) {
+    console.error("Failed to fetch GitHub languages:", error);
+    return {};
+  }
+}
+
 export default async function Home() {
   const settings = await getSettings();
   const featuredProjects = await getProjects();
   const githubEvents = await getGithubEvents(settings.githubUrl);
+  const githubLanguages = await getGithubLanguages(settings.githubUrl);
 
   // Increment view count
   try {
@@ -109,6 +138,9 @@ export default async function Home() {
   const profileImage = settings.profileImage || null;
   const resume = settings.resume || null;
   const bookingUrl = settings.bookingUrl || null;
+  const githubUrl = settings.githubUrl || null;
+  const linkedinUrl = settings.linkedinUrl || null;
+  const facebookUrl = settings.facebookUrl || null;
 
   return (
     <HomeClientComponent
@@ -120,7 +152,13 @@ export default async function Home() {
       profileImage={profileImage}
       resume={resume}
       githubEvents={githubEvents}
+      githubLanguages={githubLanguages}
       bookingUrl={bookingUrl}
+      socialLinks={{
+        github: githubUrl,
+        linkedin: linkedinUrl,
+        facebook: facebookUrl,
+      }}
     />
   );
 }
