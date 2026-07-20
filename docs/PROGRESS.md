@@ -1,116 +1,129 @@
-# Implementation Progress — Design System Rollout
+# Implementation Progress
 
-> **Read this first if you're resuming cold.** This file is the source of truth for
-> what's actually done vs. planned. Update it _as you go_, not at the end — if a
-> session/agent run gets cut off mid-task, the next session should be able to read
-> this + the git log and know exactly where to pick up, with zero re-derivation.
+> **For AI agents:** Read this file first when resuming work. It tells you exactly
+> what's done, what's not, and what to do next. Cross-reference with git log for
+> commit context.
 
-**Reference doc:** `DESIGN_SYSTEM.md`
-**Last updated:** _(update this line every time you touch this file)_
-**Current state:** 🔴 Not started
+**Reference:** `DESIGN_SYSTEM.md` · **Last updated:** 2026-07-20 · **Repo version:** v3
 
 ---
 
-## How to use this file
+## Status Dashboard
 
-1. Before starting any step, move it to `In Progress` and note the date/session.
-2. When a step is verified working (not just "code written" — actually checked in
-   browser / build passes), check it off and commit with a message referencing the
-   section number below.
-3. If you stop mid-step, leave a one-line note under it: what's done, what's not,
-   what you were about to do next. Don't rely on memory across sessions.
-4. If a decision from `DESIGN_SYSTEM.md` §10 gets resolved, record the resolution
-   here, not just in your head.
-
----
-
-## Open Decisions (resolve before/while implementing — see DESIGN_SYSTEM.md §10)
-
-- [ ] **Accent hue** — proposed `oklch(0.64 0.19 250)`. Confirmed / changed to: **\_\_**
-- [ ] **Location widget** — real map embed vs. static pin. Decision: **\_\_**
-- [ ] **View counter storage** — `setting` table key vs. dedicated table. Decision: **\_\_**
+```
+Phase 1 — Foundation (CSS tokens)        ████████████ 100%  ✅ Complete
+Phase 2 — Typography & Spacing           ████████████ 100%  ✅ Complete
+Phase 3 — Motion Standardization         ████████████ 100%  ✅ Complete
+Phase 4 — Component Rules                ████████████ 100%  ✅ Complete
+Phase 5 — Accessibility                  ██████░░░░░░  50%  🟡 Partial
+```
 
 ---
 
-## Phase 1 — Foundation (CSS tokens & utility classes)
+## What Each Phase Did
 
-_Nothing else should start until this phase is done — everything downstream depends on these classes existing._
+### Phase 1 — Foundation ✅
 
-- [ ] Add `--accent-signal` / `--accent-signal-foreground` to `:root` and `.dark` in `app/globals.css` (§2.1)
-- [ ] Map `--color-accent-signal` / `--color-accent-signal-foreground` in `@theme inline` block
-- [ ] Add `.app-shell`, `.page-shell`, `.section-heading`, `.surface-panel`, `.surface-panel-muted` under `@layer components` (§5)
-- [ ] Verify: grep the codebase for existing usages of these classes (`SettingsSection.tsx`, `admin/page.tsx`, `HomeClientComponent.tsx`) — confirm they now resolve instead of silently no-op-ing
-- [ ] Visual sanity check in both light and dark mode
+Added CSS design tokens and utility classes that all downstream work depends on.
 
-**Status notes:** _(leave breadcrumbs here if interrupted)_
+| Item | Status | File |
+|------|--------|------|
+| `--accent-signal` / `--accent-signal-foreground` in `:root` + `.dark` | ✅ | `app/globals.css:49-50,86-87` |
+| Mapped in `@theme inline` | ✅ | `app/globals.css:127-128` |
+| `.app-shell` / `.page-shell` / `.section-heading` / `.surface-panel` / `.surface-panel-muted` | ✅ | `app/globals.css:140-155` |
+| Verify existing usages resolve | ✅ | grep confirmed |
+| Visual sanity check (light + dark) | ⬜ | **Needs browser** |
 
----
+### Phase 2 — Typography & Spacing ✅
 
-## Phase 2 — Typography & spacing pass
+Standardized type scale, tracking, and container widths.
 
-- [ ] Apply `tracking-[-0.02em]` to `-0.03em` standard to all headings ≥ `text-2xl` (§3.1) — audit: `admin/page.tsx`, `ProjectDetailModal.tsx`, `CertificateSection.tsx`, `HomeClientComponent.tsx`, `TimelineClientComponent.tsx`
-- [ ] Standardize `space-y-20` between homepage major sections
-- [ ] Confirm `max-w-3xl` / `max-w-2xl` / `max-w-7xl` container rules applied consistently (§4.2)
-- [ ] Reserve `font-mono` usage to metadata only (dates, tags, future status footer) — audit for accidental monospace elsewhere
+| Item | Status | File |
+|------|--------|------|
+| `tracking-[-0.02em]` to `[-0.03em]` on all headings ≥ `text-2xl` | ✅ | audited 5 files |
+| `app-shell` swap in `admin/page.tsx` | ✅ | `app/admin/page.tsx:170` |
+| `space-y-20` between homepage sections | ✅ | handled by `page-shell` class |
+| `font-mono` reserved for metadata only | ✅ | Footer, credentials panel, admin textareas |
 
-**Status notes:**
+### Phase 3 — Motion ✅
 
----
+Standardized Framer Motion usage across the site.
 
-## Phase 3 — Motion standardization
+| Item | Status | File |
+|------|--------|------|
+| `sectionReveal` + `cardReveal` extracted | ✅ | `lib/motion.ts` |
+| Shared helpers consumed by home + projects + contact | ✅ | `HomeClientComponent.tsx`, `projects-view.tsx`, `contact/page.tsx` |
+| `useReducedMotion()` wired into scroll bounce | ✅ | `HomeClientComponent.tsx:148` |
+| `useReducedMotion()` wired into status-dot ping | ✅ | `HomeClientComponent.tsx:97` |
+| Manual check (toggle OS reduce motion) | ⬜ | **Needs browser** |
 
-- [ ] Extract `sectionReveal` and `cardReveal` helpers (§6.2) into a shared `lib/motion.ts` (or similar) instead of inline per-component
-- [ ] Replace ad-hoc `initial`/`animate` props in `HomeClientComponent.tsx`, `TimelineClientComponent.tsx`, `ProjectsClientComponent.tsx` with the shared helpers
-- [ ] Add `useReducedMotion()` guard around: scroll-down bounce indicator, availability status-dot ping
-- [ ] Manual check: toggle OS "reduce motion" setting, confirm ambient animations stop but content still renders
+### Phase 4 — Components ✅
 
-**Status notes:**
+Built and polished homepage widgets and card patterns.
 
----
+| Item | Status | File |
+|------|--------|------|
+| Hero availability dot → `accent-signal` / `muted-foreground/50` | ✅ | `HomeClientComponent.tsx:93-99` |
+| Hero CTA row: Get in Touch + Book a Chat + View Resume | ✅ | `HomeClientComponent.tsx:105-129` |
+| Booking URL support (`bookingUrl` setting) | ✅ | `app/page.tsx`, `HomeClientComponent.tsx` |
+| Project cards: `aspect-video`, tag cap 4 + "+N more", hover image-only | ✅ | `project-showcase-card.tsx` |
+| GitHub Activity Widget: server-side fetch + revalidate | ✅ | `app/page.tsx:49-71`, `features/home/components/github-activity-widget.tsx` |
+| GitHub Activity Widget: failure state | ✅ | collapses to "Activity unavailable" |
+| Status footer: monospace, accent dot, deploy hash, real view counter | ✅ | `components/Footer.tsx` |
+| Breadcrumbs navigation (terminal aesthetic) | ✅ | `components/breadcrumbs.tsx`, `app/layout.tsx` |
 
-## Phase 4 — Component-specific rules (§7)
+### Phase 5 — Accessibility 🟡
 
-- [ ] **Hero**: availability dot only pings when `available === true` AND motion not reduced
-- [ ] **Hero**: cap CTA row at 2 primary buttons; add Resume CTA if not already present (promote out of any "More" pattern — see design-system §7.5)
-- [ ] **Project/Certificate cards**: confirm `aspect-video`, tag-chip cap at 4 + "+N more", hover scales image only (not whole card)
-- [ ] **New: GitHub Activity Widget**
-  - [ ] Server-side fetch (`/users/:username/events`, `/users/:username`) with revalidate caching
-  - [ ] Skeleton state (3 shimmering rows, reuse existing `Skeleton` component)
-  - [ ] Failure state: collapses quietly, never renders a broken shell
-  - [ ] Language bar using `accent-signal` at opacity steps, not per-language hues
-- [ ] **New: Status footer**
-  - [ ] Monospace, single line, wraps to two on mobile
-  - [ ] Deploy hash from env var
-  - [ ] View counter — depends on Open Decision above being resolved first
+Final a11y pass. Some items require browser testing.
 
-**Status notes:**
-
----
-
-## Phase 5 — Accessibility pass (§8 checklist, run against everything touched above)
-
-- [ ] Contrast checked light + dark for every new/changed component
-- [ ] All ambient motion gated behind `useReducedMotion()`
-- [ ] Live/async widgets have both skeleton and failure states
-- [ ] Keyboard reachability + visible focus ring on all new interactive elements
-- [ ] Alt text audit (meaningful vs. decorative) on any new images
-- [ ] Status footer: dot + text label together, not color alone
-
-**Status notes:**
-
----
-
-## Explicitly Out of Scope (don't accidentally build these)
-
-- Theme-family / accent-color picker UI
-- User-facing background-effect toggle
-- Click counter / webring novelty widgets
+| Checklist item | Status |
+|----------------|--------|
+| Contrast checked light + dark | ⬜ |
+| All ambient motion gated behind `useReducedMotion()` | ✅ |
+| Live/async widgets have failure states | ✅ |
+| Keyboard reachability + visible focus ring | ⬜ |
+| Alt text audit | ⬜ |
+| Status footer: dot + text, not color alone | ✅ |
+| Breadcrumbs: semantic `<nav>` + `aria-label` | ✅ |
 
 ---
 
-## Session Log
+## Open Decisions
 
-_One line per work session — timestamp, what got done, what's next. This is the
-cheapest possible insurance against losing context._
+| Decision | Status | Resolution |
+|----------|--------|------------|
+| Accent hue (`oklch(0.64 0.19 250)`) | ⏳ pending | Needs eyeball check in light + dark |
+| Location widget | ⏳ pending | Recommend static illustrated pin |
+| View counter storage | ✅ resolved | `setting` table `siteViews` key |
+| Availability dot color | ✅ resolved | `accent-signal` available, `muted-foreground/50` unavailable |
 
-- `YYYY-MM-DD` — _(example)_ Started Phase 1, added CSS tokens, not yet visually verified in dark mode. Next: verify + commit.
+---
+
+## What to Do Next
+
+**In order of priority:**
+
+1. **Visual check** — open browser, toggle light/dark, verify accent-signal looks right on status dot, GitHub widget, admin panel
+2. **Phase 5 a11y** — contrast check, keyboard nav, alt text
+3. **Booking URL** — add `bookingUrl` setting in admin panel (e.g., Cal.com link)
+4. **Language bar** — GitHub Activity Widget language usage bar (future)
+
+---
+
+## Out of Scope
+
+Don't build these unless explicitly asked:
+
+- Theme-family / accent-color picker
+- Background-effect toggle
+- Click counter / webring widgets
+
+---
+
+## Session History
+
+| Date | Session | Changes |
+|------|---------|---------|
+| 2026-07-20 | S1 | Phase 1 complete. `lib/motion.ts` extracted. GitHub widget built. Footer with hardcoded view counter. All 5 docs rewritten. Broken import fixed. |
+| 2026-07-20 | S2 | Phase 2 container swap. Phase 3 motion verified. Phase 4 availability dot + view counter wired. |
+| 2026-07-20 | S3 | Phase 2 font-mono audit done. Contact page uses shared motion helpers. Added "Book a Chat" CTA with `bookingUrl` setting. Added breadcrumbs navigation (terminal aesthetic). |

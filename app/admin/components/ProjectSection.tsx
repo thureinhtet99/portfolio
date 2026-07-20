@@ -25,7 +25,7 @@ import { APP_CONFIG } from "@/config/app-config";
 import DeleteConfirmBox from "@/components/DeleteConfirmBox";
 import Image from "next/image";
 import Link from "next/link";
-import { ProjectCredentialsPanel } from "@/components/project-credentials-panel";
+import { ProjectCredentialsPanel } from "@/features/projects/components/project-credentials-panel";
 
 type ProjectFormState = {
   title: string;
