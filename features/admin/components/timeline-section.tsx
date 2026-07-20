@@ -19,7 +19,7 @@ import countries from "@/data/countries.json";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { APP_CONFIG } from "@/config/app-config";
-import DeleteConfirmBox from "@/components/DeleteConfirmBox";
+import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
 import {
   Select,
   SelectContent,

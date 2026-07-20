@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Award, Clock, ExternalLink } from "lucide-react";
-import { formatDate } from "@/utils/formate-date";
+import { formatDate } from "@/lib/utils";
 
 type Certificate = {
   id: string;

@@ -22,10 +22,7 @@ export function Breadcrumbs() {
     <nav aria-label="Breadcrumb" className="mb-4">
       <ol className="font-mono text-xs text-muted-foreground flex items-center gap-1.5">
         <li>
-          <Link
-            href="/"
-            className="hover:text-foreground transition-colors"
-          >
+          <Link href="/" className="hover:text-foreground transition-colors">
             ~
           </Link>
         </li>
@@ -38,10 +35,7 @@ export function Breadcrumbs() {
             <li key={href} className="flex items-center gap-1.5">
               <span aria-hidden="true">/</span>
               {isLast ? (
-                <span
-                  aria-current="page"
-                  className="text-foreground"
-                >
+                <span aria-current="page" className="text-foreground">
                   {label}
                 </span>
               ) : (

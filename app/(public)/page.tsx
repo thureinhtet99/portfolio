@@ -1,5 +1,5 @@
 import { APP_CONFIG } from "@/config/app-config";
-import HomeClientComponent from "./HomeClientComponent";
+import { HomeView } from "@/features/home/components/home-view";
 import { ProjectType } from "@/types/index.type";
 import { db } from "@/db/client";
 import { setting } from "@/db/schema";
@@ -143,7 +143,7 @@ export default async function Home() {
   const facebookUrl = settings.facebookUrl || null;
 
   return (
-    <HomeClientComponent
+    <HomeView
       residence={residence}
       available={available}
       aboutMe={aboutMe}

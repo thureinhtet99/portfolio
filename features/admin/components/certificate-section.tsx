@@ -20,7 +20,7 @@ import {
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { APP_CONFIG } from "@/config/app-config";
-import DeleteConfirmBox from "@/components/DeleteConfirmBox";
+import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
 import Image from "next/image";
 
 export default function CertificatesSection() {

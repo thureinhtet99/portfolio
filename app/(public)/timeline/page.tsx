@@ -1,5 +1,5 @@
 import { APP_CONFIG } from "@/config/app-config";
-import TimelineClientComponent from "./TimelineClientComponent";
+import TimelineView from "@/features/timeline/components/timeline-view";
 import {
   EducationType,
   TimelineType,
@@ -56,5 +56,5 @@ export default async function Timelines() {
       period: edu.period,
     }));
 
-  return <TimelineClientComponent work={work} education={education} />;
+  return <TimelineView work={work} education={education} />;
 }

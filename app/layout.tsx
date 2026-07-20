@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "../components/theme-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "sonner";
-import QueryProvider from "@/components/QueryProvider";
-import { Footer } from "@/components/Footer";
-import { TopNavbarWrapper } from "@/components/TopNavbarWrapper";
-import { Breadcrumbs } from "@/components/breadcrumbs";
-import { Suspense } from "react";
-import Loading from "./loading";
+import QueryProvider from "@/components/providers/query-provider";
+import { Footer } from "@/components/layout/footer";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { Suspense, ReactNode } from "react";
 import { getSiteUrl } from "@/lib/base-url";
 
 const geistSans = Inter({
@@ -23,14 +21,13 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Thu Rein Htet - A Developer from Myanmar",
+    default: "Thu Rein Htet",
     template: "%s | Thu Rein Htet's Portfolio",
   },
   description:
     "Software developer who enjoys building modern web, mobile and software applications using React, Next.js. Focusing on creating clean, efficient, and user-friendly solutions using modern technologies. My goal is to turn ideas into functional and scalable digital products.",
   keywords: [
     "Thu Rein Htet",
-    "Myanmar Web Developer",
     "React Developer",
     "React Native Developer",
     "Typescript Developer",
@@ -43,8 +40,8 @@ export const metadata: Metadata = {
     "Express.js",
     "Expo",
     "Web Developer",
-    "Frontend",
-    "Backend",
+    "Frontend Developer",
+    "Backend Developer",
     "Myanmar Developer",
   ],
   authors: [{ name: "Thu Rein Htet" }],
@@ -84,7 +81,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -94,15 +91,16 @@ export default function RootLayout({
         <QueryProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="light"
+            defaultTheme="dark"
             disableTransitionOnChange
           >
-            <TopNavbarWrapper />
-            <main className="min-h-screen p-4 pb-[calc(7rem+env(safe-area-inset-bottom))] sm:px-6 lg:px-8">
-              <Suspense fallback={<Loading />}>
-                <Breadcrumbs />
-                {children}
-              </Suspense>
+            <main className="min-h-screen p-6 pb-[calc(7rem+env(safe-area-inset-bottom))] sm:px-6 lg:px-8">
+              <div className="mx-auto flex w-full max-w-7xl flex-col justify-center border">
+                <Suspense>
+                  <Breadcrumbs />
+                  {children}
+                </Suspense>
+              </div>
               <Toaster />
             </main>
             <Footer />

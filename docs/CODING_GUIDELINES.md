@@ -4,11 +4,10 @@
 - Discoverability: contributors find behavior where routes/features live.
 - Ease of change: less context-switching between distant folders.
 
-## v3 Target Project Structure
+## v3 Project Structure
 
-> **This is the migration target, not the current state.** For what the repo actually
-> looks like right now, see `PROJECT_MAP.md`. The `←` arrows below show where each file
-> currently lives. Migration task list and status live in `PROGRESS.md` Phase 6.
+> **This is the current structure.** The v3 migration was completed in S5 (2026-07-20).
+> For a high-level overview, see `PROJECT_MAP.md`.
 
 ```
 ├── app/                                        -> next.js routing, layout, metadata, route handlers
@@ -46,57 +45,59 @@
 ├── features/
 │   ├── home/
 │   │   └── components/
-│   │       └── home-view.tsx                   ← app/HomeClientComponent.tsx
+│   │       └── home-view.tsx
 │   │
 │   ├── projects/
 │   │   ├── components/
-│   │   │   ├── projects-view.tsx               ← app/projects/ProjectsClientComponent.tsx
-│   │   │   ├── project-showcase-card.tsx       ← components/project-showcase-card.tsx
-│   │   │   ├── project-credentials-panel.tsx   ← components/project-credentials-panel.tsx
-│   │   │   └── project-detail-modal.tsx        ← components/ProjectDetailModal.tsx
+│   │   │   ├── projects-view.tsx
+│   │   │   ├── project-showcase-card.tsx
+│   │   │   ├── project-credentials-panel.tsx
+│   │   │   └── project-detail-modal.tsx
 │   │   └── data/
-│   │       └── projects.ts                     ← data/projects.ts
+│   │       └── projects.ts
 │   │
 │   ├── certificates/
 │   │   ├── components/
-│   │   │   └── certificates-view.tsx           ← app/certificates/CertificatesClientComponent.tsx
+│   │   │   └── certificates-view.tsx
 │   │   └── data/
-│   │       └── certificates.ts                 ← data/certificates.ts
+│   │       └── certificates.ts
 │   │
 │   ├── timeline/
 │   │   ├── components/
-│   │   │   └── timeline-view.tsx               ← app/timeline/TimelineClientComponent.tsx
+│   │   │   └── timeline-view.tsx
 │   │   └── data/
-│   │       └── experiences.ts                  ← data/experiences.ts
+│   │       └── experiences.ts
 │   │
 │   └── admin/
 │       ├── components/
-│       │   ├── admin-view.tsx                  ← (new: extracted from app/admin/page.tsx)
-│       │   ├── project-section.tsx             ← app/admin/components/ProjectSection.tsx
-│       │   ├── certificate-section.tsx         ← app/admin/components/CertificateSection.tsx
-│       │   ├── timeline-section.tsx            ← app/admin/components/TimelineSection.tsx
-│       │   └── settings-section.tsx            ← app/admin/components/SettingsSection.tsx
+│       │   ├── admin-view.tsx
+│       │   ├── project-section.tsx
+│       │   ├── certificate-section.tsx
+│       │   ├── timeline-section.tsx
+│       │   └── settings-section.tsx
 │       └── data/
-│           └── menu-items.tsx                  ← data/admin/menu-items.tsx
+│           └── menu-items.tsx
 │
 ├── components/                                  # shared/global only
 │   ├── ui/                                      # unchanged (shadcn primitives)
 │   │   ├── button.tsx, card.tsx, input.tsx, dialog.tsx, ...
 │   ├── layout/
-│   │   ├── top-navbar.tsx                      ← components/top-navbar.tsx
-│   │   ├── top-navbar-wrapper.tsx              ← components/TopNavbarWrapper.tsx
-│   │   ├── footer.tsx                          ← components/Footer.tsx
-│   │   ├── theme-toggle.tsx                    ← components/theme-toggle.tsx
-│   │   └── theme-provider.tsx                  ← components/theme-provider.tsx
+│   │   ├── top-navbar.tsx
+│   │   ├── top-navbar-wrapper.tsx
+│   │   ├── footer.tsx
+│   │   ├── theme-toggle.tsx
+│   │   └── breadcrumbs.tsx
+│   ├── providers/
+│   │   ├── theme-provider.tsx
+│   │   └── query-provider.tsx
 │   └── shared/
-│       ├── delete-confirm-box.tsx              ← components/DeleteConfirmBox.tsx
-│       └── query-provider.tsx                  ← components/QueryProvider.tsx
+│       └── delete-confirm-box.tsx
 │
 ├── lib/
 │   ├── auth.ts
 │   ├── auth-client.ts
 │   ├── base-url.ts
-│   └── utils.ts                                ← merged with utils/formate-date.ts
+│   └── utils.ts
 │
 ├── db/
 │   ├── schema.ts

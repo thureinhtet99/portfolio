@@ -61,9 +61,7 @@ export function getBaseUrl(): string {
 export function getSiteUrl(): string {
   const envUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
-  if (envUrl) {
-    return normalizeUrl(envUrl);
-  }
+  if (envUrl) return normalizeUrl(envUrl);
 
   return getBaseUrl();
 }

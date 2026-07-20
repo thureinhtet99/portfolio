@@ -45,7 +45,7 @@ type Props = {
   };
 };
 
-export default function HomeClientComponent({
+export function HomeView({
   residence,
   available,
   aboutMe,

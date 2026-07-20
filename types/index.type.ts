@@ -1,6 +1,11 @@
 import { StaticImageData } from "next/image";
 import { Dispatch, ReactNode, SetStateAction } from "react";
 
+export type SocialLinkType = {
+  href: string;
+  label: "GitHub" | "Facebook" | "LinkedIn";
+};
+
 // Database Schema Types
 export type UserType = {
   id: string;

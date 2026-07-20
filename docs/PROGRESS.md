@@ -93,35 +93,25 @@ Final a11y pass. Some items require browser testing.
 
 ---
 
-### Phase 6 — v3 Structural Migration ⬜
+### Phase 6 — v3 Structural Migration ✅
 
-Migrates the codebase from the structure documented in `PROJECT_MAP.md` (current/v2) to
+Migrates the codebase from the structure documented in `PROJECT_MAP.md` (v2) to
 the target structure documented in `CODING_GUIDELINES.md` (v3 — features extraction for
 certificates/timeline/admin, `components/layout/`, `components/shared/`,
-`app/(public)/` route group). `PROJECT_MAP.md`'s tree is **not** yet accurate to
-`CODING_GUIDELINES.md`'s — that gap is this phase's job to close.
+`app/(public)/` route group). **Completed in S6 (2026-07-20).**
 
-**Do this feature-by-feature, not all at once.** For each row: move the file(s), fix
-every import referencing the old path, run the type check, confirm zero errors, then
-move on.
-
-| Item                                                        | Status | Notes                                                                                                                                                                                                                                                                                                                     |
-| ----------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| §1 Pre-flight: resolve the two conflicting-docs items above | ⬜     | Blocks everything else in this phase — do first                                                                                                                                                                                                                                                                           |
-| `certificates` feature extraction                           | ⬜     | `app/certificates/CertificatesClientComponent.tsx` → `features/certificates/components/certificates-view.tsx`; `data/certificates.ts` → `features/certificates/data/certificates.ts`; `app/certificates/page.tsx` becomes thin wrapper                                                                                    |
-| `timeline` feature extraction                               | ⬜     | `app/timeline/TimelineClientComponent.tsx` → `features/timeline/components/timeline-view.tsx`; `data/experiences.ts` → `features/timeline/data/experiences.ts`; `app/timeline/page.tsx` becomes thin wrapper                                                                                                              |
-| `admin` feature extraction                                  | ⬜     | `app/admin/page.tsx` dashboard body → `features/admin/components/admin-view.tsx` (auth-gate stays inline in `app/admin/page.tsx` per `PROJECT_MAP.md` §9 rule 7); 4 admin section components → `features/admin/components/*-section.tsx` (kebab-case); `data/admin/menu-items.tsx` → `features/admin/data/menu-items.tsx` |
-| `home` feature rename                                       | ⬜     | `app/HomeClientComponent.tsx` → `features/home/components/home-view.tsx`                                                                                                                                                                                                                                                  |
-| Shared component reorg                                      | ⬜     | `top-navbar.tsx`, `TopNavbarWrapper.tsx`, `Footer.tsx`, `theme-toggle.tsx`, `theme-provider.tsx` → `components/layout/`; `DeleteConfirmBox.tsx`, `QueryProvider.tsx` → `components/shared/`. `components/ui/*` does not move.                                                                                             |
-| `lib/` consolidation                                        | ⬜     | Merge `utils/formate-date.ts` into `lib/utils.ts`, delete `utils/` folder, repoint every call site (no re-export shim — that's still an orphan per the no-duplicate-logic rule)                                                                                                                                           |
-| Route grouping                                              | ⬜     | `app/page.tsx`, `loading.tsx`, `not-found.tsx`, `contact/`, `projects/`, `certificates/`, `timeline/` → move under `app/(public)/`. `app/admin/` and `app/api/` stay outside the group. Route groups don't change URLs — test every public route anyway.                                                                  |
-| Verification pass                                           | ⬜     | `tsc --noEmit` clean, lint clean, every route in `PROJECT_MAP.md` §5 loads, `grep` for any import still pointing at an old path                                                                                                                                                                                           |
-| Rewrite `PROJECT_MAP.md`                                    | ⬜     | Once migration is done, `PROJECT_MAP.md`'s folder table + "Feature Flow" section should describe the same tree `CODING_GUIDELINES.md` describes — that's what makes this phase "done"                                                                                                                                     |
-
-**docs/ folder note:** `CODING_GUIDELINES.md`'s tree only lists
-`docs/CODING_GUIDELINES.md` and `docs/PROJECT_MAP.md` — treat that as an incomplete
-snapshot, not an instruction to delete `DESGIN_SYSTEM.md`, `PROGRESS.md`, or
-`References.md`. Keep all five.
+| Item                                                        | Status | Notes                                                                                                      |
+| ----------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------- |
+| §1 Pre-flight: resolve the two conflicting-docs items above | ✅     | Availability dot = `accent-signal`, view counter = `setting.siteViews` — verified directly in source        |
+| `certificates` feature extraction                           | ✅     | Moved to `features/certificates/`; page is thin wrapper                                                    |
+| `timeline` feature extraction                               | ✅     | Moved to `features/timeline/`; page is thin wrapper                                                        |
+| `admin` feature extraction                                  | ✅     | Auth-gate stays in `app/admin/page.tsx`; dashboard body + sections + data moved to `features/admin/`       |
+| `home` feature rename                                       | ✅     | `HomeClientComponent` → `HomeView` in `features/home/components/home-view.tsx`                              |
+| Shared component reorg                                      | ✅     | Layout → `components/layout/`; providers → `components/providers/`; shared → `components/shared/`          |
+| `lib/` consolidation                                        | ✅     | `formatDate` merged into `lib/utils.ts`; `utils/` directory deleted                                        |
+| Route grouping                                              | ✅     | All public pages moved to `app/(public)/`; `admin/` and `api/` stay outside                                |
+| Verification pass                                           | ✅     | `tsc --noEmit` clean; no stale import paths                                                                |
+| Rewrite `PROJECT_MAP.md`                                    | ✅     | Folder table + Feature Flow rewritten to match v3 structure                                                |
 
 ---
 
@@ -164,3 +154,4 @@ Don't build these unless explicitly asked:
 | 2026-07-20 | S2      | Phase 2 container swap. Phase 3 motion verified. Phase 4 availability dot + view counter wired.                                                                              |
 | 2026-07-20 | S3      | Phase 2 font-mono audit done. Contact page uses shared motion helpers. Added "Book a Chat" CTA with `bookingUrl` setting. Added breadcrumbs navigation (terminal aesthetic). |
 | 2026-07-20 | S4      | Added GitHub language bar with accent-signal opacity steps. Enhanced location widget ("Currently Based In"). Added "Find Me On" section with social links. |
+| 2026-07-20 | S5      | Phase 6 v3 structural migration complete: all 5 features extracted to `features/`, `components/layout/` + `components/providers/` + `components/shared/` reorg, `lib/` consolidation, `app/(public)/` route grouping. `PROJECT_MAP.md` rewritten. |

@@ -19,10 +19,13 @@ export async function GET(req: NextRequest) {
     if (!key) {
       // Return all settings
       const allSettings = await db.select().from(setting).all();
-      const settingsObj = allSettings.reduce((acc, item) => {
-        acc[item.key] = item.value;
-        return acc;
-      }, {} as Record<string, string>);
+      const settingsObj = allSettings.reduce(
+        (acc, item) => {
+          acc[item.key] = item.value;
+          return acc;
+        },
+        {} as Record<string, string>,
+      );
 
       return NextResponse.json({ success: true, data: settingsObj });
     }
@@ -33,16 +36,15 @@ export async function GET(req: NextRequest) {
       .where(eq(setting.key, key))
       .limit(1)
       .all();
-    if (result.length === 0) {
+    if (result.length === 0)
       return NextResponse.json({ success: true, data: null });
-    }
 
     return NextResponse.json({ success: true, data: result[0].value });
   } catch (error) {
     console.error("Error fetching setting:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch setting" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -55,7 +57,7 @@ export async function POST(req: NextRequest) {
     if (!key || value === undefined) {
       return NextResponse.json(
         { error: "Key and value are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -90,7 +92,7 @@ export async function POST(req: NextRequest) {
         } catch (cloudinaryError) {
           console.error(
             "Failed to delete old file from Cloudinary:",
-            cloudinaryError
+            cloudinaryError,
           );
           // Continue with update even if Cloudinary deletion fails
         }
@@ -118,7 +120,7 @@ export async function POST(req: NextRequest) {
     console.error("Error saving setting:", error);
     return NextResponse.json(
       { error: "Failed to save setting" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,5 +1,5 @@
 import { APP_CONFIG } from "@/config/app-config";
-import CertificatesClientComponent from "./CertificatesClientComponent";
+import CertificatesView from "@/features/certificates/components/certificates-view";
 
 export const dynamic = "force-dynamic";
 
@@ -26,5 +26,5 @@ async function getCertificates() {
 export default async function CertificatesPage() {
   const certificates = await getCertificates();
 
-  return <CertificatesClientComponent certificates={certificates} />;
+  return <CertificatesView certificates={certificates} />;
 }

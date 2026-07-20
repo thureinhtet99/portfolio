@@ -22,7 +22,7 @@ export async function Footer() {
   }
 
   return (
-    <footer className="mt-10 pb-6 px-8">
+    <footer className="my-8 px-8">
       <div className="app-shell flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="font-mono text-xs text-muted-foreground flex items-center gap-4">
           <div className="flex items-center gap-2">
