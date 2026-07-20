@@ -12,6 +12,7 @@ import {
   Clock,
   ChevronDown,
   ChevronUp,
+  Calendar,
 } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { sectionReveal, cardReveal } from "@/lib/motion";
@@ -32,6 +33,7 @@ type Props = {
   profileImage: StaticImageData | string | null;
   resume: string | null;
   githubEvents: any[];
+  bookingUrl: string | null;
 };
 
 export default function HomeClientComponent({
@@ -43,6 +45,7 @@ export default function HomeClientComponent({
   profileImage,
   resume,
   githubEvents,
+  bookingUrl,
 }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const isMobile = useIsMobile();
@@ -91,11 +94,11 @@ export default function HomeClientComponent({
             <span className="flex items-center gap-1">
               <div
                 className={`relative h-2.5 w-2.5 me-1 rounded-full transition-colors ${
-                  available ? "bg-green-500" : "bg-red-500"
+                  available ? "bg-[var(--accent-signal)]" : "bg-muted-foreground/50"
                 }`}
               >
                 {available && !shouldReduceMotion && (
-                  <div className="absolute inset-0 h-full w-full animate-ping rounded-full bg-green-500" />
+                  <div className="absolute inset-0 h-full w-full animate-ping rounded-full bg-[var(--accent-signal)]" />
                 )}
               </div>
               {available ? "Available for work" : "Not available for work"}
@@ -109,6 +112,24 @@ export default function HomeClientComponent({
                 Get in Touch
               </Link>
             </Button>
+            {bookingUrl && (
+              <Button
+                variant="outline"
+                asChild
+                size="lg"
+                className="w-full rounded-lg sm:w-auto hover:bg-black/5 dark:hover:bg-white/5"
+              >
+                <Link
+                  href={bookingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2"
+                >
+                  <Calendar className="h-5 w-5" />
+                  Book a Chat
+                </Link>
+              </Button>
+            )}
             {resume && (
               <Button
                 variant="outline"

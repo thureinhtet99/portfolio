@@ -1,6 +1,25 @@
+import { db } from "@/db/client";
+import { setting } from "@/db/schema";
+import { eq } from "drizzle-orm";
+
 export async function Footer() {
   const currentYear = new Date().getFullYear();
   const commitHash = process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7);
+
+  let viewCount = "0";
+  try {
+    const result = await db
+      .select()
+      .from(setting)
+      .where(eq(setting.key, "siteViews"))
+      .limit(1)
+      .all();
+    if (result.length > 0) {
+      viewCount = Number(result[0].value).toLocaleString();
+    }
+  } catch {
+    viewCount = "0";
+  }
 
   return (
     <footer className="mt-10 pb-6 px-8">
@@ -11,10 +30,10 @@ export async function Footer() {
             <span>All systems nominal</span>
           </div>
           {commitHash && <span>{commitHash}</span>}
-          <span>4,213 views</span>
+          <span>{viewCount} views</span>
         </div>
         <h4 className="text-sm text-muted-foreground text-center sm:text-end">
-          © {currentYear} Thu Rein Htet. All rights reserved.
+          &copy; {currentYear} Thu Rein Htet. All rights reserved.
         </h4>
       </div>
     </footer>

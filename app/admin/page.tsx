@@ -167,7 +167,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-6 py-2 md:py-4">
+    <div className="app-shell space-y-6 py-2 md:py-4">
       <div className="surface-panel flex flex-col gap-4 px-6 py-6 md:flex-row md:items-center md:justify-between md:px-8">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">

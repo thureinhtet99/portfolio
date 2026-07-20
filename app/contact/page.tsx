@@ -19,6 +19,7 @@ import { Send } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { sectionReveal } from "@/lib/motion";
 
 // Form schema
 const formSchema = z.object({
@@ -58,12 +59,10 @@ export default function Contact() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto py-4">
+    <div className="mx-auto max-w-2xl py-4">
       <motion.div
+        {...sectionReveal}
         className="space-y-20"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2 }}
       >
         <div className="space-y-2 text-center">
           <h1 className="text-4xl font-bold bg-clip-text tracking-[-0.03em]">Contact</h1>

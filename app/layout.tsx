@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import QueryProvider from "@/components/QueryProvider";
 import { Footer } from "@/components/Footer";
 import { TopNavbarWrapper } from "@/components/TopNavbarWrapper";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { Suspense } from "react";
 import Loading from "./loading";
 import { getSiteUrl } from "@/lib/base-url";
@@ -98,7 +99,10 @@ export default function RootLayout({
           >
             <TopNavbarWrapper />
             <main className="min-h-screen p-4 pb-[calc(7rem+env(safe-area-inset-bottom))] sm:px-6 lg:px-8">
-              <Suspense fallback={<Loading />}>{children}</Suspense>
+              <Suspense fallback={<Loading />}>
+                <Breadcrumbs />
+                {children}
+              </Suspense>
               <Toaster />
             </main>
             <Footer />

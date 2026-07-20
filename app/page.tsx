@@ -1,6 +1,9 @@
 import { APP_CONFIG } from "@/config/app-config";
 import HomeClientComponent from "./HomeClientComponent";
 import { ProjectType } from "@/types/index.type";
+import { db } from "@/db/client";
+import { setting } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
@@ -72,6 +75,32 @@ export default async function Home() {
   const featuredProjects = await getProjects();
   const githubEvents = await getGithubEvents(settings.githubUrl);
 
+  // Increment view count
+  try {
+    const existing = await db
+      .select()
+      .from(setting)
+      .where(eq(setting.key, "siteViews"))
+      .limit(1)
+      .all();
+    if (existing.length > 0) {
+      const current = Number(existing[0].value) || 0;
+      await db
+        .update(setting)
+        .set({ value: String(current + 1), updatedAt: new Date() })
+        .where(eq(setting.key, "siteViews"));
+    } else {
+      await db.insert(setting).values({
+        id: crypto.randomUUID(),
+        key: "siteViews",
+        value: "1",
+        updatedAt: new Date(),
+      });
+    }
+  } catch (error) {
+    console.error("Failed to increment view count:", error);
+  }
+
   const residence = settings.residence || "Myanmar";
   const available =
     settings.available === "true" || settings.available === true;
@@ -79,6 +108,7 @@ export default async function Home() {
   const intro = settings.intro || "";
   const profileImage = settings.profileImage || null;
   const resume = settings.resume || null;
+  const bookingUrl = settings.bookingUrl || null;
 
   return (
     <HomeClientComponent
@@ -90,6 +120,7 @@ export default async function Home() {
       profileImage={profileImage}
       resume={resume}
       githubEvents={githubEvents}
+      bookingUrl={bookingUrl}
     />
   );
 }
