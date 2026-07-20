@@ -8,96 +8,102 @@
 
 ```
 ├── app/                                        -> next.js routing, layout, metadata, route handlers
-│   ├── page.tsx                                -> Home page (fetches data, renders HomeClientComponent)
-│   ├── layout.tsx                              -> Main layout (providers + navbar + footer)
-│   ├── globals.css                             -> Global styles (Tailwind v4, oklch tokens, utility classes)
-│   ├── loading.tsx                             -> Global loading spinner
-│   ├── not-found.tsx                           -> 404 page
-│   ├── HomeClientComponent.tsx                 -> Client component for home page (hero, about, projects, GitHub widget)
-│   │
-│   ├── projects/
-│   │   └── page.tsx                            -> renders <ProjectsView />
-│   │
-│   ├── certificates/
-│   │   ├── page.tsx                            -> renders <CertificatesClientComponent />
-│   │   └── CertificatesClientComponent.tsx     -> Client component for certificates page
-│   │
-│   ├── timeline/
-│   │   ├── page.tsx                            -> renders <TimelineClientComponent />
-│   │   └── TimelineClientComponent.tsx         -> Client component for timeline page
-│   │
-│   ├── contact/
-│   │   └── page.tsx                            -> Contact form (inline client component)
+│   ├── (public)/                               -> public routes
+│   │   ├── page.tsx                            -> renders <HomeView />
+│   │   ├── loading.tsx
+│   │   ├── not-found.tsx
+│   │   ├── contact/
+│   │   │   └── page.tsx
+│   │   ├── projects/
+│   │   │   └── page.tsx                        -> renders <ProjectsView />
+│   │   ├── certificates/
+│   │   │   └── page.tsx                        -> renders <CertificatesView />
+│   │   └── timeline/
+│   │       └── page.tsx                        -> renders <TimelineView />
 │   │
 │   ├── admin/                                  -> admin route
-│   │   ├── layout.tsx                          -> Admin layout (minimal wrapper)
-│   │   ├── page.tsx                            -> Admin dashboard (login + tabs)
-│   │   └── components/
-│   │       ├── SettingsSection.tsx
-│   │       ├── ProjectSection.tsx
-│   │       ├── CertificateSection.tsx
-│   │       └── TimelineSection.tsx
+│   │   ├── layout.tsx
+│   │   └── page.tsx                            -> renders <AdminView />
 │   │
-│   └── api/                                    -> api endpoints
-│       ├── auth/[...all]/route.ts
-│       ├── admin/create-user/route.ts
-│       ├── projects/route.ts
-│       ├── certificates/route.ts
-│       ├── timelines/route.ts
-│       ├── settings/route.ts
-│       ├── resume/route.ts
-│       ├── send/route.ts
-│       └── upload/route.ts
+│   ├── api/                                    -> api endpoints
+│   │   ├── auth/[...all]/route.ts
+│   │   ├── admin/create-user/route.ts
+│   │   ├── projects/route.ts
+│   │   ├── certificates/route.ts
+│   │   ├── timelines/route.ts
+│   │   ├── settings/route.ts
+│   │   ├── resume/route.ts
+│   │   ├── send/route.ts
+│   │   └── upload/route.ts
+│   │
+│   ├── layout.tsx                              -> main layout
+│   └── globals.css                             -> global style
 │
 ├── features/
 │   ├── home/
 │   │   └── components/
-│   │       └── github-activity-widget.tsx      -> GitHub activity display widget
+│   │       └── home-view.tsx                   ← app/HomeClientComponent.tsx
 │   │
-│   └── projects/
+│   ├── projects/
+│   │   ├── components/
+│   │   │   ├── projects-view.tsx               ← app/projects/ProjectsClientComponent.tsx
+│   │   │   ├── project-showcase-card.tsx       ← components/project-showcase-card.tsx
+│   │   │   ├── project-credentials-panel.tsx   ← components/project-credentials-panel.tsx
+│   │   │   └── project-detail-modal.tsx        ← components/ProjectDetailModal.tsx
+│   │   └── data/
+│   │       └── projects.ts                     ← data/projects.ts
+│   │
+│   ├── certificates/
+│   │   ├── components/
+│   │   │   └── certificates-view.tsx           ← app/certificates/CertificatesClientComponent.tsx
+│   │   └── data/
+│   │       └── certificates.ts                 ← data/certificates.ts
+│   │
+│   ├── timeline/
+│   │   ├── components/
+│   │   │   └── timeline-view.tsx               ← app/timeline/TimelineClientComponent.tsx
+│   │   └── data/
+│   │       └── experiences.ts                  ← data/experiences.ts
+│   │
+│   └── admin/
 │       ├── components/
-│       │   ├── projects-view.tsx               -> Projects listing view
-│       │   ├── project-showcase-card.tsx       -> Project card component
-│       │   ├── project-detail-modal.tsx        -> Detail modal
-│       │   └── project-credentials-panel.tsx   -> Demo credentials panel
+│       │   ├── admin-view.tsx                  ← (new: extracted from app/admin/page.tsx)
+│       │   ├── project-section.tsx             ← app/admin/components/ProjectSection.tsx
+│       │   ├── certificate-section.tsx         ← app/admin/components/CertificateSection.tsx
+│       │   ├── timeline-section.tsx            ← app/admin/components/TimelineSection.tsx
+│       │   └── settings-section.tsx            ← app/admin/components/SettingsSection.tsx
 │       └── data/
-│           └── projects.ts                     -> Static project data
+│           └── menu-items.tsx                  ← data/admin/menu-items.tsx
 │
 ├── components/                                  # shared/global only
-│   ├── ui/                                      # shadcn primitives
-│   │   ├── button.tsx, card.tsx, input.tsx, dialog.tsx, skeleton.tsx, ...
-│   ├── top-navbar.tsx
-│   ├── TopNavbarWrapper.tsx
-│   ├── Footer.tsx
-│   ├── theme-toggle.tsx
-│   ├── theme-provider.tsx
-│   ├── QueryProvider.tsx
-│   └── DeleteConfirmBox.tsx
+│   ├── ui/                                      # unchanged (shadcn primitives)
+│   │   ├── button.tsx, card.tsx, input.tsx, dialog.tsx, ...
+│   ├── layout/
+│   │   ├── top-navbar.tsx                      ← components/top-navbar.tsx
+│   │   ├── top-navbar-wrapper.tsx              ← components/TopNavbarWrapper.tsx
+│   │   ├── footer.tsx                          ← components/Footer.tsx
+│   │   ├── theme-toggle.tsx                    ← components/theme-toggle.tsx
+│   │   └── theme-provider.tsx                  ← components/theme-provider.tsx
+│   └── shared/
+│       ├── delete-confirm-box.tsx              ← components/DeleteConfirmBox.tsx
+│       └── query-provider.tsx                  ← components/QueryProvider.tsx
 │
 ├── lib/
 │   ├── auth.ts
 │   ├── auth-client.ts
 │   ├── base-url.ts
-│   ├── motion.ts                               -> Framer Motion presets (sectionReveal, cardReveal)
-│   └── utils.ts                                -> cn() utility
+│   └── utils.ts                                ← merged with utils/formate-date.ts
 │
 ├── db/
 │   ├── schema.ts
 │   └── client.ts
 │
-├── drizzle/                                     # auto-generated migrations
+├── drizzle/                                     # unchanged
 │
-├── data/                                        # cross-feature/global static data
+├── data/                                        # only cross-feature/global static data
 │   ├── skills.tsx
-│   ├── experiences.ts
 │   ├── education.ts
-│   ├── certificates.ts
-│   ├── countries.json
-│   └── admin/
-│       └── menu-items.tsx
-│
-├── utils/
-│   └── formate-date.ts                          -> formatDate() utility
+│   └── countries.json
 │
 ├── types/
 │   └── index.type.ts
@@ -111,13 +117,10 @@
 ├── public/
 │   ├── profile.svg
 │   └── TRH.svg
-│
+
 ├── docs/
 │   ├── CODING_GUIDELINES.md
-│   ├── PROJECT_MAP.md
-│   ├── DESIGN_SYSTEM.md
-│   ├── PROGRESS.md
-│   └── References.md
+│   └── PROJECT_MAP.md
 │
 ├── drizzle.config.ts
 ├── next.config.ts
