@@ -1,6 +1,6 @@
 # Design System.md
 
-**Status:** Draft for aesthetic redesign
+**Status:** Active — Phase 1 complete, Phases 2–4 partially in progress
 **Stack:** Next.js 15 · Tailwind v4 · shadcn/ui (new-york) · Framer Motion · next-themes
 **Scope:** Visual/aesthetic overhaul only. No accent-color picker, no theme-family switcher (Catppuccin-style). Light/dark via `next-themes` stays.
 
@@ -22,16 +22,13 @@ This document is the single source of truth for spacing, type, color, motion, an
 
 Keep the existing two-token architecture in `app/globals.css` (`--white` / `--dark-gray` driving all semantic tokens via oklch). Do **not** add a third brand hue as a global switchable variable. Instead, introduce a single **fixed accent** used sparingly for interactive/emphasis moments (links-as-buttons, active nav state, status dot, chart bar). This gives visual life without becoming a "pick your vibe" feature.
 
-### 2.1 Recommended accent
+### 2.1 Accent (implemented)
 
-Add one accent token pair to `:root` / `.dark`, sitting alongside the existing semantic tokens:
+Accent token pair added to `:root` / `.dark` in `app/globals.css`:
 
 ```css
 :root {
-  /* existing --white / --dark-gray / semantic tokens stay as-is */
-  --accent-signal: oklch(
-    0.64 0.19 250
-  ); /* muted blue-violet, works on both themes */
+  --accent-signal: oklch(0.64 0.19 250);       /* muted blue-violet */
   --accent-signal-foreground: oklch(0.98 0 0);
 }
 
@@ -41,23 +38,19 @@ Add one accent token pair to `:root` / `.dark`, sitting alongside the existing s
 }
 ```
 
-```css
-@theme inline {
-  /* add alongside existing --color-* mappings */
-  --color-accent-signal: var(--accent-signal);
-  --color-accent-signal-foreground: var(--accent-signal-foreground);
-}
-```
+Mapped in `@theme inline` as `--color-accent-signal` and `--color-accent-signal-foreground`.
 
 **Usage rules for `accent-signal`:**
 
 - Active nav link underline/indicator
-- "Available for work" status dot (replace the current ping animation's implicit foreground color)
+- "Available for work" status dot (replacing the current green/red ping)
 - GitHub language-bar segments (one hue per language via opacity steps, not separate hues)
 - Primary link hover state inside prose (`aboutMe` / `intro` markdown)
 - Focus rings can stay on `--ring` (already dark-gray/white) — don't overload the accent
 
 **Do not** use the accent for: buttons (keep `bg-primary`), card backgrounds, or borders. It's a pointer, not a fill.
+
+**Status:** Token is wired in. **Needs eyeball check** in light + dark before locking.
 
 ### 2.2 Semantic token table (existing, documented for reference)
 
@@ -82,13 +75,13 @@ Opacity is the primary tool for hierarchy here (e.g. `text-muted-foreground/70`,
 | Role                                 | Class stack                                                         | Notes                                       |
 | ------------------------------------ | ------------------------------------------------------------------- | ------------------------------------------- |
 | Hero name/title                      | `text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-[-0.03em]` | One per page, homepage only                 |
-| Section heading (`.section-heading`) | `text-3xl sm:text-4xl font-bold tracking-[-0.03em]`                 | Define as a reusable utility class (see §7) |
+| Section heading (`.section-heading`) | `text-3xl sm:text-4xl font-bold tracking-[-0.03em]`                 | Defined as reusable utility class           |
 | Card title                           | `text-lg sm:text-xl font-semibold tracking-[-0.02em]`               |                                             |
 | Body / prose                         | `text-base sm:text-lg leading-relaxed text-muted-foreground`        | Markdown-rendered about/intro               |
 | Small / meta                         | `text-xs sm:text-sm text-muted-foreground`                          | Dates, tags, captions                       |
 | Monospace meta                       | `font-mono text-xs text-muted-foreground`                           | Commit hashes, status footer, timestamps    |
 
-**Tracking rule:** anything ≥ `text-2xl` gets `tracking-[-0.02em]` to `tracking-[-0.03em]` (already used inconsistently in the codebase — e.g. `admin/page.tsx` uses `-0.03em` on `h1`, apply this everywhere headings appear, including `ProjectDetailModal`, `CertificateSection`, `HomeClientComponent`).
+**Tracking rule:** anything ≥ `text-2xl` gets `tracking-[-0.02em]` to `tracking-[-0.03em]` (already used in `admin/page.tsx`, `ProjectDetailModal`, `CertificateSection`, `HomeClientComponent`).
 
 ### 3.2 Line-length
 
@@ -100,18 +93,19 @@ Prose blocks (`aboutMe`, `intro`) should stay `max-w-3xl` (already correct in `H
 
 ### 4.1 Grid rhythm
 
-- Page-level vertical rhythm: `space-y-20` between major homepage sections (hero → about → projects) — currently only applied inconsistently; standardize.
-- Section internal padding: `px-6 py-14 sm:px-10` for full-bleed panels (matches existing `#about-section`).
+- Page-level vertical rhythm: `space-y-20` between major homepage sections (hero → about → projects) — applied via `.page-shell` class.
+- Section internal padding: `px-6 py-14 sm:px-10` for full-bleed panels.
 - Card internal padding: keep shadcn defaults (`py-6`, `px-6` via `CardHeader`/`CardContent`) — don't override per-component.
 
 ### 4.2 Container widths
 
-| Context                   | Max width                                                                                                           |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| App shell (nav, footer)   | `max-w-7xl` (matches `admin/page.tsx`) — promote this to a shared `.app-shell` class used site-wide, not just admin |
-| Prose / contact form      | `max-w-2xl`                                                                                                         |
-| Reading content (about)   | `max-w-3xl`                                                                                                         |
-| Project/certificate grids | `max-w-7xl`, 2-col on `lg:`                                                                                         |
+| Context                   | Max width                                            |
+| ------------------------- | ---------------------------------------------------- |
+| App shell (nav, footer)   | `max-w-7xl` — via `.app-shell` class                 |
+| Page shell                | `max-w-7xl` with `space-y-20` — via `.page-shell`    |
+| Prose / contact form      | `max-w-2xl`                                          |
+| Reading content (about)   | `max-w-3xl`                                          |
+| Project/certificate grids | `max-w-7xl`, 2-col on `lg:`                          |
 
 ### 4.3 Radius
 
@@ -128,30 +122,17 @@ Two elevation levels only:
 
 Don't invent a third shadow value. If something needs to feel "more important," use size/spacing/position (e.g. full-bleed hero panel) rather than a heavier shadow.
 
-**New utility classes to define** (referenced throughout existing components but not yet in `globals.css` — add them under `@layer base` or `@layer components`):
+**Utility classes** (defined in `app/globals.css` `@layer components`):
 
 ```css
-@layer components {
-  .app-shell {
-    @apply mx-auto w-full max-w-7xl;
-  }
-  .page-shell {
-    @apply mx-auto w-full max-w-7xl space-y-20;
-  }
-  .section-heading {
-    @apply text-3xl sm:text-4xl font-bold tracking-[-0.03em];
-  }
-  .surface-panel {
-    @apply bg-card/92 text-card-foreground rounded-[1.5rem] border border-border/70
-           shadow-[0_18px_50px_-38px_rgba(34,34,34,0.38)] backdrop-blur-sm;
-  }
-  .surface-panel-muted {
-    @apply bg-background/80 rounded-[1.25rem] border border-border/40;
-  }
-}
+.app-shell    { @apply mx-auto w-full max-w-7xl; }
+.page-shell   { @apply mx-auto w-full max-w-7xl space-y-20; }
+.section-heading { @apply text-3xl font-bold tracking-[-0.03em] sm:text-4xl; }
+.surface-panel { @apply rounded-[1.5rem] border border-border/70 bg-card/92 text-card-foreground shadow-[...] backdrop-blur-sm; }
+.surface-panel-muted { @apply rounded-[1.25rem] border border-border/40 bg-background/80; }
 ```
 
-(These classes are already referenced across `SettingsSection.tsx`, `admin/page.tsx`, `HomeClientComponent.tsx` etc. — confirm they're actually defined; if not, this closes that gap.)
+All five classes are defined and actively used across `HomeClientComponent`, `admin/page.tsx`, `SettingsSection`, etc.
 
 ---
 
@@ -169,10 +150,10 @@ Framer Motion is already a dependency — standardize usage instead of ad-hoc `i
 | `ease`          | Framer default spring for interactive; `easeInOut` for ambient loops |                                           |
 | `stagger`       | `0.08–0.1s` per item                                                 | Lists (achievements, tech badges)         |
 
-### 6.2 Standard patterns
+### 6.2 Standard patterns (implemented in `lib/motion.ts`)
 
 ```tsx
-// Section reveal (use for every major section)
+// Section reveal — used for every major section
 const sectionReveal = {
   initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
@@ -189,7 +170,9 @@ const cardReveal = (index: number) => ({
 });
 ```
 
-**Reduced motion:** wrap ambient/looping animations (scroll-down bounce, status-dot ping) in a check against `useReducedMotion()` from Framer Motion. This directly addresses the accessibility gap flagged in the reference audit (§7, "Background effect toggle respects prefers-reduced-motion").
+**Status:** Helpers extracted and consumed by `HomeClientComponent` and `projects-view.tsx`.
+
+**Reduced motion:** `shouldReduceMotion` is computed in `HomeClientComponent` but **not yet wired** into the scroll-down bounce or the status-dot ping — that's a Phase 5 follow-up.
 
 ---
 
@@ -197,41 +180,45 @@ const cardReveal = (index: number) => ({
 
 ### 7.1 Hero (homepage)
 
-- One `h1` for name, one supporting line for role (typing animation stays — it's a nice, restrained bit of personality, not a novelty widget).
-- Availability indicator: replace the current always-pinging dot with a static dot + `animate-ping` **only when available === true** and only if `!prefersReducedMotion`.
-- CTA row: max 2 primary actions. If you add "Book a Chat," it replaces or sits beside "Get in Touch" — don't stack three+ buttons.
+- One `h1` for name, one supporting line for role (typing animation currently commented out — `Software developer` is static text).
+- Availability indicator: `available && !shouldReduceMotion` guard is in place for the ping animation. **Color still uses `bg-green-500`/`bg-red-500`** — should migrate to `accent-signal` per §2.1.
+- CTA row: 2 buttons — "Get in Touch" (primary) and "View Resume" (outline, conditional on resume data). Matches the 2-CTA rule.
 
 ### 7.2 Project / Certificate Cards
 
 - Image aspect ratio locked to `aspect-video` (already correct in `project-showcase-card.tsx`).
-- Tag chips: `Badge` variant `secondary`, max 4 visible + "+N more" (already implemented — keep this pattern, extend to certificates).
-- Hover: `hover:shadow-[0_28px_85px_-44px_...]` + `hover:scale-[1.05]` on image only, never the whole card (avoid layout jitter).
+- Tag chips: `Badge` variant `secondary`, max 4 visible + "+N more" (implemented — `techLimit={4}` prop).
+- Hover: `hover:shadow-[...]` + `hover:scale-[1.05]` on image only, never the whole card.
 
-### 7.3 GitHub Activity Widget (new)
+### 7.3 GitHub Activity Widget (implemented)
 
-- Lives in a `surface-panel` on the homepage, directly under hero or above "Featured Projects."
-- Skeleton state: 3 shimmering rows (`Skeleton` component already exists) while fetching.
-- Failure state: quietly collapse to nothing or a one-line "Activity unavailable" — never a broken/empty card shell.
-- Language bar: horizontal stacked bar, segments colored via `accent-signal` at descending opacity steps (`/100`, `/70`, `/45`, `/25`) rather than a rainbow of hues — keeps it inside the system instead of introducing per-language brand colors.
+- Lives on homepage between hero and "Featured Projects".
+- Server-side fetch in `app/page.tsx` with `next: { revalidate: 60 * 30 }` (30 min).
+- Empty state: renders "Activity unavailable" text (no Skeleton shimmer yet).
+- Failure state: collapses to empty array, widget shows "Activity unavailable" ✅.
+- Language bar: **not yet implemented** — only top-5 events shown.
+- **TODO:** Add `Skeleton` shimmer state while loading.
 
-### 7.4 Status Footer (new)
+### 7.4 Status Footer (implemented)
 
-- Monospace, small, muted: `font-mono text-xs text-muted-foreground`.
-- Format: `● All systems nominal · a1b2c3d · 4,213 views` — single line, wraps to two on mobile.
-- Status dot uses `accent-signal` (green would clash with the two-tone system — resist adding a semantic green; use the accent or a simple filled/unfilled circle).
+- `components/Footer.tsx` — server component.
+- Format: `● All systems nominal · {commitHash} · 4,213 views` — monospace, single line.
+- Status dot uses `bg-[var(--accent-signal)]` ✅.
+- Deploy hash from `VERCEL_GIT_COMMIT_SHA` ✅.
+- View counter: **hardcoded to "4,213 views"** — not yet wired to real counter.
 
 ### 7.5 Resume CTA
 
-- Promote from the admin-only "More" pattern (none currently, but per the audit, don't bury it) — place as a secondary button in the hero row, icon (`HardDriveDownload`, already used) + label, same treatment as "Get in Touch."
+- Placed as secondary button in hero row, icon (`HardDriveDownload`) + label, same treatment as "Get in Touch". Conditional on `resume` data being present.
 
 ---
 
 ## 8. Accessibility Checklist (applies to every new component)
 
-- [ ] Contrast checked in **both** light and dark (no third theme to worry about, which simplifies this significantly vs. the reference site's 4-theme × 14-accent matrix)
-- [ ] All ambient motion gated behind `useReducedMotion()`
-- [ ] Live/async widgets (GitHub, view counter) have skeleton **and** failure states — never render broken
-- [ ] Interactive elements (nav, buttons, form fields) keyboard-reachable with visible focus ring (`focus-visible:ring-ring/50` already standard via shadcn — don't strip it)
+- [ ] Contrast checked in **both** light and dark
+- [ ] All ambient motion gated behind `useReducedMotion()` — **partially done** (scroll bounce yes, status-dot ping no)
+- [ ] Live/async widgets (GitHub, view counter) have skeleton **and** failure states — **failure done, skeleton missing**
+- [ ] Interactive elements (nav, buttons, form fields) keyboard-reachable with visible focus ring
 - [ ] Images have meaningful `alt`; decorative images `alt=""`
 - [ ] Status footer text isn't the _only_ signal of state — pair the dot with the text label, not color alone
 
@@ -245,6 +232,7 @@ Per scope: no Catppuccin-style theme family switcher, no per-accent-color picker
 
 ## 10. Open Decisions
 
-1. Exact `accent-signal` hue — proposed muted blue-violet (`oklch(0.64 0.19 250)`) but should be eyeballed against the current pure black/white palette before locking in.
-2. Whether the location widget uses a real map embed (heavier, more "alive") or a static illustrated pin (lighter, more consistent with the flat-color system) — recommend the latter for load performance and visual consistency.
-3. View-counter storage: reuse `setting` table with a `siteViews` key (simplest, no migration) vs. a dedicated `analytics` table (cleaner, allows per-page counts later). Recommend `setting` key for v1.
+1. **Accent hue** — `oklch(0.64 0.19 250)` is wired in. **Needs eyeball check** against the pure black/white palette in light + dark before locking.
+2. **Location widget** — still a decision. Recommendation: static illustrated pin. No code yet.
+3. **View counter storage** — **resolved for v1: use `setting` table with `siteViews` key.** Implementation pending.
+4. **Availability dot color** — currently `bg-green-500`/`bg-red-500`; should migrate to `accent-signal` to stay inside the two-tone system.

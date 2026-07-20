@@ -8,7 +8,8 @@ Personal portfolio for Thu Rein Htet, built with Next.js 15 App Router. Main goa
 
 - Present or showcase projects, blogs, personal assets and profile.
 - Stay maintainable, fast, and easy to extend to add further features.
-<!-- - Provide an AI chat experience about the portfolio owner. -->
+
+**Design reference:** `docs/References.md` — UX/frontend audit of [jasoncameron.dev](https://jasoncameron.dev/) used as inspiration.
 
 ## Project stack
 
@@ -53,8 +54,8 @@ Never:
 
 Before writing code:
 
-1. Read docs/PROJECT_MAP.md
-2. Read docs/CODING_GUIDELINES.md
+1. Read `docs/PROJECT_MAP.md`
+2. Read `docs/CODING_GUIDELINES.md`
 3. Search existing implementation
 4. Reuse existing utilities
 
