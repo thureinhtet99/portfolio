@@ -1,8 +1,8 @@
 # Design System.md
 
 **Status:** Active — Phase 1 complete, Phases 2–4 partially in progress
-**Stack:** Next.js 15 · Tailwind v4 · shadcn/ui (new-york) · Framer Motion · next-themes
-**Scope:** Visual/aesthetic overhaul only. No accent-color picker, no theme-family switcher (Catppuccin-style). Light/dark via `next-themes` stays.
+**Stack:** Next.js 15 · Tailwind v4 · shadcn/ui (new-york) · Framer Motion
+**Scope:** Visual/aesthetic overhaul only. No accent-color picker, no theme-family switcher (Catppuccin-style), **no light/dark toggle either** — the site is locked to a single fixed dark theme. `next-themes`, `components/providers/theme-provider.tsx`, and `components/layout/theme-toggle.tsx` are removed.
 
 This document is the single source of truth for spacing, type, color, motion, and component rules across the site. Every new component or page should be checkable against this file.
 
@@ -10,7 +10,7 @@ This document is the single source of truth for spacing, type, color, motion, an
 
 ## 1. Design Principles
 
-1. **One voice, not a theme picker.** The jasoncameron.dev reference proves a strong personal system can carry a site without letting the _visitor_ configure it. We keep light/dark (system-respecting) but nothing more — no accent hue, no background-effect toggle.
+1. **One voice, not a theme picker — and not a toggle either.** `References.md` (our jasoncameron.dev-inspired feature spec) proposes a runtime theme/accent picker; an earlier version of this document countered with "keep light/dark, nothing more." We've since gone one step further: the site locks to a **single fixed dark theme**, no visitor-facing toggle at all. See §9 below.
 2. **Content is the hero, chrome is quiet.** Cards, borders, and shadows exist to organize, not decorate. Prefer whitespace over borders where possible.
 3. **Motion signals hierarchy, not decoration.** Every animation should communicate "this is new," "this is now in focus," or "this responds to you" — never motion for its own sake.
 4. **Everything degrades to plain text.** Live widgets (GitHub activity, view counter, map) must have a calm skeleton/fallback state. Nothing should block first paint.
@@ -20,20 +20,19 @@ This document is the single source of truth for spacing, type, color, motion, an
 
 ## 2. Color System
 
-Keep the existing two-token architecture in `app/globals.css` (`--white` / `--dark-gray` driving all semantic tokens via oklch). Do **not** add a third brand hue as a global switchable variable. Instead, introduce a single **fixed accent** used sparingly for interactive/emphasis moments (links-as-buttons, active nav state, status dot, chart bar). This gives visual life without becoming a "pick your vibe" feature.
+Keep the existing two-token architecture in `app/globals.css` (`--white` / `--dark-gray` driving all semantic tokens via oklch), but collapse it to a **single fixed dark theme** — remove the `.dark` class split; the values that used to live under `.dark` become the only values, applied directly on `:root`. Do **not** add a third brand hue as a global switchable variable. Instead, keep the single **fixed accent** used sparingly for interactive/emphasis moments (links-as-buttons, active nav state, status dot, chart bar). This gives visual life without becoming a "pick your vibe" feature.
+
+**Migration note:** delete the `.dark { ... }` block in `app/globals.css` entirely and move its values into `:root`. Delete `components/providers/theme-provider.tsx` (the `next-themes` wrapper), `components/layout/theme-toggle.tsx`, and the `next-themes` dependency from `package.json`. Remove `<ThemeProvider>` from `app/layout.tsx` and the `ModeToggle` control from the nav.
 
 ### 2.1 Accent (implemented)
 
-Accent token pair added to `:root` / `.dark` in `app/globals.css`:
+Accent token, fixed on `:root` in `app/globals.css` (dark-mode value only — the light-mode value is dropped):
 
 ```css
 :root {
-  --accent-signal: oklch(0.64 0.19 250); /* muted blue-violet */
-  --accent-signal-foreground: oklch(0.98 0 0);
-}
-
-.dark {
-  --accent-signal: oklch(0.72 0.17 250);
+  --accent-signal: oklch(
+    0.72 0.17 250
+  ); /* muted blue-violet, tuned for dark bg */
   --accent-signal-foreground: oklch(0.15 0 0);
 }
 ```
@@ -46,21 +45,21 @@ Mapped in `@theme inline` as `--color-accent-signal` and `--color-accent-signal-
 - "Available for work" status dot (replacing the current green/red ping)
 - GitHub language-bar segments (one hue per language via opacity steps, not separate hues)
 - Primary link hover state inside prose (`aboutMe` / `intro` markdown)
-- Focus rings can stay on `--ring` (already dark-gray/white) — don't overload the accent
+- Focus rings can stay on `--ring` (already white on the fixed dark background) — don't overload the accent
 
 **Do not** use the accent for: buttons (keep `bg-primary`), card backgrounds, or borders. It's a pointer, not a fill.
 
-**Status:** Token is wired in. **Needs eyeball check** in light + dark before locking.
+**Status:** Token is wired in. **Needs eyeball check** against the fixed dark background before locking (single-mode check now — no light variant to verify against).
 
 ### 2.2 Semantic token table (existing, documented for reference)
 
-| Token                            | Light                                         | Dark                | Use                     |
-| -------------------------------- | --------------------------------------------- | ------------------- | ----------------------- |
-| `background` / `foreground`      | white / dark-gray                             | dark-gray / white   | Page base               |
-| `card` / `card-foreground`       | white / dark-gray                             | dark-gray / white   | Card surfaces           |
-| `primary` / `primary-foreground` | dark-gray / white                             | white / dark-gray   | Buttons, active states  |
-| `muted-foreground`               | dark-gray (translucent via opacity utilities) | white (translucent) | Secondary text          |
-| `border` / `input` / `ring`      | dark-gray                                     | white               | Structural lines, focus |
+| Token                            | Fixed value         | Use                     |
+| -------------------------------- | ------------------- | ----------------------- |
+| `background` / `foreground`      | dark-gray / white   | Page base               |
+| `card` / `card-foreground`       | dark-gray / white   | Card surfaces           |
+| `primary` / `primary-foreground` | white / dark-gray   | Buttons, active states  |
+| `muted-foreground`               | white (translucent) | Secondary text          |
+| `border` / `input` / `ring`      | white               | Structural lines, focus |
 
 Opacity is the primary tool for hierarchy here (e.g. `text-muted-foreground/70`, `border-border/70`, `bg-card/92`) — this is already the pattern in `card.tsx` and `button.tsx`. **Standardize** on these opacity steps sitewide: `/10`, `/20`, `/60`, `/70`, `/80`, `/92`. Don't introduce arbitrary values like `/13` or `/55`.
 
@@ -225,7 +224,7 @@ const cardReveal = (index: number) => ({
 
 ## 8. Accessibility Checklist (applies to every new component)
 
-- [ ] Contrast checked in **both** light and dark
+- [ ] Contrast checked against the fixed dark theme (no light variant to check anymore)
 - [ ] All ambient motion gated behind `useReducedMotion()` — **partially done** (scroll bounce yes, status-dot ping no)
 - [ ] Live/async widgets (GitHub, view counter) have skeleton **and** failure states — **failure done, skeleton missing**
 - [ ] Interactive elements (nav, buttons, form fields) keyboard-reachable with visible focus ring
@@ -236,13 +235,13 @@ const cardReveal = (index: number) => ({
 
 ## 9. What We're Explicitly Not Building
 
-Per scope: no Catppuccin-style theme family switcher, no per-accent-color picker UI, no user-facing "background effect" toggle. Light/dark stays as the only user-controlled visual variable, via the existing `ModeToggle`. If personality/novelty is wanted later (click counter, webring), treat it as a separate, deliberately small addition — not part of the core design system.
+Per scope: no Catppuccin-style theme family switcher, no per-accent-color picker UI, no user-facing "background effect" toggle, and **no light/dark toggle** — this overrides `References.md` §2, which proposes theme/accent picking as inspiration from jasoncameron.dev. The site locks to a single fixed dark theme; there is no user-controlled visual variable at all. `next-themes`, `theme-provider.tsx`, and `theme-toggle.tsx` are removed from the codebase (see §2 migration note). If personality/novelty is wanted later (click counter, webring — also described in `References.md` §3/§10), treat it as a separate, deliberately small addition — not part of the core design system.
 
 ---
 
 ## 10. Open Decisions
 
-1. **Accent hue** — `oklch(0.64 0.19 250)` is wired in. **Needs eyeball check** against the pure black/white palette in light + dark before locking.
+1. **Accent hue** — `oklch(0.72 0.17 250)` is wired in as the sole (dark-only) value. **Needs eyeball check** against the fixed dark background before locking. The former light-mode value (`oklch(0.64 0.19 250)`) is dropped along with light mode itself.
 2. **Location widget** — still a decision. Recommendation: static illustrated pin. No code yet.
 3. **View counter storage** — **resolved for v1: use `setting` table with `siteViews` key.** Implementation pending.
 4. **Availability dot color** — status disputed with `PROGRESS.md` (see §7.1 above); verify against source before assuming either doc. End state should be `accent-signal` to stay inside the two-tone system.

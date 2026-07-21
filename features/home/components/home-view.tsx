@@ -68,7 +68,7 @@ export function HomeView({
         id="hero-section"
         className="surface-panel relative flex min-h-[calc(100vh-8rem)] items-center justify-center overflow-hidden px-5 py-14 sm:px-8 sm:py-16 lg:px-10"
       >
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,34,34,0.08),transparent_55%)] dark:bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.09),transparent_55%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.09),transparent_55%)]" />
         <motion.div
           {...sectionReveal}
           className="relative z-10 mx-auto max-w-3xl space-y-6 text-center"
@@ -91,7 +91,7 @@ export function HomeView({
 
           <div className="mx-auto max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             {intro && (
-              <div className="prose prose-base mx-auto dark:prose-invert sm:prose-lg">
+              <div className="prose prose-base prose-invert mx-auto sm:prose-lg">
                 <ReactMarkdown>{intro}</ReactMarkdown>
               </div>
             )}
@@ -128,7 +128,7 @@ export function HomeView({
                 variant="outline"
                 asChild
                 size="lg"
-                className="w-full rounded-lg sm:w-auto hover:bg-black/5 dark:hover:bg-white/5"
+                className="w-full rounded-lg sm:w-auto hover:bg-white/5"
               >
                 <Link
                   href={bookingUrl}
@@ -146,7 +146,7 @@ export function HomeView({
                 variant="outline"
                 asChild
                 size="lg"
-                className="w-full rounded-lg sm:w-auto hover:bg-black/5 dark:hover:bg-white/5"
+                className="w-full rounded-lg sm:w-auto hover:bg-white/5"
               >
                 <Link
                   href="/api/resume"
@@ -224,7 +224,7 @@ export function HomeView({
           <div className="mx-auto max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             {aboutMe && (
               <div
-                className={`prose prose-base mx-auto dark:prose-invert sm:prose-lg ${
+                className={`prose prose-base prose-invert mx-auto sm:prose-lg ${
                   isMobile && !isExpanded ? "line-clamp-5" : ""
                 }`}
               >

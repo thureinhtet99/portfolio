@@ -3,8 +3,6 @@
 @plugin "tailwindcss-animate";
 @plugin "@tailwindcss/typography";
 
-@custom-variant dark (&:is(.dark *));
-
 @theme {
   --font-sans: var(--font-inter);
 }
@@ -13,44 +11,7 @@
   --white: oklch(1 0 0);
   --dark-gray: oklch(0.22 0 0);
 
-  --background: var(--white);
-  --foreground: var(--dark-gray);
-  --card: var(--white);
-  --card-foreground: var(--dark-gray);
-  --popover: var(--white);
-  --popover-foreground: var(--dark-gray);
-  --primary: var(--dark-gray);
-  --primary-foreground: var(--white);
-  --secondary: var(--white);
-  --secondary-foreground: var(--dark-gray);
-  --muted: var(--white);
-  --muted-foreground: var(--dark-gray);
-  --accent: var(--white);
-  --accent-foreground: var(--dark-gray);
-  --destructive: var(--dark-gray);
-  --destructive-foreground: var(--white);
-  --border: var(--dark-gray);
-  --input: var(--dark-gray);
-  --ring: var(--dark-gray);
-  --chart-1: var(--dark-gray);
-  --chart-2: var(--white);
-  --chart-3: var(--dark-gray);
-  --chart-4: var(--white);
-  --chart-5: var(--dark-gray);
-  --radius: 0.625rem;
-  --sidebar: var(--white);
-  --sidebar-foreground: var(--dark-gray);
-  --sidebar-primary: var(--dark-gray);
-  --sidebar-primary-foreground: var(--white);
-  --sidebar-accent: var(--white);
-  --sidebar-accent-foreground: var(--dark-gray);
-  --sidebar-border: var(--dark-gray);
-  --sidebar-ring: var(--dark-gray);
-  --accent-signal: oklch(0.64 0.19 250);
-  --accent-signal-foreground: oklch(0.98 0 0);
-}
-
-.dark {
+  /* Fixed dark theme — single mode, no .dark split */
   --background: var(--dark-gray);
   --foreground: var(--white);
   --card: var(--dark-gray);
@@ -75,6 +36,7 @@
   --chart-3: var(--white);
   --chart-4: var(--dark-gray);
   --chart-5: var(--white);
+  --radius: 0.625rem;
   --sidebar: var(--dark-gray);
   --sidebar-foreground: var(--white);
   --sidebar-primary: var(--white);
@@ -83,7 +45,7 @@
   --sidebar-accent-foreground: var(--white);
   --sidebar-border: var(--white);
   --sidebar-ring: var(--white);
-  --accent-signal: oklch(0.72 0.17 250);
+  --accent-signal: oklch(0.72 0.17 250); /* muted blue-violet, tuned for dark bg */
   --accent-signal-foreground: oklch(0.15 0 0);
 }
 

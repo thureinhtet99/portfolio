@@ -59,11 +59,11 @@ export const skills = [
   },
   {
     name: "Next.js",
-    icon: <SiNextdotjs className="text-black dark:text-white" />,
+    icon: <SiNextdotjs className="text-white" />,
   },
   {
     name: "Expo",
-    icon: <SiExpo className="text-gray-800 dark:text-white" />,
+    icon: <SiExpo className="text-white" />,
   },
   {
     name: "Vite",
@@ -75,7 +75,7 @@ export const skills = [
   },
   {
     name: "Shadcn/ui",
-    icon: <SiShadcnui className="text-black dark:text-white" />,
+    icon: <SiShadcnui className="text-white" />,
   },
   {
     name: "Bootstrap",
@@ -107,7 +107,7 @@ export const skills = [
   },
   {
     name: "Express.js",
-    icon: <SiExpress className="text-gray-600 dark:text-gray-300" />,
+    icon: <SiExpress className="text-gray-300" />,
   },
 
   // Databases
@@ -129,7 +129,7 @@ export const skills = [
   },
   {
     name: "Prisma",
-    icon: <SiPrisma className="text-gray-800 dark:text-white" />,
+    icon: <SiPrisma className="text-white" />,
   },
 
   // Tools & DevOps
@@ -147,7 +147,7 @@ export const skills = [
   },
   {
     name: "GitHub",
-    icon: <FaGithub className="text-gray-800 dark:text-white" />,
+    icon: <FaGithub className="text-white" />,
   },
   {
     name: "Postman",

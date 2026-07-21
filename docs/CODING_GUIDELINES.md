@@ -84,12 +84,10 @@
 │   ├── layout/
 │   │   ├── top-navbar.tsx
 │   │   ├── top-navbar-wrapper.tsx
-│   │   ├── footer.tsx
-│   │   ├── theme-toggle.tsx
+│   │   ├── footer.tsx                          # theme-toggle.tsx removed — single fixed dark theme (DESIGN_SYSTEM.md Phase 8)
 │   │   └── breadcrumbs.tsx
 │   ├── providers/
-│   │   ├── theme-provider.tsx
-│   │   └── query-provider.tsx
+│   │   └── query-provider.tsx                  # theme-provider.tsx removed — next-themes dropped
 │   └── shared/
 │       └── delete-confirm-box.tsx
 │
@@ -125,8 +123,12 @@
 
 ├── docs/
 │   ├── CODING_GUIDELINES.md
-│   └── PROJECT_MAP.md
+│   ├── PROJECT_MAP.md
+│   ├── DESIGN_SYSTEM.md                      -> visual/styling source of truth
+│   ├── PROGRESS.md                           -> implementation status, read first when resuming
+│   └── References.md                         -> jasoncameron.dev-inspired feature spec (site map, Dashboard widgets); DESIGN_SYSTEM.md overrides it on theme/color
 │
+├── AGENTS.md                                    -> root agent instructions, points to docs/References.md
 ├── drizzle.config.ts
 ├── next.config.ts
 ├── postcss.config.mjs

@@ -54,10 +54,9 @@ Never:
 
 Before writing code:
 
-1. Read `docs/PROJECT_MAP.md`
-2. Read `docs/CODING_GUIDELINES.md`
-3. Search existing implementation
-4. Reuse existing utilities
+1. Read md files from `/docs`
+2. Search existing implementation
+3. Reuse existing utilities
 
 ## Workflow
 

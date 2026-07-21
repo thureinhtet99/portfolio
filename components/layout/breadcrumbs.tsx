@@ -16,14 +16,14 @@ export function Breadcrumbs() {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
 
-  if (segments.length === 0 || segments[0] === "admin") return null;
+  if (segments[0] === "admin") return null;
 
   return (
     <nav aria-label="Breadcrumb" className="mb-4">
-      <ol className="font-mono text-xs text-muted-foreground flex items-center gap-1.5">
+      <ol className="font-mono text-lg text-muted-foreground flex items-center gap-1.5">
         <li>
           <Link href="/" className="hover:text-foreground transition-colors">
-            ~
+            ~ /
           </Link>
         </li>
         {segments.map((segment, index) => {

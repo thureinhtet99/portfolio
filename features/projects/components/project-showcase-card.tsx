@@ -95,7 +95,7 @@ export function ProjectShowcaseCard({
                   href={project.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 hover:bg-black/5 dark:hover:bg-white/5"
+                  className="flex items-center justify-center gap-2 hover:bg-white/5"
                 >
                   <FaGithub className="h-4 w-4" />
                   Code
@@ -119,7 +119,7 @@ export function ProjectShowcaseCard({
                   href={project.liveUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 hover:bg-black/5 dark:hover:bg-white/5"
+                  className="flex items-center justify-center gap-2 hover:bg-white/5"
                 >
                   <ExternalLink className="h-4 w-4" />
                   Live

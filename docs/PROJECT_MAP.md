@@ -4,7 +4,8 @@ A personal portfolio site with an authenticated admin panel, built on Next.js Ap
 
 > **This document describes the post-v3-migration structure.** The target structure
 > was defined in `CODING_GUIDELINES.md` and migration was completed in Phase 6.
-> See `PROGRESS.md` for the full migration history.
+> See `PROGRESS.md` for the full migration history and `References.md` for the
+> jasoncameron.dev-inspired feature spec driving the `home` feature's Dashboard widgets.
 
 ---
 
@@ -42,34 +43,34 @@ All five public-facing features are extracted into `features/`. Pages in `app/(p
 
 ## 2. Folder Responsibilities
 
-| Folder                       | Responsibility                                                                                                                                                                    |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `app/`                       | Routing, layouts, metadata, API route handlers.                                                                                                                                   |
-| `app/(public)/`              | Route group for public-facing pages. `layout.tsx` wraps children in the root shell. Pages are thin server wrappers.                                                               |
-| `app/(public)/page.tsx`      | Home page — fetches data server-side, renders `<HomeView />` from `features/home/`.                                                                                               |
-| `app/(public)/projects/`     | Renders `<ProjectsView />` from `features/projects/`.                                                                                                                             |
-| `app/(public)/certificates/` | Renders `<CertificatesView />` from `features/certificates/`.                                                                                                                     |
-| `app/(public)/timeline/`     | Renders `<TimelineView />` from `features/timeline/`.                                                                                                                             |
-| `app/(public)/contact/`      | Inline contact form client component.                                                                                                                                             |
-| `app/admin/`                 | Authenticated admin routes. `page.tsx` is an auth-gate (login form when unauthenticated, `<AdminView />` when authenticated). `layout.tsx` is a minimal wrapper.                 |
-| `app/api/`                   | Server route handlers — one folder per resource (`projects`, `certificates`, `timelines`, `settings`, `resume`, `send`, `upload`, `auth`, `admin/create-user`). No UI logic here. |
-| `features/home/components/`  | `home-view.tsx` (hero, about, GitHub widget, featured projects sections) + `github-activity-widget.tsx`.                                                                          |
-| `features/projects/`         | Full project feature: `projects-view.tsx`, `project-showcase-card.tsx`, `project-detail-modal.tsx`, `project-credentials-panel.tsx`, plus static data in `data/projects.ts`.      |
-| `features/certificates/`     | `certificates-view.tsx` + `data/certificates.ts`.                                                                                                                                 |
-| `features/timeline/`         | `timeline-view.tsx` + `data/experiences.ts`.                                                                                                                                      |
-| `features/admin/`            | `admin-view.tsx` (dashboard shell), section components (`settings-section.tsx`, `project-section.tsx`, `certificate-section.tsx`, `timeline-section.tsx`), plus `data/menu-items.tsx`. |
-| `components/ui/`             | Unmodified shadcn/ui primitives (`button.tsx`, `card.tsx`, `dialog.tsx`, etc.). Never feature-specific logic here.                                                                |
-| `components/layout/`         | App chrome shared across routes: `top-navbar.tsx`, `top-navbar-wrapper.tsx`, `footer.tsx`, `breadcrumbs.tsx`, `theme-toggle.tsx`.                                                 |
-| `components/providers/`      | App-level providers: `theme-provider.tsx`, `query-provider.tsx`.                                                                                                                  |
-| `components/shared/`         | Reusable non-UI components: `delete-confirm-box.tsx`.                                                                                                                             |
-| `lib/`                       | Core singletons and utilities: auth config, auth client, base URL helper, `cn()`/`formatDate()` utils, motion presets.                                                           |
-| `db/`                        | Drizzle schema and DB client instance. The only place raw table definitions live.                                                                                                 |
-| `drizzle/`                   | Auto-generated migration SQL and snapshots. Never hand-edited.                                                                                                                    |
-| `data/`                      | Global/cross-feature static data (skills list, education history, country list). Feature-specific data lives in `features/<name>/data/`.                                         |
-| `types/`                     | Shared TypeScript types used across more than one feature.                                                                                                                        |
-| `hooks/`                     | Global reusable hooks (e.g. `use-mobile.ts`). Feature-local hooks live inside that feature folder.                                                                                |
-| `config/`                    | App-wide configuration/constants.                                                                                                                                                 |
-| `public/`                    | Static assets served as-is.                                                                                                                                                       |
+| Folder                       | Responsibility                                                                                                                                                                                                                 |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `app/`                       | Routing, layouts, metadata, API route handlers.                                                                                                                                                                                |
+| `app/(public)/`              | Route group for public-facing pages. `layout.tsx` wraps children in the root shell. Pages are thin server wrappers.                                                                                                            |
+| `app/(public)/page.tsx`      | Home page — fetches data server-side, renders `<HomeView />` from `features/home/`.                                                                                                                                            |
+| `app/(public)/projects/`     | Renders `<ProjectsView />` from `features/projects/`.                                                                                                                                                                          |
+| `app/(public)/certificates/` | Renders `<CertificatesView />` from `features/certificates/`.                                                                                                                                                                  |
+| `app/(public)/timeline/`     | Renders `<TimelineView />` from `features/timeline/`.                                                                                                                                                                          |
+| `app/(public)/contact/`      | Inline contact form client component.                                                                                                                                                                                          |
+| `app/admin/`                 | Authenticated admin routes. `page.tsx` is an auth-gate (login form when unauthenticated, `<AdminView />` when authenticated). `layout.tsx` is a minimal wrapper.                                                               |
+| `app/api/`                   | Server route handlers — one folder per resource (`projects`, `certificates`, `timelines`, `settings`, `resume`, `send`, `upload`, `auth`, `admin/create-user`). No UI logic here.                                              |
+| `features/home/components/`  | `home-view.tsx` (hero, about, GitHub widget, featured projects sections) + `github-activity-widget.tsx`.                                                                                                                       |
+| `features/projects/`         | Full project feature: `projects-view.tsx`, `project-showcase-card.tsx`, `project-detail-modal.tsx`, `project-credentials-panel.tsx`, plus static data in `data/projects.ts`.                                                   |
+| `features/certificates/`     | `certificates-view.tsx` + `data/certificates.ts`.                                                                                                                                                                              |
+| `features/timeline/`         | `timeline-view.tsx` + `data/experiences.ts`.                                                                                                                                                                                   |
+| `features/admin/`            | `admin-view.tsx` (dashboard shell), section components (`settings-section.tsx`, `project-section.tsx`, `certificate-section.tsx`, `timeline-section.tsx`), plus `data/menu-items.tsx`.                                         |
+| `components/ui/`             | Unmodified shadcn/ui primitives (`button.tsx`, `card.tsx`, `dialog.tsx`, etc.). Never feature-specific logic here.                                                                                                             |
+| `components/layout/`         | App chrome shared across routes: `top-navbar.tsx`, `top-navbar-wrapper.tsx`, `footer.tsx`, `breadcrumbs.tsx`. ~~`theme-toggle.tsx`~~ — scheduled for removal (`DESIGN_SYSTEM.md` Phase 8, single fixed dark theme, no toggle). |
+| `components/providers/`      | App-level providers: `query-provider.tsx`. ~~`theme-provider.tsx`~~ — scheduled for removal (`DESIGN_SYSTEM.md` Phase 8, `next-themes` dropped).                                                                               |
+| `components/shared/`         | Reusable non-UI components: `delete-confirm-box.tsx`.                                                                                                                                                                          |
+| `lib/`                       | Core singletons and utilities: auth config, auth client, base URL helper, `cn()`/`formatDate()` utils, motion presets.                                                                                                         |
+| `db/`                        | Drizzle schema and DB client instance. The only place raw table definitions live.                                                                                                                                              |
+| `drizzle/`                   | Auto-generated migration SQL and snapshots. Never hand-edited.                                                                                                                                                                 |
+| `data/`                      | Global/cross-feature static data (skills list, education history, country list). Feature-specific data lives in `features/<name>/data/`.                                                                                       |
+| `types/`                     | Shared TypeScript types used across more than one feature.                                                                                                                                                                     |
+| `hooks/`                     | Global reusable hooks (e.g. `use-mobile.ts`). Feature-local hooks live inside that feature folder.                                                                                                                             |
+| `config/`                    | App-wide configuration/constants.                                                                                                                                                                                              |
+| `public/`                    | Static assets served as-is.                                                                                                                                                                                                    |
 
 ---
 
@@ -85,7 +86,7 @@ All five public-facing features are extracted into `features/`. Pages in `app/(p
 
 ## 4. Feature Flow
 
-All five public-facing features are extracted into `features/`:
+All five public-facing features are extracted into `features/`. `docs/References.md` §3 is the spec for the homepage Dashboard widgets below (GitHub activity/language bar, status footer, location, Book-a-Chat) — `github-activity-widget.tsx` and `components/Footer.tsx` implement parts of it already; the posts system (§1, §6) and project detail-page credibility anchors (§5) are not yet built. `DESIGN_SYSTEM.md` overrides `References.md` on anything theme/color-related (no theme picker — see `DESIGN_SYSTEM.md` §9).
 
 ```
 features/home/
@@ -132,15 +133,15 @@ features/admin/
 
 App Router, file-based. Route groups don't affect URLs.
 
-| Route           | File                                          | Notes                                                          |
-| --------------- | --------------------------------------------- | -------------------------------------------------------------- |
-| `/`             | `app/(public)/page.tsx`                       | Fetches data server-side, renders `<HomeView />`               |
-| `/projects`     | `app/(public)/projects/page.tsx`              | Renders `<ProjectsView />` from features                       |
-| `/certificates` | `app/(public)/certificates/page.tsx`          | Renders `<CertificatesView />` from features                   |
-| `/timeline`     | `app/(public)/timeline/page.tsx`              | Renders `<TimelineView />` from features                       |
-| `/contact`      | `app/(public)/contact/page.tsx`               | Inline contact form client component                           |
-| `/admin`        | `app/admin/page.tsx` (+ `layout.tsx`)         | Protected; login form + dashboard tabs                         |
-| `/api/*`        | `app/api/**/route.ts`                         | REST-style handlers, no pages                                  |
+| Route           | File                                  | Notes                                            |
+| --------------- | ------------------------------------- | ------------------------------------------------ |
+| `/`             | `app/(public)/page.tsx`               | Fetches data server-side, renders `<HomeView />` |
+| `/projects`     | `app/(public)/projects/page.tsx`      | Renders `<ProjectsView />` from features         |
+| `/certificates` | `app/(public)/certificates/page.tsx`  | Renders `<CertificatesView />` from features     |
+| `/timeline`     | `app/(public)/timeline/page.tsx`      | Renders `<TimelineView />` from features         |
+| `/contact`      | `app/(public)/contact/page.tsx`       | Inline contact form client component             |
+| `/admin`        | `app/admin/page.tsx` (+ `layout.tsx`) | Protected; login form + dashboard tabs           |
+| `/api/*`        | `app/api/**/route.ts`                 | REST-style handlers, no pages                    |
 
 ---
 
@@ -159,7 +160,7 @@ App Router, file-based. Route groups don't affect URLs.
 
 - **Server state** (data from the DB/API): TanStack Query, initialized once via `components/providers/query-provider.tsx` wrapping the app in `app/layout.tsx`. Each feature view owns its own queries/mutations — there is no global store for server data.
 - **Local/UI state**: plain React state (`useState`/`useReducer`) inside view and section components — e.g. modal open/close (`ProjectDetailModal`), delete confirmation (`DeleteConfirmBox`).
-- **Theme state**: `components/providers/theme-provider.tsx` (context) + `components/layout/theme-toggle.tsx` (control), independent of TanStack Query.
+- **Theme state**: ~~`components/providers/theme-provider.tsx` (context) + `components/layout/theme-toggle.tsx` (control)~~ — removed per `DESIGN_SYSTEM.md` Phase 8; the site locks to a single fixed dark theme, so there is no theme state to manage.
 - **Session state**: derived from `lib/auth-client.ts`'s session hook, not duplicated into another store.
 - No global client state library (Redux/Zustand) is used — state stays as local as possible, scoped to the feature that needs it.
 
@@ -167,18 +168,18 @@ App Router, file-based. Route groups don't affect URLs.
 
 ## 8. Important Files
 
-| File                                          | Why it matters                                                                                                          |
-| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `app/layout.tsx`                              | Root layout — wraps the app in providers (theme, query) and mounts global chrome (navbar/footer).                       |
-| `app/(public)/page.tsx`                       | Home page — server-side fetches settings, projects, GitHub events, passes to `<HomeView />`.                            |
-| `features/home/components/home-view.tsx`      | Client component composing hero, about, GitHub widget, and featured projects sections.                                  |
-| `db/schema.ts`                                | Single source of truth for every table; drives migrations and all query typing.                                         |
-| `lib/auth.ts` / `lib/auth-client.ts`          | Auth boundary — every protected route/action depends on these.                                                          |
-| `lib/utils.ts`                                | Houses `cn()` and `formatDate()` shared utilities.                                                                      |
-| `lib/motion.ts`                               | Framer Motion presets (`sectionReveal`, `cardReveal`) used across pages.                                                |
-| `config/app-config.ts`                        | Central place for site metadata / feature flags — check here before hardcoding constants elsewhere.                     |
-| `components/providers/query-provider.tsx`     | TanStack Query client setup; if data isn't refreshing, check the config here first.                                     |
-| `drizzle.config.ts`                           | Points Drizzle Kit at `db/schema.ts` and the migrations output folder — needed for any `db:generate`/`db:push` command. |
+| File                                      | Why it matters                                                                                                          |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `app/layout.tsx`                          | Root layout — wraps the app in providers (theme, query) and mounts global chrome (navbar/footer).                       |
+| `app/(public)/page.tsx`                   | Home page — server-side fetches settings, projects, GitHub events, passes to `<HomeView />`.                            |
+| `features/home/components/home-view.tsx`  | Client component composing hero, about, GitHub widget, and featured projects sections.                                  |
+| `db/schema.ts`                            | Single source of truth for every table; drives migrations and all query typing.                                         |
+| `lib/auth.ts` / `lib/auth-client.ts`      | Auth boundary — every protected route/action depends on these.                                                          |
+| `lib/utils.ts`                            | Houses `cn()` and `formatDate()` shared utilities.                                                                      |
+| `lib/motion.ts`                           | Framer Motion presets (`sectionReveal`, `cardReveal`) used across pages.                                                |
+| `config/app-config.ts`                    | Central place for site metadata / feature flags — check here before hardcoding constants elsewhere.                     |
+| `components/providers/query-provider.tsx` | TanStack Query client setup; if data isn't refreshing, check the config here first.                                     |
+| `drizzle.config.ts`                       | Points Drizzle Kit at `db/schema.ts` and the migrations output folder — needed for any `db:generate`/`db:push` command. |
 
 ---
 
