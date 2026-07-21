@@ -31,7 +31,7 @@ Top nav: `About · Posts · Projects · Pics · More ▾` — the `More` dropdow
 
 **Aesthetic:** developer/terminal-coded, not corporate. Breadcrumb styled like a shell path, monospace accents, punny personal-brand mark (his is "JSON" from Jason + initials).
 
-> **Superseded by `DESGIN_SYSTEM.md`:** the reference site's runtime theme/accent picker (4 palettes × ~14 accent colors + background-effect toggle) is **not** part of this build. `DESGIN_SYSTEM.md` §1–§2 deliberately rejects a visitor-configurable theme — including a light/dark toggle — in favor of a single fixed dark theme, plus a single fixed `--accent-signal` token used sparingly (active nav state, status dot, language-bar segments, prose link hover). Treat this section as inspiration for _structure_ only (breadcrumb-as-path, monospace metadata) — for anything color/theme-related, `DESGIN_SYSTEM.md` governs.
+> **Superseded (see §12 below):** the reference site's runtime theme/accent picker (4 palettes × ~14 accent colors + background-effect toggle) is **not** part of this build. This project deliberately rejects a visitor-configurable theme — including a light/dark toggle — in favor of a single fixed dark theme, plus a single fixed `--accent-signal` token used sparingly (active nav state, status dot, language-bar segments, prose link hover). Treat this section as inspiration for _structure_ only (breadcrumb-as-path, monospace metadata) — for anything color/theme-related, §12 governs.
 
 ---
 
@@ -103,10 +103,10 @@ Top nav: `About · Posts · Projects · Pics · More ▾` — the `More` dropdow
 
 ## 8. Accessibility Checklist
 
-- Verify contrast ratios for `--accent-signal` against the fixed dark background before locking it (flagged as outstanding in `PROGRESS.md` Phase 1).
+- `--accent-signal` contrast against the fixed dark background is already measured at 4.221:1 — see §12. Re-verify if the token value ever changes.
 - Respect `prefers-reduced-motion` for any ambient/decorative animation (Framer Motion presets in `lib/motion.ts`).
 - Alt text on all meaningful images (portraits, project screenshots); empty/decorative alt on purely decorative ones.
-- There is no theme toggle to worry about — the site is a single fixed dark theme (`DESGIN_SYSTEM.md` Phase 8). Focus keyboard/focus-state effort on nav, buttons, and form fields instead.
+- There is no theme toggle to worry about — the site is a single fixed dark theme (see §12). Focus keyboard/focus-state effort on nav, buttons, and form fields instead.
 - Confirm breadcrumb and nav are in a real `<nav>`/landmark structure, not just styled divs.
 
 ---
@@ -130,9 +130,39 @@ Top nav: `About · Posts · Projects · Pics · More ▾` — the `More` dropdow
 
 ## 11. Suggested Build Order
 
-1. Layout shell: nav, breadcrumb, footer — using the single fixed dark theme and `--accent-signal` token, per `DESGIN_SYSTEM.md`. No theme toggle to build.
+1. Layout shell: nav, breadcrumb, footer — using the single fixed dark theme and `--accent-signal` token, per §12. No theme toggle to build.
 2. Static pages: home hero, about, projects list/detail, pics — using your real content, no live widgets yet.
 3. Posts system (list + detail, MDX or CMS-backed).
 4. Live Dashboard widgets, one at a time, each with loading/failure states: GitHub commits → language bar → map → click counter → status footer (deploy hash + view count).
 5. Accessibility + performance pass using the checklists above.
-6. Polish: micro-interactions, `prefers-reduced-motion` handling.
+
+---
+
+## 12. Locked Decisions (do not re-derive or re-decide these)
+
+This section preserves the load-bearing facts that used to live in `DESGIN_SYSTEM.md` and `PROGRESS.md`, so nothing gets lost if those files are removed. This is a status/rules snapshot as of 2026-07-21 (v3, S10) — it will drift from the actual code over time like any doc; check the source if something here seems wrong.
+
+**Theme: single fixed dark theme, no toggle, no picker.**
+
+- No light mode, no `next-themes`, no theme-provider/theme-toggle components, no visitor-facing control of any kind.
+- This directly overrides §2 of this document (which describes the reference site's runtime theme/accent picker as inspiration only) — do not build a theme picker even though the rest of this file gestures at one.
+
+**Accent color — fixed, do not change without re-measuring contrast:**
+
+```css
+--accent-signal: oklch(0.72 0.17 250); /* muted blue-violet */
+--accent-signal-foreground: oklch(0.15 0 0);
+```
+
+Measured WCAG contrast against the background: **4.221:1** — passes 3:1 (UI components, large text) but fails 4.5:1 (body text). **Never use this token for body copy.** Approved uses: active nav indicator, availability status dot, GitHub language-bar segments, prose link hover. Not for: buttons, card backgrounds, borders.
+
+**Resolved widget decisions (don't rebuild differently):**
+
+- Availability dot: `accent-signal` when available, `muted-foreground/50` when not — not `bg-green-500`/`bg-red-500`.
+- Location widget: static "Currently Based In" text + pin icon. **Not** a live/embedded map.
+- View counter: stored in the `setting` table under the `siteViews` key, incremented server-side.
+- Status footer format: `● All systems nominal · {commitHash} · {siteViews} views` — monospace, one line, dot uses `accent-signal`.
+
+**Known non-blocking gap (as of last update):** GitHub activity widget and latest-posts widget don't have Skeleton shimmer loading states yet — they show nothing/text until data resolves.
+
+**Out of scope — do not build unless explicitly requested:** theme/accent picker, background-effect toggle, click counter, webring, `/pics` gallery, `/tutorials`.

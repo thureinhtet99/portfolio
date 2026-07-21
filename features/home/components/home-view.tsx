@@ -21,10 +21,11 @@ import { motion, useReducedMotion } from "framer-motion";
 import { sectionReveal, cardReveal } from "@/lib/motion";
 import { useState } from "react";
 import { StaticImageData } from "next/image";
-import { ProjectType } from "@/types/index.type";
+import { ProjectType, PostType } from "@/types/index.type";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ProjectShowcaseCard } from "@/features/projects/components/project-showcase-card";
 import { GitHubActivityWidget } from "@/features/home/components/github-activity-widget";
+import { LatestPostsWidget } from "@/features/home/components/latest-posts-widget";
 import profileImg from "@/public/profile.svg";
 
 type Props = {
@@ -37,6 +38,7 @@ type Props = {
   resume: string | null;
   githubEvents: any[];
   githubLanguages: Record<string, number>;
+  latestPosts: PostType[];
   bookingUrl: string | null;
   socialLinks: {
     github: string | null;
@@ -55,6 +57,7 @@ export function HomeView({
   resume,
   githubEvents,
   githubLanguages,
+  latestPosts,
   bookingUrl,
   socialLinks,
 }: Props) {
@@ -307,6 +310,8 @@ export function HomeView({
           </div>
         )}
       </section>
+
+      <LatestPostsWidget posts={latestPosts} />
 
       {/* Connect Section */}
       {(socialLinks.github || socialLinks.linkedin || socialLinks.facebook) && (

@@ -70,7 +70,7 @@
 │           └── menu-items.tsx                  ← data/admin/menu-items.tsx
 │
 ├── components/                                  # shared/global only
-│   ├── ui/                                      # unchanged (shadcn primitives)
+│   ├── ui/                                      # shadcn primitives
 │   │   ├── button.tsx, card.tsx, input.tsx, dialog.tsx, ...
 │   ├── layout/
 │   │   ├── top-navbar.tsx                      ← components/top-navbar.tsx

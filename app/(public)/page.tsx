@@ -1,9 +1,9 @@
 import { APP_CONFIG } from "@/config/app-config";
 import { HomeView } from "@/features/home/components/home-view";
-import { ProjectType } from "@/types/index.type";
+import { ProjectType, PostType } from "@/types/index.type";
 import { db } from "@/db/client";
-import { setting } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { setting, post } from "@/db/schema";
+import { asc, eq } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
@@ -98,11 +98,32 @@ async function getGithubLanguages(githubUrl?: string) {
   }
 }
 
+async function getLatestPosts(): Promise<PostType[]> {
+  try {
+    const allPosts = await db
+      .select()
+      .from(post)
+      .orderBy(asc(post.order), asc(post.createdAt))
+      .all();
+    return allPosts
+      .filter((p) => p.published)
+      .slice(0, 4)
+      .map((p) => ({
+        ...p,
+        tags: p.tags ? JSON.parse(p.tags) : [],
+      }));
+  } catch (error) {
+    console.error("Failed to fetch latest posts:", error);
+    return [];
+  }
+}
+
 export default async function Home() {
   const settings = await getSettings();
   const featuredProjects = await getProjects();
   const githubEvents = await getGithubEvents(settings.githubUrl);
   const githubLanguages = await getGithubLanguages(settings.githubUrl);
+  const latestPosts = await getLatestPosts();
 
   // Increment view count
   try {
@@ -153,6 +174,7 @@ export default async function Home() {
       resume={resume}
       githubEvents={githubEvents}
       githubLanguages={githubLanguages}
+      latestPosts={latestPosts}
       bookingUrl={bookingUrl}
       socialLinks={{
         github: githubUrl,

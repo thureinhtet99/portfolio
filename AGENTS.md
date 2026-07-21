@@ -1,34 +1,34 @@
 # AGENTS.md
 
-This is the root instruction file for AI coding agents. Load deeper docs from `docs/` only when needed.
+Root instruction file for AI coding agents. Load deeper docs from `docs/` when needed.
 
-## What is this project?
+## Project
 
-Personal portfolio for Thu Rein Htet, built with Next.js 15 App Router. Main goals are:
+Personal portfolio for Thu Rein Htet — Next.js 15 App Router.
 
-- Present or showcase projects, blogs, personal assets and profile.
-- Stay maintainable, fast, and easy to extend to add further features.
+- Showcase projects, blog posts, and professional profile
+- Stay maintainable, fast, and easy to extend
 
-**Design reference:** `docs/References.md` — UX/frontend audit of [jasoncameron.dev](https://jasoncameron.dev/) used as inspiration.
+**Design reference:** `docs/References.md` — UX/frontend audit of [jasoncameron.dev](https://jasoncameron.dev/), plus §12 "Locked Decisions" for current styling/theme rules (single fixed dark theme, accent color, resolved widget decisions).
 
-## Project stack
+## Stack
 
-| Concern               | Technology                                                                    |
-| --------------------- | ----------------------------------------------------------------------------- |
-| Framework             | Next.js 15 (App Router), React 19                                             |
-| Language              | TypeScript                                                                    |
-| Styling               | Tailwind CSS v4, `tailwindcss-animate`, `tailwind-variants`                   |
-| UI components         | Radix UI primitives + shadcn/ui-style wrappers in `components/ui/`            |
-| Forms                 | `react-hook-form` + `@hookform/resolvers` + `zod`                             |
-| Data fetching / cache | `@tanstack/react-query`                                                       |
-| Database              | Drizzle ORM, `@libsql/client` (LibSQL/SQLite), `better-sqlite3` for local dev |
-| Auth                  | `better-auth` (with its own CLI for schema generation)                        |
-| Email                 | `nodemailer`                                                                  |
-| Media storage         | `cloudinary`                                                                  |
-| Animation             | `framer-motion`, `react-type-animation`                                       |
-| Icons                 | `lucide-react`, `react-icons`                                                 |
-| Markdown              | `react-markdown`                                                              |
-| Toasts                | `sonner`                                                                      |
+| Concern               | Technology                                                   |
+| --------------------- | ------------------------------------------------------------ |
+| Framework             | Next.js 15 (App Router), React 19                            |
+| Language              | TypeScript                                                   |
+| Styling               | Tailwind CSS v4, `tailwindcss-animate`, `tailwind-variants`  |
+| UI components         | Radix UI primitives + shadcn/ui wrappers in `components/ui/` |
+| Forms                 | `react-hook-form` + `@hookform/resolvers` + `zod`            |
+| Data fetching / cache | `@tanstack/react-query`                                      |
+| Database              | Drizzle ORM, `@libsql/client` (LibSQL/SQLite)                |
+| Auth                  | `better-auth`                                                |
+| Email                 | `nodemailer`                                                 |
+| Media storage         | `cloudinary`                                                 |
+| Animation             | `framer-motion`, `react-type-animation`                      |
+| Icons                 | `lucide-react`, `react-icons`                                |
+| Markdown              | `react-markdown`                                             |
+| Toasts                | `sonner`                                                     |
 
 ## Instructions
 
@@ -52,47 +52,12 @@ Never:
 - fetch directly inside UI components
 - install new dependencies without justification
 
-Before writing code:
-
-1. Read md files from `/docs`
-2. Search existing implementation
-3. Reuse existing utilities
-
 ## Workflow
 
-```text
-Start
- │
- ▼
-Read AGENTS.md
- │
- ▼
-Read PROGRESS.md
- │
- ▼
-Read DESIGN_SYSTEM.md
- │
- ▼
-Read PROJECT_MAP.md
- │
- ▼
-Read CODING_GUIDELINES.md
- │
- ▼
-Locate existing implementation
- │
- ▼
-Reuse components and utilities
- │
- ▼
-Write code
- │
- ▼
-Run lint and tests
- │
- ▼
-Update documentation if architecture changed
- │
- ▼
-Finish
-```
+Before writing code:
+
+1. Read `docs/PROJECT_MAP.md` (structure) and `docs/References.md` (feature spec + §12 Locked Decisions — check this before changing anything visual/theme-related)
+2. Search existing implementation — reuse components and utilities
+3. Write code
+4. Run lint (`next lint`) and typecheck (`tsc --noEmit`)
+5. Update docs if architecture changed

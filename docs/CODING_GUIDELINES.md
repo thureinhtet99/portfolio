@@ -1,13 +1,6 @@
 # CODING_GUIDELINES.md
 
-- Maintainability: feature-local code is easier to remove/refactor without orphans.
-- Discoverability: contributors find behavior where routes/features live.
-- Ease of change: less context-switching between distant folders.
-
-## v3 Project Structure
-
-> **This is the current structure.** The v3 migration was completed in S5 (2026-07-20).
-> For a high-level overview, see `PROJECT_MAP.md`.
+This is the current folder structure:
 
 ```
 ├── app/                                        -> next.js routing, layout, metadata, route handlers
@@ -21,8 +14,12 @@
 │   │   │   └── page.tsx                        -> renders <ProjectsView />
 │   │   ├── certificates/
 │   │   │   └── page.tsx                        -> renders <CertificatesView />
-│   │   └── timeline/
-│   │       └── page.tsx                        -> renders <TimelineView />
+│   │   ├── timeline/
+│   │   │   └── page.tsx                        -> renders <TimelineView />
+│   │   └── posts/
+│   │       ├── page.tsx                        -> renders <PostsView />
+│   │       └── [slug]/
+│   │           └── page.tsx                    -> renders <PostDetailView />
 │   │
 │   ├── admin/                                  -> admin route
 │   │   ├── layout.tsx
@@ -34,6 +31,7 @@
 │   │   ├── projects/route.ts
 │   │   ├── certificates/route.ts
 │   │   ├── timelines/route.ts
+│   │   ├── posts/route.ts
 │   │   ├── settings/route.ts
 │   │   ├── resume/route.ts
 │   │   ├── send/route.ts
@@ -45,7 +43,9 @@
 ├── features/
 │   ├── home/
 │   │   └── components/
-│   │       └── home-view.tsx
+│   │       ├── home-view.tsx
+│   │       ├── github-activity-widget.tsx
+│   │       └── latest-posts-widget.tsx
 │   │
 │   ├── projects/
 │   │   ├── components/
@@ -68,26 +68,30 @@
 │   │   └── data/
 │   │       └── experiences.ts
 │   │
+│   ├── posts/
+│   │   └── components/
+│   │       ├── posts-view.tsx
+│   │       └── post-detail-view.tsx
+│   │
 │   └── admin/
 │       ├── components/
 │       │   ├── admin-view.tsx
 │       │   ├── project-section.tsx
 │       │   ├── certificate-section.tsx
 │       │   ├── timeline-section.tsx
+│       │   ├── posts-section.tsx
 │       │   └── settings-section.tsx
 │       └── data/
 │           └── menu-items.tsx
 │
 ├── components/                                  # shared/global only
-│   ├── ui/                                      # unchanged (shadcn primitives)
+│   ├── ui/                                      # shadcn primitives
 │   │   ├── button.tsx, card.tsx, input.tsx, dialog.tsx, ...
 │   ├── layout/
-│   │   ├── top-navbar.tsx
-│   │   ├── top-navbar-wrapper.tsx
-│   │   ├── footer.tsx                          # theme-toggle.tsx removed — single fixed dark theme (DESIGN_SYSTEM.md Phase 8)
+│   │   ├── footer.tsx
 │   │   └── breadcrumbs.tsx
 │   ├── providers/
-│   │   └── query-provider.tsx                  # theme-provider.tsx removed — next-themes dropped
+│   │   └── query-provider.tsx
 │   └── shared/
 │       └── delete-confirm-box.tsx
 │
@@ -95,6 +99,7 @@
 │   ├── auth.ts
 │   ├── auth-client.ts
 │   ├── base-url.ts
+│   ├── motion.ts
 │   └── utils.ts
 │
 ├── db/
@@ -120,15 +125,13 @@
 ├── public/
 │   ├── profile.svg
 │   └── TRH.svg
-
+│
 ├── docs/
 │   ├── CODING_GUIDELINES.md
 │   ├── PROJECT_MAP.md
-│   ├── DESIGN_SYSTEM.md                      -> visual/styling source of truth
-│   ├── PROGRESS.md                           -> implementation status, read first when resuming
-│   └── References.md                         -> jasoncameron.dev-inspired feature spec (site map, Dashboard widgets); DESIGN_SYSTEM.md overrides it on theme/color
+│   └── References.md                          -> feature spec + locked styling/theme decisions (§12)
 │
-├── AGENTS.md                                    -> root agent instructions, points to docs/References.md
+├── AGENTS.md                                    -> root agent instructions
 ├── drizzle.config.ts
 ├── next.config.ts
 ├── postcss.config.mjs
@@ -143,47 +146,47 @@
 
 ## Coding Standards
 
-Components
+**Components**
 
 - Functional only
 - PascalCase
 
-Hooks
+**Hooks**
 
-- Prefix with use
+- Prefix with `use`
 
-Utilities
+**Utilities**
 
 - camelCase
 
-Types
+**Types**
 
 - PascalCase
 
-Prefer
+**Prefer**
 
-- composition
-- reusable hooks
-- reusable components
+- Composition
+- Reusable hooks
+- Reusable components
 
-Avoid
+**Avoid**
 
-- prop drilling
-- deeply nested JSX
-- duplicate logic
+- Prop drilling
+- Deeply nested JSX
+- Duplicate logic
 
-Always
+**Always**
 
-- use TypeScript
-- validate input
-- use async/await
-- return early
+- Use TypeScript
+- Validate input (Zod)
+- Use async/await
+- Return early
 
 ---
 
-## Naming conventions used in this repo
+## Naming Conventions
 
 - Folders/files: `kebab-case`
 - React components: `PascalCase`
 - Hooks: `useScreenSize` in files like `use-screen-size.ts`
-- Utilities/constants: descriptive camelCase or UPPER_SNAKE_CASE constants
+- Utilities/constants: descriptive camelCase or `UPPER_SNAKE_CASE` constants

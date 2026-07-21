@@ -8,6 +8,7 @@ const routeLabels: Record<string, string> = {
   projects: "projects",
   certificates: "certificates",
   timeline: "timeline",
+  posts: "posts",
   contact: "contact",
   admin: "admin",
 };
