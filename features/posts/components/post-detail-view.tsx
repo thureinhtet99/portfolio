@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Clock, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { sectionReveal } from "@/lib/motion";
 import { formatDate } from "@/lib/utils";
@@ -15,53 +13,63 @@ type Props = {
 };
 
 export function PostDetailView({ post }: Props) {
+  // Decorative title: split into words and alternate styles
+  const titleWords = post.title.split(" ");
+
   return (
     <div className="page-shell">
-      <motion.div {...sectionReveal} className="space-y-8">
-        <Button variant="ghost" asChild className="self-start -ml-2">
-          <Link href="/posts" className="flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            All Posts
-          </Link>
-        </Button>
-
-        <article className="mx-auto max-w-3xl space-y-6">
-          <header className="space-y-3">
-            <h1 className="text-3xl font-bold tracking-[-0.03em] sm:text-4xl">
-              {post.title}
+      <section className="px-6 py-12">
+        <article className="mx-auto max-w-3xl space-y-8">
+          {/* Decorative Title */}
+          <motion.header
+            {...sectionReveal}
+            className="space-y-6 text-center"
+          >
+            <h1 className="font-mono text-4xl font-bold tracking-[-0.02em] sm:text-5xl lg:text-6xl leading-tight">
+              {titleWords.map((word, i) => (
+                <span
+                  key={i}
+                  className={
+                    i % 3 === 0
+                      ? "text-muted-foreground"
+                      : i % 3 === 1
+                        ? "text-[var(--accent-signal)] italic"
+                        : "text-foreground"
+                  }
+                >
+                  {word}{" "}
+                </span>
+              ))}
             </h1>
-            <div className="flex items-center gap-3 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5" />
-                <span>{formatDate(post.createdAt.toISOString())}</span>
-              </div>
+
+            <div className="flex items-center justify-center gap-3 font-mono text-sm text-muted-foreground">
+              <span>{formatDate(post.createdAt.toISOString())}</span>
             </div>
+
             {post.tags && post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap justify-center gap-1.5">
                 {post.tags.map((tag) => (
                   <Badge
                     key={tag}
                     variant="secondary"
-                    className="text-xs bg-accent-foreground/10"
+                    className="font-mono text-[10px] bg-muted/50 text-muted-foreground rounded-md px-2 py-0.5"
                   >
                     {tag}
                   </Badge>
                 ))}
               </div>
             )}
-          </header>
+          </motion.header>
 
-          {post.excerpt && (
-            <p className="text-lg leading-relaxed text-muted-foreground border-l-2 border-[var(--accent-signal)] pl-4">
-              {post.excerpt}
-            </p>
-          )}
+          {/* Divider */}
+          <div className="border-t border-border/40" />
 
+          {/* Markdown Body */}
           <div className="prose prose-base prose-invert max-w-none sm:prose-lg">
             <ReactMarkdown>{post.body}</ReactMarkdown>
           </div>
         </article>
-      </motion.div>
+      </section>
     </div>
   );
 }

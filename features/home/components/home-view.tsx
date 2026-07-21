@@ -9,7 +9,6 @@ import {
   Mail,
   MoveRight,
   MapPin,
-  Clock,
   ChevronDown,
   ChevronUp,
   Calendar,
@@ -67,60 +66,82 @@ export function HomeView({
 
   return (
     <div className="page-shell">
-      <section
-        id="hero-section"
-        className="surface-panel relative flex min-h-[calc(100vh-8rem)] items-center justify-center overflow-hidden px-5 py-14 sm:px-8 sm:py-16 lg:px-10"
-      >
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.09),transparent_55%)]" />
+      {/* Hero Section */}
+      <section id="hero-section" className="px-6 py-16 sm:py-20">
         <motion.div
           {...sectionReveal}
-          className="relative z-10 mx-auto max-w-3xl space-y-6 text-center"
+          className="mx-auto max-w-3xl space-y-6"
         >
-          <div className="space-y-3">
-            <h1 className="text-2xl font-bold tracking-[-0.02em] sm:text-3xl lg:text-4xl">
-              Hi folks...
-            </h1>
-            <h1 className="text-2xl font-bold tracking-[-0.02em] sm:text-3xl lg:text-4xl">
-              I&apos;m{" "}
-              <span className="text-4xl font-semibold tracking-[-0.03em] text-muted-foreground sm:text-5xl lg:text-6xl">
+          <div className="space-y-2">
+            <h1 className="font-mono text-2xl text-muted-foreground sm:text-3xl">
+              Hey! I&apos;m{" "}
+              <span className="font-mono text-4xl font-bold text-[var(--accent-signal)] sm:text-5xl lg:text-6xl">
                 Thu Rein Htet
               </span>
             </h1>
-            <p className="min-h-[1.75rem] text-lg capitalize text-muted-foreground sm:text-xl">
-              {/* {currentText} */}Software developer
-              {/* <span className="animate-pulse">|</span> */}
-            </p>
           </div>
 
-          <div className="mx-auto max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+          <div className="font-mono text-base leading-relaxed text-muted-foreground sm:text-lg">
             {intro && (
-              <div className="prose prose-base prose-invert mx-auto sm:prose-lg">
+              <div className="prose prose-base prose-invert sm:prose-lg">
                 <ReactMarkdown>{intro}</ReactMarkdown>
               </div>
             )}
           </div>
 
-          <div className="flex flex-col items-center justify-center gap-3 text-sm text-muted-foreground sm:flex-row sm:gap-6">
-            <div className="surface-panel-muted flex items-center gap-2 px-3 py-1.5">
-              <MapPin className="h-3.5 w-3.5 text-[var(--accent-signal)]" />
-              <span>Currently based in <span className="font-medium text-foreground">{residence}</span></span>
-            </div>
-            <span className="flex items-center gap-1">
-              <div
-                className={`relative h-2.5 w-2.5 me-1 rounded-full transition-colors ${
-                  available ? "bg-[var(--accent-signal)]" : "bg-muted-foreground/50"
-                }`}
+          {/* Social Links Row */}
+          <div className="flex flex-wrap items-center gap-3 font-mono text-sm text-muted-foreground">
+            {socialLinks.github && (
+              <Link
+                href={socialLinks.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 hover:text-foreground transition-colors"
               >
-                {available && !shouldReduceMotion && (
-                  <div className="absolute inset-0 h-full w-full animate-ping rounded-full bg-[var(--accent-signal)]" />
-                )}
-              </div>
-              {available ? "Available for work" : "Not available for work"}
-            </span>
+                <Github className="h-4 w-4" />
+                GitHub
+              </Link>
+            )}
+            {socialLinks.linkedin && (
+              <>
+                <span className="text-muted-foreground/30">|</span>
+                <Link
+                  href={socialLinks.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 hover:text-foreground transition-colors"
+                >
+                  <Linkedin className="h-4 w-4" />
+                  LinkedIn
+                </Link>
+              </>
+            )}
+            {socialLinks.facebook && (
+              <>
+                <span className="text-muted-foreground/30">|</span>
+                <Link
+                  href={socialLinks.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 hover:text-foreground transition-colors"
+                >
+                  <Facebook className="h-4 w-4" />
+                  Facebook
+                </Link>
+              </>
+            )}
+            <span className="text-muted-foreground/30">|</span>
+            <Link
+              href="/about"
+              className="flex items-center gap-1.5 hover:text-foreground transition-colors"
+            >
+              More about me <MoveRight className="h-3.5 w-3.5" />
+            </Link>
           </div>
 
-          <div className="flex w-full flex-col justify-center gap-3 pt-3 sm:w-auto sm:flex-row sm:flex-wrap">
-            <Button asChild size="lg" className="w-full rounded-lg sm:w-auto">
+          {/* CTA Row */}
+          <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:flex-wrap">
+            <Button asChild size="lg" className="rounded-lg">
               <Link href="/contact" className="flex items-center gap-2">
                 <Mail className="h-5 w-5" />
                 Get in Touch
@@ -131,7 +152,7 @@ export function HomeView({
                 variant="outline"
                 asChild
                 size="lg"
-                className="w-full rounded-lg sm:w-auto hover:bg-white/5"
+                className="rounded-lg hover:bg-white/5"
               >
                 <Link
                   href={bookingUrl}
@@ -149,7 +170,7 @@ export function HomeView({
                 variant="outline"
                 asChild
                 size="lg"
-                className="w-full rounded-lg sm:w-auto hover:bg-white/5"
+                className="rounded-lg hover:bg-white/5"
               >
                 <Link
                   href="/api/resume"
@@ -162,212 +183,112 @@ export function HomeView({
               </Button>
             )}
           </div>
-        </motion.div>
 
-        {/* Scroll Down Indicator */}
-        <motion.button
-          type="button"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 0.5 }}
-          className="absolute bottom-4 left-1/2 z-20 hidden -translate-x-1/2 flex-col items-center gap-2 bg-background/70 px-4 text-sm text-muted-foreground sm:flex focus-visible:outline-none focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:rounded-sm"
-          onClick={() => {
-            document
-              .getElementById("about-section")
-              ?.scrollIntoView({ behavior: "smooth" });
-          }}
-          aria-label="Scroll to About section"
-        >
-          <span>Scroll</span>
-          <motion.span
-            animate={shouldReduceMotion ? { y: 0 } : { y: [0, 5, 0] }}
-            transition={{
-              duration: 1.3,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="inline-flex"
-          >
-            <ChevronDown className="h-5 w-5" />
-          </motion.span>
-        </motion.button>
-      </section>
-
-      <section
-        id="about-section"
-        className="surface-panel min-h-[calc(100vh-8rem)] px-5 py-12 sm:px-8 sm:py-14 lg:px-10"
-      >
-        <motion.div
-          {...sectionReveal}
-          className="space-y-6 text-center"
-        >
-          <div className="flex justify-center mb-6">
-            {profileImage && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className="relative h-50 w-50 md:h-100 md:w-100"
-              >
-                <div className="absolute inset-0  overflow-hidden ">
-                  <Image
-                    src={profileImg}
-                    alt="Thu Rein Htet"
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                </div>
-              </motion.div>
-            )}
-          </div>
-
-          <h2 className="section-heading">About Me</h2>
-          <div className="mx-auto max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {aboutMe && (
+          {/* Location + Status */}
+          <div className="flex flex-col gap-2 font-mono text-sm text-muted-foreground sm:flex-row sm:items-center">
+            <div className="flex items-center gap-1.5">
+              <MapPin className="h-3.5 w-3.5 text-[var(--accent-signal)]" />
+              <span>
+                Currently based in{" "}
+                <span className="text-foreground">{residence}</span>
+              </span>
+            </div>
+            <span className="hidden text-muted-foreground/30 sm:inline">|</span>
+            <span className="flex items-center gap-1.5">
               <div
-                className={`prose prose-base prose-invert mx-auto sm:prose-lg ${
-                  isMobile && !isExpanded ? "line-clamp-5" : ""
+                className={`relative h-2 w-2 rounded-full ${
+                  available
+                    ? "bg-[var(--accent-signal)]"
+                    : "bg-muted-foreground/50"
                 }`}
               >
-                <ReactMarkdown>{aboutMe}</ReactMarkdown>
-              </div>
-            )}
-            {isMobile && aboutMe && (
-              <Button
-                variant="ghost"
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="mt-4"
-              >
-                {isExpanded ? (
-                  <>
-                    <ChevronUp />
-                    Read Less
-                  </>
-                ) : (
-                  <>
-                    <ChevronDown />
-                    Read More
-                  </>
+                {available && !shouldReduceMotion && (
+                  <div className="absolute inset-0 h-full w-full animate-ping rounded-full bg-[var(--accent-signal)]" />
                 )}
-              </Button>
-            )}
+              </div>
+              {available ? "Available for work" : "Not available"}
+            </span>
           </div>
         </motion.div>
       </section>
 
-      <GitHubActivityWidget events={githubEvents} languages={githubLanguages} />
-
-      {/* Featured Projects Section */}
-      <section
-        id="projects-section"
-        className="surface-panel space-y-6 px-5 py-10 sm:space-y-8 sm:px-8 sm:py-12 lg:px-10"
-      >
-        <div
-          className={`flex flex-col items-start gap-3 sm:flex-row sm:items-center ${
-            featuredProjects.length > 0
-              ? "sm:justify-between"
-              : "sm:justify-center"
-          }`}
-        >
-          <motion.h2
-            {...sectionReveal}
-            className="section-heading"
-          >
-            Featured Projects
-          </motion.h2>
-          {featuredProjects.length > 0 && (
-            <Button variant="outline" asChild className="rounded-lg">
-              <Link href="/projects" className="flex items-center gap-2">
-                View All <MoveRight className="h-4 w-4" />
+      {/* Featured Projects */}
+      <section id="projects-section" className="px-6">
+        <div className="mx-auto max-w-3xl space-y-6">
+          <div className="flex items-center justify-between">
+            <motion.h2 {...sectionReveal} className="font-mono text-2xl font-bold tracking-[-0.02em]">
+              Featured Projects
+            </motion.h2>
+            {featuredProjects.length > 0 && (
+              <Link
+                href="/projects"
+                className="font-mono text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                View all <MoveRight className="inline h-3.5 w-3.5" />
               </Link>
-            </Button>
+            )}
+          </div>
+
+          {featuredProjects.length > 0 ? (
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              {featuredProjects.slice(0, 2).map((project, index) => (
+                <motion.div key={project.id} {...cardReveal(index)}>
+                  <ProjectShowcaseCard
+                    project={project}
+                    techLimit={4}
+                  />
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <p className="font-mono text-sm text-muted-foreground">
+              No featured projects yet.
+            </p>
           )}
         </div>
-
-        {featuredProjects.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {featuredProjects.slice(0, 2).map((project, index) => (
-              <motion.div
-                key={project.id}
-                {...cardReveal(index)}
-              >
-                <ProjectShowcaseCard
-                  project={project}
-                  techLimit={4}
-                  descriptionLines={2}
-                />
-              </motion.div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-8 text-center">
-            <div className="bg-muted rounded-full p-4 mb-4">
-              <Clock className="h-6 w-6 text-muted-foreground" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">No featured projects</h3>
-          </div>
-        )}
       </section>
 
-      <LatestPostsWidget posts={latestPosts} />
-
-      {/* Connect Section */}
-      {(socialLinks.github || socialLinks.linkedin || socialLinks.facebook) && (
-        <section
-          id="connect-section"
-          className="surface-panel px-5 py-10 sm:px-8 sm:py-12 lg:px-10"
-        >
-          <motion.div
-            {...sectionReveal}
-            className="space-y-6 text-center"
-          >
-            <h2 className="section-heading">Find Me On</h2>
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              {socialLinks.github && (
-                <Button variant="outline" asChild size="lg" className="rounded-lg">
-                  <Link
-                    href={socialLinks.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2"
-                  >
-                    <Github className="h-5 w-5" />
-                    GitHub
-                  </Link>
-                </Button>
-              )}
-              {socialLinks.linkedin && (
-                <Button variant="outline" asChild size="lg" className="rounded-lg">
-                  <Link
-                    href={socialLinks.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2"
-                  >
-                    <Linkedin className="h-5 w-5" />
-                    LinkedIn
-                  </Link>
-                </Button>
-              )}
-              {socialLinks.facebook && (
-                <Button variant="outline" asChild size="lg" className="rounded-lg">
-                  <Link
-                    href={socialLinks.facebook}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2"
-                  >
-                    <Facebook className="h-5 w-5" />
-                    Facebook
-                  </Link>
-                </Button>
-              )}
+      {/* Dashboard Widgets */}
+      <section className="px-6 py-12">
+        <div className="mx-auto max-w-3xl space-y-6">
+          {/* Widget Grid */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {/* Let's Connect */}
+            <div className="surface-panel p-5">
+              <h3 className="font-mono text-sm font-semibold text-foreground mb-2">
+                Let&apos;s Connect
+              </h3>
+              <p className="font-mono text-sm text-muted-foreground mb-4">
+                Always open to interesting projects and conversations.
+              </p>
+              <Button asChild size="sm" className="rounded-lg">
+                <Link href="/contact" className="flex items-center gap-2">
+                  <Mail className="h-4 w-4" />
+                  Book a Chat
+                </Link>
+              </Button>
             </div>
-          </motion.div>
-        </section>
-      )}
+
+            {/* Currently Based In */}
+            <div className="surface-panel p-5">
+              <h3 className="font-mono text-sm font-semibold text-foreground mb-2">
+                Currently Based In{" "}
+                <span className="text-[var(--accent-signal)]">📍</span>
+              </h3>
+              <div className="flex items-center gap-2 font-mono text-sm text-muted-foreground">
+                <MapPin className="h-4 w-4 text-[var(--accent-signal)]" />
+                <span>{residence}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* GitHub Activity + Latest Posts */}
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <GitHubActivityWidget events={githubEvents} languages={githubLanguages} />
+            <LatestPostsWidget posts={latestPosts} />
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

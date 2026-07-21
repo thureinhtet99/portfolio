@@ -1,5 +1,5 @@
-import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { Footer } from "@/components/layout/footer";
+import { TopNavbar } from "@/components/layout/top-navbar";
 import QueryProvider from "@/components/providers/query-provider";
 import { getSiteUrl } from "@/lib/base-url";
 import type { Metadata } from "next";
@@ -89,9 +89,9 @@ export default function RootLayout({
       >
         <QueryProvider>
           <main className="min-h-screen p-6 pb-[calc(7rem+env(safe-area-inset-bottom))] sm:px-6 lg:px-8">
-            <div className="mx-auto flex w-full max-w-7xl flex-col justify-center border">
+            <div className="mx-auto flex w-full max-w-7xl flex-col justify-center">
+              <TopNavbar />
               <Suspense>
-                <Breadcrumbs />
                 {children}
               </Suspense>
             </div>

@@ -8,6 +8,8 @@ This is the current folder structure:
 │   │   ├── page.tsx                            -> renders <HomeView />
 │   │   ├── loading.tsx
 │   │   ├── not-found.tsx
+│   │   ├── about/
+│   │   │   └── page.tsx                        -> renders <AboutView />
 │   │   ├── contact/
 │   │   │   └── page.tsx
 │   │   ├── projects/
@@ -47,6 +49,10 @@ This is the current folder structure:
 │   │       ├── github-activity-widget.tsx
 │   │       └── latest-posts-widget.tsx
 │   │
+│   ├── about/
+│   │   └── components/
+│   │       └── about-view.tsx
+│   │
 │   ├── projects/
 │   │   ├── components/
 │   │   │   ├── projects-view.tsx
@@ -85,9 +91,10 @@ This is the current folder structure:
 │           └── menu-items.tsx
 │
 ├── components/                                  # shared/global only
-│   ├── ui/                                      # shadcn primitives
+│   ├── ui/                                      # unchanged (shadcn primitives)
 │   │   ├── button.tsx, card.tsx, input.tsx, dialog.tsx, ...
 │   ├── layout/
+│   │   ├── top-navbar.tsx
 │   │   ├── footer.tsx
 │   │   └── breadcrumbs.tsx
 │   ├── providers/

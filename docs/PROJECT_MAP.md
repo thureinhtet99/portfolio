@@ -39,9 +39,10 @@ All public-facing features are extracted into `features/`. Pages in `app/(public
 | Folder                       | Responsibility                                                                                                                                                                                              |
 | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `app/`                       | Routing, layouts, metadata, API route handlers.                                                                                                                                                             |
-| `app/(public)/`              | Route group for public-facing pages. `layout.tsx` wraps children in the root shell. Pages are thin server wrappers.                                                                                         |
-| `app/(public)/page.tsx`      | Home page — fetches data server-side, renders `<HomeView />` from `features/home/`.                                                                                                                         |
-| `app/(public)/projects/`     | Renders `<ProjectsView />` from `features/projects/`.                                                                                                                                                       |
+| `app/(public)/`              | Route group for public-facing pages. `layout.tsx` wraps children in the root shell. Pages are thin server wrappers.                                                                                        |
+| `app/(public)/page.tsx`      | Home page — fetches data server-side, renders `<HomeView />` from `features/home/`.                                                                                                                        |
+| `app/(public)/about/`        | Renders `<AboutView />` from `features/about/`.                                                                                                                                                            |
+| `app/(public)/projects/`     | Renders `<ProjectsView />` from `features/projects/`.                                                                                                                                                      |
 | `app/(public)/certificates/` | Renders `<CertificatesView />` from `features/certificates/`.                                                                                                                                               |
 | `app/(public)/timeline/`     | Renders `<TimelineView />` from `features/timeline/`.                                                                                                                                                       |
 | `app/(public)/posts/`        | Renders `<PostsView />` and `<PostDetailView />` from `features/posts/`.                                                                                                                                    |
@@ -55,7 +56,7 @@ All public-facing features are extracted into `features/`. Pages in `app/(public
 | `features/posts/`            | `posts-view.tsx` (published posts list), `post-detail-view.tsx` (Markdown rendering). No `data/` — posts come from DB.                                                                                      |
 | `features/admin/`            | `admin-view.tsx` (dashboard shell), section components (`settings-section.tsx`, `project-section.tsx`, `certificate-section.tsx`, `timeline-section.tsx`, `posts-section.tsx`), plus `data/menu-items.tsx`. |
 | `components/ui/`             | ui primitives (`button.tsx`, `card.tsx`, `dialog.tsx`, etc.). Never feature-specific logic here.                                                                                                            |
-| `components/layout/`         | App chrome shared across routes: `footer.tsx`, `breadcrumbs.tsx`.                                                                                                                                           |
+| `components/layout/`         | App chrome shared across routes: `top-navbar.tsx`, `footer.tsx`, `breadcrumbs.tsx`.                                                                                                                         |
 | `components/providers/`      | App-level providers: `query-provider.tsx`.                                                                                                                                                                  |
 | `components/shared/`         | Reusable non-UI components: `delete-confirm-box.tsx`.                                                                                                                                                       |
 | `lib/`                       | Core singletons and utilities: auth config, auth client, base URL helper, `cn()`/`formatDate()` utils, motion presets.                                                                                      |
@@ -90,6 +91,10 @@ features/home/
 │   ├── github-activity-widget.tsx         # GitHub activity + language bar widget
 │   └── latest-posts-widget.tsx            # latest 4 posts with "View all" link
 └── (no data/ — home data comes from DB settings)
+
+features/about/
+└── components/
+    └── about-view.tsx                     # entry point, imported by app/(public)/about/page.tsx
 
 features/projects/
 ├── components/
@@ -139,6 +144,7 @@ App Router, file-based. Route groups don't affect URLs.
 | Route           | File                                  | Notes                                                        |
 | --------------- | ------------------------------------- | ------------------------------------------------------------ |
 | `/`             | `app/(public)/page.tsx`               | Fetches data server-side, renders `<HomeView />`             |
+| `/about`        | `app/(public)/about/page.tsx`         | Renders `<AboutView />` — portrait, bio, contact             |
 | `/projects`     | `app/(public)/projects/page.tsx`      | Renders `<ProjectsView />` from features                     |
 | `/certificates` | `app/(public)/certificates/page.tsx`  | Renders `<CertificatesView />` from features                 |
 | `/timeline`     | `app/(public)/timeline/page.tsx`      | Renders `<TimelineView />` from features                     |
