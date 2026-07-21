@@ -118,9 +118,52 @@ export function ProjectDetailModal({
             </div>
           </div>
 
-          <ProjectCredentialsPanel credentials={project.demoCredentials} />
+          {/* Notable Adopters / Credibility */}
+          {project.adopters && project.adopters.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-2xl font-semibold tracking-[-0.02em]">
+                Notable Users &amp; Adopters
+              </h3>
+              <div className="space-y-4">
+                {project.adopters.map((adopter) => {
+                  const anchorId = adopter.name
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, "-")
+                    .replace(/(^-|-$)/g, "");
+                  return (
+                    <div
+                      key={adopter.name}
+                      id={anchorId}
+                      className="rounded-xl border border-border/40 bg-background/50 p-4 space-y-2 scroll-mt-24"
+                    >
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-semibold text-foreground">
+                          {adopter.name}
+                        </h4>
+                        {adopter.url && (
+                          <Link
+                            href={adopter.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-muted-foreground hover:text-[var(--accent-signal)] transition-colors"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5" />
+                          </Link>
+                        )}
+                      </div>
+                      {adopter.description && (
+                        <p className="text-sm leading-relaxed text-muted-foreground">
+                          {adopter.description}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
-          {/* <Separator /> */}
+          <ProjectCredentialsPanel credentials={project.demoCredentials} />
 
           {/* Action Buttons */}
           <div className="flex flex-col gap-3 pt-2 sm:flex-row">

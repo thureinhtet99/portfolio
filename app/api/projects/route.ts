@@ -36,6 +36,7 @@ export async function GET() {
       demoCredentials: proj.demoCredentials
         ? JSON.parse(proj.demoCredentials)
         : undefined,
+      adopters: proj.adopters ? JSON.parse(proj.adopters) : undefined,
       featured: proj.featured,
       order: proj.order,
       createdAt: proj.createdAt,
@@ -69,6 +70,7 @@ export async function POST(req: NextRequest) {
       objectives,
       keyChallenges,
       demoCredentials,
+      adopters,
       featured,
     } = body;
 
@@ -97,6 +99,7 @@ export async function POST(req: NextRequest) {
           ? JSON.stringify(demoCredentials)
           : null
         : null,
+      adopters: adopters ? JSON.stringify(adopters) : null,
       featured: featured || false,
       order: 0,
       createdAt: now,
@@ -117,6 +120,7 @@ export async function POST(req: NextRequest) {
         objectives,
         keyChallenges,
         demoCredentials,
+        adopters,
       },
     });
   } catch (error) {
@@ -147,6 +151,7 @@ export async function PUT(req: NextRequest) {
       objectives,
       keyChallenges,
       demoCredentials,
+      adopters,
       featured,
     } = body;
 
@@ -173,6 +178,7 @@ export async function PUT(req: NextRequest) {
             ? JSON.stringify(demoCredentials)
             : null
           : null,
+        adopters: adopters ? JSON.stringify(adopters) : null,
         featured: featured !== undefined ? featured : false,
         updatedAt: new Date(),
       })
@@ -190,6 +196,7 @@ export async function PUT(req: NextRequest) {
         objectives,
         keyChallenges,
         demoCredentials,
+        adopters,
       },
     });
   } catch (error) {

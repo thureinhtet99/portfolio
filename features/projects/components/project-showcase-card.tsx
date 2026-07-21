@@ -146,6 +146,7 @@ export function ProjectShowcaseCard({
               github: project.githubUrl || "",
               liveDemo: project.liveUrl || "",
               demoCredentials: project.demoCredentials || [],
+              adopters: project.adopters || [],
             }}
           >
             <Button

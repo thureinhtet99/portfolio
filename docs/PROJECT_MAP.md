@@ -122,9 +122,16 @@ features/admin/
 │   ├── settings-section.tsx
 │   ├── project-section.tsx
 │   ├── certificate-section.tsx
-│   └── timeline-section.tsx
+│   ├── timeline-section.tsx
+│   └── posts-section.tsx
 └── data/
     └── menu-items.tsx                     # admin sidebar menu items
+
+features/posts/
+├── components/
+│   ├── posts-view.tsx                     # entry point, imported by app/(public)/posts/page.tsx
+│   └── post-detail-view.tsx              # entry point, imported by app/(public)/posts/[slug]/page.tsx
+└── (no data/ — posts come from DB)
 ```
 
 ---
@@ -133,15 +140,17 @@ features/admin/
 
 App Router, file-based. Route groups don't affect URLs.
 
-| Route           | File                                  | Notes                                            |
-| --------------- | ------------------------------------- | ------------------------------------------------ |
-| `/`             | `app/(public)/page.tsx`               | Fetches data server-side, renders `<HomeView />` |
-| `/projects`     | `app/(public)/projects/page.tsx`      | Renders `<ProjectsView />` from features         |
-| `/certificates` | `app/(public)/certificates/page.tsx`  | Renders `<CertificatesView />` from features     |
-| `/timeline`     | `app/(public)/timeline/page.tsx`      | Renders `<TimelineView />` from features         |
-| `/contact`      | `app/(public)/contact/page.tsx`       | Inline contact form client component             |
-| `/admin`        | `app/admin/page.tsx` (+ `layout.tsx`) | Protected; login form + dashboard tabs           |
-| `/api/*`        | `app/api/**/route.ts`                 | REST-style handlers, no pages                    |
+| Route           | File                                          | Notes                                                          |
+| --------------- | --------------------------------------------- | -------------------------------------------------------------- |
+| `/`             | `app/(public)/page.tsx`                       | Fetches data server-side, renders `<HomeView />`               |
+| `/projects`     | `app/(public)/projects/page.tsx`              | Renders `<ProjectsView />` from features                       |
+| `/certificates` | `app/(public)/certificates/page.tsx`          | Renders `<CertificatesView />` from features                   |
+| `/timeline`     | `app/(public)/timeline/page.tsx`              | Renders `<TimelineView />` from features                       |
+| `/posts`        | `app/(public)/posts/page.tsx`                 | Renders `<PostsView />` — published posts list                 |
+| `/posts/[slug]` | `app/(public)/posts/[slug]/page.tsx`          | Renders `<PostDetailView />` — individual post with Markdown   |
+| `/contact`      | `app/(public)/contact/page.tsx`               | Inline contact form client component                           |
+| `/admin`        | `app/admin/page.tsx` (+ `layout.tsx`)         | Protected; login form + dashboard tabs                         |
+| `/api/*`        | `app/api/**/route.ts`                         | REST-style handlers, no pages                                  |
 
 ---
 

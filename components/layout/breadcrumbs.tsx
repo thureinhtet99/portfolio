@@ -22,9 +22,13 @@ export function Breadcrumbs() {
     <nav aria-label="Breadcrumb" className="mb-4">
       <ol className="font-mono text-lg text-muted-foreground flex items-center gap-1.5">
         <li>
-          <Link href="/" className="hover:text-foreground transition-colors">
-            ~ /
+          <Link
+            href="/"
+            className="hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:rounded-sm me-1"
+          >
+            ~
           </Link>
+          /
         </li>
         {segments.map((segment, index) => {
           const href = `/${segments.slice(0, index + 1).join("/")}`;
@@ -33,7 +37,7 @@ export function Breadcrumbs() {
 
           return (
             <li key={href} className="flex items-center gap-1.5">
-              <span aria-hidden="true">/</span>
+              {/* <span aria-hidden="true">/</span> */}
               {isLast ? (
                 <span aria-current="page" className="text-foreground">
                   {label}
@@ -41,7 +45,7 @@ export function Breadcrumbs() {
               ) : (
                 <Link
                   href={href}
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:rounded-sm"
                 >
                   {label}
                 </Link>

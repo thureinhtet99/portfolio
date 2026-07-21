@@ -167,7 +167,7 @@ export function HomeView({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.5 }}
-          className="absolute bottom-4 left-1/2 z-20 hidden -translate-x-1/2 flex-col items-center gap-2 bg-background/70 px-4 text-sm text-muted-foreground sm:flex"
+          className="absolute bottom-4 left-1/2 z-20 hidden -translate-x-1/2 flex-col items-center gap-2 bg-background/70 px-4 text-sm text-muted-foreground sm:flex focus-visible:outline-none focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:rounded-sm"
           onClick={() => {
             document
               .getElementById("about-section")

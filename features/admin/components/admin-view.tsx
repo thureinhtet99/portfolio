@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 
 import CertificatesSection from "./certificate-section";
+import PostsSection from "./posts-section";
 import ProjectsSection from "./project-section";
 import SettingsSection from "./settings-section";
 import TimelinesSection from "./timeline-section";
@@ -105,6 +106,7 @@ export function AdminView({ userName }: Props) {
           {activeTab === "timelines" && <TimelinesSection />}
           {activeTab === "projects" && <ProjectsSection />}
           {activeTab === "certificates" && <CertificatesSection />}
+          {activeTab === "posts" && <PostsSection />}
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-import { User, Calendar, FolderGit2, Award } from "lucide-react";
+import { User, Calendar, FolderGit2, Award, FileText } from "lucide-react";
 
 export const adminMenuItems = [
   { id: "settings", label: "Settings", icon: <User className="h-4 w-4" /> },
@@ -16,5 +16,10 @@ export const adminMenuItems = [
     id: "certificates",
     label: "Certificates",
     icon: <Award className="h-4 w-4" />,
+  },
+  {
+    id: "posts",
+    label: "Posts",
+    icon: <FileText className="h-4 w-4" />,
   },
 ];

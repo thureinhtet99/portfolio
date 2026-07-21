@@ -109,7 +109,7 @@ export default function CertificatesClientComponent({ certificates }: Props) {
                           href={certificate.credentialUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center gap-1.5 lg:gap-2 px-3 py-2 lg:px-4 lg:py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-md lg:rounded-lg text-xs lg:text-sm font-medium transition-colors flex-shrink-0 w-full sm:w-auto"
+                          className="inline-flex items-center justify-center gap-1.5 lg:gap-2 px-3 py-2 lg:px-4 lg:py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-md lg:rounded-lg text-xs lg:text-sm font-medium transition-colors flex-shrink-0 w-full sm:w-auto focus-visible:outline-none focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:rounded-sm"
                         >
                           <span>Verify Certificate</span>
                           <ExternalLink className="h-3 w-3 lg:h-4 lg:w-4" />

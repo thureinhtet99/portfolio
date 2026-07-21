@@ -69,6 +69,7 @@ export const project = sqliteTable("project", {
   objectives: text("objectives"), // JSON array
   keyChallenges: text("key_challenges"), // JSON array
   demoCredentials: text("demo_credentials"), // JSON array
+  adopters: text("adopters"), // JSON array of { name, url?, description? }
   featured: integer("featured", { mode: "boolean" }).notNull().default(false),
   order: integer("order").notNull().default(0),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
@@ -116,5 +117,18 @@ export const setting = sqliteTable("setting", {
   id: text("id").primaryKey(),
   key: text("key").notNull().unique(),
   value: text("value").notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+});
+
+export const post = sqliteTable("post", {
+  id: text("id").primaryKey(),
+  slug: text("slug").notNull().unique(),
+  title: text("title").notNull(),
+  excerpt: text("excerpt"),
+  body: text("body").notNull(),
+  tags: text("tags"), // JSON array
+  published: integer("published", { mode: "boolean" }).notNull().default(false),
+  order: integer("order").notNull().default(0),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });

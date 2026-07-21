@@ -59,6 +59,12 @@ export type DemoCredentialType = {
   password: string;
 };
 
+export type AdopterType = {
+  name: string;
+  url?: string;
+  description?: string;
+};
+
 export type ProjectType = {
   id: string;
   title: string;
@@ -70,6 +76,7 @@ export type ProjectType = {
   objectives?: string[];
   keyChallenges?: string[];
   demoCredentials?: DemoCredentialType[];
+  adopters?: AdopterType[];
   featured?: boolean;
 };
 
@@ -110,6 +117,19 @@ export type SettingType = {
   updatedAt: Date;
 };
 
+export type PostType = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt?: string | null;
+  body: string;
+  tags?: string[];
+  published: boolean;
+  order: number;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 export type TimelineType = WorkType | EducationType;
 
 // Display Types for Components
@@ -145,6 +165,7 @@ export type ProjectDetailModalType = {
     github: string;
     liveDemo: string;
     demoCredentials?: DemoCredentialType[];
+    adopters?: AdopterType[];
   };
   children: ReactNode;
 };

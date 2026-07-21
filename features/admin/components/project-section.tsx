@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { DemoCredentialType, ProjectType } from "@/types/index.type";
+import { AdopterType, DemoCredentialType, ProjectType } from "@/types/index.type";
 import {
   FolderGit2,
   Plus,
@@ -40,6 +40,7 @@ type ProjectFormState = {
   demoUserPassword: string;
   demoAdminEmail: string;
   demoAdminPassword: string;
+  adopters: string;
   featured: boolean;
 };
 
@@ -56,6 +57,7 @@ const createEmptyForm = (): ProjectFormState => ({
   demoUserPassword: "",
   demoAdminEmail: "",
   demoAdminPassword: "",
+  adopters: "",
   featured: false,
 });
 
@@ -77,6 +79,21 @@ const getDemoCredentialsFromForm = (
       password: formData.demoAdminPassword.trim(),
     },
   ].filter((credential) => credential.email && credential.password);
+
+const getAdoptersFromForm = (formData: ProjectFormState): AdopterType[] =>
+  formData.adopters
+    ? formData.adopters
+        .split("\n")
+        .filter((line) => line.trim())
+        .map((line) => {
+          const parts = line.split("|").map((p) => p.trim());
+          return {
+            name: parts[0],
+            url: parts[1] || undefined,
+            description: parts[2] || undefined,
+          };
+        })
+    : [];
 
 export default function ProjectsSection() {
   const [projects, setProjects] = useState<ProjectType[]>([]);
@@ -167,6 +184,7 @@ export default function ProjectsSection() {
           ? formData.keyChallenges.split("\n").filter((item) => item.trim())
           : undefined,
         demoCredentials: getDemoCredentialsFromForm(formData),
+        adopters: getAdoptersFromForm(formData),
         image: imageUrl || undefined,
         featured: formData.featured,
       };
@@ -225,6 +243,11 @@ export default function ProjectsSection() {
         project.demoCredentials?.find(
           (credential) => credential.role.toLowerCase() === "admin",
         )?.password || "",
+      adopters: project.adopters
+        ? project.adopters
+            .map((a) => [a.name, a.url || "", a.description || ""].join(" | "))
+            .join("\n")
+        : "",
       featured: project.featured || false,
     });
     setImagePreview(project.image || null);
@@ -289,6 +312,7 @@ export default function ProjectsSection() {
           ? formData.keyChallenges.split("\n").filter((item) => item.trim())
           : undefined,
         demoCredentials: getDemoCredentialsFromForm(formData),
+        adopters: getAdoptersFromForm(formData),
         image: imageUrl || undefined,
         featured: formData.featured,
       };
@@ -787,6 +811,20 @@ function ProjectForm({
               </div>
             </div>
           </div>
+        </div>
+        <div className="space-y-2">
+          <Label>Notable Adopters (one per line: Name | URL | Description)</Label>
+          <Textarea
+            value={formData.adopters}
+            onChange={(e) =>
+              setFormData({ ...formData, adopters: e.target.value })
+            }
+            placeholder={"Acme Corp | https://acme.com | Uses this in production\nOpen Source Project | | Community fork"}
+            className="min-h-[80px] font-mono text-sm"
+          />
+          <p className="text-xs text-muted-foreground">
+            Each line becomes a linkable section. Use | to separate name, URL (optional), and description (optional).
+          </p>
         </div>
         <div className="flex items-center justify-between space-x-2 p-4 rounded-lg border">
           <div className="space-y-0.5">
