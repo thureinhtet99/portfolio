@@ -820,7 +820,7 @@ function ProjectForm({
               setFormData({ ...formData, adopters: e.target.value })
             }
             placeholder={"Acme Corp | https://acme.com | Uses this in production\nOpen Source Project | | Community fork"}
-            className="min-h-[80px] font-mono text-sm"
+            className="min-h-[80px]  text-sm"
           />
           <p className="text-xs text-muted-foreground">
             Each line becomes a linkable section. Use | to separate name, URL (optional), and description (optional).

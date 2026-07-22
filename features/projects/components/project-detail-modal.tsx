@@ -145,7 +145,7 @@ export function ProjectDetailModal({
                             href={adopter.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-muted-foreground hover:text-[var(--accent-signal)] transition-colors"
+                            className="text-muted-foreground hover:text-[var(--primary)] transition-colors"
                           >
                             <ExternalLink className="h-3.5 w-3.5" />
                           </Link>

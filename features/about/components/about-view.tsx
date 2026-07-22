@@ -25,7 +25,7 @@ export function AboutView({ aboutMe, profileImage, email, socialLinks }: Props) 
     <div className="page-shell">
       <section className="px-6 py-12">
         <motion.div {...sectionReveal} className="mx-auto max-w-4xl">
-          <h1 className="font-mono text-3xl font-bold tracking-[-0.03em] mb-8">
+          <h1 className=" text-3xl font-bold tracking-[-0.03em] mb-8">
             About Me
           </h1>
 
@@ -47,7 +47,7 @@ export function AboutView({ aboutMe, profileImage, email, socialLinks }: Props) 
 
             {/* Bio */}
             <div className="flex-1 space-y-6">
-              <div className="font-mono text-base leading-relaxed text-muted-foreground sm:text-lg">
+              <div className=" text-base leading-relaxed text-muted-foreground sm:text-lg">
                 {aboutMe && (
                   <div className="prose prose-base prose-invert sm:prose-lg">
                     <ReactMarkdown>{aboutMe}</ReactMarkdown>
@@ -56,7 +56,7 @@ export function AboutView({ aboutMe, profileImage, email, socialLinks }: Props) 
               </div>
 
               {/* Social Links */}
-              <div className="flex flex-wrap items-center gap-3 font-mono text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-3  text-sm text-muted-foreground">
                 {socialLinks.github && (
                   <Link
                     href={socialLinks.github}

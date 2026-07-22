@@ -36,14 +36,14 @@ export function ProjectShowcaseCard({
     >
       <Card
         className={cn(
-          "surface-panel overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-[var(--accent-signal)]/30",
+          "surface-panel overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-[var(--primary)]/30",
           className
         )}
       >
         {/* GitHub-style header */}
         <div className="bg-muted/50 px-4 py-3 border-b border-border/40">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 font-mono text-sm">
+            <div className="flex items-center gap-2  text-sm">
               <div className="flex gap-1">
                 <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
                 <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
@@ -51,12 +51,12 @@ export function ProjectShowcaseCard({
               </div>
               <span className="text-muted-foreground">{org}</span>
               <span className="text-muted-foreground/40">/</span>
-              <span className="font-semibold text-foreground group-hover:text-[var(--accent-signal)] transition-colors">
+              <span className="font-semibold text-foreground group-hover:text-[var(--primary)] transition-colors">
                 {repo}
               </span>
             </div>
           </div>
-          <p className="mt-2 font-mono text-xs text-muted-foreground line-clamp-2">
+          <p className="mt-2  text-xs text-muted-foreground line-clamp-2">
             {project.description || "No description"}
           </p>
         </div>
@@ -64,13 +64,13 @@ export function ProjectShowcaseCard({
         {/* Card body */}
         <div className="p-4 space-y-3">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="font-mono text-base font-semibold text-foreground group-hover:text-[var(--accent-signal)] transition-colors">
+            <h3 className=" text-base font-semibold text-foreground group-hover:text-[var(--primary)] transition-colors">
               {project.title}
             </h3>
           </div>
 
           {project.description && (
-            <p className="font-mono text-xs leading-relaxed text-muted-foreground line-clamp-2">
+            <p className=" text-xs leading-relaxed text-muted-foreground line-clamp-2">
               {project.description}
             </p>
           )}
@@ -82,7 +82,7 @@ export function ProjectShowcaseCard({
                 <Badge
                   key={tech}
                   variant="secondary"
-                  className="font-mono text-[10px] bg-muted/50 text-muted-foreground rounded-md px-2 py-0.5"
+                  className=" text-[10px] bg-muted/50 text-muted-foreground rounded-md px-2 py-0.5"
                 >
                   {tech}
                 </Badge>
@@ -90,7 +90,7 @@ export function ProjectShowcaseCard({
               {remainingCount > 0 && (
                 <Badge
                   variant="secondary"
-                  className="font-mono text-[10px] bg-muted/50 text-muted-foreground rounded-md px-2 py-0.5"
+                  className=" text-[10px] bg-muted/50 text-muted-foreground rounded-md px-2 py-0.5"
                 >
                   +{remainingCount}
                 </Badge>
@@ -101,13 +101,13 @@ export function ProjectShowcaseCard({
           {/* Links */}
           <div className="flex items-center gap-3 pt-1">
             {project.githubUrl && (
-              <span className="flex items-center gap-1 font-mono text-xs text-muted-foreground">
+              <span className="flex items-center gap-1  text-xs text-muted-foreground">
                 <Github className="h-3 w-3" />
                 Code
               </span>
             )}
             {project.liveUrl && (
-              <span className="flex items-center gap-1 font-mono text-xs text-muted-foreground">
+              <span className="flex items-center gap-1  text-xs text-muted-foreground">
                 <ExternalLink className="h-3 w-3" />
                 Live
               </span>

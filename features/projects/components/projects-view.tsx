@@ -29,7 +29,7 @@ export default function ProjectsView({ projects }: Props) {
         <div className="mx-auto max-w-5xl space-y-8">
           <motion.h1
             {...cardReveal(0)}
-            className="font-mono text-3xl font-bold tracking-[-0.03em]"
+            className=" text-3xl font-bold tracking-[-0.03em]"
           >
             <FolderGit2 className="inline h-7 w-7 mr-2 text-muted-foreground" />
             Projects
@@ -44,7 +44,7 @@ export default function ProjectsView({ projects }: Props) {
               ))}
             </div>
           ) : (
-            <p className="font-mono text-sm text-muted-foreground">
+            <p className=" text-sm text-muted-foreground">
               No projects yet.
             </p>
           )}

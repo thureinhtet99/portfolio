@@ -26,10 +26,10 @@ export function GitHubActivityWidget({ events, languages }: Props) {
   if (!hasEvents && !hasLanguages) {
     return (
       <div className="surface-panel p-5">
-        <h3 className="font-mono text-sm font-semibold text-foreground mb-3">
+        <h3 className=" text-sm font-semibold text-foreground mb-3">
           GitHub Activity
         </h3>
-        <p className="font-mono text-sm text-muted-foreground">
+        <p className=" text-sm text-muted-foreground">
           Activity unavailable
         </p>
       </div>
@@ -95,7 +95,7 @@ export function GitHubActivityWidget({ events, languages }: Props) {
 
   return (
     <div className="surface-panel p-5">
-      <h3 className="font-mono text-sm font-semibold text-foreground mb-3">
+      <h3 className=" text-sm font-semibold text-foreground mb-3">
         ✦ Recent Commits
       </h3>
 
@@ -103,7 +103,7 @@ export function GitHubActivityWidget({ events, languages }: Props) {
       {hasEvents && (
         <div className="space-y-2 mb-4">
           {events.slice(0, 3).map((event, index) => (
-            <div key={index} className="flex items-start gap-2 font-mono text-xs text-muted-foreground">
+            <div key={index} className="flex items-start gap-2  text-xs text-muted-foreground">
               <span className="mt-0.5 shrink-0">{eventIcon(event.type)}</span>
               <span className="truncate">{eventTitle(event)}</span>
             </div>
@@ -118,7 +118,7 @@ export function GitHubActivityWidget({ events, languages }: Props) {
             {sortedLanguages.map(([lang, count], i) => {
               const percent = (count / totalRepos) * 100;
               const colors = [
-                "bg-[var(--accent-signal)]",
+                "bg-[var(--primary)]",
                 "bg-blue-500",
                 "bg-yellow-500",
                 "bg-red-500",

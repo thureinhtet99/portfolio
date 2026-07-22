@@ -13,7 +13,7 @@ export function LatestPostsWidget({ posts }: Props) {
 
   return (
     <div className="surface-panel p-5">
-      <h3 className="font-mono text-sm font-semibold text-foreground mb-3">
+      <h3 className=" text-sm font-semibold text-foreground mb-3">
         ✦ Latest Posts
       </h3>
 
@@ -23,9 +23,9 @@ export function LatestPostsWidget({ posts }: Props) {
             <li key={post.id}>
               <Link
                 href={`/posts/${post.slug}`}
-                className="group flex items-baseline justify-between gap-3 font-mono text-xs transition-colors hover:text-[var(--accent-signal)]"
+                className="group flex items-baseline justify-between gap-3  text-xs transition-colors hover:text-[var(--primary)]"
               >
-                <span className="truncate text-muted-foreground group-hover:text-[var(--accent-signal)]">
+                <span className="truncate text-muted-foreground group-hover:text-[var(--primary)]">
                   {post.title}
                 </span>
                 <span className="shrink-0 text-muted-foreground/60">
@@ -36,7 +36,7 @@ export function LatestPostsWidget({ posts }: Props) {
           ))}
         </ul>
       ) : (
-        <p className="font-mono text-xs text-muted-foreground">
+        <p className=" text-xs text-muted-foreground">
           No posts yet.
         </p>
       )}

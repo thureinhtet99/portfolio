@@ -1,15 +1,16 @@
 import { Footer } from "@/components/layout/footer";
 import { TopNavbar } from "@/components/layout/top-navbar";
 import QueryProvider from "@/components/providers/query-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { getSiteUrl } from "@/lib/base-url";
 import type { Metadata } from "next";
-import { Geist_Mono, Inter } from "next/font/google";
+import { Geist_Mono, JetBrains_Mono } from "next/font/google";
 import { ReactNode, Suspense } from "react";
 import { Toaster } from "sonner";
 import "./globals.css";
 
-const geistSans = Inter({
-  variable: "--font-inter",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
 });
 
@@ -85,14 +86,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`}
+        className={`${jetbrainsMono.variable} ${geistMono.variable} antialiased font-sans`}
       >
         <QueryProvider>
-          <main className="min-h-screen p-6 pb-[calc(7rem+env(safe-area-inset-bottom))] sm:px-6 lg:px-8">
-            <div className="mx-auto flex w-full max-w-7xl flex-col justify-center">
+          <main className="min-h-screen sm:px-6 lg:px-8">
+            <div className="mx-auto flex w-full flex-col justify-center">
               <TopNavbar />
               <Suspense>
-                {children}
+                <TooltipProvider>{children}</TooltipProvider>
               </Suspense>
             </div>
             <Toaster />

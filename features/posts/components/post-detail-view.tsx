@@ -25,7 +25,7 @@ export function PostDetailView({ post }: Props) {
             {...sectionReveal}
             className="space-y-6 text-center"
           >
-            <h1 className="font-mono text-4xl font-bold tracking-[-0.02em] sm:text-5xl lg:text-6xl leading-tight">
+            <h1 className=" text-4xl font-bold tracking-[-0.02em] sm:text-5xl lg:text-6xl leading-tight">
               {titleWords.map((word, i) => (
                 <span
                   key={i}
@@ -33,7 +33,7 @@ export function PostDetailView({ post }: Props) {
                     i % 3 === 0
                       ? "text-muted-foreground"
                       : i % 3 === 1
-                        ? "text-[var(--accent-signal)] italic"
+                        ? "text-[var(--primary)] italic"
                         : "text-foreground"
                   }
                 >
@@ -42,7 +42,7 @@ export function PostDetailView({ post }: Props) {
               ))}
             </h1>
 
-            <div className="flex items-center justify-center gap-3 font-mono text-sm text-muted-foreground">
+            <div className="flex items-center justify-center gap-3  text-sm text-muted-foreground">
               <span>{formatDate(post.createdAt.toISOString())}</span>
             </div>
 
@@ -52,7 +52,7 @@ export function PostDetailView({ post }: Props) {
                   <Badge
                     key={tag}
                     variant="secondary"
-                    className="font-mono text-[10px] bg-muted/50 text-muted-foreground rounded-md px-2 py-0.5"
+                    className=" text-[10px] bg-muted/50 text-muted-foreground rounded-md px-2 py-0.5"
                   >
                     {tag}
                   </Badge>

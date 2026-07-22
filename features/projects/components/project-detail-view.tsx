@@ -38,7 +38,7 @@ export function ProjectDetailView({ project }: Props) {
           {/* Back link */}
           <Link
             href="/projects"
-            className="inline-flex items-center gap-1.5 font-mono text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="inline-flex items-center gap-1.5  text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Projects
@@ -63,7 +63,7 @@ export function ProjectDetailView({ project }: Props) {
               {/* GitHub header */}
               <div className="bg-muted/50 px-5 py-4 border-b border-border/40">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 font-mono text-sm">
+                  <div className="flex items-center gap-2  text-sm">
                     <div className="flex gap-1">
                       <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
                       <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
@@ -76,7 +76,7 @@ export function ProjectDetailView({ project }: Props) {
                     </span>
                   </div>
                 </div>
-                <p className="mt-2 font-mono text-sm text-muted-foreground">
+                <p className="mt-2  text-sm text-muted-foreground">
                   {project.description || "No description"}
                 </p>
               </div>
@@ -86,7 +86,7 @@ export function ProjectDetailView({ project }: Props) {
           {/* Project Info */}
           <motion.div {...sectionReveal} className="space-y-6">
             <div>
-              <h1 className="font-mono text-3xl font-bold tracking-[-0.03em]">
+              <h1 className=" text-3xl font-bold tracking-[-0.03em]">
                 {project.title}
               </h1>
             </div>
@@ -98,7 +98,7 @@ export function ProjectDetailView({ project }: Props) {
                   <Badge
                     key={tech}
                     variant="secondary"
-                    className="font-mono text-xs bg-muted/50 text-muted-foreground rounded-md px-2 py-1"
+                    className=" text-xs bg-muted/50 text-muted-foreground rounded-md px-2 py-1"
                   >
                     {tech}
                   </Badge>
@@ -113,7 +113,7 @@ export function ProjectDetailView({ project }: Props) {
                   href={project.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 font-mono text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="flex items-center gap-1.5  text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <Github className="h-4 w-4" />
                   View on GitHub
@@ -124,7 +124,7 @@ export function ProjectDetailView({ project }: Props) {
                   href={project.liveUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 font-mono text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="flex items-center gap-1.5  text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <ExternalLink className="h-4 w-4" />
                   Live Demo
@@ -142,20 +142,20 @@ export function ProjectDetailView({ project }: Props) {
             {/* Adopters */}
             {adopters.length > 0 && (
               <div className="space-y-3">
-                <h2 className="font-mono text-lg font-semibold">Adopters</h2>
+                <h2 className=" text-lg font-semibold">Adopters</h2>
                 <div className="space-y-2">
                   {adopters.map((adopter, i) => (
                     <div
                       key={i}
                       id={adopter.name.toLowerCase().replace(/\s+/g, "")}
-                      className="scroll-mt-24 font-mono text-sm text-muted-foreground"
+                      className="scroll-mt-24  text-sm text-muted-foreground"
                     >
                       {adopter.url ? (
                         <Link
                           href={adopter.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[var(--accent-signal)] hover:underline"
+                          className="text-[var(--primary)] hover:underline"
                         >
                           #{adopter.name}
                         </Link>

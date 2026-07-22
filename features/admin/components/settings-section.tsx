@@ -651,7 +651,7 @@ export default function SettingsSection() {
               onChange={(e) => setIntro(e.target.value)}
               placeholder="Write a brief introduction about yourself...&#10;&#10;Example:&#10;Hi! I'm a **Full Stack Developer** with expertise in *React* and *Node.js*."
               rows={6}
-              className="resize-y font-mono text-sm"
+              className="resize-y  text-sm"
             />
           </div>
           <div className="space-y-2">
@@ -666,7 +666,7 @@ export default function SettingsSection() {
               onChange={(e) => setAboutMe(e.target.value)}
               placeholder="Write detailed information about yourself...&#10;&#10;Example:&#10;## Background&#10;I have **5 years** of experience in web development.&#10;&#10;## Skills&#10;- React & Next.js&#10;- Node.js & Express&#10;- Database Design"
               rows={12}
-              className="resize-y font-mono text-sm"
+              className="resize-y  text-sm"
             />
           </div>
           <Button

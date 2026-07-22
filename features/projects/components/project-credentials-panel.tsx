@@ -32,7 +32,7 @@ function CredentialRow({ label, value, copied, onCopy }: CredentialRowProps) {
       <p className="w-12 shrink-0 text-[10px] text-muted-foreground sm:w-16 sm:text-[11px]">
         {label}
       </p>
-      <p className="min-w-0 flex-1 truncate font-mono text-[11px] text-foreground sm:text-xs">
+      <p className="min-w-0 flex-1 truncate  text-[11px] text-foreground sm:text-xs">
         {value}
       </p>
       <Button

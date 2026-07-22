@@ -1,9 +1,12 @@
 import { APP_CONFIG } from "@/config/app-config";
 import { HomeView } from "@/features/home/components/home-view";
-import { ProjectType, PostType } from "@/types/index.type";
+import { WidgetSection } from "@/features/home/components/widget-section";
+import { WidgetSectionSkeleton } from "@/features/home/components/widget-section-skeleton";
+import { ProjectType } from "@/types/index.type";
 import { db } from "@/db/client";
-import { setting, post } from "@/db/schema";
-import { asc, eq } from "drizzle-orm";
+import { setting } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 
@@ -46,84 +49,9 @@ async function getProjects(): Promise<ProjectType[]> {
   }
 }
 
-async function getGithubEvents(githubUrl?: string) {
-  if (!githubUrl) return [];
-  const username = githubUrl.split("/").pop();
-  if (!username) return [];
-
-  try {
-    const response = await fetch(
-      `https://api.github.com/users/${username}/events/public`,
-      {
-        next: { revalidate: 60 * 30 }, // Revalidate every 30 minutes
-      },
-    );
-    if (!response.ok) {
-      console.error("Failed to fetch GitHub events:", response.statusText);
-      return [];
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Failed to fetch GitHub events:", error);
-    return [];
-  }
-}
-
-async function getGithubLanguages(githubUrl?: string) {
-  if (!githubUrl) return {};
-  const username = githubUrl.split("/").pop();
-  if (!username) return {};
-
-  try {
-    const response = await fetch(
-      `https://api.github.com/users/${username}/repos?per_page=10&sort=updated`,
-      {
-        next: { revalidate: 60 * 60 }, // Revalidate every hour
-      },
-    );
-    if (!response.ok) return {};
-    const repos = await response.json();
-
-    const languageMap: Record<string, number> = {};
-    for (const repo of repos) {
-      if (repo.language) {
-        languageMap[repo.language] = (languageMap[repo.language] || 0) + 1;
-      }
-    }
-    return languageMap;
-  } catch (error) {
-    console.error("Failed to fetch GitHub languages:", error);
-    return {};
-  }
-}
-
-async function getLatestPosts(): Promise<PostType[]> {
-  try {
-    const allPosts = await db
-      .select()
-      .from(post)
-      .orderBy(asc(post.order), asc(post.createdAt))
-      .all();
-    return allPosts
-      .filter((p) => p.published)
-      .slice(0, 4)
-      .map((p) => ({
-        ...p,
-        tags: p.tags ? JSON.parse(p.tags) : [],
-      }));
-  } catch (error) {
-    console.error("Failed to fetch latest posts:", error);
-    return [];
-  }
-}
-
 export default async function Home() {
   const settings = await getSettings();
   const featuredProjects = await getProjects();
-  const githubEvents = await getGithubEvents(settings.githubUrl);
-  const githubLanguages = await getGithubLanguages(settings.githubUrl);
-  const latestPosts = await getLatestPosts();
 
   // Increment view count
   try {
@@ -172,15 +100,16 @@ export default async function Home() {
       featuredProjects={featuredProjects}
       profileImage={profileImage}
       resume={resume}
-      githubEvents={githubEvents}
-      githubLanguages={githubLanguages}
-      latestPosts={latestPosts}
       bookingUrl={bookingUrl}
       socialLinks={{
         github: githubUrl,
         linkedin: linkedinUrl,
         facebook: facebookUrl,
       }}
-    />
+    >
+      <Suspense fallback={<WidgetSectionSkeleton />}>
+        <WidgetSection />
+      </Suspense>
+    </HomeView>
   );
 }

@@ -24,7 +24,7 @@ export function Breadcrumbs() {
 
   return (
     <nav aria-label="Breadcrumb" className="mb-8 px-6 pt-4">
-      <ol className="font-mono text-base text-muted-foreground flex items-center gap-0">
+      <ol className=" text-base text-muted-foreground flex items-center gap-0">
         <li>
           <Link
             href="/"
@@ -56,7 +56,7 @@ export function Breadcrumbs() {
           );
         })}
         {isLast && (
-          <span className="ml-0.5 inline-block h-4 w-[2px] animate-pulse bg-[var(--accent-signal)]" />
+          <span className="ml-0.5 inline-block h-4 w-[2px] animate-pulse bg-[var(--primary)]" />
         )}
       </ol>
     </nav>

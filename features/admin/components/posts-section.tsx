@@ -338,7 +338,7 @@ export default function PostsSection() {
                   value={formData.body}
                   onChange={(e) => setFormData({ ...formData, body: e.target.value })}
                   placeholder="Write your post content in Markdown..."
-                  className="min-h-[200px] font-mono text-sm"
+                  className="min-h-[200px]  text-sm"
                 />
               </div>
               <div className="space-y-2">

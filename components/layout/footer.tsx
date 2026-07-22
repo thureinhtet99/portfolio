@@ -43,17 +43,17 @@ export async function Footer() {
     <footer className="border-t border-border/40 px-6 py-4">
       <div className="app-shell flex flex-col items-center justify-between gap-3 sm:flex-row">
         {/* Left */}
-        <div className="flex items-center gap-3 font-mono text-xs text-muted-foreground">
+        <div className="flex items-center gap-3  text-xs text-muted-foreground">
           <span>&copy; {currentYear} Thu Rein Htet</span>
           <span className="text-muted-foreground/30">·</span>
           <div className="flex items-center gap-1.5">
-            <div className="h-2 w-2 rounded-full bg-[var(--accent-signal)]" />
+            <div className="h-2 w-2 rounded-full bg-[var(--primary)]" />
             <span>All Services Nominal</span>
           </div>
         </div>
 
         {/* Right */}
-        <div className="flex items-center gap-3 font-mono text-xs text-muted-foreground">
+        <div className="flex items-center gap-3  text-xs text-muted-foreground">
           {commitHash && (
             <>
               <span>⚡ {commitHash}</span>

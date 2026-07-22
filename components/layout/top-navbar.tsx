@@ -1,10 +1,10 @@
 "use client";
 
+import { cn } from "@/lib/utils";
+import { ChevronDown, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { ChevronDown, Menu, X } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 const routeLabels: Record<string, string> = {
   about: "about",
@@ -18,15 +18,15 @@ const routeLabels: Record<string, string> = {
 
 const navLinks = [
   { href: "/about", label: "About" },
-  { href: "/posts", label: "Posts" },
   { href: "/projects", label: "Projects" },
-  { href: "/api/resume", label: "Resume", external: true },
+  { href: "/posts", label: "Posts" },
+  // { href: "/api/resume", label: "Resume", external: true },
 ];
 
 const moreLinks = [
-  { href: "/certificates", label: "Certificates" },
-  { href: "/timeline", label: "Timeline" },
-  { href: "/contact", label: "Contact" },
+  { href: "/posts", label: "Posts" },
+  // { href: "/timeline", label: "Timeline" },
+  // { href: "/contact", label: "Contact" },
 ];
 
 export function TopNavbar() {
@@ -44,38 +44,35 @@ export function TopNavbar() {
 
   const isMoreActive = moreLinks.some((link) => isActive(link.href));
 
-  // Build terminal-style path: ~/seg1/seg2/
-  const terminalPath = segments.length === 0
-    ? "~"
-    : `~/${segments.map((s) => routeLabels[s] || s).join("/")}`;
+  const terminalPath =
+    segments.length === 0
+      ? "~ "
+      : `~ /${segments.map((s) => routeLabels[s] || s).join("/")}`;
 
   if (isAdmin) return null;
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm">
+    <nav className="sticky top-0 z-50 bg-transparent backdrop-blur-sm py-3">
       <div className="app-shell flex items-center justify-between px-6 py-4">
-        {/* Terminal path */}
         <Link
           href="/"
-          className="font-mono text-base text-muted-foreground hover:text-foreground transition-colors shrink-0"
+          className="flex items-center justify-center  text-base text-muted-foreground hover:text-foreground transition-colors shrink-0"
         >
           {terminalPath}/
-          <span className="ml-0.5 inline-block h-4 w-[2px] animate-pulse bg-[var(--accent-signal)] align-middle" />
+          <span className="ml-1 inline-block h-4 w-2 animate-pulse-slow bg-[var(--primary)]" />
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden items-center gap-6 sm:flex">
+        <div className="hidden items-center gap-10 sm:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              target={link.external ? "_blank" : undefined}
-              rel={link.external ? "noopener noreferrer" : undefined}
               className={cn(
-                "font-mono text-sm transition-colors hover:text-foreground",
+                " text-sm transition-colors hover:text-foreground",
                 isActive(link.href)
                   ? "text-foreground"
-                  : "text-muted-foreground"
+                  : "text-muted-foreground",
               )}
             >
               {link.label}
@@ -89,15 +86,15 @@ export function TopNavbar() {
               onClick={() => setMoreOpen(!moreOpen)}
               onBlur={() => setTimeout(() => setMoreOpen(false), 150)}
               className={cn(
-                "font-mono text-sm transition-colors hover:text-foreground flex items-center gap-1",
-                isMoreActive ? "text-foreground" : "text-muted-foreground"
+                " text-sm transition-colors hover:text-foreground flex items-center gap-1",
+                isMoreActive ? "text-foreground" : "text-muted-foreground",
               )}
             >
               More
               <ChevronDown
                 className={cn(
                   "h-3 w-3 transition-transform",
-                  moreOpen && "rotate-180"
+                  moreOpen && "rotate-180",
                 )}
               />
             </button>
@@ -108,10 +105,10 @@ export function TopNavbar() {
                     key={link.href}
                     href={link.href}
                     className={cn(
-                      "block rounded-md px-3 py-2 font-mono text-sm transition-colors hover:bg-white/5",
+                      "block rounded-md px-3 py-2  text-sm transition-colors hover:bg-white/5",
                       isActive(link.href)
                         ? "text-foreground"
-                        : "text-muted-foreground"
+                        : "text-muted-foreground",
                     )}
                   >
                     {link.label}
@@ -120,6 +117,19 @@ export function TopNavbar() {
               </div>
             )}
           </div>
+
+          {/* <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="/api/resume"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FileUser />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent className="text-sm">Resume</TooltipContent>
+          </Tooltip> */}
         </div>
 
         {/* Mobile toggle */}
@@ -129,7 +139,11 @@ export function TopNavbar() {
           className="sm:hidden text-muted-foreground hover:text-foreground transition-colors"
           aria-label="Toggle navigation"
         >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {mobileOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
         </button>
       </div>
 
@@ -141,14 +155,12 @@ export function TopNavbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                target={link.external ? "_blank" : undefined}
-                rel={link.external ? "noopener noreferrer" : undefined}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "rounded-md px-3 py-2 font-mono text-sm transition-colors hover:bg-white/5",
+                  "rounded-md px-3 py-2  text-sm transition-colors hover:bg-white/5",
                   isActive(link.href)
                     ? "text-foreground"
-                    : "text-muted-foreground"
+                    : "text-muted-foreground",
                 )}
               >
                 {link.label}
@@ -161,10 +173,10 @@ export function TopNavbar() {
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "rounded-md px-3 py-2 font-mono text-sm transition-colors hover:bg-white/5",
+                  "rounded-md px-3 py-2  text-sm transition-colors hover:bg-white/5",
                   isActive(link.href)
                     ? "text-foreground"
-                    : "text-muted-foreground"
+                    : "text-muted-foreground",
                 )}
               >
                 {link.label}

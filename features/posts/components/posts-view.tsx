@@ -18,7 +18,7 @@ export function PostsView({ posts }: Props) {
         <div className="mx-auto max-w-3xl space-y-8">
           <motion.h1
             {...sectionReveal}
-            className="font-mono text-3xl font-bold tracking-[-0.03em]"
+            className=" text-3xl font-bold tracking-[-0.03em]"
           >
             Posts
           </motion.h1>
@@ -37,14 +37,14 @@ export function PostsView({ posts }: Props) {
                     href={`/posts/${post.slug}`}
                     className="group block space-y-2"
                   >
-                    <h2 className="font-mono text-xl font-semibold text-foreground group-hover:text-[var(--accent-signal)] transition-colors">
+                    <h2 className=" text-xl font-semibold text-foreground group-hover:text-[var(--primary)] transition-colors">
                       {post.title}
                     </h2>
-                    <p className="font-mono text-xs text-muted-foreground">
+                    <p className=" text-xs text-muted-foreground">
                       {formatDate(post.createdAt.toISOString())}
                     </p>
                     {post.excerpt && (
-                      <p className="font-mono text-sm leading-relaxed text-muted-foreground line-clamp-2">
+                      <p className=" text-sm leading-relaxed text-muted-foreground line-clamp-2">
                         {post.excerpt}
                       </p>
                     )}
@@ -54,7 +54,7 @@ export function PostsView({ posts }: Props) {
                           <Badge
                             key={tag}
                             variant="secondary"
-                            className="font-mono text-[10px] bg-muted/50 text-muted-foreground rounded-md px-2 py-0.5"
+                            className=" text-[10px] bg-muted/50 text-muted-foreground rounded-md px-2 py-0.5"
                           >
                             {tag}
                           </Badge>
@@ -66,7 +66,7 @@ export function PostsView({ posts }: Props) {
               ))}
             </div>
           ) : (
-            <p className="font-mono text-sm text-muted-foreground">
+            <p className=" text-sm text-muted-foreground">
               No posts yet.
             </p>
           )}
