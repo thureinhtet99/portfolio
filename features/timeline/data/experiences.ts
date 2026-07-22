@@ -1,4 +1,4 @@
-import type { ExperienceItemType } from "@/components/work-experience";
+import type { ExperienceItemType } from "@/components/ui/work-experience";
 
 export const experiences: ExperienceItemType[] = [
   {
@@ -22,7 +22,7 @@ export const experiences: ExperienceItemType[] = [
         isExpanded: true,
       },
     ],
-    isCurrentEmployer: false,
+    // isCurrentEmployer: true,
   },
   {
     id: "2",
@@ -52,6 +52,6 @@ export const experiences: ExperienceItemType[] = [
         isExpanded: true,
       },
     ],
-    isCurrentEmployer: false,
+    // isCurrentEmployer: false,
   },
 ];

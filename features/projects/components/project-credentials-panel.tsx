@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { Check, ChevronDown, Copy, KeyRound } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -43,11 +43,7 @@ function CredentialRow({ label, value, copied, onCopy }: CredentialRowProps) {
         className="h-6 w-6 shrink-0 p-0 text-muted-foreground hover:text-foreground sm:h-7 sm:w-7 cursor-pointer"
         aria-label={`Copy ${label}`}
       >
-        {copied ? (
-          <Check className="h-3.5 w-3.5" />
-        ) : (
-          <Copy className="h-3.5 w-3.5" />
-        )}
+        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
       </Button>
     </div>
   );
@@ -109,7 +105,7 @@ export function ProjectCredentialsPanel({
           >
             <ChevronDown
               className={cn(
-                "h-3.5 w-3.5 transition-transform",
+                "h-4 w--4transition-transform",
                 isOpen && "rotate-180",
               )}
             />

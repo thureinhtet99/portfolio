@@ -7,7 +7,7 @@ export function WidgetSectionSkeleton() {
         <div className="space-y-2 mb-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="flex items-start gap-2">
-              <div className="h-3.5 w-3.5 rounded bg-muted/50 mt-0.5 shrink-0" />
+              <div className="h-4 w--4rounded bg-muted/50 mt-0.5 shrink-0" />
               <div className="h-3.5 flex-1 rounded bg-muted/50" />
             </div>
           ))}

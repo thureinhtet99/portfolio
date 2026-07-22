@@ -1,7 +1,6 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
-import { Github, GitPullRequest, Star, GitFork } from "lucide-react";
+import { GitFork, Github, GitPullRequest, Star } from "lucide-react";
 
 type Event = {
   type: string;
@@ -29,14 +28,15 @@ export function GitHubActivityWidget({ events, languages }: Props) {
         <h3 className=" text-sm font-semibold text-foreground mb-3">
           GitHub Activity
         </h3>
-        <p className=" text-sm text-muted-foreground">
-          Activity unavailable
-        </p>
+        <p className=" text-sm text-muted-foreground">Activity unavailable</p>
       </div>
     );
   }
 
-  const totalRepos = Object.values(languages).reduce((sum, count) => sum + count, 0);
+  const totalRepos = Object.values(languages).reduce(
+    (sum, count) => sum + count,
+    0,
+  );
   const sortedLanguages = Object.entries(languages)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 5);
@@ -44,15 +44,15 @@ export function GitHubActivityWidget({ events, languages }: Props) {
   const eventIcon = (type: string) => {
     switch (type) {
       case "PushEvent":
-        return <Github className="h-3.5 w-3.5" />;
+        return <Github className="h-4 w-4" />;
       case "PullRequestEvent":
-        return <GitPullRequest className="h-3.5 w-3.5" />;
+        return <GitPullRequest className="h-4 w-4" />;
       case "WatchEvent":
-        return <Star className="h-3.5 w-3.5" />;
+        return <Star className="h-4 w-4" />;
       case "ForkEvent":
-        return <GitFork className="h-3.5 w-3.5" />;
+        return <GitFork className="h-4 w-4" />;
       default:
-        return <Github className="h-3.5 w-3.5" />;
+        return <Github className="h-4 w-4" />;
     }
   };
 
@@ -103,7 +103,10 @@ export function GitHubActivityWidget({ events, languages }: Props) {
       {hasEvents && (
         <div className="space-y-2 mb-4">
           {events.slice(0, 3).map((event, index) => (
-            <div key={index} className="flex items-start gap-2  text-xs text-muted-foreground">
+            <div
+              key={index}
+              className="flex items-start gap-2  text-xs text-muted-foreground"
+            >
               <span className="mt-0.5 shrink-0">{eventIcon(event.type)}</span>
               <span className="truncate">{eventTitle(event)}</span>
             </div>
@@ -118,7 +121,7 @@ export function GitHubActivityWidget({ events, languages }: Props) {
             {sortedLanguages.map(([lang, count], i) => {
               const percent = (count / totalRepos) * 100;
               const colors = [
-                "bg-[var(--primary)]",
+                "bg-primary",
                 "bg-blue-500",
                 "bg-yellow-500",
                 "bg-red-500",

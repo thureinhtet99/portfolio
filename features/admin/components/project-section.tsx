@@ -1,31 +1,35 @@
+import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { AdopterType, DemoCredentialType, ProjectType } from "@/types/index.type";
+import { Textarea } from "@/components/ui/textarea";
+import { APP_CONFIG } from "@/config/app-config";
+import { ProjectCredentialsPanel } from "@/features/projects/components/project-credentials-panel";
 import {
+  AdopterType,
+  DemoCredentialType,
+  ProjectType,
+} from "@/types/index.type";
+import {
+  ArrowDown,
+  ArrowUp,
+  Edit,
+  ExternalLink,
   FolderGit2,
+  Github,
   Plus,
   Save,
-  Edit,
   Trash2,
-  ExternalLink,
-  Github,
   Upload,
   X,
-  ArrowUp,
-  ArrowDown,
 } from "lucide-react";
-import { useState, useEffect } from "react";
-import { toast } from "sonner";
-import { APP_CONFIG } from "@/config/app-config";
-import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
 import Image from "next/image";
 import Link from "next/link";
-import { ProjectCredentialsPanel } from "@/features/projects/components/project-credentials-panel";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 type ProjectFormState = {
   title: string;
@@ -813,17 +817,22 @@ function ProjectForm({
           </div>
         </div>
         <div className="space-y-2">
-          <Label>Notable Adopters (one per line: Name | URL | Description)</Label>
+          <Label>
+            Notable Adopters (one per line: Name | URL | Description)
+          </Label>
           <Textarea
             value={formData.adopters}
             onChange={(e) =>
               setFormData({ ...formData, adopters: e.target.value })
             }
-            placeholder={"Acme Corp | https://acme.com | Uses this in production\nOpen Source Project | | Community fork"}
+            placeholder={
+              "Acme Corp | https://acme.com | Uses this in production\nOpen Source Project | | Community fork"
+            }
             className="min-h-[80px]  text-sm"
           />
           <p className="text-xs text-muted-foreground">
-            Each line becomes a linkable section. Use | to separate name, URL (optional), and description (optional).
+            Each line becomes a linkable section. Use | to separate name, URL
+            (optional), and description (optional).
           </p>
         </div>
         <div className="flex items-center justify-between space-x-2 p-4 rounded-lg border">
@@ -965,7 +974,7 @@ function ProjectCard({
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-xs text-primary transition-colors"
               >
-                <Github className="h-3.5 w-3.5" />
+                <Github className="h-4 w-4" />
                 GitHub
               </a>
             )}
@@ -977,7 +986,7 @@ function ProjectCard({
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-xs text-primary transition-colors"
               >
-                <ExternalLink className="h-3.5 w-3.5" />
+                <ExternalLink className="h-4 w-4" />
                 Live
               </Link>
             )}

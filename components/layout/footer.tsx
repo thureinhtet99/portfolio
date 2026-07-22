@@ -1,7 +1,7 @@
 import { db } from "@/db/client";
 import { setting } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { Github, Linkedin, Facebook } from "lucide-react";
+import { Facebook, Github, Linkedin } from "lucide-react";
 import Link from "next/link";
 
 export async function Footer() {
@@ -30,7 +30,7 @@ export async function Footer() {
   try {
     const settings = await db.select().from(setting).all();
     const settingsMap = Object.fromEntries(
-      settings.map((s) => [s.key, s.value])
+      settings.map((s) => [s.key, s.value]),
     );
     githubUrl = settingsMap.githubUrl || "";
     linkedinUrl = settingsMap.linkedinUrl || "";
@@ -47,7 +47,7 @@ export async function Footer() {
           <span>&copy; {currentYear} Thu Rein Htet</span>
           <span className="text-muted-foreground/30">·</span>
           <div className="flex items-center gap-1.5">
-            <div className="h-2 w-2 rounded-full bg-[var(--primary)]" />
+            <div className="h-2 w-2 rounded-full bg-primary" />
             <span>All Services Nominal</span>
           </div>
         </div>
@@ -70,7 +70,7 @@ export async function Footer() {
                 rel="noopener noreferrer"
                 className="hover:text-foreground transition-colors"
               >
-                <Github className="h-3.5 w-3.5" />
+                <Github className="h-4 w-4" />
               </Link>
             )}
             {linkedinUrl && (
@@ -80,7 +80,7 @@ export async function Footer() {
                 rel="noopener noreferrer"
                 className="hover:text-foreground transition-colors"
               >
-                <Linkedin className="h-3.5 w-3.5" />
+                <Linkedin className="h-4 w-4" />
               </Link>
             )}
             {facebookUrl && (
@@ -90,7 +90,7 @@ export async function Footer() {
                 rel="noopener noreferrer"
                 className="hover:text-foreground transition-colors"
               >
-                <Facebook className="h-3.5 w-3.5" />
+                <Facebook className="h-4 w-4" />
               </Link>
             )}
           </div>

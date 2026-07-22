@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 // Better Auth Tables
 export const user = sqliteTable("user", {
@@ -57,17 +57,17 @@ export const verification = sqliteTable("verification", {
   updatedAt: integer("updated_at", { mode: "timestamp" }),
 });
 
-// Portfolio Tables
 export const project = sqliteTable("project", {
   id: text("id").primaryKey(),
   title: text("title").notNull(),
+  summary: text("summary").notNull(),
   description: text("description"),
   image: text("image"),
   technologies: text("technologies"), // JSON string
   githubUrl: text("github_url"),
   liveUrl: text("live_url"),
   objectives: text("objectives"), // JSON array
-  keyChallenges: text("key_challenges"), // JSON array
+  collaborators: text("collaborators"), // JSON array
   demoCredentials: text("demo_credentials"), // JSON array
   adopters: text("adopters"), // JSON array of { name, url?, description? }
   featured: integer("featured", { mode: "boolean" }).notNull().default(false),

@@ -1,13 +1,12 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import { sectionReveal } from "@/lib/motion";
+import { ProjectType } from "@/types/index.type";
+import { motion } from "framer-motion";
+import { ArrowLeft, ExternalLink, Github } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
-import { sectionReveal } from "@/lib/motion";
-import { formatDate } from "@/lib/utils";
-import { ProjectType } from "@/types/index.type";
-import { ExternalLink, Github, ArrowLeft } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 type Props = {
@@ -29,7 +28,8 @@ export function ProjectDetailView({ project }: Props) {
   // Parse org/repo from githubUrl
   const githubParts = project.githubUrl?.split("/").slice(-2) || [];
   const org = githubParts[0] || "owner";
-  const repo = githubParts[1] || project.title.toLowerCase().replace(/\s+/g, "-");
+  const repo =
+    githubParts[1] || project.title.toLowerCase().replace(/\s+/g, "-");
 
   return (
     <div className="page-shell">
@@ -155,7 +155,7 @@ export function ProjectDetailView({ project }: Props) {
                           href={adopter.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[var(--primary)] hover:underline"
+                          className="text-primary hover:underline"
                         >
                           #{adopter.name}
                         </Link>

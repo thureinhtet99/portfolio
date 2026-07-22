@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { WorkExperience } from "@/components/work-experience";
+import { WorkExperience } from "@/components/ui/work-experience";
 import { ProjectShowcaseCard } from "@/features/projects/components/project-showcase-card";
 import { experiences } from "@/features/timeline/data/experiences";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -38,9 +38,7 @@ export function HomeView({
   aboutMe,
   intro,
   featuredProjects,
-  profileImage,
   resume,
-  bookingUrl,
   socialLinks,
   children,
 }: Props) {
@@ -54,21 +52,20 @@ export function HomeView({
       <section id="hero-section" className="px-6 py-16 sm:py-20 ">
         <motion.div
           // {...sectionReveal}
-          className="mx-auto max-w-6xl space-y-6"
+          className="mx-auto max-w-5xl space-y-6"
         >
           <div className="space-y-2">
             <span className="text-muted-foreground text-md sm:text-base ">
               Good to see you!
             </span>
             <h1 className="font-bold text-3xl text-muted-foreground sm:text-4xl">
-              I&apos;m{" "}
-              <span className="text-[var(--primary)]">Thu Rein Htet</span>
+              I&apos;m <span className="text-primary">Thu Rein Htet</span>
             </h1>
           </div>
 
-          <div className="text-base leading-relaxed text-muted-foreground sm:text-lg">
+          <div className="text-base leading-relaxed sm:text-lg">
             {intro && (
-              <div className="prose prose-base prose-invert sm:prose-lg">
+              <div className="prose prose-base prose-invert sm:prose-lg text-muted-foreground">
                 <ReactMarkdown>{intro}</ReactMarkdown>
               </div>
             )}
@@ -81,7 +78,7 @@ export function HomeView({
                 href={socialLinks.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 hover:text-foreground transition-colors"
+                className="flex items-center gap-1.5 hover:text-primary transition-colors"
               >
                 <FaGithub className="h-4 w-4" />
                 GitHub
@@ -94,7 +91,7 @@ export function HomeView({
                   href={socialLinks.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 hover:text-foreground transition-colors"
+                  className="flex items-center gap-1.5 hover:text-primary transition-colors"
                 >
                   <FaLinkedin className="h-4 w-4" />
                   LinkedIn
@@ -107,7 +104,7 @@ export function HomeView({
                 <Link
                   href="/api/resume"
                   target="_blank"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-1.5 hover:text-primary transition-colors"
                 >
                   <FaFile className="h-4 w-4" />
                   Resume
@@ -116,14 +113,20 @@ export function HomeView({
             )}
             <>
               <span className="text-muted-foreground/30">|</span>
-              <span className="flex items-center gap-1.5">
+              <span className="flex items-center gap-1.5 text-primary">
                 <div
                   className={`relative h-2 w-2 rounded-full ${
-                    available ? "bg-[var(--primary)]" : "bg-muted-foreground/50"
+                    available ? "bg-primary" : "bg-muted-foreground/50"
                   }`}
                 >
                   {available && !shouldReduceMotion && (
-                    <div className="absolute inset-0 h-full w-full animate-ping rounded-full bg-[var(--primary)]" />
+                    <span
+                      className="relative flex items-center justify-center"
+                      aria-label="Current Employer"
+                    >
+                      <span className="absolute inline-flex size-3 animate-ping rounded-full bg-sky-500 opacity-50" />
+                      <span className="relative inline-flex size-2 rounded-full bg-sky-500" />
+                    </span>
                   )}
                 </div>
                 {available ? "Available for work" : "Not available"}
@@ -135,10 +138,10 @@ export function HomeView({
 
       {/* Experiences */}
       <section id="experience-section" className="px-6 py-16 sm:py-20">
-        <div className="mx-auto max-w-6xl space-y-6">
+        <div className="mx-auto max-w-5xl space-y-6">
           <motion.h2
             // {...sectionReveal}
-            className=" text-2xl font-bold tracking-[-0.02em]"
+            className=" text-4xl font-bold text-muted-foreground tracking-[-0.02em]"
           >
             Experiences
           </motion.h2>
@@ -148,28 +151,36 @@ export function HomeView({
 
       {/* Featured Projects */}
       <section id="projects-section" className="px-6 py-16 sm:py-20">
-        <div className="mx-auto max-w-6xl space-y-6">
+        <div className="mx-auto max-w-7xl space-y-6">
           <div className="flex items-center justify-between">
             <motion.h2
               // {...sectionReveal}
-              className=" text-2xl font-bold tracking-[-0.02em]"
+              className=" text-4xl font-bold text-muted-foreground tracking-[-0.02em]"
             >
               Featured Projects
             </motion.h2>
             {featuredProjects.length > 0 && (
-              <Link
-                href="/projects"
-                className=" text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                View all <MoveRight className="inline h-3.5 w-3.5" />
-              </Link>
+              <div className="flex items-center gap-1 text-primary hover:bg-primary hover:text-background transition-colors">
+                <Link href="/projects" className="text-base">
+                  View all
+                </Link>
+                <MoveRight className="inline h-4 w-4" />
+              </div>
             )}
           </div>
 
           {featuredProjects.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              {featuredProjects.slice(0, 2).map((project, index) => (
-                <motion.div key={project.id} {...cardReveal(index)}>
+              {featuredProjects.map((project, index) => (
+                <motion.div
+                  key={project.id}
+                  {...cardReveal(index)}
+                  className={
+                    featuredProjects.length === 1
+                      ? "lg:col-span-2 mx-auto w-full"
+                      : ""
+                  }
+                >
                   <ProjectShowcaseCard project={project} techLimit={4} />
                 </motion.div>
               ))}
@@ -206,11 +217,10 @@ export function HomeView({
             {/* Currently Based In */}
             <div className="surface-panel p-5">
               <h3 className=" text-sm font-semibold text-foreground mb-2">
-                Currently Based In{" "}
-                <span className="text-[var(--primary)]">📍</span>
+                Currently Based In <span className="text-primary">📍</span>
               </h3>
               <div className="flex items-center gap-2  text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4 text-[var(--primary)]" />
+                <MapPin className="h-4 w-4 text-primary" />
                 <span>{residence}</span>
               </div>
             </div>

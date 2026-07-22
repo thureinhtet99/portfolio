@@ -1,11 +1,11 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, MapPin, Clock } from "lucide-react";
+import { EducationDisplayType, WorkDisplayType } from "@/types/index.type";
 import { motion } from "framer-motion";
-import { WorkDisplayType, EducationDisplayType } from "@/types/index.type";
-import { Badge } from "@/components/ui/badge";
+import { Calendar, Clock, MapPin } from "lucide-react";
 
 type Props = {
   work: WorkDisplayType[];
@@ -48,7 +48,7 @@ export default function TimelineClientComponent({ work, education }: Props) {
                     transition={{ duration: 0.3, delay: index * 0.1 }}
                     className="relative border-l-2 border-primary/20 pl-5 pb-6 sm:pl-8 sm:pb-8 last:pb-0"
                   >
-                    <div className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full border-4 border-background bg-primary sm:-left-2 sm:top-0 sm:h-4 sm:w-4" />
+                    <div className="absolute -left-[7px] top-1 h-4 w--4rounded-full border-4 border-background bg-primary sm:-left-2 sm:top-0 sm:h-4 sm:w-4" />
 
                     <div className="space-y-4 sm:space-y-6">
                       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -130,7 +130,7 @@ export default function TimelineClientComponent({ work, education }: Props) {
                     transition={{ duration: 0.3, delay: index * 0.1 }}
                     className="relative border-l-2 border-primary/20 pl-5 pb-6 sm:pl-8 sm:pb-8 last:pb-0"
                   >
-                    <div className="absolute -left-[7px] top-1 h-3.5 w-3.5 rounded-full border-4 border-background bg-primary sm:-left-2 sm:top-0 sm:h-4 sm:w-4" />
+                    <div className="absolute -left-[7px] top-1 h-4 w--4rounded-full border-4 border-background bg-primary sm:-left-2 sm:top-0 sm:h-4 sm:w-4" />
 
                     <div className="space-y-4 sm:space-y-6">
                       <div className="flex flex-wrap items-start justify-between gap-2">

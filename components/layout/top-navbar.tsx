@@ -59,7 +59,7 @@ export function TopNavbar() {
           className="flex items-center justify-center  text-base text-muted-foreground hover:text-foreground transition-colors shrink-0"
         >
           {terminalPath}/
-          <span className="ml-1 inline-block h-4 w-2 animate-pulse-slow bg-[var(--primary)]" />
+          <span className="ml-1 inline-block h-4 w-2 animate-pulse-slow bg-primary" />
         </Link>
 
         {/* Desktop nav */}
@@ -93,7 +93,7 @@ export function TopNavbar() {
               More
               <ChevronDown
                 className={cn(
-                  "h-3 w-3 transition-transform",
+                  "h-4 w-4 transition-transform",
                   moreOpen && "rotate-180",
                 )}
               />

@@ -4,8 +4,8 @@ import { differenceInMonths, parse } from "date-fns";
 import { useCallback, useRef, type ComponentProps } from "react";
 import ReactMarkdown from "react-markdown";
 
-import type { ChevronsUpDownIconHandle } from "@/components/chevrons-up-down-icon";
-import { ChevronsUpDownIcon } from "@/components/chevrons-up-down-icon";
+import type { ChevronsUpDownIconHandle } from "@/components/ui/chevrons-up-down-icon";
+import { ChevronsUpDownIcon } from "@/components/ui/chevrons-up-down-icon";
 import {
   Collapsible,
   CollapsibleContent,
@@ -56,7 +56,7 @@ export type ExperienceItemType = {
    * */
   positions: ExperiencePositionItemType[];
   /** Indicates if this is the user's current employer */
-  isCurrentEmployer?: boolean;
+  // isCurrentEmployer?: boolean;
 };
 
 export type WorkExperienceProps = {
@@ -95,11 +95,11 @@ export function ExperienceItem({ experience }: ExperienceItemProps) {
               aria-hidden
             />
           ) : (
-            <span className="flex size-2 rounded-full bg-[var(--primary)]" />
+            <span className="flex size-2 rounded-full bg-primary" />
           )}
         </div>
 
-        <h3 className="text-lg leading-snug font-semibold">
+        <h3 className="text-lg leading-snug font-semibold text-muted-foreground">
           {experience.companyWebsite ? (
             <a
               className="link"
@@ -114,7 +114,7 @@ export function ExperienceItem({ experience }: ExperienceItemProps) {
           )}
         </h3>
 
-        {experience.isCurrentEmployer && (
+        {/* {experience.isCurrentEmployer && (
           <span
             className="relative flex items-center justify-center"
             aria-label="Current Employer"
@@ -122,7 +122,7 @@ export function ExperienceItem({ experience }: ExperienceItemProps) {
             <span className="absolute inline-flex size-3 animate-ping rounded-full bg-sky-500 opacity-50" />
             <span className="relative inline-flex size-2 rounded-full bg-sky-500" />
           </span>
-        )}
+        )} */}
       </div>
 
       <div className="relative space-y-4 before:absolute before:left-3 before:h-full before:w-px before:bg-border">
@@ -169,7 +169,7 @@ export function ExperiencePositionItem({
         <CollapsibleTrigger
           className={cn(
             "group/experience-position not-prose block w-full text-left select-none",
-            "relative before:absolute before:-top-1 before:-right-1 before:-bottom-1.5 before:left-7 before:rounded-lg hover:before:bg-muted/80",
+            "relative before:absolute before:-top-1 before:-right-1 before:-bottom-1.5 before:left-7 before:rounded-lg hover:before:bg-muted-foreground/5",
             "data-disabled:before:content-none",
           )}
         >
@@ -206,7 +206,7 @@ export function ExperiencePositionItem({
 
             <div>
               <dt className="sr-only">Employment Period</dt>
-              <dd className="flex items-center gap-0.5 tabular-nums">
+              <dd className="flex items-center gap-1 tabular-nums">
                 <span>{start}</span>
                 <span>—</span>
                 {isOngoing ? (
@@ -235,7 +235,7 @@ export function ExperiencePositionItem({
 
         <CollapsibleContent className="overflow-hidden">
           {position.description && (
-            <Prose className="pt-2 pl-9">
+            <Prose className="pt-2 pl-9 text-muted-foreground">
               <ReactMarkdown>{position.description}</ReactMarkdown>
             </Prose>
           )}

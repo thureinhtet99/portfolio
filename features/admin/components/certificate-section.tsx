@@ -1,27 +1,27 @@
+import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import { APP_CONFIG } from "@/config/app-config";
 import { CertificateType } from "@/types/index.type";
 import {
+  ArrowDown,
+  ArrowUp,
   Award,
+  Calendar,
+  Edit,
+  ExternalLink,
   Plus,
   Save,
-  Edit,
   Trash2,
-  ExternalLink,
   Upload,
   X,
-  Calendar,
-  ArrowUp,
-  ArrowDown,
 } from "lucide-react";
-import { useState, useEffect } from "react";
-import { toast } from "sonner";
-import { APP_CONFIG } from "@/config/app-config";
-import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function CertificatesSection() {
   const [certificates, setCertificates] = useState<CertificateType[]>([]);
@@ -714,7 +714,7 @@ function CertificateCard({
           {/* Issue Date */}
           {certificate.issueDate && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="h-3.5 w-3.5" />
+              <Calendar className="h-4 w-4" />
               <span>
                 {new Date(certificate.issueDate).toLocaleDateString()}
               </span>
@@ -735,7 +735,7 @@ function CertificateCard({
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
               >
-                <ExternalLink className="h-3.5 w-3.5" />
+                <ExternalLink className="h-4 w-4" />
                 View Credential
               </a>
             )}

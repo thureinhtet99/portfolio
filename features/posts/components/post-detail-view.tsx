@@ -1,11 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
 import { sectionReveal } from "@/lib/motion";
 import { formatDate } from "@/lib/utils";
 import { PostType } from "@/types/index.type";
+import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 
 type Props = {
@@ -21,10 +20,7 @@ export function PostDetailView({ post }: Props) {
       <section className="px-6 py-12">
         <article className="mx-auto max-w-3xl space-y-8">
           {/* Decorative Title */}
-          <motion.header
-            {...sectionReveal}
-            className="space-y-6 text-center"
-          >
+          <motion.header {...sectionReveal} className="space-y-6 text-center">
             <h1 className=" text-4xl font-bold tracking-[-0.02em] sm:text-5xl lg:text-6xl leading-tight">
               {titleWords.map((word, i) => (
                 <span
@@ -33,7 +29,7 @@ export function PostDetailView({ post }: Props) {
                     i % 3 === 0
                       ? "text-muted-foreground"
                       : i % 3 === 1
-                        ? "text-[var(--primary)] italic"
+                        ? "text-primary italic"
                         : "text-foreground"
                   }
                 >

@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
 import { sectionReveal } from "@/lib/motion";
 import { formatDate } from "@/lib/utils";
 import { PostType } from "@/types/index.type";
+import { motion } from "framer-motion";
+import Link from "next/link";
 
 type Props = {
   posts: PostType[];
@@ -37,7 +37,7 @@ export function PostsView({ posts }: Props) {
                     href={`/posts/${post.slug}`}
                     className="group block space-y-2"
                   >
-                    <h2 className=" text-xl font-semibold text-foreground group-hover:text-[var(--primary)] transition-colors">
+                    <h2 className=" text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
                       {post.title}
                     </h2>
                     <p className=" text-xs text-muted-foreground">
@@ -66,9 +66,7 @@ export function PostsView({ posts }: Props) {
               ))}
             </div>
           ) : (
-            <p className=" text-sm text-muted-foreground">
-              No posts yet.
-            </p>
+            <p className=" text-sm text-muted-foreground">No posts yet.</p>
           )}
         </div>
       </section>

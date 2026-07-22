@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/client";
 import { project } from "@/db/schema";
-import { eq, asc } from "drizzle-orm";
 import { v2 as cloudinary } from "cloudinary";
+import { asc, eq } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -30,8 +30,8 @@ export async function GET() {
       githubUrl: proj.githubUrl,
       liveUrl: proj.liveUrl,
       objectives: proj.objectives ? JSON.parse(proj.objectives) : undefined,
-      keyChallenges: proj.keyChallenges
-        ? JSON.parse(proj.keyChallenges)
+      collaborators: proj.collaborators
+        ? JSON.parse(proj.collaborators)
         : undefined,
       demoCredentials: proj.demoCredentials
         ? JSON.parse(proj.demoCredentials)
@@ -172,7 +172,7 @@ export async function PUT(req: NextRequest) {
         githubUrl: githubUrl || null,
         liveUrl: liveUrl || null,
         objectives: objectives ? JSON.stringify(objectives) : null,
-        keyChallenges: keyChallenges ? JSON.stringify(keyChallenges) : null,
+        collaborators: collaborators ? JSON.stringify(collaborators) : null,
         demoCredentials: demoCredentials
           ? demoCredentials.length > 0
             ? JSON.stringify(demoCredentials)

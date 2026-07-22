@@ -1,10 +1,10 @@
 import { APP_CONFIG } from "@/config/app-config";
+import { db } from "@/db/client";
+import { setting } from "@/db/schema";
 import { HomeView } from "@/features/home/components/home-view";
 import { WidgetSection } from "@/features/home/components/widget-section";
 import { WidgetSectionSkeleton } from "@/features/home/components/widget-section-skeleton";
 import { ProjectType } from "@/types/index.type";
-import { db } from "@/db/client";
-import { setting } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { Suspense } from "react";
 
@@ -29,29 +29,25 @@ async function getSettings() {
   }
 }
 
-async function getProjects(): Promise<ProjectType[]> {
+async function getFeaturedProjects(): Promise<ProjectType[]> {
   try {
     const baseUrl = APP_CONFIG.BASE_URL;
     const response = await fetch(
-      `${baseUrl}/api/${APP_CONFIG.ROUTE.PROJECTS}`,
-      {
-        cache: "no-store",
-      },
+      `${baseUrl}/api/${APP_CONFIG.ROUTE.PROJECTS}?featured=true`,
     );
-    const data = await response.json();
-    if (data.success && data.data) {
-      return data.data.filter((p: ProjectType) => p.featured).slice(0, 2);
-    }
+    const { success, data } = await response.json();
+    if (success && data) return data;
+
     return [];
   } catch (error) {
-    console.error("Failed to load projects:", error);
+    console.error("Failed to load featured projects:", error);
     return [];
   }
 }
 
 export default async function Home() {
   const settings = await getSettings();
-  const featuredProjects = await getProjects();
+  const featuredProjects = await getFeaturedProjects();
 
   // Increment view count
   try {
