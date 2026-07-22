@@ -1,19 +1,21 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import { GitHubStars } from "@/components/ui/github-stars";
 import { cn } from "@/lib/utils";
 import demoImage from "@/public/screenshots/home-page-2.png";
 import { ProjectType } from "@/types/index.type";
 import { Tag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaStar } from "react-icons/fa";
 
 type Props = {
   project: ProjectType;
   className?: string;
   techLimit?: number;
 };
+
+const GITHUB_USERNAME = "thureinhtet99";
 
 export function ProjectShowcaseCard({
   project,
@@ -50,7 +52,7 @@ export function ProjectShowcaseCard({
                 <span className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
               </div>
               <div className="flex items-center gap-1 text-muted-foreground text-sm">
-                99 <FaStar className="h-4 w-4" />
+                <GitHubStars repo={GITHUB_USERNAME} stargazersCount={2050} />
               </div>
             </div>
 

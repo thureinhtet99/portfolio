@@ -46,7 +46,7 @@ export default async function ProjectDetailPage({ params }: Props) {
       liveUrl: p.liveUrl ?? undefined,
       technologies: p.technologies ? JSON.parse(p.technologies) : [],
       objectives: p.objectives ? JSON.parse(p.objectives) : [],
-      keyChallenges: p.keyChallenges ? JSON.parse(p.keyChallenges) : [],
+      keyChallenges: p.collaborators ? JSON.parse(p.collaborators) : [],
       demoCredentials: p.demoCredentials ? JSON.parse(p.demoCredentials) : [],
       adopters: p.adopters ? JSON.parse(p.adopters) : [],
     };

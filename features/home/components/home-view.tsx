@@ -4,14 +4,13 @@ import { Button } from "@/components/ui/button";
 import { WorkExperience } from "@/components/ui/work-experience";
 import { ProjectShowcaseCard } from "@/features/projects/components/project-showcase-card";
 import { experiences } from "@/features/timeline/data/experiences";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { cardReveal } from "@/lib/motion";
 import { ProjectType } from "@/types/index.type";
 import { motion, useReducedMotion } from "framer-motion";
 import { Mail, MapPin, MoveRight } from "lucide-react";
 import { StaticImageData } from "next/image";
 import Link from "next/link";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import { FaFile, FaGithub, FaLinkedin } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 
@@ -30,20 +29,19 @@ type Props = {
     facebook: string | null;
   };
   children: ReactNode;
+  contributionsSection: ReactNode;
 };
 
 export function HomeView({
   residence,
   available,
-  aboutMe,
   intro,
   featuredProjects,
   resume,
   socialLinks,
   children,
+  contributionsSection,
 }: Props) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const isMobile = useIsMobile();
   const shouldReduceMotion = useReducedMotion();
 
   return (
@@ -149,6 +147,19 @@ export function HomeView({
         </div>
       </section>
 
+      {/* Contribution */}
+      <section id="contributions" className="px-6 py-16 sm:py-20">
+        <div className="mx-auto max-w-5xl space-y-6">
+          <motion.h2
+            // {...sectionReveal}
+            className=" text-4xl font-bold text-muted-foreground tracking-[-0.02em]"
+          >
+            Contributions
+          </motion.h2>
+          {contributionsSection}
+        </div>
+      </section>
+
       {/* Featured Projects */}
       <section id="projects-section" className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-7xl space-y-6">
@@ -193,10 +204,9 @@ export function HomeView({
         </div>
       </section>
 
-      {/* Dashboard Widgets */}
-      <section id="widgets" className="px-6 py-16 sm:py-20">
-        <div className="mx-auto max-w-3xl space-y-6">
-          {/* Widget Grid */}
+      {/* Widgets */}
+      <section id="widgets" className="px-6 py-16 sm:py-20 border">
+        <div className="mx-auto max-w-5xl space-y-6 border">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {/* Let's Connect */}
             <div className="surface-panel p-5">

@@ -1,6 +1,7 @@
 import { APP_CONFIG } from "@/config/app-config";
 import { db } from "@/db/client";
 import { setting } from "@/db/schema";
+import { ContributionsSection } from "@/features/home/components/contributions-section";
 import { HomeView } from "@/features/home/components/home-view";
 import { WidgetSection } from "@/features/home/components/widget-section";
 import { WidgetSectionSkeleton } from "@/features/home/components/widget-section-skeleton";
@@ -102,6 +103,7 @@ export default async function Home() {
         linkedin: linkedinUrl,
         facebook: facebookUrl,
       }}
+      contributionsSection={<ContributionsSection />}
     >
       <Suspense fallback={<WidgetSectionSkeleton />}>
         <WidgetSection />

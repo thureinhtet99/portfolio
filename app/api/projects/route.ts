@@ -62,12 +62,14 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const {
       title,
+      summary,
       description,
       technologies,
       image,
       githubUrl,
       liveUrl,
       objectives,
+      collaborators,
       keyChallenges,
       demoCredentials,
       adopters,
@@ -87,13 +89,14 @@ export async function POST(req: NextRequest) {
     const insertData = {
       id,
       title,
+      summary: summary || "",
       description: description || "",
       technologies: technologies ? JSON.stringify(technologies) : null,
       image: image || null,
       githubUrl: githubUrl || null,
       liveUrl: liveUrl || null,
       objectives: objectives ? JSON.stringify(objectives) : null,
-      keyChallenges: keyChallenges ? JSON.stringify(keyChallenges) : null,
+      collaborators: collaborators ? JSON.stringify(collaborators) : null,
       demoCredentials: demoCredentials
         ? demoCredentials.length > 0
           ? JSON.stringify(demoCredentials)
@@ -145,11 +148,11 @@ export async function PUT(req: NextRequest) {
       title,
       description,
       technologies,
+      collaborators,
       image,
       githubUrl,
       liveUrl,
       objectives,
-      keyChallenges,
       demoCredentials,
       adopters,
       featured,
@@ -194,7 +197,7 @@ export async function PUT(req: NextRequest) {
         githubUrl,
         liveUrl,
         objectives,
-        keyChallenges,
+        collaborators,
         demoCredentials,
         adopters,
       },
