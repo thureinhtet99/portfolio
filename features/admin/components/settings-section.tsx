@@ -2,29 +2,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { APP_CONFIG } from "@/config/app-config";
-import {
-  FileText,
-  MapPin,
-  Save,
-  Upload,
-  User,
-  Github,
-  Facebook,
-  Linkedin,
-  Link as LinkIcon,
-  MessageSquare,
-  Briefcase,
-  Circle,
-} from "lucide-react";
+import countries from "@/data/countries.json";
+import { FileText, Save, Upload } from "lucide-react";
 import Image from "next/image";
 import NextLink from "next/link";
 import { useEffect, useState } from "react";
+import { FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa";
 import { toast } from "sonner";
-import countries from "@/data/countries.json";
-import { Spinner } from "@/components/ui/spinner";
-import { Switch } from "@/components/ui/switch";
 
 export default function SettingsSection() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -369,10 +357,9 @@ export default function SettingsSection() {
   return (
     <div className="space-y-6">
       {/* Profile Picture */}
-      <Card className="surface-panel">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5" />
             Profile Picture
           </CardTitle>
         </CardHeader>
@@ -435,10 +422,9 @@ export default function SettingsSection() {
       </Card>
 
       {/* Roles */}
-      <Card className="surface-panel">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Briefcase className="h-5 w-5" />
             Professional Roles
           </CardTitle>
         </CardHeader>
@@ -452,10 +438,6 @@ export default function SettingsSection() {
               placeholder="e.g. Frontend Developer, Backend Developer, Fullstack Developer"
               className="h-11"
             />
-            <p className="text-xs text-muted-foreground">
-              These roles will be displayed in the typing animation on your
-              homepage
-            </p>
           </div>
           <Button
             className="w-full"
@@ -477,16 +459,10 @@ export default function SettingsSection() {
       </Card>
 
       {/* Available for Work */}
-      <Card className="surface-panel">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Circle className="h-5 w-5" />
-            Availability Status
-          </CardTitle>
-        </CardHeader>
+      <Card>
         <CardContent className="space-y-4">
-          <div className="flex items-center justify-between p-4">
-            <div className="space-y-1">
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
               <Label
                 htmlFor="available"
                 className="text-base font-medium cursor-pointer"
@@ -503,37 +479,17 @@ export default function SettingsSection() {
               onCheckedChange={handleAvailableToggle}
             />
           </div>
-          {available ? (
-            <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/60 p-3">
-              <Circle className="h-4 w-4 fill-foreground text-foreground" />
-              <span className="text-sm font-medium text-foreground">
-                Currently showing as available on homepage
-              </span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2 rounded-lg border border-border bg-background p-3">
-              <Circle className="h-4 w-4 fill-foreground/25 text-foreground/60" />
-              <span className="text-sm font-medium text-muted-foreground">
-                Currently hidden on homepage
-              </span>
-            </div>
-          )}
         </CardContent>
       </Card>
 
       {/* Residence */}
-      <Card className="surface-panel">
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MapPin className="h-5 w-5" />
-            Residence
-          </CardTitle>
+          <CardTitle className="flex items-center gap-2">Residence</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="residence">Current Location</Label>
             <Input
-              id="residence"
               list="countries-list"
               value={residence}
               onChange={(e) => setResidence(e.target.value)}
@@ -566,20 +522,20 @@ export default function SettingsSection() {
       </Card>
 
       {/* Resume Upload */}
-      <Card className="surface-panel">
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Resume / CV
-          </CardTitle>
+          <CardTitle className="flex items-center gap-2">Resume / CV</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {resumeUrl && (
-            <div className="surface-panel-muted p-4">
-              <p className="text-sm text-muted-foreground mb-2">
-                Current Resume:
-              </p>
-              <Button asChild variant="outline" className="border-border/70">
+            <div className="flex items-center py-4">
+              {/* <p className="text-sm text-muted-foreground">Current Resume:</p> */}
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="border hover:border-primary"
+              >
                 <NextLink
                   href="/api/resume"
                   target="_blank"
@@ -632,16 +588,17 @@ export default function SettingsSection() {
       </Card>
 
       {/* About Me & Intro */}
-      <Card className="surface-panel">
-        <CardHeader>
+      <Card>
+        {/* <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5" />
             About & Introduction
           </CardTitle>
-        </CardHeader>
+        </CardHeader> */}
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="intro">Introduction</Label>
+            <Label htmlFor="intro" className="text-lg">
+              Introduction
+            </Label>
             <p className="text-xs text-muted-foreground">
               Supports Markdown formatting (e.g., **bold**, *italic*, [links]())
             </p>
@@ -655,7 +612,9 @@ export default function SettingsSection() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="aboutMe">About Me</Label>
+            <Label htmlFor="aboutMe" className="text-lg">
+              About Me
+            </Label>
             <p className="text-xs text-muted-foreground">
               Supports Markdown formatting (e.g., **bold**, *italic*, [links](),
               lists)
@@ -689,17 +648,16 @@ export default function SettingsSection() {
       </Card>
 
       {/* Social Links */}
-      <Card className="surface-panel">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <LinkIcon className="h-5 w-5" />
             Social Links
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="github" className="flex items-center gap-2">
-              <Github className="h-4 w-4" />
+              <FaGithub className="h-4 w-4" />
               GitHub URL
             </Label>
             <Input
@@ -713,7 +671,7 @@ export default function SettingsSection() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="facebook" className="flex items-center gap-2">
-              <Facebook className="h-4 w-4" />
+              <FaFacebook className="h-4 w-4" />
               Facebook URL
             </Label>
             <Input
@@ -727,7 +685,7 @@ export default function SettingsSection() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="linkedin" className="flex items-center gap-2">
-              <Linkedin className="h-4 w-4" />
+              <FaLinkedin className="h-4 w-4" />
               LinkedIn URL
             </Label>
             <Input

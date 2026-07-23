@@ -130,7 +130,7 @@ Don't invent a third shadow value. If something needs to feel "more important," 
 .surface-panel {
   @apply rounded-[1.5rem] border border-border/70 bg-card/92 text-card-foreground shadow-[...] backdrop-blur-sm;
 }
-.surface-panel-muted {
+. {
   @apply rounded-[1.25rem] border border-border/40 bg-background/80;
 }
 ```

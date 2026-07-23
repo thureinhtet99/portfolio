@@ -9,7 +9,6 @@ import { CertificateType } from "@/types/index.type";
 import {
   ArrowDown,
   ArrowUp,
-  Award,
   Calendar,
   Edit,
   ExternalLink,
@@ -348,14 +347,13 @@ export default function CertificatesSection() {
   };
 
   return (
-    <Card className="surface-panel">
+    <Card>
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle className="flex items-center gap-2">
-            <Award className="h-5 w-5" />
             Manage Certificates
           </CardTitle>
-          <Button size="sm" onClick={() => setIsAdding(!isAdding)}>
+          <Button size="lg" onClick={() => setIsAdding(!isAdding)}>
             <Plus className="h-4 w-4" />
             Add Certificate
           </Button>
@@ -412,11 +410,7 @@ export default function CertificatesSection() {
               ))}
               {certificates.length === 0 && (
                 <div className="text-center py-12 text-muted-foreground">
-                  <Award className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                  <p>
-                    No certificates added yet. Click &quot;Add Certificate&quot;
-                    to get started.
-                  </p>
+                  <p>No certificates added yet.</p>
                 </div>
               )}
             </>
@@ -497,7 +491,7 @@ function CertificateForm({
   };
 
   return (
-    <Card className="surface-panel">
+    <Card>
       <CardContent className="pt-6 space-y-4">
         {/* Image Upload Section */}
         <div className="space-y-2">
@@ -557,6 +551,7 @@ function CertificateForm({
                 setFormData({ ...formData, title: e.target.value })
               }
               placeholder="e.g. AWS Certified Developer"
+              className="h-11"
             />
           </div>
           <div className="space-y-2">
@@ -567,6 +562,7 @@ function CertificateForm({
                 setFormData({ ...formData, issuer: e.target.value })
               }
               placeholder="e.g. Amazon Web Services"
+              className="h-11"
             />
           </div>
           <div className="space-y-2">
@@ -577,6 +573,7 @@ function CertificateForm({
               onChange={(e) =>
                 setFormData({ ...formData, issueDate: e.target.value })
               }
+              className="h-11"
             />
           </div>
           <div className="space-y-2">
@@ -587,6 +584,7 @@ function CertificateForm({
                 setFormData({ ...formData, credentialId: e.target.value })
               }
               placeholder="e.g. ABC123XYZ"
+              className="h-11"
             />
           </div>
           <div className="space-y-2 md:col-span-2">
@@ -597,6 +595,7 @@ function CertificateForm({
                 setFormData({ ...formData, credentialUrl: e.target.value })
               }
               placeholder="https://..."
+              className="h-11"
             />
           </div>
         </div>
@@ -604,6 +603,7 @@ function CertificateForm({
           <Button
             onClick={onSave}
             className="flex-1"
+            size="lg"
             disabled={isLoading || isUploading}
           >
             <Save className="h-4 w-4 mr-2" />
@@ -612,6 +612,7 @@ function CertificateForm({
           <Button
             onClick={onCancel}
             variant="outline"
+            size="lg"
             disabled={isLoading || isUploading}
           >
             Cancel

@@ -1,13 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 
-import { adminMenuItems } from "@/features/admin/data/menu-items";
-import { signOut } from "@/lib/auth-client";
-import { APP_CONFIG } from "@/config/app-config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -18,6 +15,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { APP_CONFIG } from "@/config/app-config";
+import { adminMenuItems } from "@/features/admin/data/menu-items";
+import { signOut } from "@/lib/auth-client";
 
 import CertificatesSection from "./certificate-section";
 import PostsSection from "./posts-section";
@@ -53,23 +53,20 @@ export function AdminView({ userName }: Props) {
 
   return (
     <div className="app-shell space-y-6 py-2 md:py-4">
-      <div className="surface-panel flex flex-col gap-4 px-6 py-6 md:flex-row md:items-center md:justify-between md:px-8">
+      <div className="surface-panel flex flex-col gap-4 px-4 py-6 md:flex-row md:items-center md:justify-between md:px-6">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            Admin Workspace
-          </p>
-          <h1 className="mt-2 text-3xl font-bold tracking-[-0.03em] md:text-4xl">
+          <h1 className="text-3xl font-bold tracking-[-0.03em] md:text-4xl">
             Admin Dashboard
           </h1>
-          <p className="mt-1 text-muted-foreground">
-            Welcome back, <b>{userName}</b>
+          <p>
+            Welcome back, <b className="text-white">{userName}</b>
           </p>
         </div>
 
         <Button
           variant="outline"
           onClick={() => setLogoutDialogOpen(true)}
-          className="w-full md:w-auto"
+          className="w-full md:w-auto rounded-md"
         >
           <LogOut className="mr-2 h-4 w-4" />
           Logout
@@ -77,7 +74,7 @@ export function AdminView({ userName }: Props) {
       </div>
 
       <div className="grid gap-6 md:grid-cols-4">
-        <Card className="surface-panel h-fit md:col-span-1">
+        <Card className="surface-panel h-fit md:col-span-1 border-none">
           <CardHeader>
             <CardTitle className="text-lg">Menu</CardTitle>
           </CardHeader>
@@ -87,7 +84,7 @@ export function AdminView({ userName }: Props) {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all ${
+                  className={`w-full flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all ${
                     activeTab === item.id
                       ? "bg-primary text-primary-foreground shadow-[0_14px_30px_-22px_rgba(34,34,34,0.55)]"
                       : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"

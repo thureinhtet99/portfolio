@@ -113,12 +113,6 @@
   .section-heading {
     @apply text-3xl font-bold tracking-[-0.03em] sm:text-4xl;
   }
-  .surface-panel {
-    @apply rounded-[1.5rem] border border-border/70 bg-card/92 text-card-foreground shadow-[0_18px_50px_-38px_rgba(34,34,34,0.38)] backdrop-blur-sm;
-  }
-  .surface-panel-muted {
-    @apply rounded-[1.25rem] border border-border/40 bg-background/80;
-  }
 }
 
 @custom-variant retina {

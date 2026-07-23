@@ -1,25 +1,9 @@
+import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TimelineType } from "@/types/index.type";
-import {
-  Calendar,
-  Edit,
-  Plus,
-  Save,
-  Trash2,
-  ArrowUp,
-  ArrowDown,
-} from "lucide-react";
-import { useState, useEffect } from "react";
-import { toast } from "sonner";
-import countries from "@/data/countries.json";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { APP_CONFIG } from "@/config/app-config";
-import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
 import {
   Select,
   SelectContent,
@@ -27,6 +11,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { APP_CONFIG } from "@/config/app-config";
+import countries from "@/data/countries.json";
+import { TimelineType } from "@/types/index.type";
+import { ArrowDown, ArrowUp, Edit, Plus, Save, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function TimelinesSection() {
   const [timelines, setTimelines] = useState<TimelineType[]>([]);
@@ -365,11 +357,10 @@ export default function TimelinesSection() {
   const educationTimelines = timelines.filter((t) => t.type === "education");
 
   return (
-    <Card className="surface-panel">
+    <Card>
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5" />
             Manage Timeline
           </CardTitle>
         </div>
@@ -379,15 +370,25 @@ export default function TimelinesSection() {
           value={activeTimelineTab}
           onValueChange={(v) => setActiveTimelineTab(v as "work" | "education")}
         >
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="work">Work Experience</TabsTrigger>
-            <TabsTrigger value="education">Education</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 gap-1">
+            <TabsTrigger
+              value="work"
+              className="border border-muted-foreground"
+            >
+              Work Experience
+            </TabsTrigger>
+            <TabsTrigger
+              value="education"
+              className="border border-muted-foreground"
+            >
+              Education
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="work" className="space-y-4 mt-4">
             <Button
               onClick={() => setIsAdding(!isAdding)}
-              size="sm"
+              size="lg"
               className="w-full"
             >
               <Plus className="h-4 w-4 mr-2" />
@@ -452,7 +453,7 @@ export default function TimelinesSection() {
           <TabsContent value="education" className="space-y-4 mt-4">
             <Button
               onClick={() => setIsAdding(!isAdding)}
-              size="sm"
+              size="lg"
               className="w-full"
             >
               <Plus className="h-4 w-4 mr-2" />
@@ -563,7 +564,7 @@ function TimelineForm({
   isEditing?: boolean;
 }) {
   return (
-    <Card className="surface-panel">
+    <Card>
       <CardContent className="pt-6 space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
           {activeTimelineTab === "work" && (
@@ -579,6 +580,7 @@ function TimelineForm({
                     ? "e.g. Full Stack Developer"
                     : "e.g. Bachelor of Computer Science"
                 }
+                className="h-11"
               />
             </div>
           )}
@@ -598,6 +600,7 @@ function TimelineForm({
                   ? "Tech Company"
                   : "Greenwish University"
               }`}
+              className="h-11"
             />
           </div>
           <div className="space-y-2">
@@ -608,6 +611,7 @@ function TimelineForm({
                 setFormData({ ...formData, period: e.target.value })
               }
               placeholder="e.g. 2023 - Present"
+              className="h-11"
             />
           </div>
           <div className="space-y-2">
@@ -619,6 +623,7 @@ function TimelineForm({
                 setFormData({ ...formData, location: e.target.value })
               }
               placeholder="e.g. Myanmar"
+              className="h-11"
             />
             <datalist id="timeline-countries-list">
               {countries.map((country) => (
@@ -638,7 +643,7 @@ function TimelineForm({
                   })
                 }
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full h-11">
                   <SelectValue placeholder="Select work mode" />
                 </SelectTrigger>
                 <SelectContent>
@@ -683,11 +688,21 @@ function TimelineForm({
           </>
         )}
         <div className="flex gap-2">
-          <Button onClick={onSave} className="flex-1" disabled={isLoading}>
+          <Button
+            onClick={onSave}
+            className="flex-1"
+            size="lg"
+            disabled={isLoading}
+          >
             <Save className="h-4 w-4 mr-2" />
             {isLoading ? "Saving..." : isEditing ? "Update" : "Save"}
           </Button>
-          <Button onClick={onCancel} variant="outline" disabled={isLoading}>
+          <Button
+            onClick={onCancel}
+            variant="outline"
+            size="lg"
+            disabled={isLoading}
+          >
             Cancel
           </Button>
         </div>

@@ -1,9 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { WorkExperience } from "@/components/ui/work-experience";
 import { ProjectShowcaseCard } from "@/features/projects/components/project-showcase-card";
 import { experiences } from "@/features/timeline/data/experiences";
+import { WorkExperienceWithRail } from "@/features/timeline/components/work-experience-with-rail";
 import { cardReveal } from "@/lib/motion";
 import { ProjectType } from "@/types/index.type";
 import { motion, useReducedMotion } from "framer-motion";
@@ -139,11 +139,11 @@ export function HomeView({
         <div className="mx-auto max-w-5xl space-y-6">
           <motion.h2
             // {...sectionReveal}
-            className=" text-4xl font-bold text-muted-foreground tracking-[-0.02em]"
+            className=" text-4xl font-bold text-white tracking-[-0.02em]"
           >
             Experiences
           </motion.h2>
-          <WorkExperience experiences={experiences} />
+          <WorkExperienceWithRail experiences={experiences} />
         </div>
       </section>
 
@@ -152,7 +152,7 @@ export function HomeView({
         <div className="mx-auto max-w-5xl space-y-6">
           <motion.h2
             // {...sectionReveal}
-            className=" text-4xl font-bold text-muted-foreground tracking-[-0.02em]"
+            className=" text-4xl font-bold text-white tracking-[-0.02em]"
           >
             Contributions
           </motion.h2>

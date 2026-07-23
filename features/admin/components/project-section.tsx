@@ -18,7 +18,6 @@ import {
   ArrowUp,
   Edit,
   ExternalLink,
-  FolderGit2,
   Github,
   Plus,
   Save,
@@ -473,14 +472,13 @@ export default function ProjectsSection() {
   };
 
   return (
-    <Card className="surface-panel">
+    <Card>
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle className="flex items-center gap-2">
-            <FolderGit2 className="h-5 w-5" />
             Manage Projects
           </CardTitle>
-          <Button size="sm" onClick={() => setIsAdding(!isAdding)}>
+          <Button size="lg" onClick={() => setIsAdding(!isAdding)}>
             <Plus className="h-4 w-4" />
             Add Project
           </Button>
@@ -536,11 +534,7 @@ export default function ProjectsSection() {
               ))}
               {projects.length === 0 && (
                 <div className="text-center py-12 text-muted-foreground">
-                  <FolderGit2 className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                  <p>
-                    No projects added yet. Click &quot;Add Project&quot; to get
-                    started.
-                  </p>
+                  <p>No projects added yet.</p>
                 </div>
               )}
             </>
@@ -603,7 +597,7 @@ function ProjectForm({
   };
 
   return (
-    <Card className="surface-panel border border-dashed border-border/70 bg-background/60 shadow-none">
+    <Card>
       <CardContent className="pt-6 space-y-4">
         {/* Image Upload Section */}
         <div className="space-y-2">
@@ -663,6 +657,7 @@ function ProjectForm({
                 setFormData({ ...formData, title: e.target.value })
               }
               placeholder="e.g. Portfolio Website"
+              className="h-11"
             />
           </div>
           <div className="space-y-2">
@@ -673,6 +668,7 @@ function ProjectForm({
                 setFormData({ ...formData, technologies: e.target.value })
               }
               placeholder="e.g. React, Next.js, TailwindCSS"
+              className="h-11"
             />
           </div>
           <div className="space-y-2">
@@ -683,6 +679,7 @@ function ProjectForm({
                 setFormData({ ...formData, githubUrl: e.target.value })
               }
               placeholder="https://github.com/..."
+              className="h-11"
             />
           </div>
           <div className="space-y-2">
@@ -693,6 +690,7 @@ function ProjectForm({
                 setFormData({ ...formData, liveUrl: e.target.value })
               }
               placeholder="https://..."
+              className="h-11"
             />
           </div>
         </div>
@@ -729,19 +727,19 @@ function ProjectForm({
             rows={4}
           />
         </div>
-        <div className="surface-panel-muted p-4 sm:p-5">
-          <div className="mb-4">
+        <div className="p-4 sm:p-6">
+          <div className="mb-2">
             <h4 className="text-base font-semibold tracking-[-0.02em]">
               Demo Access
             </h4>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               These credentials are optional and will be shown publicly on the
               project card and detail view.
             </p>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-border/70 bg-background/80 p-4">
+            <div className="p-4">
               <div className="mb-3">
                 <p className="text-sm font-medium">Standard User</p>
                 <p className="text-xs text-muted-foreground">
@@ -750,7 +748,6 @@ function ProjectForm({
               </div>
               <div className="space-y-3">
                 <div className="space-y-2">
-                  <Label>User Email</Label>
                   <Input
                     value={formData.demoUserEmail}
                     onChange={(e) =>
@@ -763,7 +760,6 @@ function ProjectForm({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>User Password</Label>
                   <Input
                     value={formData.demoUserPassword}
                     onChange={(e) =>
@@ -778,7 +774,7 @@ function ProjectForm({
               </div>
             </div>
 
-            <div className="rounded-2xl border border-border/70 bg-background/80 p-4">
+            <div className="p-4">
               <div className="mb-3">
                 <p className="text-sm font-medium">Admin User</p>
                 <p className="text-xs text-muted-foreground">
@@ -787,7 +783,6 @@ function ProjectForm({
               </div>
               <div className="space-y-3">
                 <div className="space-y-2">
-                  <Label>Admin Email</Label>
                   <Input
                     value={formData.demoAdminEmail}
                     onChange={(e) =>
@@ -800,7 +795,6 @@ function ProjectForm({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Admin Password</Label>
                   <Input
                     value={formData.demoAdminPassword}
                     onChange={(e) =>
@@ -816,25 +810,7 @@ function ProjectForm({
             </div>
           </div>
         </div>
-        <div className="space-y-2">
-          <Label>
-            Notable Adopters (one per line: Name | URL | Description)
-          </Label>
-          <Textarea
-            value={formData.adopters}
-            onChange={(e) =>
-              setFormData({ ...formData, adopters: e.target.value })
-            }
-            placeholder={
-              "Acme Corp | https://acme.com | Uses this in production\nOpen Source Project | | Community fork"
-            }
-            className="min-h-[80px]  text-sm"
-          />
-          <p className="text-xs text-muted-foreground">
-            Each line becomes a linkable section. Use | to separate name, URL
-            (optional), and description (optional).
-          </p>
-        </div>
+
         <div className="flex items-center justify-between space-x-2 p-4 rounded-lg border">
           <div className="space-y-0.5">
             <Label htmlFor="featured" className="text-base font-medium">
@@ -855,6 +831,7 @@ function ProjectForm({
         <div className="flex gap-2">
           <Button
             onClick={onSave}
+            size="lg"
             className="flex-1"
             disabled={isLoading || isUploading}
           >
@@ -864,6 +841,7 @@ function ProjectForm({
           <Button
             onClick={onCancel}
             variant="outline"
+            size="lg"
             disabled={isLoading || isUploading}
           >
             Cancel
