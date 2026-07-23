@@ -608,7 +608,7 @@ export default function SettingsSection() {
               onChange={(e) => setIntro(e.target.value)}
               placeholder="Write a brief introduction about yourself...&#10;&#10;Example:&#10;Hi! I'm a **Full Stack Developer** with expertise in *React* and *Node.js*."
               rows={6}
-              className="resize-y  text-sm"
+              className="resize-y text-sm"
             />
           </div>
           <div className="space-y-2">

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 const TARGET = "loading...";
 const CHARS = "abcdefghijklmnopqrstuvwxyz.";
 
-export default function Loading() {
+export default function CustomLoading() {
   const [display, setDisplay] = useState("");
 
   useEffect(() => {
@@ -35,19 +35,17 @@ export default function Loading() {
   }, []);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="flex items-center gap-1">
-        <span className="text-base text-primary hover:text-muted-foreground transition-colors shrink-0">
-          ~
+    <div className="flex items-center justify-center gap-1">
+      <span className="text-base text-primary hover:text-muted-foreground transition-colors shrink-0">
+        ~
+      </span>
+      <span className="flex items-center">
+        <span className="mr-1">/</span>
+        <span className="text-base text-primary hover:text-muted-foreground transition-colors">
+          {display}
         </span>
-        <span className="flex items-center">
-          <span className="mr-1">/</span>
-          <span className="text-base text-primary hover:text-muted-foreground transition-colors">
-            {display}
-          </span>
-        </span>
-        <span className="inline-block h-4 w-2 animate-pulse-slow bg-primary" />
-      </div>
+      </span>
+      <span className="inline-block h-4 w-2 animate-pulse-slow bg-primary" />
     </div>
   );
 }

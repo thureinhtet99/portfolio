@@ -39,7 +39,7 @@ export function PostDetailView({ post }: Props) {
             </h1>
 
             <div className="flex items-center justify-center gap-3  text-sm text-muted-foreground">
-              <span>{formatDate(post.createdAt.toISOString())}</span>
+              <span>{formatDate(new Date(post.createdAt).toISOString())}</span>
             </div>
 
             {post.tags && post.tags.length > 0 && (

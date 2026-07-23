@@ -48,61 +48,70 @@ export default function TimelineClientComponent({ work, education }: Props) {
                     transition={{ duration: 0.3, delay: index * 0.1 }}
                     className="relative border-l-2 border-primary/20 pl-5 pb-6 sm:pl-8 sm:pb-8 last:pb-0"
                   >
-                    <div className="absolute -left-[7px] top-1 h-4 w--4rounded-full border-4 border-background bg-primary sm:-left-2 sm:top-0 sm:h-4 sm:w-4" />
+                    <div className="absolute -left-[7px] top-1 h-4 w-4 rounded-full border-4 border-background bg-primary sm:-left-2 sm:top-0 sm:h-4 sm:w-4" />
 
                     <div className="space-y-4 sm:space-y-6">
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <div className="flex-1">
                           <div className="flex items-center justify-between">
                             <h3 className="text-xl font-bold capitalize tracking-[-0.02em] sm:text-2xl">
-                              {exp.title}
+                              {exp.companyName}
                             </h3>
-                            <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground sm:gap-x-8 sm:text-sm">
-                              {exp.location && (
-                                <Badge className="capitalize">
-                                  {exp.location}
-                                </Badge>
-                              )}
-                              {exp.period && (
-                                <Badge className="capitalize">
-                                  {exp.period}
-                                </Badge>
-                              )}
-                              {exp.role && (
-                                <Badge className="capitalize">{exp.role}</Badge>
-                              )}
-                            </div>
+                            {exp.isCurrentEmployer && (
+                              <Badge className="ml-2">Current</Badge>
+                            )}
                           </div>
-                          {exp.company && (
-                            <p className="text-sm text-muted-foreground sm:text-base">
-                              {exp.company}
-                            </p>
+                          {exp.companyWebsite && (
+                            <a
+                              href={exp.companyWebsite}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-sm text-muted-foreground hover:text-primary sm:text-base"
+                            >
+                              {exp.companyWebsite}
+                            </a>
                           )}
                         </div>
                       </div>
 
-                      {exp.description && (
-                        <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-                          {exp.description}
-                        </p>
-                      )}
-
-                      {exp.achievements && exp.achievements.length > 0 && (
-                        <div className="space-y-2">
-                          <p className="text-sm font-medium sm:text-base">
-                            Key Achievements
-                          </p>
-                          <ul className="list-disc space-y-1 pl-5 text-sm leading-relaxed text-muted-foreground sm:text-base">
-                            {exp.achievements.map(
-                              (achievement, achievementIndex) => (
-                                <li
-                                  key={`${exp.id}-achievement-${achievementIndex}`}
-                                >
-                                  {achievement}
-                                </li>
-                              ),
-                            )}
-                          </ul>
+                      {exp.positions && exp.positions.length > 0 && (
+                        <div className="space-y-3">
+                          {exp.positions.map((pos) => (
+                            <div
+                              key={pos.id}
+                              className="border-l-2 border-border/50 pl-4 py-2"
+                            >
+                              <h4 className="text-base font-medium sm:text-lg">
+                                {pos.title}
+                              </h4>
+                              <p className="text-xs text-muted-foreground sm:text-sm">
+                                {pos.employmentPeriod?.start}
+                                {pos.employmentPeriod?.end
+                                  ? ` — ${pos.employmentPeriod.end}`
+                                  : " — Present"}
+                                {pos.employmentType &&
+                                  ` · ${pos.employmentType}`}
+                              </p>
+                              {pos.description && (
+                                <p className="text-sm leading-relaxed text-muted-foreground mt-2 sm:text-base">
+                                  {pos.description}
+                                </p>
+                              )}
+                              {pos.skills && pos.skills.length > 0 && (
+                                <div className="flex flex-wrap gap-1.5 mt-2">
+                                  {pos.skills.map((skill, i) => (
+                                    <Badge
+                                      key={i}
+                                      variant="secondary"
+                                      className="text-xs"
+                                    >
+                                      {skill}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ))}
                         </div>
                       )}
                     </div>

@@ -124,15 +124,6 @@ Don't invent a third shadow value. If something needs to feel "more important," 
 .page-shell {
   @apply mx-auto w-full max-w-7xl space-y-20;
 }
-.section-heading {
-  @apply text-3xl font-bold tracking-[-0.03em] sm:text-4xl;
-}
-.surface-panel {
-  @apply rounded-[1.5rem] border border-border/70 bg-card/92 text-card-foreground shadow-[...] backdrop-blur-sm;
-}
-. {
-  @apply rounded-[1.25rem] border border-border/40 bg-background/80;
-}
 ```
 
 ---

@@ -29,7 +29,7 @@ export function LatestPostsWidget({ posts }: Props) {
                   {post.title}
                 </span>
                 <span className="shrink-0 text-muted-foreground/60">
-                  {formatDate(post.createdAt.toISOString())}
+                  {formatDate(new Date(post.createdAt).toISOString())}
                 </span>
               </Link>
             </li>

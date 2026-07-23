@@ -1,18 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { Eye, EyeOff, Lock, Mail } from "lucide-react";
-import { toast } from "sonner";
-
-import { useSession, signIn } from "@/lib/auth-client";
-import { APP_CONFIG } from "@/config/app-config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Spinner } from "@/components/ui/spinner";
-
+import { APP_CONFIG } from "@/config/app-config";
 import { AdminView } from "@/features/admin/components/admin-view";
+import { signIn, useSession } from "@/lib/auth-client";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import Loading from "../loading";
 
 export default function AdminDashboard() {
   const { data: session, isPending } = useSession();
@@ -21,7 +19,7 @@ export default function AdminDashboard() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.SubmitEvent) => {
     e.preventDefault();
 
     await signIn.email(
@@ -46,22 +44,7 @@ export default function AdminDashboard() {
     );
   };
 
-  if (isPending) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Card className="surface-panel w-full max-w-md">
-          <CardContent className="p-8">
-            <div className="flex items-center justify-center">
-              <div className="flex flex-col items-center gap-4">
-                <Spinner className="size-8" />
-                <p className="text-sm text-muted-foreground">Loading...</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  if (isPending) return <Loading />;
 
   if (!session) {
     return (

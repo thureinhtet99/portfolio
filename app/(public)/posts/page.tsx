@@ -1,26 +1,26 @@
+import { APP_CONFIG } from "@/config/app-config";
 import { PostsView } from "@/features/posts/components/posts-view";
-import { db } from "@/db/client";
-import { post } from "@/db/schema";
 
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 async function getPublishedPosts() {
   try {
-    const allPosts = await db.select().from(post).all();
-    return allPosts
-      .filter((p) => p.published)
-      .map((p) => ({
-        ...p,
-        tags: p.tags ? JSON.parse(p.tags) : [],
-      }))
-      .sort((a, b) => a.order - b.order || b.createdAt.getTime() - a.createdAt.getTime());
+    const baseUrl = APP_CONFIG.BASE_URL;
+    const response = await fetch(
+      `${baseUrl}/api/${APP_CONFIG.ROUTE.POSTS}?published=true`,
+    );
+    const { success, data } = await response.json();
+    if (success && data) return data;
+
+    return [];
   } catch (error) {
-    console.error("Failed to fetch posts:", error);
+    console.error("Failed to load published posts:", error);
     return [];
   }
 }
 
 export default async function PostsPage() {
   const posts = await getPublishedPosts();
+
   return <PostsView posts={posts} />;
 }

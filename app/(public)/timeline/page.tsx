@@ -38,13 +38,11 @@ export default async function Timelines() {
     .filter((t): t is WorkType => t.type === "work")
     .map((exp) => ({
       id: exp.id,
-      title: exp.title,
-      company: exp.company,
-      location: exp.location,
-      period: exp.period,
-      role: exp.role || undefined,
-      description: exp.description || undefined,
-      achievements: exp.achievements,
+      companyName: exp.companyName,
+      companyLogo: exp.companyLogo,
+      companyWebsite: exp.companyWebsite,
+      isCurrentEmployer: exp.isCurrentEmployer,
+      positions: exp.positions || [],
     }));
 
   const education: EducationDisplayType[] = timelines

@@ -106,7 +106,7 @@ export function ProjectShowcaseCard({
                 <Badge
                   key={tech}
                   variant="secondary"
-                  className="inline-flex items-center rounded-sm border border-white/20 bg-muted/50 px-1.5 py-0.5 text-xs text-muted-foreground"
+                  className="inline-flex items-center rounded-sm border border-muted-foreground/20 bg-muted/50 px-1.5 py-0.5 text-xs text-muted-foreground"
                 >
                   {tech}
                 </Badge>
@@ -114,7 +114,7 @@ export function ProjectShowcaseCard({
               {remainingCount > 0 && (
                 <Badge
                   variant="secondary"
-                  className="inline-flex items-center rounded-sm border border-white/20 bg-muted/50 px-1.5 py-0.5 text-xs text-muted-foreground"
+                  className="inline-flex items-center rounded-sm border border-muted-foreground/20 bg-muted/50 px-1.5 py-0.5 text-xs text-muted-foreground"
                 >
                   +{remainingCount}
                 </Badge>

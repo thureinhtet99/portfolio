@@ -93,13 +93,19 @@ export type CertificateType = {
 export type WorkType = {
   id: string;
   type: "work";
-  title: string;
-  company: string;
-  location?: string;
-  period?: string;
-  role?: "" | "remote" | "on-site" | "internship";
-  description?: string;
-  achievements?: string[];
+  companyName: string;
+  companyLogo?: string;
+  companyWebsite?: string;
+  isCurrentEmployer?: boolean;
+  positions: {
+    id: string;
+    title: string;
+    employmentPeriod: { start: string; end?: string };
+    employmentType?: string;
+    description?: string;
+    skills?: string[];
+    isExpanded?: boolean;
+  }[];
 };
 
 export type EducationType = {
@@ -135,13 +141,19 @@ export type TimelineType = WorkType | EducationType;
 // Display Types for Components
 export type WorkDisplayType = {
   id: string;
-  title: string;
-  company: string;
-  location?: string;
-  period?: string;
-  role?: "remote" | "on-site" | "internship";
-  description?: string;
-  achievements?: string[];
+  companyName: string;
+  companyLogo?: string;
+  companyWebsite?: string;
+  isCurrentEmployer?: boolean;
+  positions: {
+    id: string;
+    title: string;
+    employmentPeriod: { start: string; end?: string };
+    employmentType?: string;
+    description?: string;
+    skills?: string[];
+    isExpanded?: boolean;
+  }[];
 };
 
 export type EducationDisplayType = {

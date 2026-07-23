@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/client";
 import { post } from "@/db/schema";
-import { eq, asc } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
 
 // GET - Fetch all posts (or published only via ?published=true)
 export async function GET(req: NextRequest) {

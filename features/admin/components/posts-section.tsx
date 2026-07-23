@@ -1,7 +1,8 @@
+import CustomLoading from "@/components/shared/custom-loading";
 import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -305,10 +306,7 @@ export default function PostsSection() {
   return (
     <Card>
       <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle className="flex items-center gap-2">
-            Manage Posts
-          </CardTitle>
+        <div className="flex justify-end items-center">
           <Button
             size="lg"
             onClick={() => {
@@ -367,14 +365,18 @@ export default function PostsSection() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Body * (Markdown)</Label>
+                <Label>Body *</Label>
+                <p className="text-xs text-muted-foreground">
+                  Supports Markdown formatting (e.g., **bold**, *italic*,
+                  [links]())
+                </p>
                 <Textarea
                   value={formData.body}
                   onChange={(e) =>
                     setFormData({ ...formData, body: e.target.value })
                   }
                   placeholder="Write your post content in Markdown..."
-                  className="min-h-[200px]  text-sm"
+                  className="min-h-[200px] text-sm"
                 />
               </div>
               <div className="space-y-2">
@@ -430,47 +432,33 @@ export default function PostsSection() {
 
         <div className="space-y-3">
           {postsLoading ? (
-            Array.from({ length: 2 }).map((_, idx) => (
-              <Card key={idx} className="animate-pulse">
-                <CardContent className="p-4">
-                  <div className="space-y-3">
-                    <div className="h-6 bg-muted rounded w-3/4" />
-                    <div className="h-4 bg-muted rounded w-1/2" />
-                  </div>
-                </CardContent>
-              </Card>
-            ))
+            <CustomLoading />
           ) : (
             <>
               {posts.map((post, index) => (
                 <Card
                   key={post.id}
-                  className={`hover:shadow-md transition-shadow ${editingId === post.id ? "border-primary" : ""}`}
+                  className={`border border-muted-foreground/20 hover:border-muted-foreground transition-shadow ${editingId === post.id ? "border-primary" : ""}`}
                 >
-                  <CardContent className="p-4">
+                  <CardContent className="px-4">
                     <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-semibold text-base">
-                            {post.title}
-                          </h3>
-                          <Badge
-                            variant={post.published ? "default" : "secondary"}
-                            className="text-xs"
-                          >
-                            {post.published ? "Published" : "Draft"}
-                          </Badge>
-                        </div>
+                      <div className="flex-1 min-w-0 space-y-2">
+                        <h3 className="font-semibold text-base">
+                          {post.title}
+                        </h3>
                         <p className="text-sm text-muted-foreground mt-1">
-                          /{post.slug}
+                          #{post.slug}
                         </p>
+                        <Badge variant={post.published ? "default" : "outline"}>
+                          {post.published ? "Published" : "Draft"}
+                        </Badge>
                         {post.tags && post.tags.length > 0 && (
                           <div className="flex flex-wrap gap-1 mt-2">
                             {post.tags.map((tag) => (
                               <Badge
                                 key={tag}
                                 variant="outline"
-                                className="text-xs"
+                                className="text-xs border-muted-foreground/20"
                               >
                                 {tag}
                               </Badge>
@@ -478,6 +466,7 @@ export default function PostsSection() {
                           </div>
                         )}
                       </div>
+
                       <div className="flex gap-1 shrink-0">
                         <Button
                           size="sm"

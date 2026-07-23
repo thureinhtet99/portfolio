@@ -36,7 +36,6 @@ export async function GET() {
       demoCredentials: proj.demoCredentials
         ? JSON.parse(proj.demoCredentials)
         : undefined,
-      adopters: proj.adopters ? JSON.parse(proj.adopters) : undefined,
       featured: proj.featured,
       order: proj.order,
       createdAt: proj.createdAt,
@@ -181,7 +180,6 @@ export async function PUT(req: NextRequest) {
             ? JSON.stringify(demoCredentials)
             : null
           : null,
-        adopters: adopters ? JSON.stringify(adopters) : null,
         featured: featured !== undefined ? featured : false,
         updatedAt: new Date(),
       })

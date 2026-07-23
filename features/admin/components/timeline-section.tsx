@@ -20,6 +20,40 @@ import { ArrowDown, ArrowUp, Edit, Plus, Save, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+type PositionForm = {
+  id: string;
+  title: string;
+  start: string;
+  end: string;
+  employmentType: string;
+  description: string;
+  skills: string;
+};
+
+type WorkFormData = {
+  companyName: string;
+  companyLogo: string;
+  companyWebsite: string;
+  isCurrentEmployer: boolean;
+  positions: PositionForm[];
+};
+
+type EducationFormData = {
+  institution: string;
+  location: string;
+  period: string;
+};
+
+const emptyPosition = (): PositionForm => ({
+  id: `pos_${Date.now()}`,
+  title: "",
+  start: "",
+  end: "",
+  employmentType: "",
+  description: "",
+  skills: "",
+});
+
 export default function TimelinesSection() {
   const [timelines, setTimelines] = useState<TimelineType[]>([]);
   const [isAdding, setIsAdding] = useState(false);
@@ -34,23 +68,23 @@ export default function TimelinesSection() {
   const [activeTimelineTab, setActiveTimelineTab] = useState<
     "work" | "education"
   >("work");
-  const [formData, setFormData] = useState({
-    title: "",
-    company: "",
-    period: "",
+  const [workForm, setWorkForm] = useState<WorkFormData>({
+    companyName: "",
+    companyLogo: "",
+    companyWebsite: "",
+    isCurrentEmployer: false,
+    positions: [emptyPosition()],
+  });
+  const [educationForm, setEducationForm] = useState<EducationFormData>({
+    institution: "",
     location: "",
-    description: "" as string,
-    keyAchievements: "" as string,
-    role: "" as "remote" | "on-site" | "internship" | "",
-    type: "work" as "work" | "education",
+    period: "",
   });
 
-  // Load timelines on mount
   useEffect(() => {
     loadTimelines();
   }, []);
 
-  // Reset form and close add/edit mode when switching between work and education tabs
   useEffect(() => {
     resetForm();
     setIsAdding(false);
@@ -73,33 +107,54 @@ export default function TimelinesSection() {
   };
 
   const handleAdd = async () => {
-    if (
-      !formData.company ||
-      (activeTimelineTab === "work" && !formData.title)
-    ) {
-      toast.error("Please fill in required fields");
-      return;
+    if (activeTimelineTab === "work") {
+      if (!workForm.companyName) {
+        toast.error("Company name is required");
+        return;
+      }
+      if (workForm.positions.some((p) => !p.title)) {
+        toast.error("All positions need a title");
+        return;
+      }
+    } else {
+      if (!educationForm.institution) {
+        toast.error("Institution is required");
+        return;
+      }
     }
 
     setIsLoading(true);
     try {
-      const payload = {
-        title: formData.title,
-        company: formData.company,
-        period: formData.period,
-        location: formData.location,
-        ...(activeTimelineTab === "work" && {
-          description: formData.description || undefined,
-          keyAchievements: formData.keyAchievements
-            ? formData.keyAchievements
-                .split("\n")
-                .map((achievement) => achievement.trim())
-                .filter((achievement) => achievement.length > 0)
-            : undefined,
-          role: formData.role || undefined,
-        }),
-        type: activeTimelineTab,
-      };
+      let payload;
+      if (activeTimelineTab === "work") {
+        payload = {
+          companyName: workForm.companyName,
+          companyLogo: workForm.companyLogo || undefined,
+          companyWebsite: workForm.companyWebsite || undefined,
+          isCurrentEmployer: workForm.isCurrentEmployer,
+          positions: workForm.positions.map((p) => ({
+            id: p.id,
+            title: p.title,
+            employmentPeriod: {
+              start: p.start,
+              end: p.end || undefined,
+            },
+            employmentType: p.employmentType || undefined,
+            description: p.description || undefined,
+            skills: p.skills
+              ? p.skills.split(",").map((s) => s.trim()).filter(Boolean)
+              : undefined,
+          })),
+          type: "work",
+        };
+      } else {
+        payload = {
+          institution: educationForm.institution,
+          location: educationForm.location || undefined,
+          period: educationForm.period || undefined,
+          type: "education",
+        };
+      }
 
       const response = await fetch(`/api/${APP_CONFIG.ROUTE.TIMELINES}`, {
         method: "POST",
@@ -120,7 +175,6 @@ export default function TimelinesSection() {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to add timeline";
       toast.error(errorMessage);
-      console.error("Add timeline error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -130,64 +184,86 @@ export default function TimelinesSection() {
     setEditingId(timeline.id);
 
     if (timeline.type === "work") {
-      setFormData({
-        title: timeline.title,
-        company: timeline.company,
-        period: timeline.period || "",
-        location: timeline.location || "",
-        description: timeline.description || "",
-        keyAchievements: timeline.achievements?.join("\n") || "",
-        role: timeline.role || "",
-        type: timeline.type,
+      const t = timeline as Extract<TimelineType, { type: "work" }>;
+      setWorkForm({
+        companyName: t.companyName,
+        companyLogo: t.companyLogo || "",
+        companyWebsite: t.companyWebsite || "",
+        isCurrentEmployer: t.isCurrentEmployer || false,
+        positions:
+          t.positions?.map((p) => ({
+            id: p.id,
+            title: p.title,
+            start: p.employmentPeriod?.start || "",
+            end: p.employmentPeriod?.end || "",
+            employmentType: p.employmentType || "",
+            description: p.description || "",
+            skills: p.skills?.join(", ") || "",
+          })) || [emptyPosition()],
       });
+      setActiveTimelineTab("work");
     } else {
-      // Education type
-      setFormData({
-        title: "",
-        company: timeline.institution,
-        period: timeline.period || "",
-        location: timeline.location || "",
-        description: "",
-        keyAchievements: "",
-        role: "",
-        type: timeline.type,
+      const t = timeline as Extract<TimelineType, { type: "education" }>;
+      setEducationForm({
+        institution: t.institution,
+        location: t.location || "",
+        period: t.period || "",
       });
+      setActiveTimelineTab("education");
     }
 
-    setActiveTimelineTab(timeline.type);
     setIsAdding(false);
   };
 
   const handleUpdate = async () => {
-    if (
-      !formData.company ||
-      (activeTimelineTab === "work" && !formData.title) ||
-      !editingId
-    ) {
-      toast.error("Please fill in required fields");
-      return;
+    if (!editingId) return;
+
+    if (activeTimelineTab === "work") {
+      if (!workForm.companyName) {
+        toast.error("Company name is required");
+        return;
+      }
+    } else {
+      if (!educationForm.institution) {
+        toast.error("Institution is required");
+        return;
+      }
     }
 
     setIsLoading(true);
     try {
-      const payload = {
-        id: editingId,
-        title: formData.title,
-        company: formData.company,
-        period: formData.period,
-        location: formData.location,
-        ...(activeTimelineTab === "work" && {
-          description: formData.description || undefined,
-          keyAchievements: formData.keyAchievements
-            ? formData.keyAchievements
-                .split("\n")
-                .map((achievement) => achievement.trim())
-                .filter((achievement) => achievement.length > 0)
-            : undefined,
-          role: formData.role || undefined,
-        }),
-        type: activeTimelineTab,
-      };
+      let payload;
+      if (activeTimelineTab === "work") {
+        payload = {
+          id: editingId,
+          companyName: workForm.companyName,
+          companyLogo: workForm.companyLogo || undefined,
+          companyWebsite: workForm.companyWebsite || undefined,
+          isCurrentEmployer: workForm.isCurrentEmployer,
+          positions: workForm.positions.map((p) => ({
+            id: p.id,
+            title: p.title,
+            employmentPeriod: {
+              start: p.start,
+              end: p.end || undefined,
+            },
+            employmentType: p.employmentType || undefined,
+            description: p.description || undefined,
+            skills: p.skills
+              ? p.skills.split(",").map((s) => s.trim()).filter(Boolean)
+              : undefined,
+          })),
+          type: "work",
+        };
+      } else {
+        payload = {
+          id: editingId,
+          institution: educationForm.institution,
+          location: educationForm.location || undefined,
+          period: educationForm.period || undefined,
+          type: "education",
+        };
+      }
 
       const response = await fetch(`/api/${APP_CONFIG.ROUTE.TIMELINES}`, {
         method: "PUT",
@@ -208,7 +284,6 @@ export default function TimelinesSection() {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to update timeline";
       toast.error(errorMessage);
-      console.error("Update timeline error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -226,9 +301,7 @@ export default function TimelinesSection() {
     try {
       const response = await fetch(
         `/api/${APP_CONFIG.ROUTE.TIMELINES}?id=${timelineToDelete.id}&type=${timelineToDelete.type}`,
-        {
-          method: "DELETE",
-        },
+        { method: "DELETE" },
       );
 
       const data = await response.json();
@@ -244,7 +317,6 @@ export default function TimelinesSection() {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to delete timeline";
       toast.error(errorMessage);
-      console.error("Delete timeline error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -261,7 +333,6 @@ export default function TimelinesSection() {
       newTimelines[index],
     ];
 
-    // Update order values
     const updatedTimelines = newTimelines.map((timeline, idx) => ({
       id: timeline.id,
       order: idx,
@@ -286,7 +357,6 @@ export default function TimelinesSection() {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to update order";
       toast.error(errorMessage);
-      console.error("Update order error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -303,7 +373,6 @@ export default function TimelinesSection() {
       newTimelines[index],
     ];
 
-    // Update order values
     const updatedTimelines = newTimelines.map((timeline, idx) => ({
       id: timeline.id,
       order: idx,
@@ -328,29 +397,47 @@ export default function TimelinesSection() {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to update order";
       toast.error(errorMessage);
-      console.error("Update order error:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const resetForm = () => {
-    setFormData({
-      title: "",
-      company: "",
-      period: "",
-      location: "",
-      description: "",
-      keyAchievements: "",
-      role: "",
-      type: "work",
+    setWorkForm({
+      companyName: "",
+      companyLogo: "",
+      companyWebsite: "",
+      isCurrentEmployer: false,
+      positions: [emptyPosition()],
     });
+    setEducationForm({ institution: "", location: "", period: "" });
   };
 
   const handleCancel = () => {
     resetForm();
     setIsAdding(false);
     setEditingId(null);
+  };
+
+  const addPosition = () => {
+    setWorkForm({
+      ...workForm,
+      positions: [...workForm.positions, emptyPosition()],
+    });
+  };
+
+  const removePosition = (idx: number) => {
+    if (workForm.positions.length <= 1) return;
+    setWorkForm({
+      ...workForm,
+      positions: workForm.positions.filter((_, i) => i !== idx),
+    });
+  };
+
+  const updatePosition = (idx: number, field: keyof PositionForm, value: string) => {
+    const updated = [...workForm.positions];
+    updated[idx] = { ...updated[idx], [field]: value };
+    setWorkForm({ ...workForm, positions: updated });
   };
 
   const workTimelines = timelines.filter((t) => t.type === "work");
@@ -396,30 +483,27 @@ export default function TimelinesSection() {
             </Button>
 
             {(isAdding || editingId) && activeTimelineTab === "work" && (
-              <TimelineForm
-                activeTimelineTab={activeTimelineTab}
-                formData={formData}
-                setFormData={setFormData}
+              <WorkForm
+                form={workForm}
+                setForm={setWorkForm}
                 onSave={editingId ? handleUpdate : handleAdd}
                 onCancel={handleCancel}
                 isLoading={isLoading}
                 isEditing={!!editingId}
+                onAddPosition={addPosition}
+                onRemovePosition={removePosition}
+                onUpdatePosition={updatePosition}
               />
             )}
 
             <div className="space-y-3">
               {timelinesLoading ? (
-                // Loading skeleton
                 Array.from({ length: 2 }).map((_, idx) => (
                   <Card key={idx} className="animate-pulse">
                     <CardContent className="p-3 sm:p-4">
                       <div className="space-y-3">
                         <div className="h-6 bg-muted rounded w-3/4" />
                         <div className="h-4 bg-muted rounded w-1/2" />
-                        <div className="flex gap-2">
-                          <div className="h-6 bg-muted rounded w-20" />
-                          <div className="h-6 bg-muted rounded w-24" />
-                        </div>
                         <div className="h-16 bg-muted rounded" />
                       </div>
                     </CardContent>
@@ -428,7 +512,7 @@ export default function TimelinesSection() {
               ) : (
                 <>
                   {workTimelines.map((timeline, idx) => (
-                    <TimelineCard
+                    <WorkCard
                       key={timeline.id}
                       timeline={timeline}
                       onEdit={handleEdit}
@@ -461,10 +545,9 @@ export default function TimelinesSection() {
             </Button>
 
             {(isAdding || editingId) && activeTimelineTab === "education" && (
-              <TimelineForm
-                activeTimelineTab={activeTimelineTab}
-                formData={formData}
-                setFormData={setFormData}
+              <EducationForm
+                form={educationForm}
+                setForm={setEducationForm}
                 onSave={editingId ? handleUpdate : handleAdd}
                 onCancel={handleCancel}
                 isLoading={isLoading}
@@ -474,18 +557,12 @@ export default function TimelinesSection() {
 
             <div className="space-y-3">
               {timelinesLoading ? (
-                // Loading skeleton
                 Array.from({ length: 2 }).map((_, idx) => (
                   <Card key={idx} className="animate-pulse">
                     <CardContent className="p-3 sm:p-4">
                       <div className="space-y-3">
                         <div className="h-6 bg-muted rounded w-3/4" />
                         <div className="h-4 bg-muted rounded w-1/2" />
-                        <div className="flex gap-2">
-                          <div className="h-6 bg-muted rounded w-20" />
-                          <div className="h-6 bg-muted rounded w-24" />
-                        </div>
-                        <div className="h-16 bg-muted rounded" />
                       </div>
                     </CardContent>
                   </Card>
@@ -493,7 +570,7 @@ export default function TimelinesSection() {
               ) : (
                 <>
                   {educationTimelines.map((timeline, idx) => (
-                    <TimelineCard
+                    <EducationCard
                       key={timeline.id}
                       timeline={timeline}
                       onEdit={handleEdit}
@@ -517,7 +594,6 @@ export default function TimelinesSection() {
         </Tabs>
       </CardContent>
 
-      {/* Delete dialog */}
       <DeleteConfirmBox
         deleteDialogOpen={deleteDialogOpen}
         setDeleteDialogOpen={setDeleteDialogOpen}
@@ -528,165 +604,194 @@ export default function TimelinesSection() {
   );
 }
 
-function TimelineForm({
-  activeTimelineTab,
-  formData,
-  setFormData,
+function WorkForm({
+  form,
+  setForm,
   onSave,
   onCancel,
   isLoading,
   isEditing,
+  onAddPosition,
+  onRemovePosition,
+  onUpdatePosition,
 }: {
-  activeTimelineTab: "work" | "education";
-  formData: {
-    title: string;
-    company: string;
-    period: string;
-    location: string;
-    description: string;
-    keyAchievements: string;
-    role: "remote" | "on-site" | "internship" | "";
-    type: "work" | "education";
-  };
-  setFormData: (data: {
-    title: string;
-    company: string;
-    period: string;
-    location: string;
-    description: string;
-    keyAchievements: string;
-    role: "remote" | "on-site" | "internship" | "";
-    type: "work" | "education";
-  }) => void;
+  form: WorkFormData;
+  setForm: (data: WorkFormData) => void;
   onSave: () => void;
   onCancel: () => void;
   isLoading?: boolean;
   isEditing?: boolean;
+  onAddPosition: () => void;
+  onRemovePosition: (idx: number) => void;
+  onUpdatePosition: (idx: number, field: keyof PositionForm, value: string) => void;
 }) {
   return (
     <Card>
       <CardContent className="pt-6 space-y-4">
         <div className="grid md:grid-cols-2 gap-4">
-          {activeTimelineTab === "work" && (
-            <div className="space-y-2">
-              <Label>Title *</Label>
-              <Input
-                value={formData.title}
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
-                }
-                placeholder={
-                  activeTimelineTab === "work"
-                    ? "e.g. Full Stack Developer"
-                    : "e.g. Bachelor of Computer Science"
-                }
-                className="h-11"
-              />
-            </div>
-          )}
           <div className="space-y-2">
-            <Label>
-              {activeTimelineTab === "work"
-                ? "Company/Institution *"
-                : "University/College *"}
-            </Label>
+            <Label>Company Name *</Label>
             <Input
-              value={formData.company}
+              value={form.companyName}
               onChange={(e) =>
-                setFormData({ ...formData, company: e.target.value })
+                setForm({ ...form, companyName: e.target.value })
               }
-              placeholder={`e.g. ${
-                activeTimelineTab === "work"
-                  ? "Tech Company"
-                  : "Greenwish University"
-              }`}
+              placeholder="e.g. Tech Company"
               className="h-11"
             />
           </div>
           <div className="space-y-2">
-            <Label>Period *</Label>
+            <Label>Company Logo URL</Label>
             <Input
-              value={formData.period}
+              value={form.companyLogo}
               onChange={(e) =>
-                setFormData({ ...formData, period: e.target.value })
+                setForm({ ...form, companyLogo: e.target.value })
               }
-              placeholder="e.g. 2023 - Present"
+              placeholder="https://example.com/logo.png"
               className="h-11"
             />
           </div>
           <div className="space-y-2">
-            <Label>Location</Label>
+            <Label>Company Website</Label>
             <Input
-              value={formData.location}
-              list="timeline-countries-list"
+              value={form.companyWebsite}
               onChange={(e) =>
-                setFormData({ ...formData, location: e.target.value })
+                setForm({ ...form, companyWebsite: e.target.value })
               }
-              placeholder="e.g. Myanmar"
+              placeholder="https://example.com"
               className="h-11"
             />
-            <datalist id="timeline-countries-list">
-              {countries.map((country) => (
-                <option key={country.code} value={country.name} />
-              ))}
-            </datalist>
           </div>
-          {activeTimelineTab === "work" && (
-            <div className="space-y-2">
-              <Label>Work Mode</Label>
-              <Select
-                value={formData.role}
-                onValueChange={(value) =>
-                  setFormData({
-                    ...formData,
-                    role: value as "remote" | "on-site" | "internship" | "",
-                  })
-                }
-              >
-                <SelectTrigger className="w-full h-11">
-                  <SelectValue placeholder="Select work mode" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="remote">Remote</SelectItem>
-                  <SelectItem value="on-site">On-site</SelectItem>
-                  <SelectItem value="internship">Internship</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+          <div className="flex items-center gap-2 pt-8">
+            <input
+              type="checkbox"
+              id="isCurrentEmployer"
+              checked={form.isCurrentEmployer}
+              onChange={(e) =>
+                setForm({ ...form, isCurrentEmployer: e.target.checked })
+              }
+              className="h-4 w-4"
+            />
+            <Label htmlFor="isCurrentEmployer">Current Employer</Label>
+          </div>
         </div>
 
-        {activeTimelineTab === "work" && (
-          <>
-            <div className="space-y-2">
-              <Label>Description</Label>
-              <Textarea
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-                placeholder="Briefly describe your responsibilities and impact"
-                rows={4}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Key Achievements</Label>
-              <Textarea
-                value={formData.keyAchievements}
-                onChange={(e) =>
-                  setFormData({ ...formData, keyAchievements: e.target.value })
-                }
-                placeholder={
-                  "One achievement per line\nBuilt reusable components\nImproved page performance by 30%"
-                }
-                rows={4}
-              />
-              <p className="text-xs text-muted-foreground">
-                Enter one achievement per line.
-              </p>
-            </div>
-          </>
-        )}
+        {/* Positions */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Label className="text-base font-semibold">Positions</Label>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onAddPosition}
+            >
+              <Plus className="h-3 w-3 mr-1" />
+              Add Position
+            </Button>
+          </div>
+
+          {form.positions.map((pos, idx) => (
+            <Card key={pos.id} className="border border-border/50">
+              <CardContent className="pt-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium">
+                    Position {idx + 1}
+                  </Label>
+                  {form.positions.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onRemovePosition(idx)}
+                      className="h-7 px-2 text-destructive"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
+                <div className="grid md:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs">Title *</Label>
+                    <Input
+                      value={pos.title}
+                      onChange={(e) =>
+                        onUpdatePosition(idx, "title", e.target.value)
+                      }
+                      placeholder="e.g. Full Stack Developer"
+                      className="h-9"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Employment Type</Label>
+                    <Select
+                      value={pos.employmentType}
+                      onValueChange={(v) =>
+                        onUpdatePosition(idx, "employmentType", v)
+                      }
+                    >
+                      <SelectTrigger className="h-9">
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Remote">Remote</SelectItem>
+                        <SelectItem value="On-site">On-site</SelectItem>
+                        <SelectItem value="Intern">Intern</SelectItem>
+                        <SelectItem value="Contract">Contract</SelectItem>
+                        <SelectItem value="Part-time">Part-time</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Start Date *</Label>
+                    <Input
+                      value={pos.start}
+                      onChange={(e) =>
+                        onUpdatePosition(idx, "start", e.target.value)
+                      }
+                      placeholder="MM.YYYY or YYYY"
+                      className="h-9"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">End Date</Label>
+                    <Input
+                      value={pos.end}
+                      onChange={(e) =>
+                        onUpdatePosition(idx, "end", e.target.value)
+                      }
+                      placeholder="MM.YYYY or YYYY (empty = Present)"
+                      className="h-9"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">Description</Label>
+                  <Textarea
+                    value={pos.description}
+                    onChange={(e) =>
+                      onUpdatePosition(idx, "description", e.target.value)
+                    }
+                    placeholder="Describe your responsibilities..."
+                    rows={3}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">Skills</Label>
+                  <Input
+                    value={pos.skills}
+                    onChange={(e) =>
+                      onUpdatePosition(idx, "skills", e.target.value)
+                    }
+                    placeholder="React, TypeScript, Node.js (comma separated)"
+                    className="h-9"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
         <div className="flex gap-2">
           <Button
             onClick={onSave}
@@ -711,7 +816,90 @@ function TimelineForm({
   );
 }
 
-function TimelineCard({
+function EducationForm({
+  form,
+  setForm,
+  onSave,
+  onCancel,
+  isLoading,
+  isEditing,
+}: {
+  form: EducationFormData;
+  setForm: (data: EducationFormData) => void;
+  onSave: () => void;
+  onCancel: () => void;
+  isLoading?: boolean;
+  isEditing?: boolean;
+}) {
+  return (
+    <Card>
+      <CardContent className="pt-6 space-y-4">
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>Institution *</Label>
+            <Input
+              value={form.institution}
+              onChange={(e) =>
+                setForm({ ...form, institution: e.target.value })
+              }
+              placeholder="e.g. University of Technology"
+              className="h-11"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Location</Label>
+            <Input
+              value={form.location}
+              list="edu-countries-list"
+              onChange={(e) =>
+                setForm({ ...form, location: e.target.value })
+              }
+              placeholder="e.g. Myanmar"
+              className="h-11"
+            />
+            <datalist id="edu-countries-list">
+              {countries.map((country) => (
+                <option key={country.code} value={country.name} />
+              ))}
+            </datalist>
+          </div>
+          <div className="space-y-2">
+            <Label>Period</Label>
+            <Input
+              value={form.period}
+              onChange={(e) =>
+                setForm({ ...form, period: e.target.value })
+              }
+              placeholder="e.g. 2020 - 2024"
+              className="h-11"
+            />
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            onClick={onSave}
+            className="flex-1"
+            size="lg"
+            disabled={isLoading}
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {isLoading ? "Saving..." : isEditing ? "Update" : "Save"}
+          </Button>
+          <Button
+            onClick={onCancel}
+            variant="outline"
+            size="lg"
+            disabled={isLoading}
+          >
+            Cancel
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function WorkCard({
   timeline,
   onEdit,
   onDelete,
@@ -730,10 +918,8 @@ function TimelineCard({
   isFirst?: boolean;
   isLast?: boolean;
 }) {
-  const displayTitle =
-    timeline.type === "work" ? timeline.title : timeline.institution;
-  const displayCompany =
-    timeline.type === "work" ? timeline.company : undefined;
+  if (timeline.type !== "work") return null;
+  const t = timeline as Extract<TimelineType, { type: "work" }>;
 
   return (
     <Card
@@ -743,98 +929,129 @@ function TimelineCard({
     >
       <CardContent className="p-4 sm:p-5">
         <div className="flex flex-col gap-3">
-          {/* Header with title, company and action buttons */}
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-base sm:text-lg capitalize break-words">
-                {displayTitle}
+              <h3 className="font-semibold text-base sm:text-lg break-words">
+                {t.companyName}
               </h3>
-              {displayCompany && (
-                <p className="text-sm text-muted-foreground mt-1 break-words">
-                  {displayCompany}
+              {t.companyWebsite && (
+                <p className="text-xs text-muted-foreground mt-1 break-words">
+                  {t.companyWebsite}
                 </p>
               )}
             </div>
             <div className="flex gap-1 shrink-0">
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={onMoveUp}
-                disabled={isFirst}
-                className="h-9 w-9 p-0"
-              >
+              <Button size="sm" variant="ghost" onClick={onMoveUp} disabled={isFirst} className="h-9 w-9 p-0">
                 <ArrowUp className="h-4 w-4" />
               </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={onMoveDown}
-                disabled={isLast}
-                className="h-9 w-9 p-0"
-              >
+              <Button size="sm" variant="ghost" onClick={onMoveDown} disabled={isLast} className="h-9 w-9 p-0">
                 <ArrowDown className="h-4 w-4" />
               </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => onEdit(timeline)}
-                className="h-9 w-9 p-0"
-              >
+              <Button size="sm" variant="ghost" onClick={() => onEdit(timeline)} className="h-9 w-9 p-0">
                 <Edit className="h-4 w-4" />
               </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => onDelete(timeline.id, timeline.type)}
-                className="h-9 w-9 p-0"
-              >
+              <Button size="sm" variant="ghost" onClick={() => onDelete(timeline.id, "work")} className="h-9 w-9 p-0">
                 <Trash2 className="h-4 w-4 text-destructive" />
               </Button>
             </div>
           </div>
 
-          {/* Badges */}
           <div className="flex flex-wrap gap-2">
-            {timeline.period && (
-              <Badge variant="outline" className="text-xs">
-                {timeline.period}
-              </Badge>
-            )}
-            {timeline.location && (
-              <Badge variant="outline" className="text-xs">
-                {timeline.location}
-              </Badge>
-            )}
-            {timeline.type === "work" && timeline.role && (
-              <Badge variant="default" className="text-xs">
-                {timeline.role === "on-site"
-                  ? "On-site"
-                  : timeline.role.charAt(0).toUpperCase() +
-                    timeline.role.slice(1)}
-              </Badge>
+            {t.isCurrentEmployer && (
+              <Badge variant="default" className="text-xs">Current</Badge>
             )}
           </div>
 
-          {timeline.type === "work" && timeline.description && (
-            <p className="text-sm leading-relaxed text-muted-foreground mt-1 break-words">
-              {timeline.description}
-            </p>
-          )}
-
-          {timeline.type === "work" &&
-            timeline.achievements &&
-            timeline.achievements.length > 0 && (
-              <div className="space-y-1 mt-1">
-                {timeline.achievements.map((achievement, idx) => (
-                  <p
-                    key={idx}
-                    className="text-sm leading-relaxed text-muted-foreground break-words"
-                  >
-                    - {achievement}
+          {t.positions && t.positions.length > 0 && (
+            <div className="space-y-2 mt-2">
+              {t.positions.map((pos) => (
+                <div key={pos.id} className="border-l-2 border-border/50 pl-3 py-1">
+                  <p className="text-sm font-medium">{pos.title}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {pos.employmentPeriod?.start}
+                    {pos.employmentPeriod?.end
+                      ? ` — ${pos.employmentPeriod.end}`
+                      : " — Present"}
+                    {pos.employmentType && ` · ${pos.employmentType}`}
                   </p>
-                ))}
-              </div>
+                  {pos.skills && pos.skills.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {pos.skills.map((skill, i) => (
+                        <Badge key={i} variant="secondary" className="text-[10px]">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function EducationCard({
+  timeline,
+  onEdit,
+  onDelete,
+  onMoveUp,
+  onMoveDown,
+  isEditing,
+  isFirst,
+  isLast,
+}: {
+  timeline: TimelineType;
+  onEdit: (timeline: TimelineType) => void;
+  onDelete: (id: string, type: "work" | "education") => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  isEditing?: boolean;
+  isFirst?: boolean;
+  isLast?: boolean;
+}) {
+  if (timeline.type !== "education") return null;
+  const t = timeline as Extract<TimelineType, { type: "education" }>;
+
+  return (
+    <Card
+      className={`hover:shadow-md transition-shadow ${
+        isEditing ? "border-primary" : ""
+      }`}
+    >
+      <CardContent className="p-4 sm:p-5">
+        <div className="flex flex-col gap-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-base sm:text-lg capitalize break-words">
+                {t.institution}
+              </h3>
+            </div>
+            <div className="flex gap-1 shrink-0">
+              <Button size="sm" variant="ghost" onClick={onMoveUp} disabled={isFirst} className="h-9 w-9 p-0">
+                <ArrowUp className="h-4 w-4" />
+              </Button>
+              <Button size="sm" variant="ghost" onClick={onMoveDown} disabled={isLast} className="h-9 w-9 p-0">
+                <ArrowDown className="h-4 w-4" />
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => onEdit(timeline)} className="h-9 w-9 p-0">
+                <Edit className="h-4 w-4" />
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => onDelete(timeline.id, "education")} className="h-9 w-9 p-0">
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </Button>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {t.period && (
+              <Badge variant="outline" className="text-xs">{t.period}</Badge>
             )}
+            {t.location && (
+              <Badge variant="outline" className="text-xs">{t.location}</Badge>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>
