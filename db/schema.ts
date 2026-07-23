@@ -69,7 +69,6 @@ export const project = sqliteTable("project", {
   objectives: text("objectives"), // JSON array
   collaborators: text("collaborators"), // JSON array
   demoCredentials: text("demo_credentials"), // JSON array
-  adopters: text("adopters"), // JSON array of { name, url?, description? }
   featured: integer("featured", { mode: "boolean" }).notNull().default(false),
   order: integer("order").notNull().default(0),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
@@ -91,13 +90,13 @@ export const certificate = sqliteTable("certificate", {
 
 export const experience = sqliteTable("work", {
   id: text("id").primaryKey(),
-  title: text("title").notNull(),
-  company: text("company").notNull(),
-  location: text("location"),
-  period: text("period"),
-  description: text("description"),
-  keyAchievements: text("key_achievements"), // JSON array
-  role: text("role"), // 'remote', 'on-site', or 'internship'
+  companyName: text("company_name").notNull(),
+  companyLogo: text("company_logo"),
+  companyWebsite: text("company_website"),
+  isCurrentEmployer: integer("is_current_employer", { mode: "boolean" })
+    .notNull()
+    .default(false),
+  positions: text("positions").notNull(), // JSON array of positions
   order: integer("order").notNull().default(0),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),

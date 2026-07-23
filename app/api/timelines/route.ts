@@ -19,15 +19,11 @@ export async function GET() {
 
     const formattedExperiences = experiences.map((exp) => ({
       id: exp.id,
-      title: exp.title,
-      company: exp.company,
-      location: exp.location,
-      period: exp.period,
-      description: exp.description,
-      achievements: exp.keyAchievements
-        ? JSON.parse(exp.keyAchievements)
-        : undefined,
-      role: exp.role as "remote" | "on-site" | "internship" | undefined,
+      companyName: exp.companyName,
+      companyLogo: exp.companyLogo,
+      companyWebsite: exp.companyWebsite,
+      isCurrentEmployer: exp.isCurrentEmployer,
+      positions: exp.positions ? JSON.parse(exp.positions) : [],
       type: "work" as const,
       order: exp.order,
       createdAt: exp.createdAt,
@@ -63,112 +59,82 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const {
-      title,
-      company,
+      companyName,
+      companyLogo,
+      companyWebsite,
+      isCurrentEmployer,
+      positions,
+      type,
+      // Education fields
+      institution,
       location,
       period,
-      description,
-      keyAchievements,
-      achievements,
-      role,
-      type,
     } = body;
 
-    const legacyAchievements =
-      keyAchievements ??
-      (Array.isArray(achievements) ? achievements : undefined);
+    if (type === "education") {
+      if (!institution) {
+        return NextResponse.json(
+          { success: false, error: "Institution is required" },
+          { status: 400 },
+        );
+      }
 
-    const normalizedDescription =
-      typeof description === "string" && description.trim().length > 0
-        ? description.trim()
-        : legacyAchievements && legacyAchievements.length > 0
-          ? legacyAchievements.join("\n")
-          : null;
+      const id = `education_${Date.now()}`;
+      const now = new Date();
 
-    if (!company || !type) {
+      await db.insert(education).values({
+        id,
+        institution,
+        location: location || null,
+        period: period || null,
+        order: 0,
+        createdAt: now,
+        updatedAt: now,
+      });
+
+      return NextResponse.json({
+        success: true,
+        data: { id, institution, location, period, type },
+      });
+    }
+
+    // Work experience
+    if (!companyName) {
       return NextResponse.json(
-        { success: false, error: "Company/Institution and type are required" },
+        { success: false, error: "Company name is required" },
         { status: 400 },
       );
     }
 
-    if (type === "work" && !title) {
-      return NextResponse.json(
-        { success: false, error: "Title is required for work experience" },
-        { status: 400 },
-      );
-    }
-
-    const id = `${type}_${Date.now()}`;
+    const id = `work_${Date.now()}`;
     const now = new Date();
 
-    if (type === "education") {
-      // Insert into education table
-      const insertData = {
-        id,
-        institution: company,
-        location: location || null,
-        period: period || null,
-        order: 0,
-        createdAt: now,
-        updatedAt: now,
-      };
-
-      await db.insert(education).values(insertData);
-
-      return NextResponse.json({
-        success: true,
-        data: {
-          id,
-          title,
-          company,
-          location,
-          period,
-          description: normalizedDescription,
-          type,
-        },
-      });
-    } else {
-      // Insert into experience table
-      const insertData = {
-        id,
-        title: title!,
-        company,
-        location: location || null,
-        period: period || null,
-        description: normalizedDescription,
-        keyAchievements: legacyAchievements
-          ? JSON.stringify(legacyAchievements)
-          : null,
-        role: role || null,
-        order: 0,
-        createdAt: now,
-        updatedAt: now,
-      };
-
-      await db.insert(experience).values(insertData);
-
-      return NextResponse.json({
-        success: true,
-        data: {
-          id,
-          title,
-          company,
-          location,
-          period,
-          description: normalizedDescription,
-          keyAchievements: legacyAchievements,
-          role,
-          type,
-        },
-      });
-    }
-  } catch (error) {
-    console.error("Failed to create timeline - Full error:", error);
-    console.error("Error details:", {
-      message: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
+    await db.insert(experience).values({
+      id,
+      companyName,
+      companyLogo: companyLogo || null,
+      companyWebsite: companyWebsite || null,
+      isCurrentEmployer: isCurrentEmployer || false,
+      positions: positions ? JSON.stringify(positions) : "[]",
+      order: 0,
+      createdAt: now,
+      updatedAt: now,
     });
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        id,
+        companyName,
+        companyLogo,
+        companyWebsite,
+        isCurrentEmployer,
+        positions,
+        type,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to create timeline:", error);
     return NextResponse.json(
       {
         success: false,
@@ -186,51 +152,39 @@ export async function PUT(req: NextRequest) {
     const body = await req.json();
     const {
       id,
-      title,
-      company,
+      companyName,
+      companyLogo,
+      companyWebsite,
+      isCurrentEmployer,
+      positions,
+      type,
+      // Education fields
+      institution,
       location,
       period,
-      description,
-      keyAchievements,
-      achievements,
-      role,
-      type,
     } = body;
 
-    const legacyAchievements =
-      keyAchievements ??
-      (Array.isArray(achievements) ? achievements : undefined);
-
-    const normalizedDescription =
-      typeof description === "string" && description.trim().length > 0
-        ? description.trim()
-        : legacyAchievements && legacyAchievements.length > 0
-          ? legacyAchievements.join("\n")
-          : null;
-
-    if (!id || !company || !type) {
+    if (!id) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "ID, company/institution, and type are required",
-        },
+        { success: false, error: "ID is required" },
         { status: 400 },
       );
     }
 
-    if (type === "work" && !title) {
-      return NextResponse.json(
-        { success: false, error: "Title is required for work experience" },
-        { status: 400 },
-      );
-    }
+    const isEducation = id.startsWith("education_") || type === "education";
 
-    if (type === "education") {
-      // Update education table
+    if (isEducation) {
+      if (!institution) {
+        return NextResponse.json(
+          { success: false, error: "Institution is required" },
+          { status: 400 },
+        );
+      }
+
       await db
         .update(education)
         .set({
-          institution: company,
+          institution,
           location: location || null,
           period: period || null,
           updatedAt: new Date(),
@@ -239,49 +193,41 @@ export async function PUT(req: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        data: {
-          id,
-          title,
-          company,
-          location,
-          period,
-          description: normalizedDescription,
-          type,
-        },
-      });
-    } else {
-      // Update experience table
-      await db
-        .update(experience)
-        .set({
-          title: title!,
-          company,
-          location: location || null,
-          period: period || null,
-          description: normalizedDescription,
-          keyAchievements: legacyAchievements
-            ? JSON.stringify(legacyAchievements)
-            : null,
-          role: role || null,
-          updatedAt: new Date(),
-        })
-        .where(eq(experience.id, id));
-
-      return NextResponse.json({
-        success: true,
-        data: {
-          id,
-          title,
-          company,
-          location,
-          period,
-          description: normalizedDescription,
-          keyAchievements: legacyAchievements,
-          role,
-          type,
-        },
+        data: { id, institution, location, period, type: "education" },
       });
     }
+
+    if (!companyName) {
+      return NextResponse.json(
+        { success: false, error: "Company name is required" },
+        { status: 400 },
+      );
+    }
+
+    await db
+      .update(experience)
+      .set({
+        companyName,
+        companyLogo: companyLogo || null,
+        companyWebsite: companyWebsite || null,
+        isCurrentEmployer: isCurrentEmployer || false,
+        positions: positions ? JSON.stringify(positions) : "[]",
+        updatedAt: new Date(),
+      })
+      .where(eq(experience.id, id));
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        id,
+        companyName,
+        companyLogo,
+        companyWebsite,
+        isCurrentEmployer,
+        positions,
+        type: "work",
+      },
+    });
   } catch (error) {
     console.error("Failed to update timeline:", error);
     return NextResponse.json(
@@ -304,7 +250,6 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    // Update order for each timeline
     await Promise.all(
       updatedTimelines.map((timeline: { id: string; order: number }) => {
         const isEducation = timeline.id.startsWith("education_");
@@ -349,7 +294,6 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    // Determine which table to delete from based on ID prefix or type parameter
     const isEducation = id.startsWith("education_") || type === "education";
 
     if (isEducation) {

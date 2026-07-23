@@ -9,7 +9,7 @@ import { ProjectType } from "@/types/index.type";
 import { eq } from "drizzle-orm";
 import { Suspense } from "react";
 
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 async function getSettings() {
   try {

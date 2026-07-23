@@ -40,28 +40,41 @@ CREATE TABLE `education` (
 --> statement-breakpoint
 CREATE TABLE `work` (
 	`id` text PRIMARY KEY NOT NULL,
-	`title` text NOT NULL,
-	`company` text NOT NULL,
-	`location` text,
-	`period` text,
-	`key_achievements` text,
-	`tech_stacks` text,
-	`role` text,
+	`company_name` text NOT NULL,
+	`company_logo` text,
+	`company_website` text,
+	`is_current_employer` integer DEFAULT false NOT NULL,
+	`positions` text NOT NULL,
 	`order` integer DEFAULT 0 NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE `post` (
+	`id` text PRIMARY KEY NOT NULL,
+	`slug` text NOT NULL,
+	`title` text NOT NULL,
+	`excerpt` text,
+	`body` text NOT NULL,
+	`tags` text,
+	`published` integer DEFAULT false NOT NULL,
+	`order` integer DEFAULT 0 NOT NULL,
+	`created_at` integer NOT NULL,
+	`updated_at` integer NOT NULL
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `post_slug_unique` ON `post` (`slug`);--> statement-breakpoint
 CREATE TABLE `project` (
 	`id` text PRIMARY KEY NOT NULL,
 	`title` text NOT NULL,
+	`summary` text NOT NULL,
 	`description` text,
 	`image` text,
 	`technologies` text,
 	`github_url` text,
 	`live_url` text,
 	`objectives` text,
-	`key_challenges` text,
+	`collaborators` text,
 	`demo_credentials` text,
 	`featured` integer DEFAULT false NOT NULL,
 	`order` integer DEFAULT 0 NOT NULL,

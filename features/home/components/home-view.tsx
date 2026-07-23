@@ -205,7 +205,7 @@ export function HomeView({
       </section>
 
       {/* Widgets */}
-      <section id="widgets" className="px-6 py-16 sm:py-20 border">
+      <section id="widgets" className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl space-y-6 border">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {/* Let's Connect */}

@@ -1,8 +1,8 @@
 import { db } from "@/db/client";
 import { setting } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { Facebook, Github, Linkedin } from "lucide-react";
 import Link from "next/link";
+import { FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
 
 export async function Footer() {
   const currentYear = new Date().getFullYear();
@@ -11,7 +11,7 @@ export async function Footer() {
   let viewCount = "0";
   let githubUrl = "";
   let linkedinUrl = "";
-  let facebookUrl = "";
+  let emailUrl = "";
 
   try {
     const result = await db
@@ -34,43 +34,43 @@ export async function Footer() {
     );
     githubUrl = settingsMap.githubUrl || "";
     linkedinUrl = settingsMap.linkedinUrl || "";
-    facebookUrl = settingsMap.facebookUrl || "";
+    emailUrl = settingsMap.emailUrl || "";
   } catch {
     // ignore
   }
 
   return (
-    <footer className="border-t border-border/40 px-6 py-4">
+    <footer className="border-t border-border/20 px-6 py-4">
       <div className="app-shell flex flex-col items-center justify-between gap-3 sm:flex-row">
         {/* Left */}
-        <div className="flex items-center gap-3  text-xs text-muted-foreground">
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <span>&copy; {currentYear} Thu Rein Htet</span>
-          <span className="text-muted-foreground/30">·</span>
+          {/* <span className="text-muted-foreground/30">·</span>
           <div className="flex items-center gap-1.5">
             <div className="h-2 w-2 rounded-full bg-primary" />
             <span>All Services Nominal</span>
-          </div>
+          </div> */}
         </div>
 
         {/* Right */}
-        <div className="flex items-center gap-3  text-xs text-muted-foreground">
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
           {commitHash && (
             <>
               <span>⚡ {commitHash}</span>
-              <span className="text-muted-foreground/30">·</span>
+              <span className="text-muted-foreground">·</span>
             </>
           )}
           <span>{viewCount} views</span>
-          <span className="text-muted-foreground/30">·</span>
-          <div className="flex items-center gap-2">
+          <span className="text-muted-foreground">·</span>
+          <div className="flex items-center gap-4">
             {githubUrl && (
               <Link
                 href={githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-foreground transition-colors"
+                className="hover:text-primary transition-colors"
               >
-                <Github className="h-4 w-4" />
+                <FaGithub className="h-5 w-5" />
               </Link>
             )}
             {linkedinUrl && (
@@ -78,19 +78,19 @@ export async function Footer() {
                 href={linkedinUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-foreground transition-colors"
+                className="hover:text-primary transition-colors"
               >
-                <Linkedin className="h-4 w-4" />
+                <FaLinkedin className="h-5 w-5" />
               </Link>
             )}
-            {facebookUrl && (
+            {emailUrl && (
               <Link
-                href={facebookUrl}
+                href={emailUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-foreground transition-colors"
+                className="hover:text-primary transition-colors"
               >
-                <Facebook className="h-4 w-4" />
+                <FaEnvelope className="h-5 w-5" />
               </Link>
             )}
           </div>

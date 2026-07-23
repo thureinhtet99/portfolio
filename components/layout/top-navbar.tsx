@@ -35,6 +35,7 @@ export function TopNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const segments = pathname.split("/").filter(Boolean);
+
   const isAdmin = segments[0] === "admin";
 
   const isActive = (href: string) => {
@@ -44,23 +45,36 @@ export function TopNavbar() {
 
   const isMoreActive = moreLinks.some((link) => isActive(link.href));
 
-  const terminalPath =
-    segments.length === 0
-      ? "~ "
-      : `~ /${segments.map((s) => routeLabels[s] || s).join("/")}`;
-
   if (isAdmin) return null;
 
   return (
     <nav className="sticky top-0 z-50 bg-transparent backdrop-blur-sm py-3">
       <div className="app-shell flex items-center justify-between px-6 py-4">
-        <Link
-          href="/"
-          className="flex items-center justify-center  text-base text-muted-foreground hover:text-foreground transition-colors shrink-0"
-        >
-          {terminalPath}/
-          <span className="ml-1 inline-block h-4 w-2 animate-pulse-slow bg-primary" />
-        </Link>
+        <div className="flex items-center gap-1">
+          <Link
+            href="/"
+            className="text-base text-primary hover:text-muted-foreground transition-colors shrink-0"
+          >
+            ~
+          </Link>
+          {segments.map((segment, i) => {
+            const href = `/${segments.slice(0, i + 1).join("/")}`;
+            const label = routeLabels[segment] || segment;
+            return (
+              <span key={href} className="flex items-center">
+                <span>/</span>
+                <Link
+                  href={href}
+                  className="text-base text-primary hover:text-muted-foreground transition-colors"
+                >
+                  {label}
+                </Link>
+              </span>
+            );
+          })}
+          <span>/</span>
+          <span className="inline-block h-4 w-2 animate-pulse-slow bg-primary" />
+        </div>
 
         {/* Desktop nav */}
         <div className="hidden items-center gap-10 sm:flex">

@@ -22,7 +22,6 @@ export const experiences: ExperienceItemType[] = [
         isExpanded: true,
       },
     ],
-    // isCurrentEmployer: true,
   },
   {
     id: "2",
@@ -52,6 +51,5 @@ export const experiences: ExperienceItemType[] = [
         isExpanded: true,
       },
     ],
-    // isCurrentEmployer: false,
   },
 ];

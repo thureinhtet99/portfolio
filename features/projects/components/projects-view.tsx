@@ -1,9 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { cardReveal } from "@/lib/motion";
-import { ProjectShowcaseCard } from "./project-showcase-card";
+import { motion } from "framer-motion";
 import { FolderGit2 } from "lucide-react";
+import { ProjectShowcaseCard } from "./project-showcase-card";
 
 type Project = {
   id: string;
@@ -25,11 +25,11 @@ type Props = {
 export default function ProjectsView({ projects }: Props) {
   return (
     <div className="page-shell">
-      <section className="px-6 py-12">
+      <section className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl space-y-8">
           <motion.h1
             {...cardReveal(0)}
-            className=" text-3xl font-bold tracking-[-0.03em]"
+            className="text-3xl font-bold tracking-[-0.03em]"
           >
             <FolderGit2 className="inline h-7 w-7 mr-2 text-muted-foreground" />
             Projects
@@ -44,9 +44,7 @@ export default function ProjectsView({ projects }: Props) {
               ))}
             </div>
           ) : (
-            <p className=" text-sm text-muted-foreground">
-              No projects yet.
-            </p>
+            <p className=" text-sm text-muted-foreground">No projects yet.</p>
           )}
         </div>
       </section>
