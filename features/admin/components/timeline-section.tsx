@@ -58,7 +58,7 @@ const emptyPosition = (): PositionForm => ({
 });
 
 export default function TimelinesSection() {
-  const { items: timelines, isMutating, create, update, invalidate } =
+  const { items: timelines, isMutating, create, update, reorder, invalidate } =
     useCrudResource<TimelineType>({
       resource: APP_CONFIG.ROUTE.TIMELINES,
       labels: { singular: "timeline entry", plural: "timelines" },
@@ -265,38 +265,19 @@ export default function TimelinesSection() {
     const targetTimelines =
       type === "work" ? workTimelines : educationTimelines;
     if (index === 0) return;
-    setIsSaving(true);
+    const reordered = [...targetTimelines];
+    [reordered[index], reordered[index - 1]] = [
+      reordered[index - 1],
+      reordered[index],
+    ];
+    const updates = reordered.map((timeline, idx) => ({
+      id: timeline.id,
+      order: idx,
+    }));
     try {
-      const newTimelines = [...targetTimelines];
-      [newTimelines[index], newTimelines[index - 1]] = [
-        newTimelines[index - 1],
-        newTimelines[index],
-      ];
-
-      const updatedTimelines = newTimelines.map((timeline, idx) => ({
-        id: timeline.id,
-        order: idx,
-      }));
-
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.TIMELINES}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ timelines: updatedTimelines }),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        invalidate();
-        toast.success("Order updated successfully!");
-      } else {
-        throw new Error(data.error || "Failed to update order");
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to update order";
-      toast.error(errorMessage);
-    } finally {
-      setIsSaving(false);
+      await reorder(updates);
+    } catch {
+      // toast handled by hook
     }
   };
 
@@ -304,38 +285,19 @@ export default function TimelinesSection() {
     const targetTimelines =
       type === "work" ? workTimelines : educationTimelines;
     if (index === targetTimelines.length - 1) return;
-    setIsSaving(true);
+    const reordered = [...targetTimelines];
+    [reordered[index], reordered[index + 1]] = [
+      reordered[index + 1],
+      reordered[index],
+    ];
+    const updates = reordered.map((timeline, idx) => ({
+      id: timeline.id,
+      order: idx,
+    }));
     try {
-      const newTimelines = [...targetTimelines];
-      [newTimelines[index], newTimelines[index + 1]] = [
-        newTimelines[index + 1],
-        newTimelines[index],
-      ];
-
-      const updatedTimelines = newTimelines.map((timeline, idx) => ({
-        id: timeline.id,
-        order: idx,
-      }));
-
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.TIMELINES}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ timelines: updatedTimelines }),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        invalidate();
-        toast.success("Order updated successfully!");
-      } else {
-        throw new Error(data.error || "Failed to update order");
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to update order";
-      toast.error(errorMessage);
-    } finally {
-      setIsSaving(false);
+      await reorder(updates);
+    } catch {
+      // toast handled by hook
     }
   };
 

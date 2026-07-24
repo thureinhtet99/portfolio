@@ -88,6 +88,26 @@ export function useCrudResource<T extends { id: string }>({
     onError: (error: Error) => toast.error(error.message),
   });
 
+  const reorderMutation = useMutation({
+    mutationFn: async (items: { id: string; order: number }[]) => {
+      const res = await fetch(endpoint, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [labels.plural]: items }),
+      });
+      const json: ApiItemResponse<T> = await res.json();
+      if (!json.success) {
+        throw new Error(json.error || "Failed to update order");
+      }
+      return items;
+    },
+    onSuccess: () => {
+      invalidate();
+      toast.success("Order updated successfully!");
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
   return {
     items: listQuery.data ?? [],
     isLoading: listQuery.isLoading,
@@ -95,11 +115,13 @@ export function useCrudResource<T extends { id: string }>({
     create: createMutation.mutateAsync,
     update: updateMutation.mutateAsync,
     remove: deleteMutation.mutateAsync,
+    reorder: reorderMutation.mutateAsync,
     invalidate,
     isMutating:
       createMutation.isPending ||
       updateMutation.isPending ||
-      deleteMutation.isPending,
+      deleteMutation.isPending ||
+      reorderMutation.isPending,
   };
 }
 

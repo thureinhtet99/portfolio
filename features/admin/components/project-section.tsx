@@ -103,7 +103,7 @@ const getAdoptersFromForm = (formData: ProjectFormState): AdopterType[] =>
     : [];
 
 export default function ProjectsSection() {
-  const { items: projects, isMutating, create, update, remove } =
+  const { items: projects, isMutating, create, update, remove, reorder } =
     useCrudResource<ProjectType>({
       resource: APP_CONFIG.ROUTE.PROJECTS,
       labels: { singular: "project", plural: "projects" },
@@ -239,61 +239,31 @@ export default function ProjectsSection() {
 
   const moveUp = async (index: number) => {
     if (index === 0) return;
-    setIsSaving(true);
+    const reordered = [...projects];
+    [reordered[index], reordered[index - 1]] = [
+      reordered[index - 1],
+      reordered[index],
+    ];
+    const updates = reordered.map((project, idx) => ({ id: project.id, order: idx }));
     try {
-      const newProjects = [...projects];
-      [newProjects[index], newProjects[index - 1]] = [
-        newProjects[index - 1],
-        newProjects[index],
-      ];
-      const updatedProjects = newProjects.map((project, idx) => ({
-        id: project.id,
-        order: idx,
-      }));
-
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.PROJECTS}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ projects: updatedProjects }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        toast.success("Order updated successfully!");
-      } else {
-        toast.error(data.error || "Failed to update order");
-      }
-    } finally {
-      setIsSaving(false);
+      await reorder(updates);
+    } catch {
+      // toast handled by hook
     }
   };
 
   const moveDown = async (index: number) => {
     if (index === projects.length - 1) return;
-    setIsSaving(true);
+    const reordered = [...projects];
+    [reordered[index], reordered[index + 1]] = [
+      reordered[index + 1],
+      reordered[index],
+    ];
+    const updates = reordered.map((project, idx) => ({ id: project.id, order: idx }));
     try {
-      const newProjects = [...projects];
-      [newProjects[index], newProjects[index + 1]] = [
-        newProjects[index + 1],
-        newProjects[index],
-      ];
-      const updatedProjects = newProjects.map((project, idx) => ({
-        id: project.id,
-        order: idx,
-      }));
-
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.PROJECTS}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ projects: updatedProjects }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        toast.success("Order updated successfully!");
-      } else {
-        toast.error(data.error || "Failed to update order");
-      }
-    } finally {
-      setIsSaving(false);
+      await reorder(updates);
+    } catch {
+      // toast handled by hook
     }
   };
 

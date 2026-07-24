@@ -30,6 +30,7 @@ export default function PostsSection() {
     create,
     update,
     remove,
+    reorder,
   } = useCrudResource<PostType>({
     resource: APP_CONFIG.ROUTE.POSTS,
     labels: { singular: "post", plural: "posts" },
@@ -39,7 +40,6 @@ export default function PostsSection() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     slug: "",
     title: "",
@@ -79,7 +79,6 @@ export default function PostsSection() {
       return;
     }
 
-    setIsSaving(true);
     try {
       const payload = {
         slug: formData.slug,
@@ -103,8 +102,8 @@ export default function PostsSection() {
         setIsAdding(false);
       }
       resetForm();
-    } finally {
-      setIsSaving(false);
+    } catch (error) {
+      console.error("Failed to save post: ", error);
     }
   };
 
@@ -134,74 +133,44 @@ export default function PostsSection() {
   };
 
   const togglePublished = async (post: PostType) => {
-    setIsSaving(true);
-    try {
-      await update({
-        id: post.id,
-        slug: post.slug,
-        title: post.title,
-        excerpt: post.excerpt,
-        body: post.body,
-        tags: post.tags,
-        published: !post.published,
-      });
-      toast.success(post.published ? "Post unpublished" : "Post published");
-    } finally {
-      setIsSaving(false);
-    }
+    await update({
+      id: post.id,
+      slug: post.slug,
+      title: post.title,
+      excerpt: post.excerpt,
+      body: post.body,
+      tags: post.tags,
+      published: !post.published,
+    });
   };
 
   const moveUp = async (index: number) => {
     if (index === 0) return;
-    setIsSaving(true);
+    const reordered = [...posts];
+    [reordered[index], reordered[index - 1]] = [
+      reordered[index - 1],
+      reordered[index],
+    ];
+    const updates = reordered.map((p, i) => ({ id: p.id, order: i }));
     try {
-      const reordered = [...posts];
-      [reordered[index], reordered[index - 1]] = [
-        reordered[index - 1],
-        reordered[index],
-      ];
-      const updates = reordered.map((p, i) => ({ id: p.id, order: i }));
-
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.POSTS}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ posts: updates }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        toast.success("Order updated");
-      } else {
-        toast.error(data.error || "Failed to update order");
-      }
-    } finally {
-      setIsSaving(false);
+      await reorder(updates);
+    } catch {
+      // toast handled by hook
     }
   };
 
   const moveDown = async (index: number) => {
     if (index === posts.length - 1) return;
-    setIsSaving(true);
+    const reordered = [...posts];
+    [reordered[index], reordered[index + 1]] = [
+      reordered[index + 1],
+      reordered[index],
+    ];
+    const updates = reordered.map((p, i) => ({ id: p.id, order: i }));
     try {
-      const reordered = [...posts];
-      [reordered[index], reordered[index + 1]] = [
-        reordered[index + 1],
-        reordered[index],
-      ];
-      const updates = reordered.map((p, i) => ({ id: p.id, order: i }));
-
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.POSTS}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ posts: updates }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        toast.success("Order updated");
-      } else {
-        toast.error(data.error || "Failed to update order");
-      }
-    } finally {
-      setIsSaving(false);
+      await reorder(updates);
+    } catch {
+      // toast handled by hook
     }
   };
 
@@ -314,16 +283,16 @@ export default function PostsSection() {
                   onClick={handleSave}
                   className="flex-1"
                   size="lg"
-                  disabled={isSaving}
+                  disabled={isMutating}
                 >
                   <Save className="h-4 w-4" />
-                  {isSaving ? "Saving..." : editingId ? "Update" : "Create"}
+                  {isMutating ? "Saving..." : editingId ? "Update" : "Create"}
                 </Button>
                 <Button
                   onClick={handleCancel}
                   variant="outline"
                   size="lg"
-                  disabled={isSaving}
+                  disabled={isMutating}
                 >
                   Cancel
                 </Button>
@@ -333,7 +302,7 @@ export default function PostsSection() {
         )}
 
         <div className="space-y-3">
-          {posts.length === 0 && (isMutating || isSaving) ? (
+          {posts.length === 0 && (isMutating || isMutating) ? (
             <CustomLoading />
           ) : (
             <>
@@ -435,7 +404,7 @@ export default function PostsSection() {
       <DeleteConfirmBox
         deleteDialogOpen={deleteDialogOpen}
         setDeleteDialogOpen={setDeleteDialogOpen}
-        isLoading={isMutating || isSaving}
+        isLoading={isMutating}
         handleDelete={handleDelete}
         description="Are you sure you want to delete this post? This action cannot be undone."
       />

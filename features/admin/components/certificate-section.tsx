@@ -27,7 +27,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export default function CertificatesSection() {
-  const { items: certificates, isMutating, create, update, remove } =
+  const { items: certificates, isMutating, create, update, remove, reorder } =
     useCrudResource<CertificateType>({
       resource: APP_CONFIG.ROUTE.CERTIFICATES,
       labels: { singular: "certificate", plural: "certificates" },
@@ -129,56 +129,31 @@ export default function CertificatesSection() {
 
   const moveUp = async (index: number) => {
     if (index === 0) return;
-    setIsSaving(true);
+    const reordered = [...certificates];
+    [reordered[index], reordered[index - 1]] = [
+      reordered[index - 1],
+      reordered[index],
+    ];
+    const updates = reordered.map((cert, idx) => ({ id: cert.id, order: idx }));
     try {
-      const updatedCertificates = certificates.map((cert, idx) => ({
-        id: cert.id,
-        order: idx,
-      }));
-
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.CERTIFICATES}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ certificates: updatedCertificates }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        toast.success("Order updated successfully!");
-      } else {
-        toast.error(data.error || "Failed to update order");
-      }
-    } finally {
-      setIsSaving(false);
+      await reorder(updates);
+    } catch {
+      // toast handled by hook
     }
   };
 
   const moveDown = async (index: number) => {
     if (index === certificates.length - 1) return;
-    setIsSaving(true);
+    const reordered = [...certificates];
+    [reordered[index], reordered[index + 1]] = [
+      reordered[index + 1],
+      reordered[index],
+    ];
+    const updates = reordered.map((cert, idx) => ({ id: cert.id, order: idx }));
     try {
-      const newCertificates = [...certificates];
-      [newCertificates[index], newCertificates[index + 1]] = [
-        newCertificates[index + 1],
-        newCertificates[index],
-      ];
-      const updatedCertificates = newCertificates.map((cert, idx) => ({
-        id: cert.id,
-        order: idx,
-      }));
-
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.CERTIFICATES}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ certificates: updatedCertificates }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        toast.success("Order updated successfully!");
-      } else {
-        toast.error(data.error || "Failed to update order");
-      }
-    } finally {
-      setIsSaving(false);
+      await reorder(updates);
+    } catch {
+      // toast handled by hook
     }
   };
 
