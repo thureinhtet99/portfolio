@@ -6,7 +6,7 @@ const TARGET = "loading...";
 const CHARS = "abcdefghijklmnopqrstuvwxyz.";
 const PAUSE_MS = 600; // how long to hold the fully-revealed text before restarting
 
-export default function CustomLoading() {
+export default function Loading() {
   const [display, setDisplay] = useState("");
 
   useEffect(() => {

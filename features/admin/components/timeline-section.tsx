@@ -58,11 +58,17 @@ const emptyPosition = (): PositionForm => ({
 });
 
 export default function TimelinesSection() {
-  const { items: timelines, isMutating, create, update, reorder, invalidate } =
-    useCrudResource<TimelineType>({
-      resource: APP_CONFIG.ROUTE.TIMELINES,
-      labels: { singular: "timeline entry", plural: "timelines" },
-    });
+  const {
+    items: timelines,
+    isMutating,
+    create,
+    update,
+    reorder,
+    invalidate,
+  } = useCrudResource<TimelineType>({
+    resource: APP_CONFIG.ROUTE.TIMELINES,
+    labels: { singular: "timeline entry", plural: "timelines" },
+  });
 
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -126,7 +132,11 @@ export default function TimelinesSection() {
     });
   };
 
-  const updatePosition = (idx: number, field: keyof PositionForm, value: string) => {
+  const updatePosition = (
+    idx: number,
+    field: keyof PositionForm,
+    value: string,
+  ) => {
     const updated = [...workForm.positions];
     updated[idx] = { ...updated[idx], [field]: value };
     setWorkForm({ ...workForm, positions: updated });
@@ -168,7 +178,10 @@ export default function TimelinesSection() {
             employmentType: p.employmentType || undefined,
             description: p.description || undefined,
             skills: p.skills
-              ? p.skills.split(",").map((s) => s.trim()).filter(Boolean)
+              ? p.skills
+                  .split(",")
+                  .map((s) => s.trim())
+                  .filter(Boolean)
               : undefined,
           })),
           type: "work" as const,
@@ -205,16 +218,15 @@ export default function TimelinesSection() {
         companyLogo: t.companyLogo || "",
         companyWebsite: t.companyWebsite || "",
         isCurrentEmployer: t.isCurrentEmployer || false,
-        positions:
-          t.positions?.map((p) => ({
-            id: p.id,
-            title: p.title,
-            start: p.employmentPeriod?.start || "",
-            end: p.employmentPeriod?.end || "",
-            employmentType: p.employmentType || "",
-            description: p.description || "",
-            skills: p.skills?.join(", ") || "",
-          })) || [emptyPosition()],
+        positions: t.positions?.map((p) => ({
+          id: p.id,
+          title: p.title,
+          start: p.employmentPeriod?.start || "",
+          end: p.employmentPeriod?.end || "",
+          employmentType: p.employmentType || "",
+          description: p.description || "",
+          skills: p.skills?.join(", ") || "",
+        })) || [emptyPosition()],
       });
       setActiveTimelineTab("work");
     } else {
@@ -477,7 +489,11 @@ function WorkForm({
   isEditing?: boolean;
   onAddPosition: () => void;
   onRemovePosition: (idx: number) => void;
-  onUpdatePosition: (idx: number, field: keyof PositionForm, value: string) => void;
+  onUpdatePosition: (
+    idx: number,
+    field: keyof PositionForm,
+    value: string,
+  ) => void;
 }) {
   return (
     <Card>
@@ -705,9 +721,7 @@ function EducationForm({
             <Input
               value={form.location}
               list="edu-countries-list"
-              onChange={(e) =>
-                setForm({ ...form, location: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, location: e.target.value })}
               placeholder="e.g. Myanmar"
               className="h-11"
             />
@@ -721,9 +735,7 @@ function EducationForm({
             <Label>Period</Label>
             <Input
               value={form.period}
-              onChange={(e) =>
-                setForm({ ...form, period: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, period: e.target.value })}
               placeholder="e.g. 2020 - 2024"
               className="h-11"
             />
@@ -785,26 +797,48 @@ function WorkCard({
         <div className="flex flex-col gap-3">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-base sm:text-lg break-words">
+              <h3 className="font-semibold text-base sm:text-lg wrap-break-word">
                 {t.companyName}
               </h3>
               {t.companyWebsite && (
-                <p className="text-xs text-muted-foreground mt-1 break-words">
+                <p className="text-xs text-muted-foreground mt-1 wrap-break-word">
                   {t.companyWebsite}
                 </p>
               )}
             </div>
             <div className="flex gap-1 shrink-0">
-              <Button size="sm" variant="ghost" onClick={onMoveUp} disabled={isFirst} className="h-9 w-9 p-0">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={onMoveUp}
+                disabled={isFirst}
+                className="h-9 w-9 p-0"
+              >
                 <ArrowUp className="h-4 w-4" />
               </Button>
-              <Button size="sm" variant="ghost" onClick={onMoveDown} disabled={isLast} className="h-9 w-9 p-0">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={onMoveDown}
+                disabled={isLast}
+                className="h-9 w-9 p-0"
+              >
                 <ArrowDown className="h-4 w-4" />
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => onEdit(timeline)} className="h-9 w-9 p-0">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => onEdit(timeline)}
+                className="h-9 w-9 p-0"
+              >
                 <Edit className="h-4 w-4" />
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => onDelete(timeline.id, "work")} className="h-9 w-9 p-0">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => onDelete(timeline.id, "work")}
+                className="h-9 w-9 p-0"
+              >
                 <Trash2 className="h-4 w-4 text-destructive" />
               </Button>
             </div>
@@ -812,14 +846,19 @@ function WorkCard({
 
           <div className="flex flex-wrap gap-2">
             {t.isCurrentEmployer && (
-              <Badge variant="default" className="text-xs">Current</Badge>
+              <Badge variant="default" className="text-xs">
+                Current
+              </Badge>
             )}
           </div>
 
           {t.positions && t.positions.length > 0 && (
             <div className="space-y-2 mt-2">
               {t.positions.map((pos) => (
-                <div key={pos.id} className="border-l-2 border-border/50 pl-3 py-1">
+                <div
+                  key={pos.id}
+                  className="border-l-2 border-border/50 pl-3 py-1"
+                >
                   <p className="text-sm font-medium">{pos.title}</p>
                   <p className="text-xs text-muted-foreground">
                     {pos.employmentPeriod?.start}
@@ -831,7 +870,11 @@ function WorkCard({
                   {pos.skills && pos.skills.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-1">
                       {pos.skills.map((skill, i) => (
-                        <Badge key={i} variant="secondary" className="text-[10px]">
+                        <Badge
+                          key={i}
+                          variant="secondary"
+                          className="text-[10px]"
+                        >
                           {skill}
                         </Badge>
                       ))}
@@ -879,31 +922,57 @@ function EducationCard({
         <div className="flex flex-col gap-3">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-base sm:text-lg capitalize break-words">
+              <h3 className="font-semibold text-base sm:text-lg capitalize wrap-break-word">
                 {t.institution}
               </h3>
             </div>
             <div className="flex gap-1 shrink-0">
-              <Button size="sm" variant="ghost" onClick={onMoveUp} disabled={isFirst} className="h-9 w-9 p-0">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={onMoveUp}
+                disabled={isFirst}
+                className="h-9 w-9 p-0"
+              >
                 <ArrowUp className="h-4 w-4" />
               </Button>
-              <Button size="sm" variant="ghost" onClick={onMoveDown} disabled={isLast} className="h-9 w-9 p-0">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={onMoveDown}
+                disabled={isLast}
+                className="h-9 w-9 p-0"
+              >
                 <ArrowDown className="h-4 w-4" />
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => onEdit(timeline)} className="h-9 w-9 p-0">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => onEdit(timeline)}
+                className="h-9 w-9 p-0"
+              >
                 <Edit className="h-4 w-4" />
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => onDelete(timeline.id, "education")} className="h-9 w-9 p-0">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => onDelete(timeline.id, "education")}
+                className="h-9 w-9 p-0"
+              >
                 <Trash2 className="h-4 w-4 text-destructive" />
               </Button>
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
             {t.period && (
-              <Badge variant="outline" className="text-xs">{t.period}</Badge>
+              <Badge variant="outline" className="text-xs">
+                {t.period}
+              </Badge>
             )}
             {t.location && (
-              <Badge variant="outline" className="text-xs">{t.location}</Badge>
+              <Badge variant="outline" className="text-xs">
+                {t.location}
+              </Badge>
             )}
           </div>
         </div>

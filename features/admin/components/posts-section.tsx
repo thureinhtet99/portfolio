@@ -1,9 +1,10 @@
+import AdminSectionHeader from "@/components/shared/admin-section-header";
 import CustomLoading from "@/components/shared/custom-loading";
 import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
 import EmptyState from "@/components/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,7 +17,6 @@ import {
   Edit,
   Eye,
   EyeOff,
-  Plus,
   Save,
   Trash2,
 } from "lucide-react";
@@ -176,21 +176,12 @@ export default function PostsSection() {
 
   return (
     <Card>
-      <CardHeader>
-        <div className="flex justify-end items-center">
-          <Button
-            size="lg"
-            onClick={() => {
-              setIsAdding(!isAdding);
-              setEditingId(null);
-              resetForm();
-            }}
-          >
-            <Plus className="h-4 w-4" />
-            Add Post
-          </Button>
-        </div>
-      </CardHeader>
+      <AdminSectionHeader
+        title="Posts"
+        count={posts.length}
+        onAdd={() => setIsAdding(!isAdding)}
+        addLabel="Add Post"
+      />
       <CardContent className="space-y-4">
         {(isAdding || editingId) && (
           <Card>
@@ -302,14 +293,14 @@ export default function PostsSection() {
         )}
 
         <div className="space-y-3">
-          {posts.length === 0 && (isMutating || isMutating) ? (
+          {posts.length === 0 && isMutating ? (
             <CustomLoading />
           ) : (
             <>
               {posts.map((post, index) => (
                 <Card
                   key={post.id}
-                  className={`border border-muted-foreground/20 hover:border-muted-foreground transition-shadow ${editingId === post.id ? "border-primary" : ""}`}
+                  className={`border border-muted-foreground/20 hover:border-muted-foreground ${editingId === post.id ? "border-primary" : ""}`}
                 >
                   <CardContent className="px-4">
                     <div className="flex items-start justify-between gap-3">

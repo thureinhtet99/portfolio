@@ -59,12 +59,6 @@ export type DemoCredentialType = {
   password: string;
 };
 
-export type AdopterType = {
-  name: string;
-  url?: string;
-  description?: string;
-};
-
 export type ProjectType = {
   id: string;
   title: string;
@@ -74,10 +68,25 @@ export type ProjectType = {
   githubUrl?: string;
   liveUrl?: string;
   objectives?: string[];
-  keyChallenges?: string[];
+  collaborators?: string[];
   demoCredentials?: DemoCredentialType[];
-  adopters?: AdopterType[];
   featured?: boolean;
+};
+
+export type ProjectFormState = {
+  title: string;
+  description: string;
+  technologies: string;
+  githubUrl: string;
+  liveUrl: string;
+  objectives: string;
+  collaborators: string;
+  image: string;
+  demoUserEmail: string;
+  demoUserPassword: string;
+  demoAdminEmail: string;
+  demoAdminPassword: string;
+  featured: boolean;
 };
 
 export type CertificateType = {
@@ -177,7 +186,6 @@ export type ProjectDetailModalType = {
     github: string;
     liveDemo: string;
     demoCredentials?: DemoCredentialType[];
-    adopters?: AdopterType[];
   };
   children: ReactNode;
 };

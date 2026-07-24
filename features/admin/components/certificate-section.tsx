@@ -1,4 +1,5 @@
 import AdminSectionHeader from "@/components/shared/admin-section-header";
+import CustomLoading from "@/components/shared/custom-loading";
 import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
 import EmptyState from "@/components/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
@@ -6,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
 import { APP_CONFIG } from "@/config/app-config";
 import { useCrudResource } from "@/hooks/use-crud";
 import { useImageUpload } from "@/hooks/use-image-upload";
@@ -27,11 +27,17 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export default function CertificatesSection() {
-  const { items: certificates, isMutating, create, update, remove, reorder } =
-    useCrudResource<CertificateType>({
-      resource: APP_CONFIG.ROUTE.CERTIFICATES,
-      labels: { singular: "certificate", plural: "certificates" },
-    });
+  const {
+    items: certificates,
+    isMutating,
+    create,
+    update,
+    remove,
+    reorder,
+  } = useCrudResource<CertificateType>({
+    resource: APP_CONFIG.ROUTE.CERTIFICATES,
+    labels: { singular: "certificate", plural: "certificates" },
+  });
 
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -39,7 +45,6 @@ export default function CertificatesSection() {
   const [certificateToDelete, setCertificateToDelete] = useState<string | null>(
     null,
   );
-  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     issuer: "",
@@ -75,7 +80,6 @@ export default function CertificatesSection() {
       return;
     }
 
-    setIsSaving(true);
     try {
       const imageUrl = await imageUpload.upload();
 
@@ -96,9 +100,7 @@ export default function CertificatesSection() {
         setIsAdding(false);
       }
       resetForm();
-    } finally {
-      setIsSaving(false);
-    }
+    } catch {}
   };
 
   const handleEdit = (certificate: CertificateType) => {
@@ -160,7 +162,7 @@ export default function CertificatesSection() {
   return (
     <Card>
       <AdminSectionHeader
-        title="Manage Certificates"
+        title="Certificates"
         count={certificates.length}
         onAdd={() => setIsAdding(!isAdding)}
         addLabel="Add Certificate"
@@ -173,25 +175,14 @@ export default function CertificatesSection() {
             imageUpload={imageUpload}
             onSave={handleSave}
             onCancel={handleCancel}
-            isLoading={isSaving}
+            isLoading={isMutating}
             isEditing={!!editingId}
           />
         )}
 
         <div className="space-y-3">
-          {certificates.length === 0 && (isMutating || isSaving) ? (
-            Array.from({ length: 2 }).map((_, idx) => (
-              <Card key={idx}>
-                <CardContent className="p-4 space-y-3">
-                  <Skeleton className="h-6 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                  <div className="flex gap-2">
-                    <Skeleton className="h-6 w-20" />
-                    <Skeleton className="h-6 w-24" />
-                  </div>
-                </CardContent>
-              </Card>
-            ))
+          {certificates.length === 0 && isMutating ? (
+            <CustomLoading />
           ) : (
             <>
               {certificates.map((certificate, index) => (
@@ -218,7 +209,7 @@ export default function CertificatesSection() {
       <DeleteConfirmBox
         deleteDialogOpen={deleteDialogOpen}
         setDeleteDialogOpen={setDeleteDialogOpen}
-        isLoading={isMutating || isSaving}
+        isLoading={isMutating}
         handleDelete={handleDelete}
         description="Are you sure you want to delete this certificate? This action cannot be undone."
       />
@@ -259,7 +250,7 @@ function CertificateForm({
 
   return (
     <Card>
-      <CardContent className="pt-6 space-y-4">
+      <CardContent className="space-y-4">
         {/* Image Upload Section */}
         <div className="space-y-2">
           <Label>Certificate Image</Label>
@@ -411,11 +402,9 @@ function CertificateCard({
 }) {
   return (
     <Card
-      className={`hover:shadow-md transition-shadow ${
-        isEditing ? "border-primary" : ""
-      }`}
+      className={`border border-muted-foreground/20 hover:border-muted-foreground ${isEditing ? "border-primary" : ""}`}
     >
-      <CardContent className="p-4 sm:p-5">
+      <CardContent className="px-4 ">
         <div className="flex flex-col gap-3">
           {/* Certificate Image */}
           {certificate.image && (
@@ -432,12 +421,10 @@ function CertificateCard({
           {/* Header */}
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-base sm:text-lg capitalize break-words">
+              <h3 className="font-semibold text-base sm:text-lg capitalize wrap-break-wordword">
                 {certificate.title}
               </h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                {certificate.issuer}
-              </p>
+              <p className="text-sm my-2">{certificate.issuer}</p>
             </div>
             <div className="flex gap-1 shrink-0">
               <Button
@@ -479,34 +466,40 @@ function CertificateCard({
             </div>
           </div>
 
-          {/* Issue Date */}
-          {certificate.issueDate && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4" />
-              <span>
-                {new Date(certificate.issueDate).toLocaleDateString()}
-              </span>
-            </div>
-          )}
+          <div className="flex items-center justify-between">
+            {/* Issue Date */}
+            {certificate.issueDate && (
+              <div className="flex items-center gap-1 text-sm">
+                <Calendar className="h-4 w-4" />
+                <span>
+                  {new Date(certificate.issueDate).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "2-digit",
+                  })}
+                </span>
+              </div>
+            )}
 
-          {/* Credential Info */}
-          <div className="flex flex-wrap gap-2">
-            {certificate.credentialId && (
-              <Badge variant="outline" className="text-xs">
-                ID: {certificate.credentialId}
-              </Badge>
-            )}
-            {certificate.credentialUrl && (
-              <a
-                href={certificate.credentialUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <ExternalLink className="h-4 w-4" />
-                View Credential
-              </a>
-            )}
+            {/* Credential Info */}
+            <div className="flex flex-wrap gap-4">
+              {certificate.credentialId && (
+                <Badge variant="outline" className="text-sm">
+                  ID: {certificate.credentialId}
+                </Badge>
+              )}
+              {certificate.credentialUrl && (
+                <a
+                  href={certificate.credentialUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-sm hover:text-primary transition-colors"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  Credential
+                </a>
+              )}
+            </div>
           </div>
         </div>
       </CardContent>

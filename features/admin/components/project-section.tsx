@@ -1,4 +1,5 @@
 import AdminSectionHeader from "@/components/shared/admin-section-header";
+import CustomLoading from "@/components/shared/custom-loading";
 import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
 import EmptyState from "@/components/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
@@ -6,16 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { APP_CONFIG } from "@/config/app-config";
+import { ProjectCredentialsPanel } from "@/features/projects/components/project-credentials-panel";
 import { useCrudResource } from "@/hooks/use-crud";
 import { useImageUpload } from "@/hooks/use-image-upload";
-import { ProjectCredentialsPanel } from "@/features/projects/components/project-credentials-panel";
 import {
-  AdopterType,
   DemoCredentialType,
+  ProjectFormState,
   ProjectType,
 } from "@/types/index.type";
 import {
@@ -34,23 +34,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
-type ProjectFormState = {
-  title: string;
-  description: string;
-  technologies: string;
-  githubUrl: string;
-  liveUrl: string;
-  objectives: string;
-  keyChallenges: string;
-  image: string;
-  demoUserEmail: string;
-  demoUserPassword: string;
-  demoAdminEmail: string;
-  demoAdminPassword: string;
-  adopters: string;
-  featured: boolean;
-};
-
 const createEmptyForm = (): ProjectFormState => ({
   title: "",
   description: "",
@@ -58,13 +41,12 @@ const createEmptyForm = (): ProjectFormState => ({
   githubUrl: "",
   liveUrl: "",
   objectives: "",
-  keyChallenges: "",
+  collaborators: "",
   image: "",
   demoUserEmail: "",
   demoUserPassword: "",
   demoAdminEmail: "",
   demoAdminPassword: "",
-  adopters: "",
   featured: false,
 });
 
@@ -87,33 +69,23 @@ const getDemoCredentialsFromForm = (
     },
   ].filter((credential) => credential.email && credential.password);
 
-const getAdoptersFromForm = (formData: ProjectFormState): AdopterType[] =>
-  formData.adopters
-    ? formData.adopters
-        .split("\n")
-        .filter((line) => line.trim())
-        .map((line) => {
-          const parts = line.split("|").map((p) => p.trim());
-          return {
-            name: parts[0],
-            url: parts[1] || undefined,
-            description: parts[2] || undefined,
-          };
-        })
-    : [];
-
 export default function ProjectsSection() {
-  const { items: projects, isMutating, create, update, remove, reorder } =
-    useCrudResource<ProjectType>({
-      resource: APP_CONFIG.ROUTE.PROJECTS,
-      labels: { singular: "project", plural: "projects" },
-    });
+  const {
+    items: projects,
+    isMutating,
+    create,
+    update,
+    remove,
+    reorder,
+  } = useCrudResource<ProjectType>({
+    resource: APP_CONFIG.ROUTE.PROJECTS,
+    labels: { singular: "project", plural: "projects" },
+  });
 
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState<ProjectFormState>(createEmptyForm());
 
   const imageUpload = useImageUpload(formData.image || undefined);
@@ -145,11 +117,10 @@ export default function ProjectsSection() {
       objectives: data.objectives
         ? data.objectives.split("\n").filter((item) => item.trim())
         : undefined,
-      keyChallenges: data.keyChallenges
-        ? data.keyChallenges.split("\n").filter((item) => item.trim())
+      collaborators: data.collaborators
+        ? data.collaborators.split("\n").filter((item) => item.trim())
         : undefined,
       demoCredentials: getDemoCredentialsFromForm(data),
-      adopters: getAdoptersFromForm(data),
       image: imageUrl || undefined,
       featured: data.featured,
     };
@@ -169,7 +140,6 @@ export default function ProjectsSection() {
       return;
     }
 
-    setIsSaving(true);
     try {
       const payload = await buildPayload(formData);
       if (editingId) {
@@ -180,9 +150,7 @@ export default function ProjectsSection() {
         setIsAdding(false);
       }
       resetForm();
-    } finally {
-      setIsSaving(false);
-    }
+    } catch {}
   };
 
   const handleEdit = (project: ProjectType) => {
@@ -194,8 +162,8 @@ export default function ProjectsSection() {
       githubUrl: project.githubUrl || "",
       liveUrl: project.liveUrl || "",
       objectives: project.objectives ? project.objectives.join("\n") : "",
-      keyChallenges: project.keyChallenges
-        ? project.keyChallenges.join("\n")
+      collaborators: project.collaborators
+        ? project.collaborators.join("\n")
         : "",
       image: project.image || "",
       demoUserEmail:
@@ -214,11 +182,6 @@ export default function ProjectsSection() {
         project.demoCredentials?.find(
           (credential) => credential.role.toLowerCase() === "admin",
         )?.password || "",
-      adopters: project.adopters
-        ? project.adopters
-            .map((a) => [a.name, a.url || "", a.description || ""].join(" | "))
-            .join("\n")
-        : "",
       featured: project.featured || false,
     });
     imageUpload.reset();
@@ -244,7 +207,10 @@ export default function ProjectsSection() {
       reordered[index - 1],
       reordered[index],
     ];
-    const updates = reordered.map((project, idx) => ({ id: project.id, order: idx }));
+    const updates = reordered.map((project, idx) => ({
+      id: project.id,
+      order: idx,
+    }));
     try {
       await reorder(updates);
     } catch {
@@ -259,7 +225,10 @@ export default function ProjectsSection() {
       reordered[index + 1],
       reordered[index],
     ];
-    const updates = reordered.map((project, idx) => ({ id: project.id, order: idx }));
+    const updates = reordered.map((project, idx) => ({
+      id: project.id,
+      order: idx,
+    }));
     try {
       await reorder(updates);
     } catch {
@@ -270,7 +239,7 @@ export default function ProjectsSection() {
   return (
     <Card>
       <AdminSectionHeader
-        title="Manage Projects"
+        title="Projects"
         count={projects.length}
         onAdd={() => setIsAdding(!isAdding)}
         addLabel="Add Project"
@@ -283,26 +252,14 @@ export default function ProjectsSection() {
             imageUpload={imageUpload}
             onSave={handleSave}
             onCancel={handleCancel}
-            isLoading={isSaving}
+            isLoading={isMutating}
             isEditing={!!editingId}
           />
         )}
 
         <div className="space-y-3">
-          {projects.length === 0 && (isMutating || isSaving) ? (
-            Array.from({ length: 2 }).map((_, idx) => (
-              <Card key={idx}>
-                <CardContent className="p-4 space-y-3">
-                  <Skeleton className="h-6 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                  <div className="flex gap-2">
-                    <Skeleton className="h-6 w-20" />
-                    <Skeleton className="h-6 w-24" />
-                  </div>
-                  <Skeleton className="h-16 w-full" />
-                </CardContent>
-              </Card>
-            ))
+          {projects.length === 0 && isMutating ? (
+            <CustomLoading />
           ) : (
             <>
               {projects.map((project, idx) => (
@@ -329,7 +286,7 @@ export default function ProjectsSection() {
       <DeleteConfirmBox
         deleteDialogOpen={deleteDialogOpen}
         setDeleteDialogOpen={setDeleteDialogOpen}
-        isLoading={isMutating || isSaving}
+        isLoading={isMutating}
         handleDelete={handleDelete}
         description="Are you sure you want to delete this project? This action cannot be undone."
       />
@@ -484,9 +441,9 @@ function ProjectForm({
         <div className="space-y-2">
           <Label>Key Challenges (one per line)</Label>
           <Textarea
-            value={formData.keyChallenges}
+            value={formData.collaborators}
             onChange={(e) =>
-              setFormData({ ...formData, keyChallenges: e.target.value })
+              setFormData({ ...formData, collaborators: e.target.value })
             }
             placeholder="• Challenge 1&#10;• Challenge 2&#10;• Challenge 3"
             rows={4}
@@ -660,7 +617,7 @@ function ProjectCard({
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="font-semibold text-base sm:text-lg capitalize break-words">
+                <h3 className="font-semibold text-base sm:text-lg capitalize wrap-break-word">
                   {project.title}
                 </h3>
               </div>
@@ -737,7 +694,7 @@ function ProjectCard({
 
           {/* Description */}
           {project.description && (
-            <p className="text-muted-foreground leading-relaxed break-words">
+            <p className="text-muted-foreground leading-relaxed wrap-break-word">
               {project.description}
             </p>
           )}
@@ -771,7 +728,7 @@ function ProjectCard({
                 {project.objectives.map((objective, idx) => (
                   <li
                     key={idx}
-                    className="text-muted-foreground break-words leading-relaxed"
+                    className="text-muted-foreground wrap-break-wordword leading-relaxed"
                   >
                     {objective}
                   </li>
@@ -781,16 +738,16 @@ function ProjectCard({
           )}
 
           {/* Key Challenges */}
-          {project.keyChallenges && project.keyChallenges.length > 0 && (
+          {project.collaborators && project.collaborators.length > 0 && (
             <div className="mt-1">
               <p className="text-sm font-medium mb-2">Key Challenges:</p>
               <ul className="list-disc list-inside space-y-1.5 text-sm">
-                {project.keyChallenges.map((challenge, idx) => (
+                {project.collaborators.map((collab, idx) => (
                   <li
                     key={idx}
-                    className="text-muted-foreground break-words leading-relaxed"
+                    className="text-muted-foreground wrap-break-wordword leading-relaxed"
                   >
-                    {challenge}
+                    {collab}
                   </li>
                 ))}
               </ul>
