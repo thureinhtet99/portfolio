@@ -1,11 +1,14 @@
 import CustomLoading from "@/components/shared/custom-loading";
 import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
+import EmptyState from "@/components/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { APP_CONFIG } from "@/config/app-config";
+import { useCrudResource } from "@/hooks/use-crud";
 import { PostType } from "@/types/index.type";
 import {
   ArrowDown,
@@ -17,17 +20,26 @@ import {
   Save,
   Trash2,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 export default function PostsSection() {
-  const [posts, setPosts] = useState<PostType[]>([]);
+  const {
+    items: posts,
+    isMutating,
+    create,
+    update,
+    remove,
+  } = useCrudResource<PostType>({
+    resource: APP_CONFIG.ROUTE.POSTS,
+    labels: { singular: "post", plural: "posts" },
+  });
+
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [postsLoading, setPostsLoading] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     slug: "",
     title: "",
@@ -36,248 +48,6 @@ export default function PostsSection() {
     tags: "",
     published: false,
   });
-
-  useEffect(() => {
-    loadPosts();
-  }, []);
-
-  const loadPosts = async () => {
-    try {
-      const response = await fetch("/api/posts");
-      const data = await response.json();
-      if (data.success) {
-        setPosts(data.data || []);
-      }
-    } catch (error) {
-      console.error("Failed to load posts:", error);
-      toast.error("Failed to load posts");
-    } finally {
-      setPostsLoading(false);
-    }
-  };
-
-  const handleAdd = async () => {
-    if (!formData.slug || !formData.title || !formData.body) {
-      toast.error("Slug, title, and body are required");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const payload = {
-        slug: formData.slug,
-        title: formData.title,
-        excerpt: formData.excerpt || undefined,
-        body: formData.body,
-        tags: formData.tags
-          ? formData.tags
-              .split(",")
-              .map((t) => t.trim())
-              .filter(Boolean)
-          : [],
-        published: formData.published,
-      };
-
-      const response = await fetch("/api/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        await loadPosts();
-        resetForm();
-        setIsAdding(false);
-        toast.success("Post created successfully!");
-      } else {
-        throw new Error(data.error || "Failed to create post");
-      }
-    } catch (error) {
-      const msg =
-        error instanceof Error ? error.message : "Failed to create post";
-      toast.error(msg);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleEdit = (post: PostType) => {
-    setEditingId(post.id);
-    setFormData({
-      slug: post.slug,
-      title: post.title,
-      excerpt: post.excerpt || "",
-      body: post.body,
-      tags: post.tags?.join(", ") || "",
-      published: post.published,
-    });
-    setIsAdding(false);
-  };
-
-  const handleUpdate = async () => {
-    if (!editingId || !formData.slug || !formData.title || !formData.body) {
-      toast.error("Slug, title, and body are required");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const payload = {
-        id: editingId,
-        slug: formData.slug,
-        title: formData.title,
-        excerpt: formData.excerpt || undefined,
-        body: formData.body,
-        tags: formData.tags
-          ? formData.tags
-              .split(",")
-              .map((t) => t.trim())
-              .filter(Boolean)
-          : [],
-        published: formData.published,
-      };
-
-      const response = await fetch("/api/posts", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        await loadPosts();
-        resetForm();
-        setEditingId(null);
-        toast.success("Post updated successfully!");
-      } else {
-        throw new Error(data.error || "Failed to update post");
-      }
-    } catch (error) {
-      const msg =
-        error instanceof Error ? error.message : "Failed to update post";
-      toast.error(msg);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const openDeleteDialog = (id: string) => {
-    setPostToDelete(id);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleDelete = async () => {
-    if (!postToDelete) return;
-
-    setIsLoading(true);
-    try {
-      const response = await fetch(`/api/posts?id=${postToDelete}`, {
-        method: "DELETE",
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        await loadPosts();
-        setDeleteDialogOpen(false);
-        setPostToDelete(null);
-        toast.success("Post deleted successfully!");
-      } else {
-        throw new Error(data.error || "Failed to delete post");
-      }
-    } catch (error) {
-      const msg =
-        error instanceof Error ? error.message : "Failed to delete post";
-      toast.error(msg);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const togglePublished = async (post: PostType) => {
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/posts", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: post.id,
-          slug: post.slug,
-          title: post.title,
-          excerpt: post.excerpt,
-          body: post.body,
-          tags: post.tags,
-          published: !post.published,
-        }),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        await loadPosts();
-        toast.success(post.published ? "Post unpublished" : "Post published");
-      }
-    } catch {
-      toast.error("Failed to toggle publish state");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const moveUp = async (index: number) => {
-    if (index === 0) return;
-    const reordered = [...posts];
-    [reordered[index], reordered[index - 1]] = [
-      reordered[index - 1],
-      reordered[index],
-    ];
-    const updates = reordered.map((p, i) => ({ id: p.id, order: i }));
-
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/posts", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ posts: updates }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        await loadPosts();
-        toast.success("Order updated");
-      }
-    } catch {
-      toast.error("Failed to update order");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const moveDown = async (index: number) => {
-    if (index === posts.length - 1) return;
-    const reordered = [...posts];
-    [reordered[index], reordered[index + 1]] = [
-      reordered[index + 1],
-      reordered[index],
-    ];
-    const updates = reordered.map((p, i) => ({ id: p.id, order: i }));
-
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/posts", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ posts: updates }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        await loadPosts();
-        toast.success("Order updated");
-      }
-    } catch {
-      toast.error("Failed to update order");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const resetForm = () => {
     setFormData({
@@ -303,6 +73,138 @@ export default function PostsSection() {
       .replace(/(^-|-$)/g, "");
   };
 
+  const handleSave = async () => {
+    if (!formData.slug || !formData.title || !formData.body) {
+      toast.error("Slug, title, and body are required");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const payload = {
+        slug: formData.slug,
+        title: formData.title,
+        excerpt: formData.excerpt || undefined,
+        body: formData.body,
+        tags: formData.tags
+          ? formData.tags
+              .split(",")
+              .map((t) => t.trim())
+              .filter(Boolean)
+          : [],
+        published: formData.published,
+      };
+
+      if (editingId) {
+        await update({ id: editingId, ...payload });
+        setEditingId(null);
+      } else {
+        await create(payload);
+        setIsAdding(false);
+      }
+      resetForm();
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleEdit = (post: PostType) => {
+    setEditingId(post.id);
+    setFormData({
+      slug: post.slug,
+      title: post.title,
+      excerpt: post.excerpt || "",
+      body: post.body,
+      tags: post.tags?.join(", ") || "",
+      published: post.published,
+    });
+    setIsAdding(false);
+  };
+
+  const openDeleteDialog = (id: string) => {
+    setPostToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!postToDelete) return;
+    await remove(postToDelete);
+    setDeleteDialogOpen(false);
+    setPostToDelete(null);
+  };
+
+  const togglePublished = async (post: PostType) => {
+    setIsSaving(true);
+    try {
+      await update({
+        id: post.id,
+        slug: post.slug,
+        title: post.title,
+        excerpt: post.excerpt,
+        body: post.body,
+        tags: post.tags,
+        published: !post.published,
+      });
+      toast.success(post.published ? "Post unpublished" : "Post published");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const moveUp = async (index: number) => {
+    if (index === 0) return;
+    setIsSaving(true);
+    try {
+      const reordered = [...posts];
+      [reordered[index], reordered[index - 1]] = [
+        reordered[index - 1],
+        reordered[index],
+      ];
+      const updates = reordered.map((p, i) => ({ id: p.id, order: i }));
+
+      const response = await fetch(`/api/${APP_CONFIG.ROUTE.POSTS}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ posts: updates }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        toast.success("Order updated");
+      } else {
+        toast.error(data.error || "Failed to update order");
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const moveDown = async (index: number) => {
+    if (index === posts.length - 1) return;
+    setIsSaving(true);
+    try {
+      const reordered = [...posts];
+      [reordered[index], reordered[index + 1]] = [
+        reordered[index + 1],
+        reordered[index],
+      ];
+      const updates = reordered.map((p, i) => ({ id: p.id, order: i }));
+
+      const response = await fetch(`/api/${APP_CONFIG.ROUTE.POSTS}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ posts: updates }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        toast.success("Order updated");
+      } else {
+        toast.error(data.error || "Failed to update order");
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -323,7 +225,7 @@ export default function PostsSection() {
       <CardContent className="space-y-4">
         {(isAdding || editingId) && (
           <Card>
-            <CardContent className="pt-6 space-y-4">
+            <CardContent className="space-y-6">
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Title *</Label>
@@ -376,7 +278,7 @@ export default function PostsSection() {
                     setFormData({ ...formData, body: e.target.value })
                   }
                   placeholder="Write your post content in Markdown..."
-                  className="min-h-[200px] text-sm"
+                  className="min-h-50"
                 />
               </div>
               <div className="space-y-2">
@@ -400,28 +302,28 @@ export default function PostsSection() {
                   type="button"
                 >
                   {formData.published ? (
-                    <Eye className="h-4 w-4 mr-1" />
+                    <Eye className="h-4 w-4" />
                   ) : (
-                    <EyeOff className="h-4 w-4 mr-1" />
+                    <EyeOff className="h-4 w-4" />
                   )}
                   {formData.published ? "Published" : "Draft"}
                 </Button>
               </div>
               <div className="flex gap-2">
                 <Button
-                  onClick={editingId ? handleUpdate : handleAdd}
+                  onClick={handleSave}
                   className="flex-1"
                   size="lg"
-                  disabled={isLoading}
+                  disabled={isSaving}
                 >
-                  <Save className="h-4 w-4 mr-2" />
-                  {isLoading ? "Saving..." : editingId ? "Update" : "Create"}
+                  <Save className="h-4 w-4" />
+                  {isSaving ? "Saving..." : editingId ? "Update" : "Create"}
                 </Button>
                 <Button
                   onClick={handleCancel}
                   variant="outline"
                   size="lg"
-                  disabled={isLoading}
+                  disabled={isSaving}
                 >
                   Cancel
                 </Button>
@@ -431,7 +333,7 @@ export default function PostsSection() {
         )}
 
         <div className="space-y-3">
-          {postsLoading ? (
+          {posts.length === 0 && (isMutating || isSaving) ? (
             <CustomLoading />
           ) : (
             <>
@@ -523,9 +425,7 @@ export default function PostsSection() {
                 </Card>
               ))}
               {posts.length === 0 && (
-                <div className="text-center py-12 text-muted-foreground">
-                  <p>No posts added yet.</p>
-                </div>
+                <EmptyState message="No posts added yet." />
               )}
             </>
           )}
@@ -535,8 +435,9 @@ export default function PostsSection() {
       <DeleteConfirmBox
         deleteDialogOpen={deleteDialogOpen}
         setDeleteDialogOpen={setDeleteDialogOpen}
-        isLoading={isLoading}
+        isLoading={isMutating || isSaving}
         handleDelete={handleDelete}
+        description="Are you sure you want to delete this post? This action cannot be undone."
       />
     </Card>
   );

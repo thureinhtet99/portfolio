@@ -25,11 +25,7 @@ import ProjectsSection from "./project-section";
 import SettingsSection from "./settings-section";
 import TimelinesSection from "./timeline-section";
 
-type Props = {
-  userName: string | null;
-};
-
-export function AdminView({ userName }: Props) {
+export function AdminView({ userName }: { userName: string | null }) {
   const [activeTab, setActiveTab] = useState("settings");
   const [isLoading, setIsLoading] = useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
@@ -52,24 +48,20 @@ export function AdminView({ userName }: Props) {
   };
 
   return (
-    <div className="app-shell space-y-6 py-2 md:py-4">
-      <div className="surface-panel flex flex-col gap-4 px-4 py-6 md:flex-row md:items-center md:justify-between md:px-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-[-0.03em] md:text-4xl">
-            Admin Dashboard
-          </h1>
-          <p>
-            Welcome back, <b className="text-foreground">{userName}</b>
-          </p>
-        </div>
+    <div className="app-shell space-y-6 py-2 md:py-4 border">
+      <div className="surface-panel flex flex-row items-center justify-between px-6">
+        <h2>
+          Welcome back,{" "}
+          <b className="text-muted-foreground text-xl">{userName}</b>
+        </h2>
 
         <Button
           variant="outline"
           onClick={() => setLogoutDialogOpen(true)}
-          className="w-full md:w-auto rounded-md"
+          className="w-auto rounded-md"
         >
-          <LogOut className="mr-2 h-4 w-4" />
-          Logout
+          <LogOut className="h-4 w-4" />
+          <span className="hidden sm:inline">Logout</span>
         </Button>
       </div>
 
@@ -78,15 +70,15 @@ export function AdminView({ userName }: Props) {
           <CardHeader>
             <CardTitle className="text-lg">Menu</CardTitle>
           </CardHeader>
-          <CardContent className="p-0">
-            <nav className="space-y-1 px-3 pb-3">
+          <CardContent>
+            <nav className="space-y-1">
               {adminMenuItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center gap-3 rounded-md px-4 py-3 text-sm font-medium transition-all ${
+                  className={`w-full flex items-center gap-3 cursor-pointer rounded-md px-4 py-3 text-sm font-medium transition-all ${
                     activeTab === item.id
-                      ? "bg-primary text-primary-foreground shadow-[0_14px_30px_-22px_rgba(34,34,34,0.55)]"
+                      ? "bg-primary text-muted"
                       : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
                   }`}
                 >
@@ -116,7 +108,7 @@ export function AdminView({ userName }: Props) {
               access the admin dashboard.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+          <DialogFooter className="gap-y-2">
             <Button
               variant="outline"
               onClick={() => setLogoutDialogOpen(false)}

@@ -3,18 +3,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-/**
- * Matches the { success, data } / { success, error } shape returned by every
- * route in app/api/* (see certificate-section.tsx, project-section.tsx, etc.
- * for the hand-written version this hook replaces).
- */
 type ApiListResponse<T> = { success: boolean; data?: T[]; error?: string };
 type ApiItemResponse<T> = { success: boolean; data?: T; error?: string };
-
 type UseCrudResourceOptions = {
-  /** e.g. APP_CONFIG.ROUTE.CERTIFICATES -> fetched at /api/{resource} */
   resource: string;
-  /** used only for toast copy, e.g. { singular: "certificate", plural: "certificates" } */
   labels: { singular: string; plural: string };
 };
 
@@ -103,6 +95,7 @@ export function useCrudResource<T extends { id: string }>({
     create: createMutation.mutateAsync,
     update: updateMutation.mutateAsync,
     remove: deleteMutation.mutateAsync,
+    invalidate,
     isMutating:
       createMutation.isPending ||
       updateMutation.isPending ||
@@ -113,14 +106,3 @@ export function useCrudResource<T extends { id: string }>({
 function capitalize(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
-
-/*
- * NOTE on API routes: this hook matches the existing convention seen in
- * app/api/certificates/route.ts — POST to create, PUT to update a full
- * record, DELETE with an ?id= query param. PATCH on these routes is
- * reserved for reordering and is intentionally NOT used here; add a
- * separate `reorder` mutation per-resource if a section needs drag
- * reordering (see certificate-section.tsx's existing PATCH calls).
- * If a resource route ever changes this convention, update its
- * mutationFn above to match — don't change the route just to fit the hook.
- */

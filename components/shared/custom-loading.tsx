@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 const TARGET = "loading...";
 const CHARS = "abcdefghijklmnopqrstuvwxyz.";
+const PAUSE_MS = 600; // how long to hold the fully-revealed text before restarting
 
 export default function CustomLoading() {
   const [display, setDisplay] = useState("");
@@ -11,6 +12,8 @@ export default function CustomLoading() {
   useEffect(() => {
     let revealed = 0;
     let typeInterval: ReturnType<typeof setInterval>;
+    let pauseTimeout: ReturnType<typeof setTimeout>;
+    let cancelled = false;
 
     const scramble = () => {
       revealed = 0;
@@ -26,12 +29,21 @@ export default function CustomLoading() {
         if (revealed >= TARGET.length) {
           setDisplay(TARGET);
           clearInterval(typeInterval);
+
+          // hold on the fully revealed text, then restart the scramble loop
+          pauseTimeout = setTimeout(() => {
+            if (!cancelled) scramble();
+          }, PAUSE_MS);
         }
       }, 55);
     };
 
     scramble();
-    return () => clearInterval(typeInterval);
+    return () => {
+      cancelled = true;
+      clearInterval(typeInterval);
+      clearTimeout(pauseTimeout);
+    };
   }, []);
 
   return (

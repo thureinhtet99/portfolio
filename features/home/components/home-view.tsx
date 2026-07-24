@@ -2,10 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { ProjectShowcaseCard } from "@/features/projects/components/project-showcase-card";
-import { experiences } from "@/features/timeline/data/experiences";
 import { WorkExperienceWithRail } from "@/features/timeline/components/work-experience-with-rail";
 import { cardReveal } from "@/lib/motion";
-import { ProjectType } from "@/types/index.type";
+import { ProjectType, WorkType } from "@/types/index.type";
 import { motion, useReducedMotion } from "framer-motion";
 import { Mail, MapPin, MoveRight } from "lucide-react";
 import { StaticImageData } from "next/image";
@@ -15,6 +14,7 @@ import { FaFile, FaGithub, FaLinkedin } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 
 type Props = {
+  experiences: WorkType[];
   residence: string;
   available: boolean;
   aboutMe: string;
@@ -33,6 +33,7 @@ type Props = {
 };
 
 export function HomeView({
+  experiences,
   residence,
   available,
   intro,
@@ -140,7 +141,11 @@ export function HomeView({
           <motion.h2 className=" text-4xl font-bold text-foreground tracking-[-0.02em]">
             Experiences
           </motion.h2>
-          <WorkExperienceWithRail experiences={experiences} />
+          {experiences.length > 0 ? (
+            <WorkExperienceWithRail experiences={experiences} />
+          ) : (
+            <p className="text-sm">No experiences yet.</p>
+          )}
         </div>
       </section>
 
@@ -194,9 +199,7 @@ export function HomeView({
               ))}
             </div>
           ) : (
-            <p className=" text-sm text-muted-foreground">
-              No featured projects yet.
-            </p>
+            <p className="text-sm">No featured projects yet.</p>
           )}
         </div>
       </section>

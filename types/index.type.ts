@@ -187,6 +187,8 @@ export type DeleteConfirmBoxType = {
   setDeleteDialogOpen: Dispatch<SetStateAction<boolean>>;
   isLoading: boolean;
   handleDelete: () => void;
+  title?: string;
+  description?: string;
 };
 
 export type FooterType = {

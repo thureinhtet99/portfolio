@@ -1,4 +1,5 @@
 import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
+import EmptyState from "@/components/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,10 +12,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { APP_CONFIG } from "@/config/app-config";
 import countries from "@/data/countries.json";
+import { useCrudResource } from "@/hooks/use-crud";
 import { TimelineType } from "@/types/index.type";
 import { ArrowDown, ArrowUp, Edit, Plus, Save, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -55,11 +58,15 @@ const emptyPosition = (): PositionForm => ({
 });
 
 export default function TimelinesSection() {
-  const [timelines, setTimelines] = useState<TimelineType[]>([]);
+  const { items: timelines, isMutating, create, update, invalidate } =
+    useCrudResource<TimelineType>({
+      resource: APP_CONFIG.ROUTE.TIMELINES,
+      labels: { singular: "timeline entry", plural: "timelines" },
+    });
+
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [timelinesLoading, setTimelinesLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [timelineToDelete, setTimelineToDelete] = useState<{
     id: string;
@@ -82,31 +89,50 @@ export default function TimelinesSection() {
   });
 
   useEffect(() => {
-    loadTimelines();
-  }, []);
-
-  useEffect(() => {
     resetForm();
     setIsAdding(false);
     setEditingId(null);
   }, [activeTimelineTab]);
 
-  const loadTimelines = async () => {
-    try {
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.TIMELINES}`);
-      const data = await response.json();
-      if (data.success) {
-        setTimelines(data.data || []);
-      }
-    } catch (error) {
-      console.error("Failed to load timelines:", error);
-      toast.error("Failed to load timelines");
-    } finally {
-      setTimelinesLoading(false);
-    }
+  const resetForm = () => {
+    setWorkForm({
+      companyName: "",
+      companyLogo: "",
+      companyWebsite: "",
+      isCurrentEmployer: false,
+      positions: [emptyPosition()],
+    });
+    setEducationForm({ institution: "", location: "", period: "" });
   };
 
-  const handleAdd = async () => {
+  const handleCancel = () => {
+    resetForm();
+    setIsAdding(false);
+    setEditingId(null);
+  };
+
+  const addPosition = () => {
+    setWorkForm({
+      ...workForm,
+      positions: [...workForm.positions, emptyPosition()],
+    });
+  };
+
+  const removePosition = (idx: number) => {
+    if (workForm.positions.length <= 1) return;
+    setWorkForm({
+      ...workForm,
+      positions: workForm.positions.filter((_, i) => i !== idx),
+    });
+  };
+
+  const updatePosition = (idx: number, field: keyof PositionForm, value: string) => {
+    const updated = [...workForm.positions];
+    updated[idx] = { ...updated[idx], [field]: value };
+    setWorkForm({ ...workForm, positions: updated });
+  };
+
+  const handleSave = async () => {
     if (activeTimelineTab === "work") {
       if (!workForm.companyName) {
         toast.error("Company name is required");
@@ -123,7 +149,7 @@ export default function TimelinesSection() {
       }
     }
 
-    setIsLoading(true);
+    setIsSaving(true);
     try {
       let payload;
       if (activeTimelineTab === "work") {
@@ -145,38 +171,27 @@ export default function TimelinesSection() {
               ? p.skills.split(",").map((s) => s.trim()).filter(Boolean)
               : undefined,
           })),
-          type: "work",
+          type: "work" as const,
         };
       } else {
         payload = {
           institution: educationForm.institution,
           location: educationForm.location || undefined,
           period: educationForm.period || undefined,
-          type: "education",
+          type: "education" as const,
         };
       }
 
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.TIMELINES}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        await loadTimelines();
-        resetForm();
-        setIsAdding(false);
-        toast.success("Timeline added successfully!");
+      if (editingId) {
+        await update({ id: editingId, ...payload });
+        setEditingId(null);
       } else {
-        throw new Error(data.error || "Failed to add timeline");
+        await create(payload);
+        setIsAdding(false);
       }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to add timeline";
-      toast.error(errorMessage);
+      resetForm();
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
@@ -215,80 +230,6 @@ export default function TimelinesSection() {
     setIsAdding(false);
   };
 
-  const handleUpdate = async () => {
-    if (!editingId) return;
-
-    if (activeTimelineTab === "work") {
-      if (!workForm.companyName) {
-        toast.error("Company name is required");
-        return;
-      }
-    } else {
-      if (!educationForm.institution) {
-        toast.error("Institution is required");
-        return;
-      }
-    }
-
-    setIsLoading(true);
-    try {
-      let payload;
-      if (activeTimelineTab === "work") {
-        payload = {
-          id: editingId,
-          companyName: workForm.companyName,
-          companyLogo: workForm.companyLogo || undefined,
-          companyWebsite: workForm.companyWebsite || undefined,
-          isCurrentEmployer: workForm.isCurrentEmployer,
-          positions: workForm.positions.map((p) => ({
-            id: p.id,
-            title: p.title,
-            employmentPeriod: {
-              start: p.start,
-              end: p.end || undefined,
-            },
-            employmentType: p.employmentType || undefined,
-            description: p.description || undefined,
-            skills: p.skills
-              ? p.skills.split(",").map((s) => s.trim()).filter(Boolean)
-              : undefined,
-          })),
-          type: "work",
-        };
-      } else {
-        payload = {
-          id: editingId,
-          institution: educationForm.institution,
-          location: educationForm.location || undefined,
-          period: educationForm.period || undefined,
-          type: "education",
-        };
-      }
-
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.TIMELINES}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        await loadTimelines();
-        resetForm();
-        setEditingId(null);
-        toast.success("Timeline updated successfully!");
-      } else {
-        throw new Error(data.error || "Failed to update timeline");
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to update timeline";
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const openDeleteDialog = (id: string, type: "work" | "education") => {
     setTimelineToDelete({ id, type });
     setDeleteDialogOpen(true);
@@ -296,17 +237,15 @@ export default function TimelinesSection() {
 
   const handleDelete = async () => {
     if (!timelineToDelete) return;
-
-    setIsLoading(true);
+    setIsSaving(true);
     try {
       const response = await fetch(
         `/api/${APP_CONFIG.ROUTE.TIMELINES}?id=${timelineToDelete.id}&type=${timelineToDelete.type}`,
         { method: "DELETE" },
       );
-
       const data = await response.json();
       if (data.success) {
-        await loadTimelines();
+        invalidate();
         setDeleteDialogOpen(false);
         setTimelineToDelete(null);
         toast.success("Timeline deleted successfully!");
@@ -318,7 +257,7 @@ export default function TimelinesSection() {
         error instanceof Error ? error.message : "Failed to delete timeline";
       toast.error(errorMessage);
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
@@ -326,20 +265,19 @@ export default function TimelinesSection() {
     const targetTimelines =
       type === "work" ? workTimelines : educationTimelines;
     if (index === 0) return;
-
-    const newTimelines = [...targetTimelines];
-    [newTimelines[index], newTimelines[index - 1]] = [
-      newTimelines[index - 1],
-      newTimelines[index],
-    ];
-
-    const updatedTimelines = newTimelines.map((timeline, idx) => ({
-      id: timeline.id,
-      order: idx,
-    }));
-
-    setIsLoading(true);
+    setIsSaving(true);
     try {
+      const newTimelines = [...targetTimelines];
+      [newTimelines[index], newTimelines[index - 1]] = [
+        newTimelines[index - 1],
+        newTimelines[index],
+      ];
+
+      const updatedTimelines = newTimelines.map((timeline, idx) => ({
+        id: timeline.id,
+        order: idx,
+      }));
+
       const response = await fetch(`/api/${APP_CONFIG.ROUTE.TIMELINES}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -348,7 +286,7 @@ export default function TimelinesSection() {
 
       const data = await response.json();
       if (data.success) {
-        await loadTimelines();
+        invalidate();
         toast.success("Order updated successfully!");
       } else {
         throw new Error(data.error || "Failed to update order");
@@ -358,7 +296,7 @@ export default function TimelinesSection() {
         error instanceof Error ? error.message : "Failed to update order";
       toast.error(errorMessage);
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
@@ -366,20 +304,19 @@ export default function TimelinesSection() {
     const targetTimelines =
       type === "work" ? workTimelines : educationTimelines;
     if (index === targetTimelines.length - 1) return;
-
-    const newTimelines = [...targetTimelines];
-    [newTimelines[index], newTimelines[index + 1]] = [
-      newTimelines[index + 1],
-      newTimelines[index],
-    ];
-
-    const updatedTimelines = newTimelines.map((timeline, idx) => ({
-      id: timeline.id,
-      order: idx,
-    }));
-
-    setIsLoading(true);
+    setIsSaving(true);
     try {
+      const newTimelines = [...targetTimelines];
+      [newTimelines[index], newTimelines[index + 1]] = [
+        newTimelines[index + 1],
+        newTimelines[index],
+      ];
+
+      const updatedTimelines = newTimelines.map((timeline, idx) => ({
+        id: timeline.id,
+        order: idx,
+      }));
+
       const response = await fetch(`/api/${APP_CONFIG.ROUTE.TIMELINES}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -388,7 +325,7 @@ export default function TimelinesSection() {
 
       const data = await response.json();
       if (data.success) {
-        await loadTimelines();
+        invalidate();
         toast.success("Order updated successfully!");
       } else {
         throw new Error(data.error || "Failed to update order");
@@ -398,46 +335,8 @@ export default function TimelinesSection() {
         error instanceof Error ? error.message : "Failed to update order";
       toast.error(errorMessage);
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
-  };
-
-  const resetForm = () => {
-    setWorkForm({
-      companyName: "",
-      companyLogo: "",
-      companyWebsite: "",
-      isCurrentEmployer: false,
-      positions: [emptyPosition()],
-    });
-    setEducationForm({ institution: "", location: "", period: "" });
-  };
-
-  const handleCancel = () => {
-    resetForm();
-    setIsAdding(false);
-    setEditingId(null);
-  };
-
-  const addPosition = () => {
-    setWorkForm({
-      ...workForm,
-      positions: [...workForm.positions, emptyPosition()],
-    });
-  };
-
-  const removePosition = (idx: number) => {
-    if (workForm.positions.length <= 1) return;
-    setWorkForm({
-      ...workForm,
-      positions: workForm.positions.filter((_, i) => i !== idx),
-    });
-  };
-
-  const updatePosition = (idx: number, field: keyof PositionForm, value: string) => {
-    const updated = [...workForm.positions];
-    updated[idx] = { ...updated[idx], [field]: value };
-    setWorkForm({ ...workForm, positions: updated });
   };
 
   const workTimelines = timelines.filter((t) => t.type === "work");
@@ -486,9 +385,9 @@ export default function TimelinesSection() {
               <WorkForm
                 form={workForm}
                 setForm={setWorkForm}
-                onSave={editingId ? handleUpdate : handleAdd}
+                onSave={handleSave}
                 onCancel={handleCancel}
-                isLoading={isLoading}
+                isLoading={isSaving}
                 isEditing={!!editingId}
                 onAddPosition={addPosition}
                 onRemovePosition={removePosition}
@@ -497,15 +396,13 @@ export default function TimelinesSection() {
             )}
 
             <div className="space-y-3">
-              {timelinesLoading ? (
+              {workTimelines.length === 0 && (isMutating || isSaving) ? (
                 Array.from({ length: 2 }).map((_, idx) => (
-                  <Card key={idx} className="animate-pulse">
-                    <CardContent className="p-3 sm:p-4">
-                      <div className="space-y-3">
-                        <div className="h-6 bg-muted rounded w-3/4" />
-                        <div className="h-4 bg-muted rounded w-1/2" />
-                        <div className="h-16 bg-muted rounded" />
-                      </div>
+                  <Card key={idx}>
+                    <CardContent className="p-3 sm:p-4 space-y-3">
+                      <Skeleton className="h-6 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                      <Skeleton className="h-16 w-full" />
                     </CardContent>
                   </Card>
                 ))
@@ -525,9 +422,7 @@ export default function TimelinesSection() {
                     />
                   ))}
                   {workTimelines.length === 0 && (
-                    <p className="text-center py-8 text-muted-foreground">
-                      No work experience added yet.
-                    </p>
+                    <EmptyState message="No work experience added yet." />
                   )}
                 </>
               )}
@@ -548,22 +443,20 @@ export default function TimelinesSection() {
               <EducationForm
                 form={educationForm}
                 setForm={setEducationForm}
-                onSave={editingId ? handleUpdate : handleAdd}
+                onSave={handleSave}
                 onCancel={handleCancel}
-                isLoading={isLoading}
+                isLoading={isSaving}
                 isEditing={!!editingId}
               />
             )}
 
             <div className="space-y-3">
-              {timelinesLoading ? (
+              {educationTimelines.length === 0 && (isMutating || isSaving) ? (
                 Array.from({ length: 2 }).map((_, idx) => (
-                  <Card key={idx} className="animate-pulse">
-                    <CardContent className="p-3 sm:p-4">
-                      <div className="space-y-3">
-                        <div className="h-6 bg-muted rounded w-3/4" />
-                        <div className="h-4 bg-muted rounded w-1/2" />
-                      </div>
+                  <Card key={idx}>
+                    <CardContent className="p-3 sm:p-4 space-y-3">
+                      <Skeleton className="h-6 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
                     </CardContent>
                   </Card>
                 ))
@@ -583,9 +476,7 @@ export default function TimelinesSection() {
                     />
                   ))}
                   {educationTimelines.length === 0 && (
-                    <p className="text-center py-8 text-muted-foreground">
-                      No education added yet.
-                    </p>
+                    <EmptyState message="No education added yet." />
                   )}
                 </>
               )}
@@ -597,8 +488,9 @@ export default function TimelinesSection() {
       <DeleteConfirmBox
         deleteDialogOpen={deleteDialogOpen}
         setDeleteDialogOpen={setDeleteDialogOpen}
-        isLoading={isLoading}
+        isLoading={isSaving}
         handleDelete={handleDelete}
+        description="Are you sure you want to delete this timeline entry? This action cannot be undone."
       />
     </Card>
   );

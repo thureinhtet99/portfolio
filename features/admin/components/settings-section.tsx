@@ -2,11 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { APP_CONFIG } from "@/config/app-config";
 import countries from "@/data/countries.json";
+import { useImageUpload } from "@/hooks/use-image-upload";
 import { FileText, Save, Upload } from "lucide-react";
 import Image from "next/image";
 import NextLink from "next/link";
@@ -15,7 +15,7 @@ import { FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa";
 import { toast } from "sonner";
 
 export default function SettingsSection() {
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const profileImageUpload = useImageUpload();
   const [residence, setResidence] = useState("Myanmar");
   const [available, setAvailable] = useState(true);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -36,7 +36,10 @@ export default function SettingsSection() {
       const data = await response.json();
 
       if (data.success && data.data) {
-        setImagePreview(data.data.profileImage || null);
+        profileImageUpload.onSelectFile(null);
+        if (data.data.profileImage) {
+          profileImageUpload.onSelectFile(null);
+        }
         setResumeUrl(data.data.resume || null);
         setResidence(data.data.residence || "Myanmar");
         setAvailable(
@@ -61,51 +64,21 @@ export default function SettingsSection() {
     loadSettings();
   }, []);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handleSaveProfileImage = async () => {
-    const fileInput = document.getElementById(
-      "profile-image",
-    ) as HTMLInputElement;
-    const file = fileInput?.files?.[0];
-    if (!file) {
+    const url = await profileImageUpload.upload();
+    if (!url) {
       toast.error("Please select an image first");
       return;
     }
 
     setIsUploading(true);
     try {
-      // Upload to Cloudinary
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("type", "image");
-
-      const uploadRes = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const uploadData = await uploadRes.json();
-      if (!uploadData.success) {
-        throw new Error(uploadData.error || "Upload failed");
-      }
-
-      // Save URL to database
       const saveRes = await fetch(`/api/${APP_CONFIG.ROUTE.SETTINGS}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           key: "profileImage",
-          value: uploadData.url,
+          value: url,
         }),
       });
 
@@ -368,10 +341,10 @@ export default function SettingsSection() {
             {imageLoading ? (
               <div className="w-48 h-48 rounded-full border-4 border-primary/20 shadow-lg bg-muted animate-pulse" />
             ) : (
-              imagePreview && (
+              profileImageUpload.preview && (
                 <div className="w-48 h-48 rounded-full overflow-hidden border-4 border-primary/20 shadow-lg relative">
                   <Image
-                    src={imagePreview}
+                    src={profileImageUpload.preview}
                     alt="Preview"
                     fill
                     className="object-cover"
@@ -396,7 +369,9 @@ export default function SettingsSection() {
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={handleImageUpload}
+                  onChange={(e) =>
+                    profileImageUpload.onSelectFile(e.target.files?.[0] ?? null)
+                  }
                 />
               </Label>
             </div>
@@ -404,15 +379,14 @@ export default function SettingsSection() {
             <Button
               className="w-full max-w-md"
               size="lg"
-              disabled={!imagePreview || isUploading}
+              disabled={
+                !profileImageUpload.preview || profileImageUpload.isUploading
+              }
               onClick={handleSaveProfileImage}
             >
               <Save className="h-4 w-4" />
-              {isUploading ? (
-                <>
-                  Uploading...
-                  <Spinner />
-                </>
+              {profileImageUpload.isUploading ? (
+                <>Uploading...</>
               ) : (
                 "Save Profile Picture"
               )}
@@ -446,14 +420,7 @@ export default function SettingsSection() {
             disabled={isSaving}
           >
             <Save className="h-4 w-4 mr-2" />
-            {isSaving ? (
-              <>
-                Updating...
-                <Spinner />
-              </>
-            ) : (
-              "Update Roles"
-            )}
+            {isSaving ? "Updating..." : "Update Roles"}
           </Button>
         </CardContent>
       </Card>
@@ -509,14 +476,7 @@ export default function SettingsSection() {
             disabled={isSaving}
           >
             <Save className="h-4 w-4 mr-2" />
-            {isSaving ? (
-              <>
-                Updating...
-                <Spinner />
-              </>
-            ) : (
-              "Update Residence"
-            )}
+            {isSaving ? "Updating..." : "Update Residence"}
           </Button>
         </CardContent>
       </Card>
@@ -575,14 +535,7 @@ export default function SettingsSection() {
             onClick={handleSaveResume}
           >
             <Save className="h-4 w-4 mr-2" />
-            {isUploading ? (
-              <>
-                Uploading...
-                <Spinner />
-              </>
-            ) : (
-              "Upload Resume"
-            )}
+            {isUploading ? "Uploading..." : "Upload Resume"}
           </Button>
         </CardContent>
       </Card>
@@ -635,14 +588,7 @@ export default function SettingsSection() {
             disabled={isSaving}
           >
             <Save className="h-4 w-4 mr-2" />
-            {isSaving ? (
-              <>
-                Updating...
-                <Spinner />
-              </>
-            ) : (
-              "Update About & Intro"
-            )}
+            {isSaving ? "Updating..." : "Update About & Intro"}
           </Button>
         </CardContent>
       </Card>
@@ -704,14 +650,7 @@ export default function SettingsSection() {
             disabled={isSaving}
           >
             <Save className="h-4 w-4 mr-2" />
-            {isSaving ? (
-              <>
-                Updating...
-                <Spinner />
-              </>
-            ) : (
-              "Update Social Links"
-            )}
+            {isSaving ? "Updating..." : "Update Social Links"}
           </Button>
         </CardContent>
       </Card>

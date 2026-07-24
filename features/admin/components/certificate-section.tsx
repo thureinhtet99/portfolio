@@ -1,10 +1,15 @@
+import AdminSectionHeader from "@/components/shared/admin-section-header";
 import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
+import EmptyState from "@/components/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { APP_CONFIG } from "@/config/app-config";
+import { useCrudResource } from "@/hooks/use-crud";
+import { useImageUpload } from "@/hooks/use-image-upload";
 import { CertificateType } from "@/types/index.type";
 import {
   ArrowDown,
@@ -12,26 +17,29 @@ import {
   Calendar,
   Edit,
   ExternalLink,
-  Plus,
   Save,
   Trash2,
   Upload,
   X,
 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 export default function CertificatesSection() {
-  const [certificates, setCertificates] = useState<CertificateType[]>([]);
+  const { items: certificates, isMutating, create, update, remove } =
+    useCrudResource<CertificateType>({
+      resource: APP_CONFIG.ROUTE.CERTIFICATES,
+      labels: { singular: "certificate", plural: "certificates" },
+    });
+
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [certificatesLoading, setCertificatesLoading] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [certificateToDelete, setCertificateToDelete] = useState<string | null>(
     null,
   );
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     issuer: "",
@@ -40,59 +48,36 @@ export default function CertificatesSection() {
     credentialUrl: "",
     image: "",
   });
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
 
-  useEffect(() => {
-    loadCertificates();
-  }, []);
+  const imageUpload = useImageUpload(formData.image || undefined);
 
-  const loadCertificates = async () => {
-    try {
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.CERTIFICATES}`);
-      const data = await response.json();
-      if (data.success) {
-        setCertificates(data.data || []);
-      }
-    } catch (error) {
-      console.error("Failed to load certificates:", error);
-      toast.error("Failed to load certificates");
-    } finally {
-      setCertificatesLoading(false);
-    }
+  const resetForm = () => {
+    setFormData({
+      title: "",
+      issuer: "",
+      issueDate: "",
+      credentialId: "",
+      credentialUrl: "",
+      image: "",
+    });
+    imageUpload.reset();
   };
 
-  const handleAdd = async () => {
+  const handleCancel = () => {
+    resetForm();
+    setIsAdding(false);
+    setEditingId(null);
+  };
+
+  const handleSave = async () => {
     if (!formData.title || !formData.issuer || !formData.issueDate) {
       toast.error("Please fill in all required fields");
       return;
     }
 
-    setIsLoading(true);
+    setIsSaving(true);
     try {
-      let imageUrl = formData.image;
-
-      // Upload image if a new file is selected
-      if (imageFile) {
-        setIsUploading(true);
-        const formDataUpload = new FormData();
-        formDataUpload.append("file", imageFile);
-        formDataUpload.append("type", "image");
-
-        const uploadRes = await fetch("/api/upload", {
-          method: "POST",
-          body: formDataUpload,
-        });
-
-        const uploadData = await uploadRes.json();
-        if (uploadData.success) {
-          imageUrl = uploadData.url;
-        } else {
-          throw new Error(uploadData.error || "Image upload failed");
-        }
-        setIsUploading(false);
-      }
+      const imageUrl = await imageUpload.upload();
 
       const payload = {
         title: formData.title,
@@ -103,28 +88,16 @@ export default function CertificatesSection() {
         image: imageUrl || undefined,
       };
 
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.CERTIFICATES}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        await loadCertificates();
-        resetForm();
-        setIsAdding(false);
-        toast.success("Certificate added successfully!");
+      if (editingId) {
+        await update({ id: editingId, ...payload });
+        setEditingId(null);
       } else {
-        throw new Error(data.error || "Failed to add certificate");
+        await create(payload);
+        setIsAdding(false);
       }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to add certificate";
-      toast.error(errorMessage);
-      console.error("Add certificate error:", error);
+      resetForm();
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
@@ -138,79 +111,8 @@ export default function CertificatesSection() {
       credentialUrl: certificate.credentialUrl || "",
       image: certificate.image || "",
     });
-    setImagePreview(certificate.image || null);
+    imageUpload.reset();
     setIsAdding(false);
-  };
-
-  const handleUpdate = async () => {
-    if (
-      !formData.title ||
-      !formData.issuer ||
-      !formData.issueDate ||
-      !editingId
-    ) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      let imageUrl = formData.image;
-
-      // Upload image if a new file is selected
-      if (imageFile) {
-        setIsUploading(true);
-        const formDataUpload = new FormData();
-        formDataUpload.append("file", imageFile);
-        formDataUpload.append("type", "image");
-
-        const uploadRes = await fetch("/api/upload", {
-          method: "POST",
-          body: formDataUpload,
-        });
-
-        const uploadData = await uploadRes.json();
-        if (uploadData.success) {
-          imageUrl = uploadData.url;
-        } else {
-          throw new Error(uploadData.error || "Image upload failed");
-        }
-        setIsUploading(false);
-      }
-
-      const payload = {
-        id: editingId,
-        title: formData.title,
-        issuer: formData.issuer,
-        issueDate: formData.issueDate,
-        credentialId: formData.credentialId || undefined,
-        credentialUrl: formData.credentialUrl || undefined,
-        image: imageUrl || undefined,
-      };
-
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.CERTIFICATES}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        await loadCertificates();
-        resetForm();
-        setEditingId(null);
-        toast.success("Certificate updated successfully!");
-      } else {
-        throw new Error(data.error || "Failed to update certificate");
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to update certificate";
-      toast.error(errorMessage);
-      console.error("Update certificate error:", error);
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const openDeleteDialog = (id: string) => {
@@ -220,175 +122,97 @@ export default function CertificatesSection() {
 
   const handleDelete = async () => {
     if (!certificateToDelete) return;
-
-    setIsLoading(true);
-    try {
-      const response = await fetch(
-        `/api/${APP_CONFIG.ROUTE.CERTIFICATES}?id=${certificateToDelete}`,
-        { method: "DELETE" },
-      );
-
-      const data = await response.json();
-      if (data.success) {
-        await loadCertificates();
-        setDeleteDialogOpen(false);
-        setCertificateToDelete(null);
-        toast.success("Certificate deleted successfully!");
-      } else {
-        throw new Error(data.error || "Failed to delete certificate");
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to delete certificate";
-      toast.error(errorMessage);
-      console.error("Delete certificate error:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    await remove(certificateToDelete);
+    setDeleteDialogOpen(false);
+    setCertificateToDelete(null);
   };
 
   const moveUp = async (index: number) => {
     if (index === 0) return;
-
-    const newCertificates = [...certificates];
-    [newCertificates[index], newCertificates[index - 1]] = [
-      newCertificates[index - 1],
-      newCertificates[index],
-    ];
-
-    // Update order values
-    const updatedCertificates = newCertificates.map((cert, idx) => ({
-      id: cert.id,
-      order: idx,
-    }));
-
-    setIsLoading(true);
+    setIsSaving(true);
     try {
+      const updatedCertificates = certificates.map((cert, idx) => ({
+        id: cert.id,
+        order: idx,
+      }));
+
       const response = await fetch(`/api/${APP_CONFIG.ROUTE.CERTIFICATES}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ certificates: updatedCertificates }),
       });
-
       const data = await response.json();
       if (data.success) {
-        await loadCertificates();
         toast.success("Order updated successfully!");
       } else {
-        throw new Error(data.error || "Failed to update order");
+        toast.error(data.error || "Failed to update order");
       }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to update order";
-      toast.error(errorMessage);
-      console.error("Update order error:", error);
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
   const moveDown = async (index: number) => {
     if (index === certificates.length - 1) return;
-
-    const newCertificates = [...certificates];
-    [newCertificates[index], newCertificates[index + 1]] = [
-      newCertificates[index + 1],
-      newCertificates[index],
-    ];
-
-    // Update order values
-    const updatedCertificates = newCertificates.map((cert, idx) => ({
-      id: cert.id,
-      order: idx,
-    }));
-
-    setIsLoading(true);
+    setIsSaving(true);
     try {
+      const newCertificates = [...certificates];
+      [newCertificates[index], newCertificates[index + 1]] = [
+        newCertificates[index + 1],
+        newCertificates[index],
+      ];
+      const updatedCertificates = newCertificates.map((cert, idx) => ({
+        id: cert.id,
+        order: idx,
+      }));
+
       const response = await fetch(`/api/${APP_CONFIG.ROUTE.CERTIFICATES}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ certificates: updatedCertificates }),
       });
-
       const data = await response.json();
       if (data.success) {
-        await loadCertificates();
         toast.success("Order updated successfully!");
       } else {
-        throw new Error(data.error || "Failed to update order");
+        toast.error(data.error || "Failed to update order");
       }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to update order";
-      toast.error(errorMessage);
-      console.error("Update order error:", error);
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
-  };
-
-  const resetForm = () => {
-    setFormData({
-      title: "",
-      issuer: "",
-      issueDate: "",
-      credentialId: "",
-      credentialUrl: "",
-      image: "",
-    });
-    setImagePreview(null);
-    setImageFile(null);
-  };
-
-  const handleCancel = () => {
-    resetForm();
-    setIsAdding(false);
-    setEditingId(null);
   };
 
   return (
     <Card>
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle className="flex items-center gap-2">
-            Manage Certificates
-          </CardTitle>
-          <Button size="lg" onClick={() => setIsAdding(!isAdding)}>
-            <Plus className="h-4 w-4" />
-            Add Certificate
-          </Button>
-        </div>
-      </CardHeader>
+      <AdminSectionHeader
+        title="Manage Certificates"
+        count={certificates.length}
+        onAdd={() => setIsAdding(!isAdding)}
+        addLabel="Add Certificate"
+      />
       <CardContent className="space-y-4">
         {(isAdding || editingId) && (
           <CertificateForm
             formData={formData}
             setFormData={setFormData}
-            imagePreview={imagePreview}
-            setImagePreview={setImagePreview}
-            imageFile={imageFile}
-            setImageFile={setImageFile}
-            isUploading={isUploading}
-            setIsUploading={setIsUploading}
-            onSave={editingId ? handleUpdate : handleAdd}
+            imageUpload={imageUpload}
+            onSave={handleSave}
             onCancel={handleCancel}
-            isLoading={isLoading}
+            isLoading={isSaving}
             isEditing={!!editingId}
           />
         )}
 
         <div className="space-y-3">
-          {certificatesLoading ? (
+          {certificates.length === 0 && (isMutating || isSaving) ? (
             Array.from({ length: 2 }).map((_, idx) => (
-              <Card key={idx} className="animate-pulse">
-                <CardContent className="p-4">
-                  <div className="space-y-3">
-                    <div className="h-6 bg-muted rounded w-3/4" />
-                    <div className="h-4 bg-muted rounded w-1/2" />
-                    <div className="flex gap-2">
-                      <div className="h-6 bg-muted rounded w-20" />
-                      <div className="h-6 bg-muted rounded w-24" />
-                    </div>
+              <Card key={idx}>
+                <CardContent className="p-4 space-y-3">
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <div className="flex gap-2">
+                    <Skeleton className="h-6 w-20" />
+                    <Skeleton className="h-6 w-24" />
                   </div>
                 </CardContent>
               </Card>
@@ -409,9 +233,7 @@ export default function CertificatesSection() {
                 />
               ))}
               {certificates.length === 0 && (
-                <div className="text-center py-12 text-muted-foreground">
-                  <p>No certificates added yet.</p>
-                </div>
+                <EmptyState message="No certificates added yet." />
               )}
             </>
           )}
@@ -421,8 +243,9 @@ export default function CertificatesSection() {
       <DeleteConfirmBox
         deleteDialogOpen={deleteDialogOpen}
         setDeleteDialogOpen={setDeleteDialogOpen}
-        isLoading={isLoading}
+        isLoading={isMutating || isSaving}
         handleDelete={handleDelete}
+        description="Are you sure you want to delete this certificate? This action cannot be undone."
       />
     </Card>
   );
@@ -431,12 +254,7 @@ export default function CertificatesSection() {
 function CertificateForm({
   formData,
   setFormData,
-  imagePreview,
-  setImagePreview,
-  // imageFile,
-  setImageFile,
-  isUploading,
-  // setIsUploading,
+  imageUpload,
   onSave,
   onCancel,
   isLoading,
@@ -450,43 +268,17 @@ function CertificateForm({
     credentialUrl: string;
     image: string;
   };
-  setFormData: (data: {
-    title: string;
-    issuer: string;
-    issueDate: string;
-    credentialId: string;
-    credentialUrl: string;
-    image: string;
-  }) => void;
-  imagePreview: string | null;
-  setImagePreview: (preview: string | null) => void;
-  imageFile: File | null;
-  setImageFile: (file: File | null) => void;
-  isUploading: boolean;
-  setIsUploading: (uploading: boolean) => void;
+  setFormData: (data: typeof formData) => void;
+  imageUpload: ReturnType<typeof useImageUpload>;
   onSave: () => void;
   onCancel: () => void;
   isLoading?: boolean;
   isEditing?: boolean;
 }) {
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Store the file for later upload
-    setImageFile(file);
-
-    // Show preview only
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
+  const { preview, isUploading, onSelectFile } = imageUpload;
 
   const handleRemoveImage = () => {
-    setImagePreview(null);
-    setImageFile(null);
+    onSelectFile(null);
     setFormData({ ...formData, image: "" });
   };
 
@@ -496,10 +288,10 @@ function CertificateForm({
         {/* Image Upload Section */}
         <div className="space-y-2">
           <Label>Certificate Image</Label>
-          {imagePreview ? (
+          {preview ? (
             <div className="relative w-full h-48 rounded-lg overflow-hidden border">
               <Image
-                src={imagePreview}
+                src={preview}
                 alt="Certificate preview"
                 fill
                 className="object-cover"
@@ -530,7 +322,7 @@ function CertificateForm({
                 type="file"
                 accept="image/*"
                 className="hidden"
-                onChange={handleImageUpload}
+                onChange={(e) => onSelectFile(e.target.files?.[0] ?? null)}
                 disabled={isUploading}
               />
             </Label>

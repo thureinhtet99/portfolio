@@ -1,12 +1,17 @@
+import AdminSectionHeader from "@/components/shared/admin-section-header";
 import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
+import EmptyState from "@/components/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { APP_CONFIG } from "@/config/app-config";
+import { useCrudResource } from "@/hooks/use-crud";
+import { useImageUpload } from "@/hooks/use-image-upload";
 import { ProjectCredentialsPanel } from "@/features/projects/components/project-credentials-panel";
 import {
   AdopterType,
@@ -19,7 +24,6 @@ import {
   Edit,
   ExternalLink,
   Github,
-  Plus,
   Save,
   Trash2,
   Upload,
@@ -27,7 +31,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 type ProjectFormState = {
@@ -99,38 +103,59 @@ const getAdoptersFromForm = (formData: ProjectFormState): AdopterType[] =>
     : [];
 
 export default function ProjectsSection() {
-  const [projects, setProjects] = useState<ProjectType[]>([]);
+  const { items: projects, isMutating, create, update, remove } =
+    useCrudResource<ProjectType>({
+      resource: APP_CONFIG.ROUTE.PROJECTS,
+      labels: { singular: "project", plural: "projects" },
+    });
+
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [projectsLoading, setProjectsLoading] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState<ProjectFormState>(createEmptyForm());
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
 
-  useEffect(() => {
-    loadProjects();
-  }, []);
+  const imageUpload = useImageUpload(formData.image || undefined);
 
-  const loadProjects = async () => {
-    try {
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.PROJECTS}`);
-      const data = await response.json();
-      if (data.success) {
-        setProjects(data.data || []);
-      }
-    } catch (error) {
-      console.error("Failed to load projects:", error);
-      toast.error("Failed to load projects");
-    } finally {
-      setProjectsLoading(false);
-    }
+  const resetForm = () => {
+    setFormData(createEmptyForm());
+    imageUpload.reset();
   };
 
-  const handleAdd = async () => {
+  const handleCancel = () => {
+    resetForm();
+    setIsAdding(false);
+    setEditingId(null);
+  };
+
+  const buildPayload = async (data: ProjectFormState) => {
+    const imageUrl = await imageUpload.upload();
+    return {
+      title: data.title,
+      description: data.description || undefined,
+      technologies: data.technologies
+        ? data.technologies
+            .split(",")
+            .map((tech) => tech.trim())
+            .filter((tech) => tech)
+        : undefined,
+      githubUrl: data.githubUrl || undefined,
+      liveUrl: data.liveUrl || undefined,
+      objectives: data.objectives
+        ? data.objectives.split("\n").filter((item) => item.trim())
+        : undefined,
+      keyChallenges: data.keyChallenges
+        ? data.keyChallenges.split("\n").filter((item) => item.trim())
+        : undefined,
+      demoCredentials: getDemoCredentialsFromForm(data),
+      adopters: getAdoptersFromForm(data),
+      image: imageUrl || undefined,
+      featured: data.featured,
+    };
+  };
+
+  const handleSave = async () => {
     if (!formData.title) {
       toast.error("Please enter a title");
       return;
@@ -144,76 +169,19 @@ export default function ProjectsSection() {
       return;
     }
 
-    setIsLoading(true);
+    setIsSaving(true);
     try {
-      let imageUrl = formData.image;
-
-      // Upload image if a new file is selected
-      if (imageFile) {
-        setIsUploading(true);
-        const formDataUpload = new FormData();
-        formDataUpload.append("file", imageFile);
-        formDataUpload.append("type", "image");
-
-        const uploadRes = await fetch("/api/upload", {
-          method: "POST",
-          body: formDataUpload,
-        });
-
-        const uploadData = await uploadRes.json();
-        if (uploadData.success) {
-          imageUrl = uploadData.url;
-        } else {
-          throw new Error(uploadData.error || "Image upload failed");
-        }
-        setIsUploading(false);
-      }
-
-      const payload = {
-        title: formData.title,
-        description: formData.description || undefined,
-        technologies: formData.technologies
-          ? formData.technologies
-              .split(",")
-              .map((tech) => tech.trim())
-              .filter((tech) => tech)
-          : undefined,
-        githubUrl: formData.githubUrl || undefined,
-        liveUrl: formData.liveUrl || undefined,
-        objectives: formData.objectives
-          ? formData.objectives.split("\n").filter((item) => item.trim())
-          : undefined,
-        keyChallenges: formData.keyChallenges
-          ? formData.keyChallenges.split("\n").filter((item) => item.trim())
-          : undefined,
-        demoCredentials: getDemoCredentialsFromForm(formData),
-        adopters: getAdoptersFromForm(formData),
-        image: imageUrl || undefined,
-        featured: formData.featured,
-      };
-
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.PROJECTS}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        await loadProjects();
-        resetForm();
-        setIsAdding(false);
-        toast.success("Project added successfully!");
+      const payload = await buildPayload(formData);
+      if (editingId) {
+        await update({ id: editingId, ...payload });
+        setEditingId(null);
       } else {
-        throw new Error(data.error || "Failed to add project");
+        await create(payload);
+        setIsAdding(false);
       }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to add project";
-      toast.error(errorMessage);
-      console.error("Add project error:", error);
+      resetForm();
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
@@ -253,96 +221,8 @@ export default function ProjectsSection() {
         : "",
       featured: project.featured || false,
     });
-    setImagePreview(project.image || null);
+    imageUpload.reset();
     setIsAdding(false);
-  };
-
-  const handleUpdate = async () => {
-    if (!formData.title || !editingId) {
-      toast.error("Please enter a title");
-      return;
-    }
-
-    if (
-      hasPartialCredential(formData.demoUserEmail, formData.demoUserPassword) ||
-      hasPartialCredential(formData.demoAdminEmail, formData.demoAdminPassword)
-    ) {
-      toast.error("Complete both email and password for each demo account");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      let imageUrl = formData.image;
-
-      // Upload image if a new file is selected
-      if (imageFile) {
-        setIsUploading(true);
-        const formDataUpload = new FormData();
-        formDataUpload.append("file", imageFile);
-        formDataUpload.append("type", "image");
-
-        const uploadRes = await fetch("/api/upload", {
-          method: "POST",
-          body: formDataUpload,
-        });
-
-        const uploadData = await uploadRes.json();
-        if (uploadData.success) {
-          imageUrl = uploadData.url;
-        } else {
-          throw new Error(uploadData.error || "Image upload failed");
-        }
-        setIsUploading(false);
-      }
-
-      const payload = {
-        id: editingId,
-        title: formData.title,
-        description: formData.description || undefined,
-        technologies: formData.technologies
-          ? formData.technologies
-              .split(",")
-              .map((tech) => tech.trim())
-              .filter((tech) => tech)
-          : undefined,
-        githubUrl: formData.githubUrl || undefined,
-        liveUrl: formData.liveUrl || undefined,
-        objectives: formData.objectives
-          ? formData.objectives.split("\n").filter((item) => item.trim())
-          : undefined,
-        keyChallenges: formData.keyChallenges
-          ? formData.keyChallenges.split("\n").filter((item) => item.trim())
-          : undefined,
-        demoCredentials: getDemoCredentialsFromForm(formData),
-        adopters: getAdoptersFromForm(formData),
-        image: imageUrl || undefined,
-        featured: formData.featured,
-      };
-
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.PROJECTS}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        await loadProjects();
-        resetForm();
-        setEditingId(null);
-        toast.success("Project updated successfully!");
-      } else {
-        throw new Error(data.error || "Failed to update project");
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to update project";
-      toast.error(errorMessage);
-      console.error("Update project error:", error);
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const openDeleteDialog = (id: string) => {
@@ -352,168 +232,104 @@ export default function ProjectsSection() {
 
   const handleDelete = async () => {
     if (!projectToDelete) return;
-
-    setIsLoading(true);
-    try {
-      const response = await fetch(
-        `/api/${APP_CONFIG.ROUTE.PROJECTS}?id=${projectToDelete}`,
-        { method: "DELETE" },
-      );
-
-      const data = await response.json();
-      if (data.success) {
-        await loadProjects();
-        setDeleteDialogOpen(false);
-        setProjectToDelete(null);
-        toast.success("Project deleted successfully!");
-      } else {
-        throw new Error(data.error || "Failed to delete project");
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to delete project";
-      toast.error(errorMessage);
-      console.error("Delete project error:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    await remove(projectToDelete);
+    setDeleteDialogOpen(false);
+    setProjectToDelete(null);
   };
 
   const moveUp = async (index: number) => {
     if (index === 0) return;
-
-    const newProjects = [...projects];
-    [newProjects[index], newProjects[index - 1]] = [
-      newProjects[index - 1],
-      newProjects[index],
-    ];
-
-    // Update order values
-    const updatedProjects = newProjects.map((project, idx) => ({
-      id: project.id,
-      order: idx,
-    }));
-
-    setIsLoading(true);
+    setIsSaving(true);
     try {
+      const newProjects = [...projects];
+      [newProjects[index], newProjects[index - 1]] = [
+        newProjects[index - 1],
+        newProjects[index],
+      ];
+      const updatedProjects = newProjects.map((project, idx) => ({
+        id: project.id,
+        order: idx,
+      }));
+
       const response = await fetch(`/api/${APP_CONFIG.ROUTE.PROJECTS}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ projects: updatedProjects }),
       });
-
       const data = await response.json();
       if (data.success) {
-        await loadProjects();
         toast.success("Order updated successfully!");
       } else {
-        throw new Error(data.error || "Failed to update order");
+        toast.error(data.error || "Failed to update order");
       }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to update order";
-      toast.error(errorMessage);
-      console.error("Update order error:", error);
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
 
   const moveDown = async (index: number) => {
     if (index === projects.length - 1) return;
-
-    const newProjects = [...projects];
-    [newProjects[index], newProjects[index + 1]] = [
-      newProjects[index + 1],
-      newProjects[index],
-    ];
-
-    // Update order values
-    const updatedProjects = newProjects.map((project, idx) => ({
-      id: project.id,
-      order: idx,
-    }));
-
-    setIsLoading(true);
+    setIsSaving(true);
     try {
+      const newProjects = [...projects];
+      [newProjects[index], newProjects[index + 1]] = [
+        newProjects[index + 1],
+        newProjects[index],
+      ];
+      const updatedProjects = newProjects.map((project, idx) => ({
+        id: project.id,
+        order: idx,
+      }));
+
       const response = await fetch(`/api/${APP_CONFIG.ROUTE.PROJECTS}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ projects: updatedProjects }),
       });
-
       const data = await response.json();
       if (data.success) {
-        await loadProjects();
         toast.success("Order updated successfully!");
       } else {
-        throw new Error(data.error || "Failed to update order");
+        toast.error(data.error || "Failed to update order");
       }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to update order";
-      toast.error(errorMessage);
-      console.error("Update order error:", error);
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
-  };
-
-  const resetForm = () => {
-    setFormData(createEmptyForm());
-    setImagePreview(null);
-    setImageFile(null);
-  };
-
-  const handleCancel = () => {
-    resetForm();
-    setIsAdding(false);
-    setEditingId(null);
   };
 
   return (
     <Card>
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle className="flex items-center gap-2">
-            Manage Projects
-          </CardTitle>
-          <Button size="lg" onClick={() => setIsAdding(!isAdding)}>
-            <Plus className="h-4 w-4" />
-            Add Project
-          </Button>
-        </div>
-      </CardHeader>
+      <AdminSectionHeader
+        title="Manage Projects"
+        count={projects.length}
+        onAdd={() => setIsAdding(!isAdding)}
+        addLabel="Add Project"
+      />
       <CardContent className="space-y-4">
         {(isAdding || editingId) && (
           <ProjectForm
             formData={formData}
             setFormData={setFormData}
-            imagePreview={imagePreview}
-            setImagePreview={setImagePreview}
-            setImageFile={setImageFile}
-            isUploading={isUploading}
-            onSave={editingId ? handleUpdate : handleAdd}
+            imageUpload={imageUpload}
+            onSave={handleSave}
             onCancel={handleCancel}
-            isLoading={isLoading}
+            isLoading={isSaving}
             isEditing={!!editingId}
           />
         )}
 
         <div className="space-y-3">
-          {projectsLoading ? (
+          {projects.length === 0 && (isMutating || isSaving) ? (
             Array.from({ length: 2 }).map((_, idx) => (
-              <Card key={idx} className="animate-pulse">
-                <CardContent className="p-4">
-                  <div className="space-y-3">
-                    <div className="h-6 bg-muted rounded w-3/4" />
-                    <div className="h-4 bg-muted rounded w-1/2" />
-                    <div className="flex gap-2">
-                      <div className="h-6 bg-muted rounded w-20" />
-                      <div className="h-6 bg-muted rounded w-24" />
-                    </div>
-                    <div className="h-16 bg-muted rounded" />
+              <Card key={idx}>
+                <CardContent className="p-4 space-y-3">
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <div className="flex gap-2">
+                    <Skeleton className="h-6 w-20" />
+                    <Skeleton className="h-6 w-24" />
                   </div>
+                  <Skeleton className="h-16 w-full" />
                 </CardContent>
               </Card>
             ))
@@ -533,9 +349,7 @@ export default function ProjectsSection() {
                 />
               ))}
               {projects.length === 0 && (
-                <div className="text-center py-12 text-muted-foreground">
-                  <p>No projects added yet.</p>
-                </div>
+                <EmptyState message="No projects added yet." />
               )}
             </>
           )}
@@ -545,8 +359,9 @@ export default function ProjectsSection() {
       <DeleteConfirmBox
         deleteDialogOpen={deleteDialogOpen}
         setDeleteDialogOpen={setDeleteDialogOpen}
-        isLoading={isLoading}
+        isLoading={isMutating || isSaving}
         handleDelete={handleDelete}
+        description="Are you sure you want to delete this project? This action cannot be undone."
       />
     </Card>
   );
@@ -555,10 +370,7 @@ export default function ProjectsSection() {
 function ProjectForm({
   formData,
   setFormData,
-  imagePreview,
-  setImagePreview,
-  setImageFile,
-  isUploading,
+  imageUpload,
   onSave,
   onCancel,
   isLoading,
@@ -566,33 +378,16 @@ function ProjectForm({
 }: {
   formData: ProjectFormState;
   setFormData: (data: ProjectFormState) => void;
-  imagePreview: string | null;
-  setImagePreview: (preview: string | null) => void;
-  setImageFile: (file: File | null) => void;
-  isUploading: boolean;
+  imageUpload: ReturnType<typeof useImageUpload>;
   onSave: () => void;
   onCancel: () => void;
   isLoading?: boolean;
   isEditing?: boolean;
 }) {
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Store the file for later upload
-    setImageFile(file);
-
-    // Show preview only
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
+  const { preview, isUploading, onSelectFile } = imageUpload;
 
   const handleRemoveImage = () => {
-    setImagePreview(null);
-    setImageFile(null);
+    onSelectFile(null);
     setFormData({ ...formData, image: "" });
   };
 
@@ -602,10 +397,10 @@ function ProjectForm({
         {/* Image Upload Section */}
         <div className="space-y-2">
           <Label>Project Image</Label>
-          {imagePreview ? (
+          {preview ? (
             <div className="relative w-full h-48 rounded-lg overflow-hidden border">
               <Image
-                src={imagePreview}
+                src={preview}
                 alt="Project preview"
                 fill
                 className="object-cover"
@@ -636,7 +431,7 @@ function ProjectForm({
                 type="file"
                 accept="image/*"
                 className="hidden"
-                onChange={handleImageUpload}
+                onChange={(e) => onSelectFile(e.target.files?.[0] ?? null)}
                 disabled={isUploading}
               />
             </Label>
