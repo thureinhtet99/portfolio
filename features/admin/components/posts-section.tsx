@@ -305,7 +305,7 @@ export default function PostsSection() {
                   <CardContent className="px-4">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1 min-w-0 space-y-2">
-                        <h3 className="font-semibold text-base">
+                        <h3 className="font-semibold text-base sm:text-lg capitalize wrap-break-word">
                           {post.title}
                         </h3>
                         <p className="text-sm text-muted-foreground mt-1">

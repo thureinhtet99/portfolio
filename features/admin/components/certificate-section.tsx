@@ -421,7 +421,7 @@ function CertificateCard({
           {/* Header */}
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-base sm:text-lg capitalize wrap-break-wordword">
+              <h3 className="font-semibold text-base sm:text-lg capitalize wrap-break-word">
                 {certificate.title}
               </h3>
               <p className="text-sm my-2">{certificate.issuer}</p>

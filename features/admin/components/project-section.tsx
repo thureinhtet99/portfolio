@@ -23,7 +23,6 @@ import {
   ArrowUp,
   Edit,
   ExternalLink,
-  Github,
   Save,
   Trash2,
   Upload,
@@ -32,6 +31,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { FaGithub } from "react-icons/fa";
 import { toast } from "sonner";
 
 const createEmptyForm = (): ProjectFormState => ({
@@ -439,7 +439,7 @@ function ProjectForm({
           />
         </div>
         <div className="space-y-2">
-          <Label>Key Challenges (one per line)</Label>
+          <Label>Collaborators (one per line)</Label>
           <Textarea
             value={formData.collaborators}
             onChange={(e) =>
@@ -533,22 +533,25 @@ function ProjectForm({
           </div>
         </div>
 
-        <div className="flex items-center justify-between space-x-2 p-4 rounded-lg border">
-          <div className="space-y-0.5">
-            <Label htmlFor="featured" className="text-base font-medium">
-              Featured Project
-            </Label>
-            <p className="text-sm text-muted-foreground">
-              Display this project on the homepage
-            </p>
-          </div>
-          <Switch
-            id="featured"
-            checked={formData.featured}
-            onCheckedChange={(checked) =>
-              setFormData({ ...formData, featured: checked })
-            }
-          />
+        <div className="space-y-0.5">
+          <Label
+            htmlFor="featured"
+            className="flex items-center justify-between space-x-2 p-4 rounded-lg border cursor-pointer"
+          >
+            <div className="space-y-0.5">
+              <span className="text-base font-medium">Featured Project</span>
+              <p className="text-sm text-muted-foreground">
+                Display this project on the homepage
+              </p>
+            </div>
+            <Switch
+              id="featured"
+              checked={formData.featured}
+              onCheckedChange={(checked) =>
+                setFormData({ ...formData, featured: checked })
+              }
+            />
+          </Label>
         </div>
         <div className="flex gap-2">
           <Button
@@ -595,12 +598,10 @@ function ProjectCard({
 }) {
   return (
     <Card
-      className={`hover:shadow-md transition-shadow ${
-        isEditing ? "border-primary" : ""
-      }`}
+      className={`border border-muted-foreground/20 hover:border-muted-foreground ${isEditing ? "border-primary" : ""}`}
     >
-      <CardContent className="p-4 sm:p-5">
-        <div className="flex flex-col gap-3">
+      <CardContent className="px-4">
+        <div className="flex flex-col gap-2">
           {/* Project Image */}
           {project.image && (
             <div className="w-full h-48 relative rounded-md overflow-hidden bg-muted">
@@ -615,13 +616,9 @@ function ProjectCard({
 
           {/* Header */}
           <div className="flex items-start justify-between gap-3">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="font-semibold text-base sm:text-lg capitalize wrap-break-word">
-                  {project.title}
-                </h3>
-              </div>
-            </div>
+            <h3 className="font-semibold text-base sm:text-lg capitalize wrap-break-word">
+              {project.title}
+            </h3>
             <div className="flex gap-1 shrink-0">
               <Button
                 size="sm"
@@ -661,40 +658,40 @@ function ProjectCard({
           </div>
 
           {/* Links */}
-          <div className="flex flex-wrap gap-4">
-            {project.featured && (
-              <Badge variant="secondary" className="capitalize text-xs">
-                Featured
-              </Badge>
-            )}
-            {project.githubUrl && (
-              <a
-                href={project.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs text-primary transition-colors"
-              >
-                <Github className="h-4 w-4" />
-                GitHub
-              </a>
-            )}
+          <div className="flex items-center justify-between">
+            <div className="flex flex-wrap gap-4">
+              {project.featured && <Badge>Featured</Badge>}
+              {project.githubUrl && (
+                <Link
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
+                >
+                  <FaGithub className="h-4 w-4" />
+                </Link>
+              )}
 
-            {project.liveUrl && (
-              <Link
-                href={project.liveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs text-primary transition-colors"
-              >
-                <ExternalLink className="h-4 w-4" />
-                Live
-              </Link>
-            )}
+              {project.liveUrl && (
+                <Link
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                </Link>
+              )}
+            </div>
+            <ProjectCredentialsPanel
+              credentials={project.demoCredentials}
+              compact
+            />
           </div>
 
           {/* Description */}
           {project.description && (
-            <p className="text-muted-foreground leading-relaxed wrap-break-word">
+            <p className="leading-relaxed wrap-break-word line-clamp-3">
               {project.description}
             </p>
           )}
@@ -703,32 +700,22 @@ function ProjectCard({
           {project.technologies && project.technologies.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {project.technologies.map((tech, idx) => (
-                <Badge
-                  key={idx}
-                  variant="default"
-                  className="capitalize text-xs"
-                >
+                <Badge key={idx} variant="outline">
                   {tech}
                 </Badge>
               ))}
             </div>
           )}
 
-          <ProjectCredentialsPanel
-            credentials={project.demoCredentials}
-            compact
-            className="mt-1"
-          />
-
           {/* Objectives */}
           {project.objectives && project.objectives.length > 0 && (
-            <div className="mt-1">
-              <p className="text-sm font-medium mb-2">Objectives:</p>
+            <div className="mt-2">
+              <p className="text-sm font-medium mb-1">Objectives:</p>
               <ul className="list-disc list-inside space-y-1.5 text-sm">
                 {project.objectives.map((objective, idx) => (
                   <li
                     key={idx}
-                    className="text-muted-foreground wrap-break-wordword leading-relaxed"
+                    className="text-muted-foreground wrap-break-word leading-relaxed"
                   >
                     {objective}
                   </li>
@@ -739,13 +726,13 @@ function ProjectCard({
 
           {/* Key Challenges */}
           {project.collaborators && project.collaborators.length > 0 && (
-            <div className="mt-1">
-              <p className="text-sm font-medium mb-2">Key Challenges:</p>
+            <div className="mt-2">
+              <p className="text-sm font-medium mb-1">Key Challenges:</p>
               <ul className="list-disc list-inside space-y-1.5 text-sm">
                 {project.collaborators.map((collab, idx) => (
                   <li
                     key={idx}
-                    className="text-muted-foreground wrap-break-wordword leading-relaxed"
+                    className="text-muted-foreground wrap-break-word leading-relaxed"
                   >
                     {collab}
                   </li>
