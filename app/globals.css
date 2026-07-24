@@ -9,39 +9,36 @@
 
 :root {
   --font-sans: var(--font-jetbrains-mono);
-  --white: #ffffff;
+  --gray: #ababae;
   --dark-gray: #1b1b1a;
 
   --background: var(--dark-gray);
-  --foreground: var(--white);
+  --foreground: var(--gray);
 
   --primary: #40a9ff;
-  --primary-foreground: #0d0d0d;
+  --primary-foreground: var(--gray);
 
-  --secondary: #1f211e;
-  --secondary-foreground: #ffffff;
-
-  --tertiary: #ffffff;
-  --tertiary-foreground: #0d0d0d;
+  --secondary: #1b1b1a;
+  --secondary-foreground: var(--gray);
 
   --muted: var(--dark-gray);
-  --muted-foreground: #ababae;
+  --muted-foreground: var(--gray);
 
   --accent: var(--dark-gray);
-  --accent-foreground: var(--white);
+  --accent-foreground: var(--gray);
 
-  --destructive: var(--white);
+  --destructive: var(--gray);
   --destructive-foreground: var(--dark-gray);
 
-  --border: var(--white);
-  --input: var(--white);
-  --ring: var(--white);
+  --border: var(--gray);
+  --input: var(--gray);
+  --ring: var(--gray);
   --radius: 0.625rem;
 
   --card: var(--dark-gray);
-  --card-foreground: var(--white);
+  --card-foreground: var(--gray);
   --popover: var(--dark-gray);
-  --popover-foreground: var(--white);
+  --popover-foreground: var(--gray);
 }
 
 @theme inline {
@@ -53,8 +50,6 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-tertiary: var(--tertiary);
-  --color-tertiary-foreground: var(--tertiary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
@@ -83,7 +78,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-muted-foreground/20;
   }
   body {
     @apply bg-background text-muted-foreground;
@@ -111,7 +106,7 @@
     @apply mx-auto w-full max-w-[90rem] space-y-20;
   }
   .section-heading {
-    @apply text-3xl font-bold tracking-[-0.03em] sm:text-4xl;
+    @apply text-3xl font-extrabold tracking-[-0.03em] sm:text-4xl text-foreground;
   }
 }
 

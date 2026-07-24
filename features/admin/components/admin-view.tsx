@@ -59,7 +59,7 @@ export function AdminView({ userName }: Props) {
             Admin Dashboard
           </h1>
           <p>
-            Welcome back, <b className="text-white">{userName}</b>
+            Welcome back, <b className="text-foreground">{userName}</b>
           </p>
         </div>
 

@@ -137,10 +137,7 @@ export function HomeView({
       {/* Experiences */}
       <section id="experience-section" className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl space-y-6">
-          <motion.h2
-            // {...sectionReveal}
-            className=" text-4xl font-bold text-white tracking-[-0.02em]"
-          >
+          <motion.h2 className=" text-4xl font-bold text-foreground tracking-[-0.02em]">
             Experiences
           </motion.h2>
           <WorkExperienceWithRail experiences={experiences} />
@@ -152,7 +149,7 @@ export function HomeView({
         <div className="mx-auto max-w-5xl space-y-6">
           <motion.h2
             // {...sectionReveal}
-            className=" text-4xl font-bold text-white tracking-[-0.02em]"
+            className=" text-4xl font-bold text-foreground tracking-[-0.02em]"
           >
             Contributions
           </motion.h2>

@@ -9,7 +9,6 @@ export const APP_CONFIG = {
     ABOUT: "about",
     PROJECTS: "projects",
     POSTS: "posts",
-    TIMELINE: "timeline",
     CERTIFICATES: "certificates",
     CONTACT: "contact",
     SETTINGS: "settings",

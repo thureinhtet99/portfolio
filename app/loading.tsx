@@ -35,7 +35,7 @@ export default function Loading() {
   }, []);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
+    <div className="flex min-h-150 items-center justify-center">
       <div className="flex items-center gap-1">
         <span className="text-base text-primary hover:text-muted-foreground transition-colors shrink-0">
           ~

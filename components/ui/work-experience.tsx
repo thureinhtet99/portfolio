@@ -271,7 +271,7 @@ function Skill({ className, ...props }: ComponentProps<"span">) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-sm border border-white/20 bg-muted/50 px-1.5 py-0.5 text-xs text-muted-foreground",
+        "inline-flex items-center rounded-sm border border-muted-foreground/20 bg-muted/50 px-1.5 py-0.5 text-xs text-muted-foreground",
         className,
       )}
       {...props}

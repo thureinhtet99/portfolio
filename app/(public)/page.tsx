@@ -46,9 +46,26 @@ async function getFeaturedProjects(): Promise<ProjectType[]> {
   }
 }
 
+async function getExperiences() {
+  try {
+    const baseUrl = APP_CONFIG.BASE_URL;
+    const response = await fetch(
+      `${baseUrl}/api/${APP_CONFIG.ROUTE.TIMELINES}?type=work`,
+    );
+    const { success, data } = await response.json();
+    if (success && data) return data;
+
+    return [];
+  } catch (error) {
+    console.error("Failed to load published posts:", error);
+    return [];
+  }
+}
+
 export default async function Home() {
   const settings = await getSettings();
   const featuredProjects = await getFeaturedProjects();
+  const experiences = await getExperiences();
 
   // Increment view count
   try {
@@ -90,6 +107,7 @@ export default async function Home() {
 
   return (
     <HomeView
+      experiences={experiences}
       residence={residence}
       available={available}
       aboutMe={aboutMe}

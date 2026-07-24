@@ -1,15 +1,14 @@
 "use client";
 
-import type { ExperienceItemType } from "@/components/ui/work-experience";
-import { ExperienceItem } from "@/components/ui/work-experience";
+import { ExperienceItem, ExperienceItemType } from "@/components/ui/work-experience";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TimelineYearRail } from "./timeline-year-rail";
 
-type Props = {
+export function WorkExperienceWithRail({
+  experiences,
+}: {
   experiences: ExperienceItemType[];
-};
-
-export function WorkExperienceWithRail({ experiences }: Props) {
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [entryHeights, setEntryHeights] = useState<number[]>([]);
 

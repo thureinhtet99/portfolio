@@ -27,7 +27,7 @@ export function AboutView({
       {/* About */}
       <section className="px-6 py-16 sm:py-20">
         <motion.div className="mx-auto max-w-4xl">
-          <h1 className="text-5xl font-bold tracking-[-0.03em] mb-8 text-white">
+          <h1 className="text-5xl font-bold tracking-[-0.03em] mb-8 text-foreground">
             About Me
           </h1>
 
@@ -66,7 +66,7 @@ export function AboutView({
         <motion.div className="mx-auto max-w-4xl">
           <motion.h2
             // {...sectionReveal}
-            className=" text-4xl font-bold text-white tracking-[-0.02em]"
+            className=" text-4xl font-bold text-foreground tracking-[-0.02em]"
           >
             Techs
           </motion.h2>

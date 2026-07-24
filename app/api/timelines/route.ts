@@ -1,45 +1,54 @@
-import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/client";
-import { experience, education } from "@/db/schema";
-import { eq, asc } from "drizzle-orm";
+import { education, experience } from "@/db/schema";
+import { asc, eq } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
 
-// GET - Fetch all timelines (both work experience and education)
-export async function GET() {
+// GET - Fetch all timelines (both work experience and education with ?type)
+export async function GET(req: NextRequest) {
   try {
-    const experiences = await db
-      .select()
-      .from(experience)
-      .orderBy(asc(experience.order))
-      .all();
-    const educations = await db
-      .select()
-      .from(education)
-      .orderBy(asc(education.order))
-      .all();
+    const { searchParams } = new URL(req.url);
+    const type = searchParams.get("type"); // "work" | "education" | null
 
-    const formattedExperiences = experiences.map((exp) => ({
-      id: exp.id,
-      companyName: exp.companyName,
-      companyLogo: exp.companyLogo,
-      companyWebsite: exp.companyWebsite,
-      isCurrentEmployer: exp.isCurrentEmployer,
-      positions: exp.positions ? JSON.parse(exp.positions) : [],
-      type: "work" as const,
-      order: exp.order,
-      createdAt: exp.createdAt,
-      updatedAt: exp.updatedAt,
-    }));
+    const formattedExperiences =
+      type === "education"
+        ? []
+        : (
+            await db
+              .select()
+              .from(experience)
+              .orderBy(asc(experience.order))
+              .all()
+          ).map((exp) => ({
+            id: exp.id,
+            companyName: exp.companyName,
+            companyLogo: exp.companyLogo,
+            companyWebsite: exp.companyWebsite,
+            positions: exp.positions ? JSON.parse(exp.positions) : [],
+            type: "work" as const,
+            order: exp.order,
+            createdAt: exp.createdAt,
+            updatedAt: exp.updatedAt,
+          }));
 
-    const formattedEducations = educations.map((edu) => ({
-      id: edu.id,
-      institution: edu.institution,
-      location: edu.location,
-      period: edu.period,
-      type: "education" as const,
-      order: edu.order,
-      createdAt: edu.createdAt,
-      updatedAt: edu.updatedAt,
-    }));
+    const formattedEducations =
+      type === "work"
+        ? []
+        : (
+            await db
+              .select()
+              .from(education)
+              .orderBy(asc(education.order))
+              .all()
+          ).map((edu) => ({
+            id: edu.id,
+            institution: edu.institution,
+            location: edu.location,
+            period: edu.period,
+            type: "education" as const,
+            order: edu.order,
+            createdAt: edu.createdAt,
+            updatedAt: edu.updatedAt,
+          }));
 
     return NextResponse.json({
       success: true,
@@ -53,7 +62,6 @@ export async function GET() {
     );
   }
 }
-
 // POST - Create new timeline
 export async function POST(req: NextRequest) {
   try {
@@ -62,7 +70,6 @@ export async function POST(req: NextRequest) {
       companyName,
       companyLogo,
       companyWebsite,
-      isCurrentEmployer,
       positions,
       type,
       // Education fields
@@ -114,7 +121,6 @@ export async function POST(req: NextRequest) {
       companyName,
       companyLogo: companyLogo || null,
       companyWebsite: companyWebsite || null,
-      isCurrentEmployer: isCurrentEmployer || false,
       positions: positions ? JSON.stringify(positions) : "[]",
       order: 0,
       createdAt: now,
@@ -128,7 +134,6 @@ export async function POST(req: NextRequest) {
         companyName,
         companyLogo,
         companyWebsite,
-        isCurrentEmployer,
         positions,
         type,
       },
@@ -155,7 +160,6 @@ export async function PUT(req: NextRequest) {
       companyName,
       companyLogo,
       companyWebsite,
-      isCurrentEmployer,
       positions,
       type,
       // Education fields
@@ -210,7 +214,6 @@ export async function PUT(req: NextRequest) {
         companyName,
         companyLogo: companyLogo || null,
         companyWebsite: companyWebsite || null,
-        isCurrentEmployer: isCurrentEmployer || false,
         positions: positions ? JSON.stringify(positions) : "[]",
         updatedAt: new Date(),
       })
@@ -223,7 +226,6 @@ export async function PUT(req: NextRequest) {
         companyName,
         companyLogo,
         companyWebsite,
-        isCurrentEmployer,
         positions,
         type: "work",
       },

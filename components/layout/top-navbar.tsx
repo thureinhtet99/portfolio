@@ -119,7 +119,7 @@ export function TopNavbar() {
                     key={link.href}
                     href={link.href}
                     className={cn(
-                      "block rounded-md px-3 py-2  text-sm transition-colors hover:bg-white/5",
+                      "block rounded-md px-3 py-2  text-sm transition-colors hover:bg-foreground/5",
                       isActive(link.href)
                         ? "text-foreground"
                         : "text-muted-foreground",
@@ -171,7 +171,7 @@ export function TopNavbar() {
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "rounded-md px-3 py-2  text-sm transition-colors hover:bg-white/5",
+                  "rounded-md px-3 py-2  text-sm transition-colors hover:bg-foreground/5",
                   isActive(link.href)
                     ? "text-foreground"
                     : "text-muted-foreground",
@@ -187,7 +187,7 @@ export function TopNavbar() {
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "rounded-md px-3 py-2  text-sm transition-colors hover:bg-white/5",
+                  "rounded-md px-3 py-2  text-sm transition-colors hover:bg-foreground/5",
                   isActive(link.href)
                     ? "text-foreground"
                     : "text-muted-foreground",
