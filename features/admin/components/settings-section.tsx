@@ -419,7 +419,7 @@ export default function SettingsSection() {
             onClick={handleSaveRoles}
             disabled={isSaving}
           >
-            <Save className="h-4 w-4 mr-2" />
+            <Save className="h-4 w-4" />
             {isSaving ? "Updating..." : "Update Roles"}
           </Button>
         </CardContent>
@@ -475,7 +475,7 @@ export default function SettingsSection() {
             onClick={handleSaveResidence}
             disabled={isSaving}
           >
-            <Save className="h-4 w-4 mr-2" />
+            <Save className="h-4 w-4" />
             {isSaving ? "Updating..." : "Update Residence"}
           </Button>
         </CardContent>
@@ -534,7 +534,7 @@ export default function SettingsSection() {
             disabled={!resumeFile || isUploading}
             onClick={handleSaveResume}
           >
-            <Save className="h-4 w-4 mr-2" />
+            <Save className="h-4 w-4" />
             {isUploading ? "Uploading..." : "Upload Resume"}
           </Button>
         </CardContent>
@@ -587,7 +587,7 @@ export default function SettingsSection() {
             onClick={handleSaveAboutIntro}
             disabled={isSaving}
           >
-            <Save className="h-4 w-4 mr-2" />
+            <Save className="h-4 w-4" />
             {isSaving ? "Updating..." : "Update About & Intro"}
           </Button>
         </CardContent>
@@ -649,7 +649,7 @@ export default function SettingsSection() {
             onClick={handleSaveSocialLinks}
             disabled={isSaving}
           >
-            <Save className="h-4 w-4 mr-2" />
+            <Save className="h-4 w-4" />
             {isSaving ? "Updating..." : "Update Social Links"}
           </Button>
         </CardContent>

@@ -320,9 +320,7 @@ export default function TimelinesSection() {
     <Card>
       <CardHeader>
         <div className="flex justify-between items-center">
-          <CardTitle className="flex items-center gap-2">
-            Manage Timeline
-          </CardTitle>
+          <CardTitle className="flex items-center gap-2">Timeline</CardTitle>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -351,7 +349,7 @@ export default function TimelinesSection() {
               size="lg"
               className="w-full"
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-4 w-4" />
               Add Work Experience
             </Button>
 
@@ -409,7 +407,7 @@ export default function TimelinesSection() {
               size="lg"
               className="w-full"
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-4 w-4" />
               Add Education
             </Button>
 
@@ -779,7 +777,7 @@ function WorkCard({
     <Card
       className={`border border-muted-foreground/20 hover:border-muted-foreground ${isEditing ? "border-primary" : ""}`}
     >
-      <CardContent className="p-4 sm:p-5">
+      <CardContent className="px-4">
         <div className="flex flex-col gap-3">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
@@ -787,7 +785,7 @@ function WorkCard({
                 {t.companyName}
               </h3>
               {t.companyWebsite && (
-                <p className="text-xs text-muted-foreground mt-1 wrap-break-word">
+                <p className="text-xs text-muted-foreground wrap-break-word">
                   {t.companyWebsite}
                 </p>
               )}
@@ -898,7 +896,7 @@ function EducationCard({
     <Card
       className={`border border-muted-foreground/20 hover:border-muted-foreground ${isEditing ? "border-primary" : ""}`}
     >
-      <CardContent className="p-4 sm:p-5">
+      <CardContent className="px-4">
         <div className="flex flex-col gap-3">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
