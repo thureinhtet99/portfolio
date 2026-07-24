@@ -148,7 +148,7 @@ export function TimelineYearRail({
           >
             <span className="tabular-nums text-3xl">{year}</span>
             <span className="relative z-10 flex h-6 w-6 items-center justify-center">
-              <span className="h-3 w-3 rounded-full bg-muted-foreground group-hover/year:bg-primary transition-colors" />
+              <span className="h-4 w-4 rounded-full bg-muted-foreground group-hover/year:bg-primary transition-colors" />
             </span>
           </button>
         );

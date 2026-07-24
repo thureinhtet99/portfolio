@@ -67,7 +67,7 @@ export default function TimelinesSection() {
     invalidate,
   } = useCrudResource<TimelineType>({
     resource: APP_CONFIG.ROUTE.TIMELINES,
-    labels: { singular: "timeline entry", plural: "timelines" },
+    labels: { singular: "timeline", plural: "timelines" },
   });
 
   const [isAdding, setIsAdding] = useState(false);
@@ -330,16 +330,16 @@ export default function TimelinesSection() {
           value={activeTimelineTab}
           onValueChange={(v) => setActiveTimelineTab(v as "work" | "education")}
         >
-          <TabsList className="grid w-full grid-cols-2 gap-1">
+          <TabsList className="grid w-full grid-cols-2 gap-2">
             <TabsTrigger
               value="work"
-              className="border border-muted-foreground"
+              className="border border-muted-foreground/20"
             >
               Work Experience
             </TabsTrigger>
             <TabsTrigger
               value="education"
-              className="border border-muted-foreground"
+              className="border border-muted-foreground/20"
             >
               Education
             </TabsTrigger>
@@ -532,18 +532,6 @@ function WorkForm({
               className="h-11"
             />
           </div>
-          <div className="flex items-center gap-2 pt-8">
-            <input
-              type="checkbox"
-              id="isCurrentEmployer"
-              checked={form.isCurrentEmployer}
-              onChange={(e) =>
-                setForm({ ...form, isCurrentEmployer: e.target.checked })
-              }
-              className="h-4 w-4"
-            />
-            <Label htmlFor="isCurrentEmployer">Current Employer</Label>
-          </div>
         </div>
 
         {/* Positions */}
@@ -556,14 +544,14 @@ function WorkForm({
               size="sm"
               onClick={onAddPosition}
             >
-              <Plus className="h-3 w-3 mr-1" />
+              <Plus className="h-4 w-4" />
               Add Position
             </Button>
           </div>
 
           {form.positions.map((pos, idx) => (
-            <Card key={pos.id} className="border border-border/50">
-              <CardContent className="pt-4 space-y-3">
+            <Card key={pos.id} className="border border-muted-foreground/20">
+              <CardContent className="px-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <Label className="text-sm font-medium">
                     Position {idx + 1}
@@ -576,13 +564,13 @@ function WorkForm({
                       onClick={() => onRemovePosition(idx)}
                       className="h-7 px-2 text-destructive"
                     >
-                      <Trash2 className="h-3 w-3" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   )}
                 </div>
                 <div className="grid md:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <Label className="text-xs">Title *</Label>
+                    <Label>Title *</Label>
                     <Input
                       value={pos.title}
                       onChange={(e) =>
@@ -593,14 +581,14 @@ function WorkForm({
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs">Employment Type</Label>
+                    <Label>Employment Type</Label>
                     <Select
                       value={pos.employmentType}
                       onValueChange={(v) =>
                         onUpdatePosition(idx, "employmentType", v)
                       }
                     >
-                      <SelectTrigger className="h-9">
+                      <SelectTrigger className="h-9 w-1/2">
                         <SelectValue placeholder="Select type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -613,7 +601,7 @@ function WorkForm({
                     </Select>
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs">Start Date *</Label>
+                    <Label>Start Date *</Label>
                     <Input
                       value={pos.start}
                       onChange={(e) =>
@@ -624,7 +612,7 @@ function WorkForm({
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs">End Date</Label>
+                    <Label>End Date</Label>
                     <Input
                       value={pos.end}
                       onChange={(e) =>
@@ -636,7 +624,7 @@ function WorkForm({
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Description</Label>
+                  <Label>Description</Label>
                   <Textarea
                     value={pos.description}
                     onChange={(e) =>
@@ -647,13 +635,13 @@ function WorkForm({
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Skills</Label>
+                  <Label>Skills (comma separated)</Label>
                   <Input
                     value={pos.skills}
                     onChange={(e) =>
                       onUpdatePosition(idx, "skills", e.target.value)
                     }
-                    placeholder="React, TypeScript, Node.js (comma separated)"
+                    placeholder="React, TypeScript, Node.js"
                     className="h-9"
                   />
                 </div>
@@ -789,9 +777,7 @@ function WorkCard({
 
   return (
     <Card
-      className={`hover:shadow-md transition-shadow ${
-        isEditing ? "border-primary" : ""
-      }`}
+      className={`border border-muted-foreground/20 hover:border-muted-foreground ${isEditing ? "border-primary" : ""}`}
     >
       <CardContent className="p-4 sm:p-5">
         <div className="flex flex-col gap-3">
@@ -839,7 +825,7 @@ function WorkCard({
                 onClick={() => onDelete(timeline.id, "work")}
                 className="h-9 w-9 p-0"
               >
-                <Trash2 className="h-4 w-4 text-destructive" />
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -864,17 +850,13 @@ function WorkCard({
                     {pos.employmentPeriod?.start}
                     {pos.employmentPeriod?.end
                       ? ` — ${pos.employmentPeriod.end}`
-                      : " — Present"}
+                      : " Present"}
                     {pos.employmentType && ` · ${pos.employmentType}`}
                   </p>
                   {pos.skills && pos.skills.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-1">
                       {pos.skills.map((skill, i) => (
-                        <Badge
-                          key={i}
-                          variant="secondary"
-                          className="text-[10px]"
-                        >
+                        <Badge key={i} variant="outline">
                           {skill}
                         </Badge>
                       ))}
@@ -914,9 +896,7 @@ function EducationCard({
 
   return (
     <Card
-      className={`hover:shadow-md transition-shadow ${
-        isEditing ? "border-primary" : ""
-      }`}
+      className={`border border-muted-foreground/20 hover:border-muted-foreground ${isEditing ? "border-primary" : ""}`}
     >
       <CardContent className="p-4 sm:p-5">
         <div className="flex flex-col gap-3">
@@ -959,21 +939,13 @@ function EducationCard({
                 onClick={() => onDelete(timeline.id, "education")}
                 className="h-9 w-9 p-0"
               >
-                <Trash2 className="h-4 w-4 text-destructive" />
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
-            {t.period && (
-              <Badge variant="outline" className="text-xs">
-                {t.period}
-              </Badge>
-            )}
-            {t.location && (
-              <Badge variant="outline" className="text-xs">
-                {t.location}
-              </Badge>
-            )}
+            {t.period && <Badge variant="outline">{t.period}</Badge>}
+            {t.location && <Badge variant="outline">{t.location}</Badge>}
           </div>
         </div>
       </CardContent>

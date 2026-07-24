@@ -48,7 +48,7 @@ export function AdminView({ userName }: { userName: string | null }) {
   };
 
   return (
-    <div className="app-shell space-y-6 py-2 md:py-4 border">
+    <div className="app-shell space-y-6 py-2 md:py-4">
       <div className="surface-panel flex flex-row items-center justify-between px-6">
         <h2>
           Welcome back,{" "}
