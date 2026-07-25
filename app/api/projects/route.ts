@@ -22,6 +22,8 @@ export async function GET() {
     const formattedProjects = projects.map((proj) => ({
       id: proj.id,
       title: proj.title,
+      summary: proj.summary,
+      startDate: proj.startDate,
       description: proj.description,
       technologies: proj.technologies
         ? JSON.parse(proj.technologies)
@@ -62,6 +64,7 @@ export async function POST(req: NextRequest) {
     const {
       title,
       summary,
+      startDate,
       description,
       technologies,
       image,
@@ -69,9 +72,7 @@ export async function POST(req: NextRequest) {
       liveUrl,
       objectives,
       collaborators,
-      keyChallenges,
       demoCredentials,
-      adopters,
       featured,
     } = body;
 
@@ -89,6 +90,7 @@ export async function POST(req: NextRequest) {
       id,
       title,
       summary: summary || "",
+      startDate: startDate || null,
       description: description || "",
       technologies: technologies ? JSON.stringify(technologies) : null,
       image: image || null,
@@ -101,7 +103,6 @@ export async function POST(req: NextRequest) {
           ? JSON.stringify(demoCredentials)
           : null
         : null,
-      adopters: adopters ? JSON.stringify(adopters) : null,
       featured: featured || false,
       order: 0,
       createdAt: now,
@@ -115,14 +116,16 @@ export async function POST(req: NextRequest) {
       data: {
         id,
         title,
+        summary,
+        startDate,
         description,
         technologies,
         githubUrl,
         liveUrl,
         objectives,
-        keyChallenges,
+        collaborators,
         demoCredentials,
-        adopters,
+        featured,
       },
     });
   } catch (error) {
@@ -145,6 +148,8 @@ export async function PUT(req: NextRequest) {
     const {
       id,
       title,
+      summary,
+      startDate,
       description,
       technologies,
       collaborators,
@@ -153,7 +158,6 @@ export async function PUT(req: NextRequest) {
       liveUrl,
       objectives,
       demoCredentials,
-      adopters,
       featured,
     } = body;
 
@@ -168,6 +172,8 @@ export async function PUT(req: NextRequest) {
       .update(project)
       .set({
         title,
+        summary: summary || "",
+        startDate: startDate || null,
         description: description || "",
         technologies: technologies ? JSON.stringify(technologies) : null,
         image: image || null,
@@ -190,6 +196,8 @@ export async function PUT(req: NextRequest) {
       data: {
         id,
         title,
+        summary,
+        startDate,
         description,
         technologies,
         githubUrl,
@@ -197,7 +205,7 @@ export async function PUT(req: NextRequest) {
         objectives,
         collaborators,
         demoCredentials,
-        adopters,
+        featured,
       },
     });
   } catch (error) {

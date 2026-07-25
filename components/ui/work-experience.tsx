@@ -84,7 +84,7 @@ export type ExperienceItemProps = {
 
 export function ExperienceItem({ experience }: ExperienceItemProps) {
   return (
-    <div className="space-y-4 py-4">
+    <div className="space-y-4 py-2">
       <div className="not-prose flex items-center gap-3">
         <div className="flex size-6 shrink-0 items-center justify-center">
           {experience.companyLogo ? (
@@ -95,7 +95,7 @@ export function ExperienceItem({ experience }: ExperienceItemProps) {
               aria-hidden
             />
           ) : (
-            <span className="flex size-2 rounded-full bg-primary" />
+            <span />
           )}
         </div>
 

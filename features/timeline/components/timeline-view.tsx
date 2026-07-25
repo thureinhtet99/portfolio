@@ -17,9 +17,7 @@ export default function TimelineClientComponent({ work, education }: Props) {
     <div className="mx-auto w-full max-w-4xl">
       <Card className="border-0 shadow-none">
         <CardHeader className="px-0">
-          <CardTitle className="flex items-center gap-2 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
-            Timeline
-          </CardTitle>
+          <CardTitle className="section-heading">Timeline</CardTitle>
         </CardHeader>
         <CardContent className="px-0">
           <Tabs defaultValue="work" className="w-full">
@@ -38,85 +36,97 @@ export default function TimelineClientComponent({ work, education }: Props) {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="work" className="space-y-5 sm:space-y-6">
+            <TabsContent value="work" className="space-y-0">
               {work.length > 0 ? (
-                work.map((exp, index) => (
-                  <motion.div
-                    key={exp.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                    className="relative border-l-2 border-primary/20 pl-5 pb-6 sm:pl-8 sm:pb-8 last:pb-0"
-                  >
-                    <div className="absolute -left-[7px] top-1 h-4 w-4 rounded-full border-4 border-background bg-primary sm:-left-2 sm:top-0 sm:h-4 sm:w-4" />
+                <div className="relative">
+                  {/* Vertical line */}
+                  <div className="absolute left-[7px] top-2 bottom-2 w-px bg-muted-foreground/20 sm:left-2" />
 
-                    <div className="space-y-4 sm:space-y-6">
-                      <div className="flex flex-wrap items-start justify-between gap-2">
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <h3 className="text-xl font-bold capitalize tracking-[-0.02em] sm:text-2xl">
-                              {exp.companyName}
-                            </h3>
-                            {exp.isCurrentEmployer && (
-                              <Badge className="ml-2">Current</Badge>
-                            )}
-                          </div>
-                          {exp.companyWebsite && (
-                            <a
-                              href={exp.companyWebsite}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-sm text-muted-foreground hover:text-primary sm:text-base"
-                            >
-                              {exp.companyWebsite}
-                            </a>
+                  {work.map((exp, index) => (
+                    <motion.div
+                      key={exp.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className="relative pl-8 pb-8 last:pb-0"
+                    >
+                      {/* Dot */}
+                      <div className="absolute left-0 top-1.5 h-[10px] w-[10px] rounded-full border-2 border-muted-foreground/40 bg-background" />
+
+                      <div className="space-y-3">
+                        {/* Company header */}
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="text-base font-semibold text-foreground sm:text-lg">
+                            {exp.companyName}
+                          </h3>
+                          {exp.isCurrentEmployer && (
+                            <Badge className="text-[10px] px-1.5 py-0">
+                              Current
+                            </Badge>
                           )}
                         </div>
-                      </div>
 
-                      {exp.positions && exp.positions.length > 0 && (
-                        <div className="space-y-3">
-                          {exp.positions.map((pos) => (
-                            <div
-                              key={pos.id}
-                              className="border-l-2 border-border/50 pl-4 py-2"
-                            >
-                              <h4 className="text-base font-medium sm:text-lg">
-                                {pos.title}
-                              </h4>
-                              <p className="text-xs text-muted-foreground sm:text-sm">
-                                {pos.employmentPeriod?.start}
-                                {pos.employmentPeriod?.end
-                                  ? ` — ${pos.employmentPeriod.end}`
-                                  : " — Present"}
-                                {pos.employmentType &&
-                                  ` · ${pos.employmentType}`}
-                              </p>
-                              {pos.description && (
-                                <p className="text-sm leading-relaxed text-muted-foreground mt-2 sm:text-base">
-                                  {pos.description}
-                                </p>
-                              )}
-                              {pos.skills && pos.skills.length > 0 && (
-                                <div className="flex flex-wrap gap-1.5 mt-2">
-                                  {pos.skills.map((skill, i) => (
-                                    <Badge
-                                      key={i}
-                                      variant="secondary"
-                                      className="text-xs"
-                                    >
-                                      {skill}
-                                    </Badge>
-                                  ))}
+                        {exp.companyWebsite && (
+                          <a
+                            href={exp.companyWebsite}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            {exp.companyWebsite}
+                          </a>
+                        )}
+
+                        {/* Positions */}
+                        {exp.positions && exp.positions.length > 0 && (
+                          <div className="space-y-4">
+                            {exp.positions.map((pos) => (
+                              <div key={pos.id} className="space-y-2">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <h4 className="text-sm font-medium text-foreground">
+                                    {pos.title}
+                                  </h4>
+                                  {pos.employmentType && (
+                                    <span className="text-[10px] text-muted-foreground">
+                                      {pos.employmentType}
+                                    </span>
+                                  )}
                                 </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                ))
+
+                                <p className="text-xs text-muted-foreground">
+                                  {pos.employmentPeriod?.start}
+                                  {pos.employmentPeriod?.end
+                                    ? ` — ${pos.employmentPeriod.end}`
+                                    : " — Present"}
+                                </p>
+
+                                {pos.description && (
+                                  <p className="text-xs leading-relaxed text-muted-foreground/80">
+                                    {pos.description}
+                                  </p>
+                                )}
+
+                                {pos.skills && pos.skills.length > 0 && (
+                                  <div className="flex flex-wrap gap-1">
+                                    {pos.skills.map((skill, i) => (
+                                      <Badge
+                                        key={i}
+                                        variant="secondary"
+                                        className="text-[10px] px-1.5 py-0"
+                                      >
+                                        {skill}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
                   <div className="bg-muted rounded-full p-4 mb-4">
@@ -129,46 +139,46 @@ export default function TimelineClientComponent({ work, education }: Props) {
               )}
             </TabsContent>
 
-            <TabsContent value="education" className="space-y-5 sm:space-y-6">
+            <TabsContent value="education" className="space-y-0">
               {education.length > 0 ? (
-                education.map((exp, index) => (
-                  <motion.div
-                    key={exp.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                    className="relative border-l-2 border-primary/20 pl-5 pb-6 sm:pl-8 sm:pb-8 last:pb-0"
-                  >
-                    <div className="absolute -left-[7px] top-1 h-4 w--4rounded-full border-4 border-background bg-primary sm:-left-2 sm:top-0 sm:h-4 sm:w-4" />
+                <div className="relative">
+                  {/* Vertical line */}
+                  <div className="absolute left-[7px] top-2 bottom-2 w-px bg-muted-foreground/20 sm:left-2" />
 
-                    <div className="space-y-4 sm:space-y-6">
-                      <div className="flex flex-wrap items-start justify-between gap-2">
-                        <div className="flex-1">
-                          {exp.institution && (
-                            <p className="text-base font-medium text-muted-foreground sm:text-lg">
-                              {exp.institution}
-                            </p>
+                  {education.map((exp, index) => (
+                    <motion.div
+                      key={exp.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className="relative pl-8 pb-8 last:pb-0"
+                    >
+                      {/* Dot */}
+                      <div className="absolute left-0 top-1.5 h-[10px] w-[10px] rounded-full border-2 border-muted-foreground/40 bg-background" />
+
+                      <div className="space-y-2">
+                        <h3 className="text-base font-semibold text-foreground sm:text-lg">
+                          {exp.institution}
+                        </h3>
+
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                          {exp.location && (
+                            <span className="flex items-center gap-1">
+                              <MapPin className="w-3 h-3" />
+                              {exp.location}
+                            </span>
+                          )}
+                          {exp.period && (
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-3 h-3" />
+                              {exp.period}
+                            </span>
                           )}
                         </div>
                       </div>
-
-                      <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground sm:gap-x-8 sm:text-sm">
-                        {exp.location && (
-                          <span className="flex items-center gap-1">
-                            <MapPin className="w-4 h-4" />
-                            {exp.location}
-                          </span>
-                        )}
-                        {exp.period && (
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            {exp.period}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </motion.div>
-                ))
+                    </motion.div>
+                  ))}
+                </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
                   <div className="bg-muted rounded-full p-4 mb-4">

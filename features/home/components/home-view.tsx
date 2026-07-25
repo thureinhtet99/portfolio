@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { ProjectShowcaseCard } from "@/features/projects/components/project-showcase-card";
 import { WorkExperienceWithRail } from "@/features/timeline/components/work-experience-with-rail";
-import { cardReveal } from "@/lib/motion";
 import { ProjectType, WorkType } from "@/types/index.type";
 import { motion, useReducedMotion } from "framer-motion";
 import { Mail, MapPin, MoveRight } from "lucide-react";
@@ -112,7 +111,9 @@ export function HomeView({
             )}
             <>
               <span className="text-muted-foreground/30">|</span>
-              <span className="flex items-center gap-1.5 text-primary">
+              <span
+                className={`flex items-center gap-1.5 ${available ? "text-primary" : "text-muted-foreground"}`}
+              >
                 <div
                   className={`relative h-2 w-2 rounded-full ${
                     available ? "bg-primary" : "bg-muted-foreground/50"
@@ -164,14 +165,11 @@ export function HomeView({
 
       {/* Featured Projects */}
       <section id="projects-section" className="px-6 py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl space-y-6">
+        <div className="mx-auto max-w-5xl space-y-6">
           <div className="flex items-center justify-between">
-            <motion.h2
-              // {...sectionReveal}
-              className=" text-4xl font-bold text-muted-foreground tracking-[-0.02em]"
-            >
+            <h2 className=" text-4xl font-bold text-muted-foreground tracking-[-0.02em]">
               Featured Projects
-            </motion.h2>
+            </h2>
             {featuredProjects.length > 0 && (
               <div className="flex items-center gap-1 text-primary hover:bg-primary hover:text-background transition-colors">
                 <Link href="/projects" className="text-base">
@@ -184,10 +182,9 @@ export function HomeView({
 
           {featuredProjects.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              {featuredProjects.map((project, index) => (
-                <motion.div
+              {featuredProjects.map((project) => (
+                <div
                   key={project.id}
-                  {...cardReveal(index)}
                   className={
                     featuredProjects.length === 1
                       ? "lg:col-span-2 mx-auto w-full"
@@ -195,7 +192,7 @@ export function HomeView({
                   }
                 >
                   <ProjectShowcaseCard project={project} techLimit={4} />
-                </motion.div>
+                </div>
               ))}
             </div>
           ) : (

@@ -1,6 +1,6 @@
-import { ProjectDetailView } from "@/features/projects/components/project-detail-view";
 import { db } from "@/db/client";
 import { project } from "@/db/schema";
+import { ProjectDetailView } from "@/features/projects/components/project-detail-view";
 import { eq } from "drizzle-orm";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -36,19 +36,24 @@ export default async function ProjectDetailPage({ params }: Props) {
       .where(eq(project.id, id))
       .limit(1)
       .all();
+
     if (result.length === 0) notFound();
+
     const p = result[0];
+
     projectData = {
       ...p,
+      title: p.title ?? undefined,
+      summary: p.summary ?? undefined,
+      startDate: p.startDate ?? undefined,
       description: p.description ?? undefined,
       image: p.image ?? undefined,
       githubUrl: p.githubUrl ?? undefined,
       liveUrl: p.liveUrl ?? undefined,
       technologies: p.technologies ? JSON.parse(p.technologies) : [],
       objectives: p.objectives ? JSON.parse(p.objectives) : [],
-      keyChallenges: p.collaborators ? JSON.parse(p.collaborators) : [],
+      collaborators: p.collaborators ? JSON.parse(p.collaborators) : [],
       demoCredentials: p.demoCredentials ? JSON.parse(p.demoCredentials) : [],
-      adopters: p.adopters ? JSON.parse(p.adopters) : [],
     };
   } catch (error) {
     console.error("Failed to load project:", error);

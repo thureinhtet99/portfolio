@@ -9,19 +9,17 @@ import { Tag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-type Props = {
-  project: ProjectType;
-  className?: string;
-  techLimit?: number;
-};
-
 const GITHUB_USERNAME = "thureinhtet99";
 
 export function ProjectShowcaseCard({
   project,
   className,
   techLimit = 4,
-}: Props) {
+}: {
+  project: ProjectType;
+  className?: string;
+  techLimit?: number;
+}) {
   const technologies = Array.isArray(project.technologies)
     ? project.technologies
     : [];
@@ -37,11 +35,11 @@ export function ProjectShowcaseCard({
     <Link href={`/projects/${project.id}`} className="block group">
       <div
         className={cn(
-          "rounded-xl border border-border/20 bg-background overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-primary",
+          "rounded-md border border-muted-foreground/20 overflow-hidden transition-all hover:border-muted-foreground",
           className,
         )}
       >
-        <div className="bg-muted-foreground p-4">
+        <div className="bg-muted-foreground p-6">
           {/* Terminal preview area */}
           <div className="relative rounded-lg overflow-hidden p-3 bg-background">
             {/* Terminal header */}
@@ -71,6 +69,7 @@ export function ProjectShowcaseCard({
                     src={demoImage}
                     alt={project.title}
                     fill
+                    priority
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
@@ -93,14 +92,14 @@ export function ProjectShowcaseCard({
           </h3>
 
           {project.description && (
-            <p className=" text-xs leading-relaxed text-muted-foreground line-clamp-2">
+            <p className=" text-sm leading-relaxed text-muted-foreground line-clamp-2">
               {project.description}
             </p>
           )}
 
           {/* Tags */}
           {visibleTechnologies.length > 0 && (
-            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+            <div className="flex flex-wrap items-center gap-1.5">
               <Tag className="h-4 w-4" />
               {visibleTechnologies.map((tech) => (
                 <Badge

@@ -17,9 +17,9 @@ const routeLabels: Record<string, string> = {
 };
 
 const navLinks = [
-  { href: "/about", label: "About" },
   { href: "/projects", label: "Projects" },
   { href: "/posts", label: "Posts" },
+  { href: "/about", label: "About" },
   // { href: "/api/resume", label: "Resume", external: true },
 ];
 
@@ -84,9 +84,7 @@ export function TopNavbar() {
               href={link.href}
               className={cn(
                 " text-sm transition-colors hover:text-foreground",
-                isActive(link.href)
-                  ? "text-foreground"
-                  : "text-muted-foreground",
+                isActive(link.href) ? "text-white" : "text-muted-foreground",
               )}
             >
               {link.label}

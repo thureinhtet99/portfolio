@@ -4,9 +4,15 @@ import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
 import EmptyState from "@/components/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { APP_CONFIG } from "@/config/app-config";
@@ -18,9 +24,11 @@ import {
   ProjectFormState,
   ProjectType,
 } from "@/types/index.type";
+import { format } from "date-fns";
 import {
   ArrowDown,
   ArrowUp,
+  CalendarIcon,
   Edit,
   ExternalLink,
   Save,
@@ -37,6 +45,8 @@ import { toast } from "sonner";
 const createEmptyForm = (): ProjectFormState => ({
   title: "",
   description: "",
+  summary: "",
+  startDate: "",
   technologies: "",
   githubUrl: "",
   liveUrl: "",
@@ -106,6 +116,8 @@ export default function ProjectsSection() {
     return {
       title: data.title,
       description: data.description || undefined,
+      summary: data.summary || undefined,
+      startDate: data.startDate || undefined,
       technologies: data.technologies
         ? data.technologies
             .split(",")
@@ -158,6 +170,8 @@ export default function ProjectsSection() {
     setFormData({
       title: project.title,
       description: project.description || "",
+      summary: project.summary || "",
+      startDate: project.startDate || "",
       technologies: project.technologies ? project.technologies.join(", ") : "",
       githubUrl: project.githubUrl || "",
       liveUrl: project.liveUrl || "",
@@ -382,17 +396,41 @@ function ProjectForm({
               className="h-11"
             />
           </div>
+
           <div className="space-y-2">
-            <Label>Technologies (comma separated)</Label>
-            <Input
-              value={formData.technologies}
-              onChange={(e) =>
-                setFormData({ ...formData, technologies: e.target.value })
-              }
-              placeholder="e.g. React, Next.js, TailwindCSS"
-              className="h-11"
-            />
+            <Label>Start Date</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="h-11 w-full justify-start text-left"
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {formData.startDate
+                    ? format(new Date(formData.startDate), "PPP")
+                    : "Pick a date"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={
+                    formData.startDate
+                      ? new Date(formData.startDate)
+                      : undefined
+                  }
+                  onSelect={(date) =>
+                    setFormData({
+                      ...formData,
+                      startDate: date ? format(date, "yyyy-MM-dd") : "",
+                    })
+                  }
+                  captionLayout="dropdown-years"
+                />
+              </PopoverContent>
+            </Popover>
           </div>
+
           <div className="space-y-2">
             <Label>GitHub URL</Label>
             <Input
@@ -417,7 +455,34 @@ function ProjectForm({
           </div>
         </div>
         <div className="space-y-2">
+          <Label>Technologies (comma separated)</Label>
+          <Input
+            value={formData.technologies}
+            onChange={(e) =>
+              setFormData({ ...formData, technologies: e.target.value })
+            }
+            placeholder="e.g. React, Next.js, TailwindCSS"
+            className="h-11"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Summary</Label>
+          <Input
+            value={formData.summary}
+            onChange={(e) =>
+              setFormData({ ...formData, summary: e.target.value })
+            }
+            placeholder="Briefly describe shortly..."
+            className="h-11"
+          />
+        </div>
+
+        <div className="space-y-2">
           <Label>Description</Label>
+          <p className="text-xs text-muted-foreground">
+            Supports Markdown formatting (e.g., **bold**, *italic*, [links]())
+          </p>
           <Textarea
             value={formData.description}
             onChange={(e) =>
@@ -439,13 +504,13 @@ function ProjectForm({
           />
         </div>
         <div className="space-y-2">
-          <Label>Collaborators (one per line)</Label>
+          <Label>Collaborators (one GitHub profile URL per line)</Label>
           <Textarea
             value={formData.collaborators}
             onChange={(e) =>
               setFormData({ ...formData, collaborators: e.target.value })
             }
-            placeholder="• Challenge 1&#10;• Challenge 2&#10;• Challenge 3"
+            placeholder="https://github.com/user1&#10;https://github.com/user2"
             rows={4}
           />
         </div>
@@ -659,8 +724,14 @@ function ProjectCard({
 
           {/* Links */}
           <div className="flex items-center justify-between">
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap items-center gap-6">
               {project.featured && <Badge>Featured</Badge>}
+              {project.startDate && (
+                <span className="flex items-center text-xs gap-1">
+                  <CalendarIcon className="h-4 w-4" />
+                  {format(new Date(project.startDate), "MMM yyyy")}
+                </span>
+              )}
               {project.githubUrl && (
                 <Link
                   href={project.githubUrl}
@@ -724,20 +795,24 @@ function ProjectCard({
             </div>
           )}
 
-          {/* Key Challenges */}
+          {/* Collaborators */}
           {project.collaborators && project.collaborators.length > 0 && (
-            <div className="mt-2">
-              <p className="text-sm font-medium mb-1">Key Challenges:</p>
-              <ul className="list-disc list-inside space-y-1.5 text-sm">
+            <div className="mt-2 flex items-center gap-2">
+              <p className="text-sm font-medium">Collaborators: </p>
+              <div className="flex flex-wrap gap-3">
                 {project.collaborators.map((collab, idx) => (
-                  <li
+                  <Link
                     key={idx}
-                    className="text-muted-foreground wrap-break-word leading-relaxed"
+                    href={collab}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
                   >
-                    {collab}
-                  </li>
+                    <FaGithub className="h-4 w-4" />
+                    {collab.replace("https://github.com/", "")}
+                  </Link>
                 ))}
-              </ul>
+              </div>
             </div>
           )}
         </div>

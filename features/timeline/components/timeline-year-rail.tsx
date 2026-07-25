@@ -5,11 +5,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-type YearEntry = {
-  year: string;
-  startIdx: number;
-  endIdx: number;
-};
+// type YearEntry = {
+//   year: string;
+//   startIdx: number;
+//   endIdx: number;
+// };
 
 type Props = {
   experiences: ExperienceItemType[];
@@ -22,40 +22,6 @@ function extractYear(dateStr: string): string {
   return match ? match[1] : "";
 }
 
-function buildYearEntries(experiences: ExperienceItemType[]): YearEntry[] {
-  const yearMap = new Map<string, { startIdx: number; endIdx: number }>();
-
-  experiences.forEach((exp, idx) => {
-    for (const pos of exp.positions) {
-      const startYear = extractYear(pos.employmentPeriod.start);
-      const endYear = pos.employmentPeriod.end
-        ? extractYear(pos.employmentPeriod.end)
-        : startYear;
-
-      if (startYear && !yearMap.has(startYear)) {
-        yearMap.set(startYear, { startIdx: idx, endIdx: idx });
-      }
-      if (endYear && !yearMap.has(endYear)) {
-        yearMap.set(endYear, {
-          startIdx: yearMap.get(endYear)?.startIdx ?? idx,
-          endIdx: idx,
-        });
-      }
-
-      // Update endIdx for all years in range
-      for (const [year, range] of yearMap) {
-        if (year >= startYear && year <= endYear) {
-          range.endIdx = Math.max(range.endIdx, idx);
-        }
-      }
-    }
-  });
-
-  return Array.from(yearMap.entries())
-    .sort(([a], [b]) => b.localeCompare(a))
-    .map(([year, range]) => ({ year, ...range }));
-}
-
 export function TimelineYearRail({
   experiences,
   entryHeights,
@@ -64,11 +30,6 @@ export function TimelineYearRail({
   const isMobile = useIsMobile();
   const railRef = useRef<HTMLDivElement>(null);
   const [totalHeight, setTotalHeight] = useState(0);
-
-  const yearEntries = useMemo(
-    () => buildYearEntries(experiences),
-    [experiences],
-  );
 
   // Calculate total height from entry heights
   useEffect(() => {
@@ -86,11 +47,8 @@ export function TimelineYearRail({
       const yearsForEntry = new Set<string>();
       for (const pos of exp.positions) {
         const startYear = extractYear(pos.employmentPeriod.start);
-        const endYear = pos.employmentPeriod.end
-          ? extractYear(pos.employmentPeriod.end)
-          : startYear;
+
         if (startYear) yearsForEntry.add(startYear);
-        if (endYear) yearsForEntry.add(endYear);
       }
 
       // Position year labels at the top of this entry (where company name is)
@@ -113,6 +71,13 @@ export function TimelineYearRail({
     );
   }
 
+  // Line endpoints: centered on first and last circle
+  const lineTop = yearPositions.length > 0 ? yearPositions[0].y + 12 : 0;
+  const lineBottom =
+    yearPositions.length > 0
+      ? totalHeight - yearPositions[yearPositions.length - 1].y - 12
+      : 0;
+
   return (
     <div
       ref={railRef}
@@ -120,7 +85,10 @@ export function TimelineYearRail({
       style={{ height: totalHeight || "100%" }}
     >
       {/* Connecting line */}
-      <div className="absolute right-3 top-0 bottom-0 w-px bg-muted-foreground/40" />
+      <div
+        className="absolute right-3 w-px bg-muted-foreground/40"
+        style={{ top: lineTop, bottom: lineBottom }}
+      />
 
       {/* Year labels */}
       {yearPositions.map(({ year, y }) => {
@@ -140,13 +108,13 @@ export function TimelineYearRail({
             type="button"
             onClick={() => onYearClick(entryIdx)}
             className={cn(
-              "absolute right-0 flex items-center gap-2 -translate-y-1/2",
+              "absolute right-0 flex items-center gap-2",
               "text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer",
               "group/year",
             )}
             style={{ top: y }}
           >
-            <span className="tabular-nums text-3xl">{year}</span>
+            <span className="tabular-nums text-3xl leading-none">{year}</span>
             <span className="relative z-10 flex h-6 w-6 items-center justify-center">
               <span className="h-4 w-4 rounded-full bg-muted-foreground group-hover/year:bg-primary transition-colors" />
             </span>

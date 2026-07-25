@@ -1,6 +1,9 @@
 "use client";
 
-import { ExperienceItem, ExperienceItemType } from "@/components/ui/work-experience";
+import {
+  ExperienceItem,
+  ExperienceItemType,
+} from "@/components/ui/work-experience";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TimelineYearRail } from "./timeline-year-rail";
 
@@ -64,12 +67,12 @@ export function WorkExperienceWithRail({
         onYearClick={handleYearClick}
       />
       <div className="flex-1">
-        <div className="bg-background px-4 text-foreground">
+        <div className="text-muted-foreground px-2">
           {experiences.map((experience) => (
             <div
               key={experience.id}
               data-experience-entry
-              className="space-y-4 py-4"
+              className="space-y-4"
             >
               <ExperienceItem experience={experience} />
             </div>

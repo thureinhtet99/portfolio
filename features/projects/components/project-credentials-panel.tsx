@@ -80,7 +80,7 @@ export function ProjectCredentialsPanel({
       open={isOpen}
       onOpenChange={setIsOpen}
       className={cn(
-        "relative rounded-lg bg-accent-foreground/10 data-[state=open]:z-20 data-[state=open]:border sm:ps-3",
+        "relative rounded-md bg-accent-foreground/10 data-[state=open]:z-20 data-[state=open]:border sm:ps-3",
         compact ? "w-auto min-w-0 shrink-0" : "w-full",
         className,
       )}

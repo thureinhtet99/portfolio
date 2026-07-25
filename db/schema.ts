@@ -61,6 +61,7 @@ export const project = sqliteTable("project", {
   id: text("id").primaryKey(),
   title: text("title").notNull(),
   summary: text("summary").notNull(),
+  startDate: text("start_date"),
   description: text("description"),
   image: text("image"),
   technologies: text("technologies"), // JSON string

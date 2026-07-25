@@ -63,6 +63,8 @@ export type ProjectType = {
   id: string;
   title: string;
   description?: string;
+  summary?: string;
+  startDate?: string;
   technologies?: string[];
   image?: string;
   githubUrl?: string;
@@ -76,6 +78,8 @@ export type ProjectType = {
 export type ProjectFormState = {
   title: string;
   description: string;
+  summary: string;
+  startDate: string;
   technologies: string;
   githubUrl: string;
   liveUrl: string;
@@ -177,9 +181,10 @@ export type ProjectDetailModalType = {
   project: {
     image?: string | StaticImageData;
     title: string;
+    summary: string;
     description: string;
     objectives?: string[];
-    challenges?: string[];
+    collaborators?: string[];
     techStacks: string[];
     isGitHub: boolean;
     isLiveDemo: boolean;

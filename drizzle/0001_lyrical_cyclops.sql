@@ -1,0 +1,1 @@
+ALTER TABLE `project` ADD `start_date` text;

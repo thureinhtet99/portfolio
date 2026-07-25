@@ -1,8 +1,5 @@
 "use client";
 
-import { cardReveal } from "@/lib/motion";
-import { motion } from "framer-motion";
-import { FolderGit2 } from "lucide-react";
 import { ProjectShowcaseCard } from "./project-showcase-card";
 
 type Project = {
@@ -18,29 +15,19 @@ type Project = {
   featured?: boolean;
 };
 
-type Props = {
-  projects: Project[];
-};
-
-export default function ProjectsView({ projects }: Props) {
+export default function ProjectsView({ projects }: { projects: Project[] }) {
   return (
     <div className="page-shell">
       <section className="px-6 py-16 sm:py-20">
-        <div className="mx-auto max-w-5xl space-y-8">
-          <motion.h1
-            {...cardReveal(0)}
-            className="text-3xl font-bold tracking-[-0.03em]"
-          >
-            <FolderGit2 className="inline h-7 w-7 mr-2 text-muted-foreground" />
-            Projects
-          </motion.h1>
+        <div className="mx-auto max-w-3xl space-y-6">
+          <h1 className="text-4xl font-bold tracking-[-0.03em]">Projects</h1>
 
           {projects.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {projects.map((project, index) => (
-                <motion.div key={project.id} {...cardReveal(index)}>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {projects.map((project) => (
+                <div key={project.id}>
                   <ProjectShowcaseCard project={project} />
-                </motion.div>
+                </div>
               ))}
             </div>
           ) : (

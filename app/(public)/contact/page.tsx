@@ -1,8 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, ControllerRenderProps } from "react-hook-form";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,12 +11,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
-import { Send } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { motion } from "framer-motion";
-import { sectionReveal } from "@/lib/motion";
+import { Send } from "lucide-react";
+import { ControllerRenderProps, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
 
 // Form schema
 const formSchema = z.object({
@@ -60,12 +58,11 @@ export default function Contact() {
 
   return (
     <div className="mx-auto max-w-2xl py-4">
-      <motion.div
-        {...sectionReveal}
-        className="space-y-20"
-      >
+      <div className="space-y-20">
         <div className="space-y-2 text-center">
-          <h1 className="text-4xl font-bold bg-clip-text tracking-[-0.03em]">Contact</h1>
+          <h1 className="text-4xl font-bold bg-clip-text tracking-[-0.03em]">
+            Contact
+          </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Have a question or want to work together? Send me a message and
             I&apos;ll get back to you as soon as possible.
@@ -207,7 +204,7 @@ export default function Contact() {
             </form>
           </Form>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

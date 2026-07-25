@@ -1,29 +1,36 @@
 "use client";
 
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { sectionReveal } from "@/lib/motion";
+import { GitHubStars } from "@/components/ui/github-stars";
 import { ProjectType } from "@/types/index.type";
-import { motion } from "framer-motion";
-import { ArrowLeft, ExternalLink, Github } from "lucide-react";
+import { format } from "date-fns";
+import { CalendarIcon, ExternalLink, Tag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { FaGithub } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 
-type Props = {
-  project: ProjectType;
-};
+const GITHUB_USERNAME = "thureinhtet99";
 
-export function ProjectDetailView({ project }: Props) {
+export function ProjectDetailView({ project }: { project: ProjectType }) {
   const technologies = Array.isArray(project.technologies)
     ? project.technologies
     : [];
-  const objectives = Array.isArray(project.objectives)
-    ? project.objectives
+  // const objectives = Array.isArray(project.objectives)
+  //   ? project.objectives
+  //   : [];
+  // const keyChallenges = Array.isArray(project.keyChallenges)
+  //   ? project.keyChallenges
+  //   : [];
+  const collaborators = Array.isArray(project.collaborators)
+    ? project.collaborators
     : [];
-  const keyChallenges = Array.isArray(project.keyChallenges)
-    ? project.keyChallenges
-    : [];
-  const adopters = Array.isArray(project.adopters) ? project.adopters : [];
 
   // Parse org/repo from githubUrl
   const githubParts = project.githubUrl?.split("/").slice(-2) || [];
@@ -34,89 +41,75 @@ export function ProjectDetailView({ project }: Props) {
   return (
     <div className="page-shell">
       <section className="px-6 py-12">
-        <div className="mx-auto max-w-3xl space-y-8">
-          {/* Back link */}
-          <Link
-            href="/projects"
-            className="inline-flex items-center gap-1.5  text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Projects
-          </Link>
-
-          {/* GitHub-style header card */}
-          <motion.div {...sectionReveal}>
-            <div className="surface-panel overflow-hidden">
-              {/* Image */}
-              {project.image && (
-                <div className="relative aspect-video w-full">
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    fill
-                    className="object-cover"
-                    priority
-                  />
+        <div className="mx-auto max-w-3xl space-y-6">
+          <div className="bg-muted-foreground p-6 rounded-lg">
+            {/* Terminal preview area */}
+            <div className="relative rounded-lg overflow-hidden p-3 bg-background">
+              {/* Terminal header */}
+              <div className="flex items-center justify-between">
+                <div className="flex gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
                 </div>
-              )}
-
-              {/* GitHub header */}
-              <div className="bg-muted/50 px-5 py-4 border-b border-border/40">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2  text-sm">
-                    <div className="flex gap-1">
-                      <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
-                      <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
-                      <span className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
-                    </div>
-                    <span className="text-muted-foreground">{org}</span>
-                    <span className="text-muted-foreground/40">/</span>
-                    <span className="font-semibold text-foreground">
-                      {repo}
-                    </span>
-                  </div>
+                <div className="flex items-center gap-1 text-muted-foreground text-sm">
+                  <GitHubStars repo={GITHUB_USERNAME} stargazersCount={2050} />
                 </div>
-                <p className="mt-2  text-sm text-muted-foreground">
-                  {project.description || "No description"}
+              </div>
+
+              {/* Terminal content */}
+              <div className="py-4">
+                <p className="text-sm text-muted-foreground line-clamp-1">
+                  {org} / {repo}
                 </p>
               </div>
+
+              {/* Image or summary */}
+              <div className="pb-4">
+                {project.image ? (
+                  <div className="relative w-full aspect-video rounded-md overflow-hidden">
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      fill
+                      priority
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full aspect-video flex items-center justify-center">
+                    <span className="text-xs text-muted-foreground">
+                      {project.summary}
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Project Info */}
-          <motion.div {...sectionReveal} className="space-y-6">
-            <div>
-              <h1 className=" text-3xl font-bold tracking-[-0.03em]">
-                {project.title}
-              </h1>
-            </div>
-
-            {/* Tags */}
-            {technologies.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                {technologies.map((tech) => (
-                  <Badge
-                    key={tech}
-                    variant="secondary"
-                    className=" text-xs bg-muted/50 text-muted-foreground rounded-md px-2 py-1"
-                  >
-                    {tech}
-                  </Badge>
-                ))}
-              </div>
-            )}
+          <div className="space-y-6">
+            <h1 className=" text-3xl font-bold tracking-[-0.03em]">
+              {project.title}
+            </h1>
 
             {/* Links */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
+              {project.startDate && (
+                <span className="flex items-center text-xs gap-1">
+                  <CalendarIcon className="h-4 w-4" />
+                  {format(new Date(project.startDate), "MMM yyyy")}
+                </span>
+              )}
               {project.githubUrl && (
                 <Link
                   href={project.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5  text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
                 >
-                  <Github className="h-4 w-4" />
-                  View on GitHub
+                  <FaGithub className="h-4 w-4" />
                 </Link>
               )}
               {project.liveUrl && (
@@ -124,13 +117,26 @@ export function ProjectDetailView({ project }: Props) {
                   href={project.liveUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5  text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
                 >
                   <ExternalLink className="h-4 w-4" />
-                  Live Demo
                 </Link>
               )}
             </div>
+
+            {/* Tags */}
+            {technologies.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5">
+                <Tag className="h-4 w-4" />
+                {technologies.map((tech) => (
+                  <Badge key={tech} variant="outline">
+                    {tech}
+                  </Badge>
+                ))}
+              </div>
+            )}
+
+            <hr className="border-muted-foreground/20 my-10" />
 
             {/* Description */}
             {project.description && (
@@ -139,38 +145,46 @@ export function ProjectDetailView({ project }: Props) {
               </div>
             )}
 
-            {/* Adopters */}
-            {adopters.length > 0 && (
-              <div className="space-y-3">
-                <h2 className=" text-lg font-semibold">Adopters</h2>
-                <div className="space-y-2">
-                  {adopters.map((adopter, i) => (
+            {/* collaborators */}
+            {collaborators.length > 0 && (
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-semibold">Collaborators: </h2>
+                <AvatarGroup>
+                  <Avatar size="lg">
+                    <AvatarImage
+                      src="https://github.com/shadcn.png"
+                      alt="@shadcn"
+                    />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                </AvatarGroup>
+
+                {/* <div className="space-y-2">
+                  {collaborators.map((collab, i) => (
                     <div
                       key={i}
-                      id={adopter.name.toLowerCase().replace(/\s+/g, "")}
-                      className="scroll-mt-24  text-sm text-muted-foreground"
+                      id={collab.toLowerCase().replace(/\s+/g, "")}
+                      className="scroll-mt-24  ext-sm text-muted-foreground"
                     >
-                      {adopter.url ? (
+                      {collab ? (
                         <Link
-                          href={adopter.url}
+                          href={collab}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-primary hover:underline"
                         >
-                          #{adopter.name}
+                          #{collab}
                         </Link>
                       ) : (
-                        <span>#{adopter.name}</span>
+                        <span>#{collab}</span>
                       )}
-                      {adopter.description && (
-                        <span className="ml-2">— {adopter.description}</span>
-                      )}
+                      {collab && <span className="ml-2">— {collab}</span>}
                     </div>
                   ))}
-                </div>
+                </div> */}
               </div>
             )}
-          </motion.div>
+          </div>
         </div>
       </section>
     </div>
