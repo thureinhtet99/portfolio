@@ -1,12 +1,12 @@
 import { APP_CONFIG } from "@/config/app-config";
 import { db } from "@/db/client";
-import { setting } from "@/db/schema";
+import { project, setting } from "@/db/schema";
 import { ContributionsSection } from "@/features/home/components/contributions-section";
 import { HomeView } from "@/features/home/components/home-view";
 import { WidgetSection } from "@/features/home/components/widget-section";
 import { WidgetSectionSkeleton } from "@/features/home/components/widget-section-skeleton";
 import { ProjectType } from "@/types/index.type";
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { Suspense } from "react";
 
 // export const dynamic = "force-dynamic";
@@ -32,14 +32,63 @@ async function getSettings() {
 
 async function getFeaturedProjects(): Promise<ProjectType[]> {
   try {
-    const baseUrl = APP_CONFIG.BASE_URL;
-    const response = await fetch(
-      `${baseUrl}/api/${APP_CONFIG.ROUTE.PROJECTS}?featured=true`,
-    );
-    const { success, data } = await response.json();
-    if (success && data) return data;
+    const rows = await db
+      .select()
+      .from(project)
+      .where(eq(project.featured, true))
+      .orderBy(asc(project.order))
+      .all();
 
-    return [];
+    const projects: ProjectType[] = await Promise.all(
+      rows.map(async (p) => {
+        let stargazersCount = 0;
+        if (p.githubUrl) {
+          const parts = p.githubUrl.split("/").slice(-2);
+          if (parts.length === 2) {
+            try {
+              const ghRes = await fetch(
+                `https://api.github.com/repos/${parts[0]}/${parts[1]}`,
+                {
+                  headers: {
+                    Accept: "application/vnd.github.v3+json",
+                    ...(process.env.GITHUB_TOKEN
+                      ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
+                      : {}),
+                  },
+                  next: { revalidate: 86400 },
+                },
+              );
+              if (ghRes.ok) {
+                const ghData = await ghRes.json();
+                stargazersCount = ghData.stargazers_count ?? 0;
+              }
+            } catch {
+              // fallback to 0
+            }
+          }
+        }
+        return {
+          id: p.id,
+          title: p.title,
+          summary: p.summary ?? undefined,
+          startDate: p.startDate ?? undefined,
+          description: p.description ?? undefined,
+          image: p.image ?? undefined,
+          githubUrl: p.githubUrl ?? undefined,
+          liveUrl: p.liveUrl ?? undefined,
+          technologies: p.technologies ? JSON.parse(p.technologies) : [],
+          objectives: p.objectives ? JSON.parse(p.objectives) : [],
+          collaborators: p.collaborators ? JSON.parse(p.collaborators) : [],
+          demoCredentials: p.demoCredentials
+            ? JSON.parse(p.demoCredentials)
+            : [],
+          featured: p.featured,
+          stargazersCount,
+        };
+      }),
+    );
+
+    return projects;
   } catch (error) {
     console.error("Failed to load featured projects:", error);
     return [];

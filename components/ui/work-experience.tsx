@@ -84,7 +84,7 @@ export type ExperienceItemProps = {
 
 export function ExperienceItem({ experience }: ExperienceItemProps) {
   return (
-    <div className="space-y-4 py-2">
+    <div className="space-y-4 py-1">
       <div className="not-prose flex items-center gap-3">
         <div className="flex size-6 shrink-0 items-center justify-center">
           {experience.companyLogo ? (
@@ -99,7 +99,7 @@ export function ExperienceItem({ experience }: ExperienceItemProps) {
           )}
         </div>
 
-        <h3 className="text-lg leading-snug font-semibold text-muted-foreground">
+        <h3 className="text-lg leading-snug font-semibold text-white">
           {experience.companyWebsite ? (
             <a
               className="link"
@@ -113,16 +113,6 @@ export function ExperienceItem({ experience }: ExperienceItemProps) {
             experience.companyName
           )}
         </h3>
-
-        {/* {experience.isCurrentEmployer && (
-          <span
-            className="relative flex items-center justify-center"
-            aria-label="Current Employer"
-          >
-            <span className="absolute inline-flex size-3 animate-ping rounded-full bg-sky-500 opacity-50" />
-            <span className="relative inline-flex size-2 rounded-full bg-sky-500" />
-          </span>
-        )} */}
       </div>
 
       <div className="relative space-y-4 before:absolute before:left-3 before:h-full before:w-px before:bg-border">
@@ -160,7 +150,7 @@ export function ExperiencePositionItem({
 
   return (
     <Collapsible
-      defaultOpen={position.isExpanded}
+      defaultOpen={position.isExpanded ?? true}
       onOpenChange={handleOpenChange}
       disabled={!position.description}
       asChild
@@ -240,16 +230,6 @@ export function ExperiencePositionItem({
             </Prose>
           )}
         </CollapsibleContent>
-
-        {Array.isArray(position.skills) && position.skills.length > 0 && (
-          <ul className="not-prose flex flex-wrap gap-1.5 pt-3 pl-9">
-            {position.skills.map((skill, index) => (
-              <li key={index} className="flex">
-                <Skill>{skill}</Skill>
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
     </Collapsible>
   );
@@ -260,18 +240,6 @@ function Prose({ className, ...props }: ComponentProps<"div">) {
     <div
       className={cn(
         "prose max-w-none prose-ncdai prose-zinc dark:prose-invert",
-        className,
-      )}
-      {...props}
-    />
-  );
-}
-
-function Skill({ className, ...props }: ComponentProps<"span">) {
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-sm border border-muted-foreground/20 bg-muted/50 px-1.5 py-0.5 text-xs text-muted-foreground",
         className,
       )}
       {...props}

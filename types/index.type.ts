@@ -73,6 +73,7 @@ export type ProjectType = {
   collaborators?: string[];
   demoCredentials?: DemoCredentialType[];
   featured?: boolean;
+  stargazersCount?: number;
 };
 
 export type ProjectFormState = {
@@ -109,7 +110,6 @@ export type WorkType = {
   companyName: string;
   companyLogo?: string;
   companyWebsite?: string;
-  isCurrentEmployer?: boolean;
   positions: {
     id: string;
     title: string;
@@ -157,7 +157,6 @@ export type WorkDisplayType = {
   companyName: string;
   companyLogo?: string;
   companyWebsite?: string;
-  isCurrentEmployer?: boolean;
   positions: {
     id: string;
     title: string;

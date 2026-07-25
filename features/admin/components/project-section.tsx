@@ -1,3 +1,4 @@
+import { GitHubContributor } from "@/app/api/github/contributors/route";
 import AdminSectionHeader from "@/components/shared/admin-section-header";
 import CustomLoading from "@/components/shared/custom-loading";
 import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
@@ -24,6 +25,7 @@ import {
   ProjectFormState,
   ProjectType,
 } from "@/types/index.type";
+import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
   ArrowDown,
@@ -504,14 +506,18 @@ function ProjectForm({
           />
         </div>
         <div className="space-y-2">
-          <Label>Collaborators (one GitHub profile URL per line)</Label>
+          <Label>Additional Collaborators (optional)</Label>
+          <p className="text-xs text-muted-foreground">
+            GitHub contributors are auto-fetched from the repo. Use this field
+            only for non-GitHub collaborators.
+          </p>
           <Textarea
             value={formData.collaborators}
             onChange={(e) =>
               setFormData({ ...formData, collaborators: e.target.value })
             }
             placeholder="https://github.com/user1&#10;https://github.com/user2"
-            rows={4}
+            rows={3}
           />
         </div>
         <div className="p-4 sm:p-6">
@@ -661,6 +667,25 @@ function ProjectCard({
   isFirst?: boolean;
   isLast?: boolean;
 }) {
+  const githubParts = project.githubUrl?.split("/").slice(-2) || [];
+  const org = githubParts[0];
+  const repo = githubParts[1];
+
+  const { data: githubContributors = [] } = useQuery<GitHubContributor[]>({
+    queryKey: ["github-contributors", org, repo],
+    queryFn: async () => {
+      const res = await fetch(
+        `/api/github/contributors?owner=${org}&repo=${repo}`,
+      );
+      const json = await res.json();
+      return json.success ? json.data : [];
+    },
+    enabled: !!org && !!repo,
+    staleTime: 86400_000,
+  });
+
+  const manualCollaborators = project.collaborators || [];
+
   return (
     <Card
       className={`border border-muted-foreground/20 hover:border-muted-foreground ${isEditing ? "border-primary" : ""}`}
@@ -728,7 +753,7 @@ function ProjectCard({
               {project.featured && <Badge>Featured</Badge>}
               {project.startDate && (
                 <span className="flex items-center text-xs gap-1">
-                  <CalendarIcon className="h-4 w-4" />
+                  {/* <CalendarIcon className="h-4 w-4" /> */}
                   {format(new Date(project.startDate), "MMM yyyy")}
                 </span>
               )}
@@ -796,13 +821,29 @@ function ProjectCard({
           )}
 
           {/* Collaborators */}
-          {project.collaborators && project.collaborators.length > 0 && (
-            <div className="mt-2 flex items-center gap-2">
-              <p className="text-sm font-medium">Collaborators: </p>
+          {(githubContributors.length > 0 ||
+            manualCollaborators.length > 0) && (
+            <div className="mt-2">
+              <p className="text-sm font-medium mb-1">Collaborators:</p>
               <div className="flex flex-wrap gap-3">
-                {project.collaborators.map((collab, idx) => (
+                {githubContributors.map((contributor) => (
                   <Link
-                    key={idx}
+                    key={contributor.login}
+                    href={contributor.html_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <FaGithub className="h-4 w-4" />
+                    {contributor.login}
+                    <span className="text-xs text-muted-foreground/60">
+                      ({contributor.contributions})
+                    </span>
+                  </Link>
+                ))}
+                {manualCollaborators.map((collab, idx) => (
+                  <Link
+                    key={`manual-${idx}`}
                     href={collab}
                     target="_blank"
                     rel="noopener noreferrer"

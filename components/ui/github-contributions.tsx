@@ -1,8 +1,5 @@
 "use client";
 
-import { format } from "date-fns";
-import { use } from "react";
-
 import type { Activity } from "@/components/ui/contribution-graph";
 import {
   ContributionGraph,
@@ -12,13 +9,14 @@ import {
   ContributionGraphLegend,
   ContributionGraphTotalCount,
 } from "@/components/ui/contribution-graph";
-// import { Spinner } from "@/components/ui/spinner";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { use } from "react";
 import CustomLoading from "../shared/custom-loading";
 
 export function GitHubContributions({
@@ -92,7 +90,6 @@ export function GitHubContributions({
 export function GitHubContributionsFallback() {
   return (
     <div className="flex h-40.5 w-full items-center justify-center">
-      {/* <Spinner className="text-muted-foreground" /> */}
       <CustomLoading />
     </div>
   );

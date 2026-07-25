@@ -1,12 +1,8 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { ProjectShowcaseCard } from "@/features/projects/components/project-showcase-card";
 import { WorkExperienceWithRail } from "@/features/timeline/components/work-experience-with-rail";
 import { ProjectType, WorkType } from "@/types/index.type";
-import { motion, useReducedMotion } from "framer-motion";
 import { Mail, MapPin, MoveRight } from "lucide-react";
-import { StaticImageData } from "next/image";
 import Link from "next/link";
 import { ReactNode } from "react";
 import { FaFile, FaGithub, FaLinkedin } from "react-icons/fa";
@@ -19,7 +15,7 @@ type Props = {
   aboutMe: string;
   intro: string;
   featuredProjects: ProjectType[];
-  profileImage: StaticImageData | string | null;
+  profileImage: string | null;
   resume: string | null;
   bookingUrl: string | null;
   socialLinks: {
@@ -42,16 +38,11 @@ export function HomeView({
   children,
   contributionsSection,
 }: Props) {
-  const shouldReduceMotion = useReducedMotion();
-
   return (
     <div className="page-shell">
       {/* Hero Section */}
       <section id="hero-section" className="px-6 py-16 sm:py-20 ">
-        <motion.div
-          // {...sectionReveal}
-          className="mx-auto max-w-5xl space-y-6"
-        >
+        <div className="mx-auto max-w-5xl space-y-6">
           <div className="space-y-2">
             <span className="text-muted-foreground text-md sm:text-base ">
               Good to see you!
@@ -119,7 +110,7 @@ export function HomeView({
                     available ? "bg-primary" : "bg-muted-foreground/50"
                   }`}
                 >
-                  {available && !shouldReduceMotion && (
+                  {available && (
                     <span
                       className="relative flex items-center justify-center"
                       aria-label="Current Employer"
@@ -133,15 +124,15 @@ export function HomeView({
               </span>
             </>
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* Experiences */}
       <section id="experience-section" className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl space-y-6">
-          <motion.h2 className=" text-4xl font-bold text-foreground tracking-[-0.02em]">
+          <h2 className=" text-4xl font-bold text-foreground tracking-[-0.02em]">
             Experiences
-          </motion.h2>
+          </h2>
           {experiences.length > 0 ? (
             <WorkExperienceWithRail experiences={experiences} />
           ) : (
@@ -153,12 +144,9 @@ export function HomeView({
       {/* Contribution */}
       <section id="contributions" className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl space-y-6">
-          <motion.h2
-            // {...sectionReveal}
-            className=" text-4xl font-bold text-foreground tracking-[-0.02em]"
-          >
+          <h2 className=" text-4xl font-bold text-foreground tracking-[-0.02em]">
             Contributions
-          </motion.h2>
+          </h2>
           {contributionsSection}
         </div>
       </section>
@@ -171,28 +159,24 @@ export function HomeView({
               Featured Projects
             </h2>
             {featuredProjects.length > 0 && (
-              <div className="flex items-center gap-1 text-primary hover:bg-primary hover:text-background transition-colors">
+              <div className="flex items-center gap-1 hover:bg-primary hover:text-background transition-colors">
                 <Link href="/projects" className="text-base">
                   View all
                 </Link>
-                <MoveRight className="inline h-4 w-4" />
+                <MoveRight className="h-4 w-4" />
               </div>
             )}
           </div>
 
           {featuredProjects.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <div className="flex flex-wrap justify-center gap-6">
               {featuredProjects.map((project) => (
-                <div
+                <ProjectShowcaseCard
                   key={project.id}
-                  className={
-                    featuredProjects.length === 1
-                      ? "lg:col-span-2 mx-auto w-full"
-                      : ""
-                  }
-                >
-                  <ProjectShowcaseCard project={project} techLimit={4} />
-                </div>
+                  project={project}
+                  techLimit={4}
+                  className="w-full max-w-[480px]"
+                />
               ))}
             </div>
           ) : (

@@ -1,34 +1,26 @@
-"use client";
-
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarGroup,
-  AvatarImage,
-} from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { GitHubStars } from "@/components/ui/github-stars";
 import { ProjectType } from "@/types/index.type";
 import { format } from "date-fns";
-import { CalendarIcon, ExternalLink, Tag } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import { FaGithub } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
+import { ContributorsSection } from "./contributors-section";
 
-const GITHUB_USERNAME = "thureinhtet99";
-
-export function ProjectDetailView({ project }: { project: ProjectType }) {
+export function ProjectDetailView({
+  project,
+  stargazersCount = 0,
+}: {
+  project: ProjectType;
+  stargazersCount?: number;
+}) {
   const technologies = Array.isArray(project.technologies)
     ? project.technologies
     : [];
-  // const objectives = Array.isArray(project.objectives)
-  //   ? project.objectives
-  //   : [];
-  // const keyChallenges = Array.isArray(project.keyChallenges)
-  //   ? project.keyChallenges
-  //   : [];
-  const collaborators = Array.isArray(project.collaborators)
+  const manualCollaborators = Array.isArray(project.collaborators)
     ? project.collaborators
     : [];
 
@@ -37,6 +29,7 @@ export function ProjectDetailView({ project }: { project: ProjectType }) {
   const org = githubParts[0] || "owner";
   const repo =
     githubParts[1] || project.title.toLowerCase().replace(/\s+/g, "-");
+  const projectUrl = project.githubUrl || "";
 
   return (
     <div className="page-shell">
@@ -44,30 +37,31 @@ export function ProjectDetailView({ project }: { project: ProjectType }) {
         <div className="mx-auto max-w-3xl space-y-6">
           <div className="bg-muted-foreground p-6 rounded-lg">
             {/* Terminal preview area */}
-            <div className="relative rounded-lg overflow-hidden p-3 bg-background">
+            <div className="relative rounded-lg overflow-hidden bg-background">
               {/* Terminal header */}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center px-3 justify-between">
                 <div className="flex gap-1.5">
                   <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
                   <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
                   <span className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
                 </div>
                 <div className="flex items-center gap-1 text-muted-foreground text-sm">
-                  <GitHubStars repo={GITHUB_USERNAME} stargazersCount={2050} />
+                  <GitHubStars
+                    repo={projectUrl}
+                    stargazersCount={stargazersCount}
+                  />
                 </div>
               </div>
 
               {/* Terminal content */}
-              <div className="py-4">
-                <p className="text-sm text-muted-foreground line-clamp-1">
-                  {org} / {repo}
-                </p>
-              </div>
+              <p className="text-sm text-muted-foreground line-clamp-1 px-3">
+                {org} / {repo}
+              </p>
 
               {/* Image or summary */}
-              <div className="pb-4">
+              <div className="pt-4">
                 {project.image ? (
-                  <div className="relative w-full aspect-video rounded-md overflow-hidden">
+                  <div className="relative w-full aspect-video overflow-hidden">
                     <Image
                       src={project.image}
                       alt={project.title}
@@ -78,10 +72,8 @@ export function ProjectDetailView({ project }: { project: ProjectType }) {
                     />
                   </div>
                 ) : (
-                  <div className="w-full aspect-video flex items-center justify-center">
-                    <span className="text-xs text-muted-foreground">
-                      {project.summary}
-                    </span>
+                  <div className="w-full aspect-video flex items-center justify-center px-3">
+                    {project.summary}
                   </div>
                 )}
               </div>
@@ -90,7 +82,7 @@ export function ProjectDetailView({ project }: { project: ProjectType }) {
 
           {/* Project Info */}
           <div className="space-y-6">
-            <h1 className=" text-3xl font-bold tracking-[-0.03em]">
+            <h1 className=" text-4xl font-bold tracking-[-0.03em]">
               {project.title}
             </h1>
 
@@ -98,7 +90,6 @@ export function ProjectDetailView({ project }: { project: ProjectType }) {
             <div className="flex items-center gap-6">
               {project.startDate && (
                 <span className="flex items-center text-xs gap-1">
-                  <CalendarIcon className="h-4 w-4" />
                   {format(new Date(project.startDate), "MMM yyyy")}
                 </span>
               )}
@@ -127,7 +118,7 @@ export function ProjectDetailView({ project }: { project: ProjectType }) {
             {/* Tags */}
             {technologies.length > 0 && (
               <div className="flex flex-wrap items-center gap-1.5">
-                <Tag className="h-4 w-4" />
+                {/* <Tag className="h-4 w-4" /> */}
                 {technologies.map((tech) => (
                   <Badge key={tech} variant="outline">
                     {tech}
@@ -135,6 +126,15 @@ export function ProjectDetailView({ project }: { project: ProjectType }) {
                 ))}
               </div>
             )}
+
+            {/* Collaborators */}
+            <Suspense>
+              <ContributorsSection
+                org={org}
+                repo={repo}
+                manualCollaborators={manualCollaborators}
+              />
+            </Suspense>
 
             <hr className="border-muted-foreground/20 my-10" />
 
@@ -145,44 +145,20 @@ export function ProjectDetailView({ project }: { project: ProjectType }) {
               </div>
             )}
 
-            {/* collaborators */}
-            {collaborators.length > 0 && (
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg font-semibold">Collaborators: </h2>
-                <AvatarGroup>
-                  <Avatar size="lg">
-                    <AvatarImage
-                      src="https://github.com/shadcn.png"
-                      alt="@shadcn"
-                    />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>
-                </AvatarGroup>
-
-                {/* <div className="space-y-2">
-                  {collaborators.map((collab, i) => (
-                    <div
-                      key={i}
-                      id={collab.toLowerCase().replace(/\s+/g, "")}
-                      className="scroll-mt-24  ext-sm text-muted-foreground"
-                    >
-                      {collab ? (
-                        <Link
-                          href={collab}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary hover:underline"
-                        >
-                          #{collab}
-                        </Link>
-                      ) : (
-                        <span>#{collab}</span>
-                      )}
-                      {collab && <span className="ml-2">— {collab}</span>}
-                    </div>
+            {project.objectives && (
+              <>
+                <hr className="border-muted-foreground/20 my-10" />
+                <h2 className=" text-2xl font-bold tracking-[-0.03em]">
+                  Objective{project.objectives.length > 1 ? "s" : ""}:
+                </h2>
+                <ul className="list-disc list-inside space-y-1.5 text-muted-foreground">
+                  {project.objectives.map((objective, idx) => (
+                    <li key={idx} className="wrap-break-word leading-relaxed">
+                      {objective}
+                    </li>
                   ))}
-                </div> */}
-              </div>
+                </ul>
+              </>
             )}
           </div>
         </div>

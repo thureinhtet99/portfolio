@@ -83,8 +83,8 @@ export function TopNavbar() {
               key={link.href}
               href={link.href}
               className={cn(
-                " text-sm transition-colors hover:text-foreground",
-                isActive(link.href) ? "text-white" : "text-muted-foreground",
+                "text-sm transition-colors hover:bg-primary hover:text-background",
+                isActive(link.href) ? "text-white" : "",
               )}
             >
               {link.label}

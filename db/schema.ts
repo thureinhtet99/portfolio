@@ -94,9 +94,6 @@ export const experience = sqliteTable("work", {
   companyName: text("company_name").notNull(),
   companyLogo: text("company_logo"),
   companyWebsite: text("company_website"),
-  isCurrentEmployer: integer("is_current_employer", { mode: "boolean" })
-    .notNull()
-    .default(false),
   positions: text("positions").notNull(), // JSON array of positions
   order: integer("order").notNull().default(0),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),

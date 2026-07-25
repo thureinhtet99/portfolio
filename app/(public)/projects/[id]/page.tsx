@@ -5,11 +5,11 @@ import { eq } from "drizzle-orm";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-type Props = {
+export async function generateMetadata({
+  params,
+}: {
   params: Promise<{ id: string }>;
-};
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+}): Promise<Metadata> {
   const { id } = await params;
   try {
     const result = await db
@@ -25,7 +25,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function ProjectDetailPage({ params }: Props) {
+export default async function ProjectDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
 
   let projectData = null;
@@ -54,11 +58,44 @@ export default async function ProjectDetailPage({ params }: Props) {
       objectives: p.objectives ? JSON.parse(p.objectives) : [],
       collaborators: p.collaborators ? JSON.parse(p.collaborators) : [],
       demoCredentials: p.demoCredentials ? JSON.parse(p.demoCredentials) : [],
+      stargazersCount: 0,
     };
+
+    // Fetch actual stargazers count
+    if (projectData.githubUrl) {
+      const parts = projectData.githubUrl.split("/").slice(-2);
+      if (parts.length === 2) {
+        try {
+          const ghRes = await fetch(
+            `https://api.github.com/repos/${parts[0]}/${parts[1]}`,
+            {
+              headers: {
+                Accept: "application/vnd.github.v3+json",
+                ...(process.env.GITHUB_TOKEN
+                  ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
+                  : {}),
+              },
+              next: { revalidate: 86400 },
+            },
+          );
+          if (ghRes.ok) {
+            const ghData = await ghRes.json();
+            projectData.stargazersCount = ghData.stargazers_count ?? 0;
+          }
+        } catch {
+          // fallback to 0
+        }
+      }
+    }
   } catch (error) {
     console.error("Failed to load project:", error);
     notFound();
   }
 
-  return <ProjectDetailView project={projectData} />;
+  return (
+    <ProjectDetailView
+      project={projectData}
+      stargazersCount={projectData.stargazersCount}
+    />
+  );
 }

@@ -66,7 +66,7 @@ export function TimelineYearRail({
   if (isMobile) {
     return (
       <div className="flex flex-col items-center gap-2 w-8">
-        <div className="relative h-full w-px bg-border/50" />
+        <div className="relative h-full w-px bg-muted-foreground/20" />
       </div>
     );
   }
@@ -86,7 +86,7 @@ export function TimelineYearRail({
     >
       {/* Connecting line */}
       <div
-        className="absolute right-3 w-px bg-muted-foreground/40"
+        className="absolute right-3 w-px bg-muted-foreground/20"
         style={{ top: lineTop, bottom: lineBottom }}
       />
 

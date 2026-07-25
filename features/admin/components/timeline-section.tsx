@@ -30,14 +30,12 @@ type PositionForm = {
   end: string;
   employmentType: string;
   description: string;
-  skills: string;
 };
 
 type WorkFormData = {
   companyName: string;
   companyLogo: string;
   companyWebsite: string;
-  isCurrentEmployer: boolean;
   positions: PositionForm[];
 };
 
@@ -54,7 +52,6 @@ const emptyPosition = (): PositionForm => ({
   end: "",
   employmentType: "",
   description: "",
-  skills: "",
 });
 
 export default function TimelinesSection() {
@@ -85,7 +82,6 @@ export default function TimelinesSection() {
     companyName: "",
     companyLogo: "",
     companyWebsite: "",
-    isCurrentEmployer: false,
     positions: [emptyPosition()],
   });
   const [educationForm, setEducationForm] = useState<EducationFormData>({
@@ -105,7 +101,6 @@ export default function TimelinesSection() {
       companyName: "",
       companyLogo: "",
       companyWebsite: "",
-      isCurrentEmployer: false,
       positions: [emptyPosition()],
     });
     setEducationForm({ institution: "", location: "", period: "" });
@@ -167,7 +162,6 @@ export default function TimelinesSection() {
           companyName: workForm.companyName,
           companyLogo: workForm.companyLogo || undefined,
           companyWebsite: workForm.companyWebsite || undefined,
-          isCurrentEmployer: workForm.isCurrentEmployer,
           positions: workForm.positions.map((p) => ({
             id: p.id,
             title: p.title,
@@ -177,12 +171,6 @@ export default function TimelinesSection() {
             },
             employmentType: p.employmentType || undefined,
             description: p.description || undefined,
-            skills: p.skills
-              ? p.skills
-                  .split(",")
-                  .map((s) => s.trim())
-                  .filter(Boolean)
-              : undefined,
           })),
           type: "work" as const,
         };
@@ -217,7 +205,6 @@ export default function TimelinesSection() {
         companyName: t.companyName,
         companyLogo: t.companyLogo || "",
         companyWebsite: t.companyWebsite || "",
-        isCurrentEmployer: t.isCurrentEmployer || false,
         positions: t.positions?.map((p) => ({
           id: p.id,
           title: p.title,
@@ -632,17 +619,6 @@ function WorkForm({
                     rows={3}
                   />
                 </div>
-                <div className="space-y-1">
-                  <Label>Skills (comma separated)</Label>
-                  <Input
-                    value={pos.skills}
-                    onChange={(e) =>
-                      onUpdatePosition(idx, "skills", e.target.value)
-                    }
-                    placeholder="React, TypeScript, Node.js"
-                    className="h-9"
-                  />
-                </div>
               </CardContent>
             </Card>
           ))}
@@ -826,14 +802,6 @@ function WorkCard({
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            {t.isCurrentEmployer && (
-              <Badge variant="default" className="text-xs">
-                Current
-              </Badge>
-            )}
           </div>
 
           {t.positions && t.positions.length > 0 && (

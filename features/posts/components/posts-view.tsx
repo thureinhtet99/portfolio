@@ -10,7 +10,7 @@ export function PostsView({ posts }: { posts: PostType[] }) {
   return (
     <div className="page-shell">
       <section className="px-6 py-16 sm:py-20">
-        <div className="mx-auto max-w-3xl space-y-6">
+        <div className="mx-auto max-w-2xl space-y-6">
           <h1 className="text-4xl font-bold tracking-[-0.03em]">Posts</h1>
 
           {posts.length > 0 ? (
@@ -28,7 +28,7 @@ export function PostsView({ posts }: { posts: PostType[] }) {
                       {formatDate(new Date(post.createdAt).toISOString())}
                     </p>
                     {post.excerpt && (
-                      <p className=" text-sm leading-relaxed text-muted-foreground line-clamp-2">
+                      <p className="text-sm leading-relaxed text-muted-foreground line-clamp-3">
                         {post.excerpt}
                       </p>
                     )}

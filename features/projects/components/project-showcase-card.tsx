@@ -3,7 +3,6 @@
 import { Badge } from "@/components/ui/badge";
 import { GitHubStars } from "@/components/ui/github-stars";
 import { cn } from "@/lib/utils";
-import demoImage from "@/public/screenshots/home-page-2.png";
 import { ProjectType } from "@/types/index.type";
 import { Tag } from "lucide-react";
 import Image from "next/image";
@@ -30,6 +29,7 @@ export function ProjectShowcaseCard({
   const org = githubParts[0] || "owner";
   const repo =
     githubParts[1] || project.title.toLowerCase().replace(/\s+/g, "-");
+  const stargazersCount = project.stargazersCount ?? 0;
 
   return (
     <Link href={`/projects/${project.id}`} className="block group">
@@ -41,32 +41,31 @@ export function ProjectShowcaseCard({
       >
         <div className="bg-muted-foreground p-6">
           {/* Terminal preview area */}
-          <div className="relative rounded-lg overflow-hidden p-3 bg-background">
+          <div className="relative rounded-lg overflow-hidden bg-background">
             {/* Terminal header */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between px-3">
               <div className="flex gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
                 <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
                 <span className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
               </div>
-              <div className="flex items-center gap-1 text-muted-foreground text-sm">
-                <GitHubStars repo={GITHUB_USERNAME} stargazersCount={2050} />
-              </div>
+              <GitHubStars
+                repo={GITHUB_USERNAME}
+                stargazersCount={stargazersCount}
+              />
             </div>
 
             {/* Terminal content */}
-            <div className="py-4">
-              <p className="text-sm text-muted-foreground line-clamp-1">
-                {org} / {repo}
-              </p>
-            </div>
+            <p className="text-sm text-muted-foreground line-clamp-1 px-3">
+              {org} / {repo}
+            </p>
 
             {/* Image or summary */}
-            <div className="pb-4">
+            <div className="pt-4">
               {project.image ? (
-                <div className="relative w-full aspect-video rounded-md overflow-hidden">
+                <div className="relative w-full aspect-video overflow-hidden">
                   <Image
-                    src={demoImage}
+                    src={project.image}
                     alt={project.title}
                     fill
                     priority
@@ -75,10 +74,8 @@ export function ProjectShowcaseCard({
                   />
                 </div>
               ) : (
-                <div className="w-full aspect-video flex items-center justify-center">
-                  <span className="text-xs text-muted-foreground">
-                    {project.title}
-                  </span>
+                <div className="w-full aspect-video flex items-center justify-center px-3">
+                  {project.summary}
                 </div>
               )}
             </div>
