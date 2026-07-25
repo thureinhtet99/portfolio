@@ -5,6 +5,20 @@ import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const postData = await getPost(slug);
+  if (!postData) return { title: "Post Not Found" };
+  return {
+    title: postData.title,
+    description: postData.excerpt || postData.title,
+  };
+}
+
 async function getPost(slug: string) {
   try {
     const result = await db
@@ -22,20 +36,6 @@ async function getPost(slug: string) {
     console.error("Failed to fetch post:", error);
     return null;
   }
-}
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
-  const { slug } = await params;
-  const postData = await getPost(slug);
-  if (!postData) return { title: "Post Not Found" };
-  return {
-    title: postData.title,
-    description: postData.excerpt || postData.title,
-  };
 }
 
 export default async function PostPage({

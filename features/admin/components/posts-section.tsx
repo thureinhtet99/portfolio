@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { APP_CONFIG } from "@/config/app-config";
 import { useCrudResource } from "@/hooks/use-crud";
+import { generateSlug } from "@/lib/utils";
 import { PostType } from "@/types/index.type";
 import {
   ArrowDown,
@@ -64,13 +65,6 @@ export default function PostsSection() {
     resetForm();
     setIsAdding(false);
     setEditingId(null);
-  };
-
-  const generateSlug = (title: string) => {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
   };
 
   const handleSave = async () => {

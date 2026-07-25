@@ -61,6 +61,7 @@ export type DemoCredentialType = {
 
 export type ProjectType = {
   id: string;
+  slug: string;
   title: string;
   description?: string;
   summary?: string;
@@ -77,6 +78,7 @@ export type ProjectType = {
 };
 
 export type ProjectFormState = {
+  slug: string;
   title: string;
   description: string;
   summary: string;

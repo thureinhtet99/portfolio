@@ -20,6 +20,7 @@ import { APP_CONFIG } from "@/config/app-config";
 import { ProjectCredentialsPanel } from "@/features/projects/components/project-credentials-panel";
 import { useCrudResource } from "@/hooks/use-crud";
 import { useImageUpload } from "@/hooks/use-image-upload";
+import { generateSlug } from "@/lib/utils";
 import {
   DemoCredentialType,
   ProjectFormState,
@@ -45,6 +46,7 @@ import { FaGithub } from "react-icons/fa";
 import { toast } from "sonner";
 
 const createEmptyForm = (): ProjectFormState => ({
+  slug: "",
   title: "",
   description: "",
   summary: "",
@@ -116,6 +118,7 @@ export default function ProjectsSection() {
   const buildPayload = async (data: ProjectFormState) => {
     const imageUrl = await imageUpload.upload();
     return {
+      slug: data.slug,
       title: data.title,
       description: data.description || undefined,
       summary: data.summary || undefined,
@@ -141,8 +144,8 @@ export default function ProjectsSection() {
   };
 
   const handleSave = async () => {
-    if (!formData.title) {
-      toast.error("Please enter a title");
+    if (!formData.slug || !formData.title) {
+      toast.error("Please enter a slug and title");
       return;
     }
 
@@ -170,6 +173,7 @@ export default function ProjectsSection() {
   const handleEdit = (project: ProjectType) => {
     setEditingId(project.id);
     setFormData({
+      slug: project.slug,
       title: project.title,
       description: project.description || "",
       summary: project.summary || "",
@@ -270,6 +274,8 @@ export default function ProjectsSection() {
             onCancel={handleCancel}
             isLoading={isMutating}
             isEditing={!!editingId}
+            editingId={editingId}
+            generateSlug={generateSlug}
           />
         )}
 
@@ -318,14 +324,20 @@ function ProjectForm({
   onCancel,
   isLoading,
   isEditing,
+  editingId,
+  generateSlug,
 }: {
   formData: ProjectFormState;
-  setFormData: (data: ProjectFormState) => void;
+  setFormData: (
+    data: ProjectFormState | ((prev: ProjectFormState) => ProjectFormState),
+  ) => void;
   imageUpload: ReturnType<typeof useImageUpload>;
   onSave: () => void;
   onCancel: () => void;
   isLoading?: boolean;
   isEditing?: boolean;
+  editingId: string | null;
+  generateSlug: (title: string) => string;
 }) {
   const { preview, isUploading, onSelectFile } = imageUpload;
 
@@ -391,10 +403,29 @@ function ProjectForm({
             <Label>Title *</Label>
             <Input
               value={formData.title}
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
+              // onChange={(e) =>
+              //   setFormData({ ...formData, title: e.target.value })
+              // }
+              onChange={(e) => {
+                const title = e.target.value;
+                setFormData((prev) => ({
+                  ...prev,
+                  title,
+                  slug: editingId ? prev.slug : generateSlug(title),
+                }));
+              }}
               placeholder="e.g. Portfolio Website"
+              className="h-11"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Slug *</Label>
+            <Input
+              value={formData.slug}
+              onChange={(e) =>
+                setFormData({ ...formData, slug: e.target.value })
+              }
+              placeholder="e.g. portfolio-website"
               className="h-11"
             />
           </div>

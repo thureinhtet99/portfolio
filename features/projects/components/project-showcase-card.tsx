@@ -32,7 +32,7 @@ export function ProjectShowcaseCard({
   const stargazersCount = project.stargazersCount ?? 0;
 
   return (
-    <Link href={`/projects/${project.id}`} className="block group">
+    <Link href={`/projects/${project.slug}`} className="block group">
       <div
         className={cn(
           "rounded-md border border-muted-foreground/20 overflow-hidden transition-all hover:border-muted-foreground",

@@ -21,6 +21,7 @@ export async function GET() {
 
     const formattedProjects = projects.map((proj) => ({
       id: proj.id,
+      slug: proj.slug,
       title: proj.title,
       summary: proj.summary,
       startDate: proj.startDate,
@@ -62,6 +63,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const {
+      slug,
       title,
       summary,
       startDate,
@@ -76,9 +78,9 @@ export async function POST(req: NextRequest) {
       featured,
     } = body;
 
-    if (!title) {
+    if (!slug || !title) {
       return NextResponse.json(
-        { success: false, error: "Title is required" },
+        { success: false, error: "Slug and title are required" },
         { status: 400 },
       );
     }
@@ -88,6 +90,7 @@ export async function POST(req: NextRequest) {
 
     const insertData = {
       id,
+      slug,
       title,
       summary: summary || "",
       startDate: startDate || null,
@@ -115,6 +118,7 @@ export async function POST(req: NextRequest) {
       success: true,
       data: {
         id,
+        slug,
         title,
         summary,
         startDate,
@@ -147,6 +151,7 @@ export async function PUT(req: NextRequest) {
     const body = await req.json();
     const {
       id,
+      slug,
       title,
       summary,
       startDate,
@@ -161,9 +166,9 @@ export async function PUT(req: NextRequest) {
       featured,
     } = body;
 
-    if (!id || !title) {
+    if (!id || !slug || !title) {
       return NextResponse.json(
-        { success: false, error: "ID and title are required" },
+        { success: false, error: "ID, slug, and title are required" },
         { status: 400 },
       );
     }
@@ -171,6 +176,7 @@ export async function PUT(req: NextRequest) {
     await db
       .update(project)
       .set({
+        slug,
         title,
         summary: summary || "",
         startDate: startDate || null,
@@ -195,6 +201,7 @@ export async function PUT(req: NextRequest) {
       success: true,
       data: {
         id,
+        slug,
         title,
         summary,
         startDate,

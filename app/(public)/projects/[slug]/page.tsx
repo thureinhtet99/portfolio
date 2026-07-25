@@ -2,50 +2,20 @@ import { db } from "@/db/client";
 import { project } from "@/db/schema";
 import { ProjectDetailView } from "@/features/projects/components/project-detail-view";
 import { eq } from "drizzle-orm";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}): Promise<Metadata> {
-  const { id } = await params;
+async function getProject(slug: string) {
   try {
     const result = await db
       .select()
       .from(project)
-      .where(eq(project.id, id))
+      .where(eq(project.slug, slug))
       .limit(1)
       .all();
-    if (result.length === 0) return { title: "Project Not Found" };
-    return { title: result[0].title };
-  } catch {
-    return { title: "Project" };
-  }
-}
-
-export default async function ProjectDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-
-  let projectData = null;
-  try {
-    const result = await db
-      .select()
-      .from(project)
-      .where(eq(project.id, id))
-      .limit(1)
-      .all();
-
-    if (result.length === 0) notFound();
-
+    if (result.length === 0) return null;
     const p = result[0];
-
-    projectData = {
+    const projectData = {
       ...p,
       title: p.title ?? undefined,
       summary: p.summary ?? undefined,
@@ -61,7 +31,6 @@ export default async function ProjectDetailPage({
       stargazersCount: 0,
     };
 
-    // Fetch actual stargazers count
     if (projectData.githubUrl) {
       const parts = projectData.githubUrl.split("/").slice(-2);
       if (parts.length === 2) {
@@ -87,10 +56,37 @@ export default async function ProjectDetailPage({
         }
       }
     }
+
+    return projectData;
   } catch (error) {
     console.error("Failed to load project:", error);
-    notFound();
+    return null;
   }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const projectData = await getProject(slug);
+  if (!projectData) return { title: "Project Not Found" };
+  return {
+    title: projectData.title,
+    description: projectData.summary || projectData.title,
+  };
+}
+
+export default async function ProjectPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const projectData = await getProject(slug);
+
+  if (!projectData) notFound();
 
   return (
     <ProjectDetailView

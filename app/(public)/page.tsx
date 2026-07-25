@@ -69,6 +69,7 @@ async function getFeaturedProjects(): Promise<ProjectType[]> {
         }
         return {
           id: p.id,
+          slug: p.slug,
           title: p.title,
           summary: p.summary ?? undefined,
           startDate: p.startDate ?? undefined,

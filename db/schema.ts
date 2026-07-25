@@ -59,6 +59,7 @@ export const verification = sqliteTable("verification", {
 
 export const project = sqliteTable("project", {
   id: text("id").primaryKey(),
+  slug: text("slug").notNull().unique(),
   title: text("title").notNull(),
   summary: text("summary").notNull(),
   startDate: text("start_date"),
