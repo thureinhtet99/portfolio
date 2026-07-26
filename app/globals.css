@@ -67,7 +67,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --animate-pulse-slow: pulse-deep 3s ease-out infinite;
+  --animate-pulse-slow: pulse-deep 2s ease-out infinite;
 
   @keyframes pulse-deep {
     50% {

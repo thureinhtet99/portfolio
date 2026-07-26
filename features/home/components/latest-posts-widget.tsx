@@ -26,10 +26,11 @@ export function LatestPostsWidget({ posts }: Props) {
               key={post.id}
               className="group flex items-baseline justify-between text-sm"
             >
-              <Link href={`/posts/${post.slug}`}>
-                <span className="truncate text-muted-foreground hover:text-primary">
-                  {post.title}
-                </span>
+              <Link
+                href={`/posts/${post.slug}`}
+                className="truncate hover:text-primary"
+              >
+                {post.title}
               </Link>
               <span className="shrink-0 flex items-center gap-x-4">
                 <span className="text-muted-foreground/40">-</span>

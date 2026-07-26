@@ -2,7 +2,8 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatDate } from "@/lib/utils";
+import { format } from "date-fns";
+
 import { Award, Clock, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -48,11 +49,11 @@ export default function CertificatesClientComponent({ certificates }: Props) {
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
                       <div className="absolute top-3 right-3 lg:top-4 lg:right-4">
-                        <Badge
-                          variant="secondary"
-                          className="bg-background/90 text-foreground backdrop-blur-sm border border-border/20 text-xs lg:text-sm px-2 py-1 lg:px-3 lg:py-1.5"
-                        >
-                          {formatDate(certificate.issueDate)}
+                        <Badge variant="secondary">
+                          {format(
+                            new Date(certificate.issueDate),
+                            "dd MMM yyyy",
+                          )}
                         </Badge>
                       </div>
                     </div>
@@ -67,11 +68,11 @@ export default function CertificatesClientComponent({ certificates }: Props) {
                         </h2>
                       </div>
                       <div className="absolute top-3 right-3 lg:top-4 lg:right-4">
-                        <Badge
-                          variant="secondary"
-                          className="text-xs lg:text-sm px-2 py-1 lg:px-3 lg:py-1.5"
-                        >
-                          {formatDate(certificate.issueDate)}
+                        <Badge variant="secondary">
+                          {format(
+                            new Date(certificate.issueDate),
+                            "dd MMM yyyy",
+                          )}
                         </Badge>
                       </div>
                     </div>

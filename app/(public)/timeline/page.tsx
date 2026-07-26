@@ -1,14 +1,14 @@
 import { APP_CONFIG } from "@/config/app-config";
 import TimelineView from "@/features/timeline/components/timeline-view";
 import {
+  EducationDisplayType,
   EducationType,
   TimelineType,
-  WorkType,
   WorkDisplayType,
-  EducationDisplayType,
+  WorkType,
 } from "@/types/index.type";
 
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 async function getTimelines(): Promise<TimelineType[]> {
   try {
@@ -41,7 +41,6 @@ export default async function Timelines() {
       companyName: exp.companyName,
       companyLogo: exp.companyLogo,
       companyWebsite: exp.companyWebsite,
-      isCurrentEmployer: exp.isCurrentEmployer,
       positions: exp.positions || [],
     }));
 

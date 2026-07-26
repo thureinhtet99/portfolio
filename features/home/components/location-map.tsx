@@ -1,73 +1,42 @@
 "use client";
 
-import L from "leaflet";
+import { icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useEffect, useState } from "react";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
-// Fix default marker icon issue with bundlers
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-  iconUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-  shadowUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+const markerIcon = icon({
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconSize: [20, 30],
+  iconAnchor: [10, 30],
+  popupAnchor: [0, -30],
 });
 
-function FlyToLocation({ coords }: { coords: [number, number] }) {
-  const map = useMap();
-  useEffect(() => {
-    map.flyTo(coords, 10, { duration: 1.5 });
-  }, [map, coords]);
-  return null;
-}
-
-export function LocationMap({
-  fallbackLat,
-  fallbackLng,
-  label,
-}: {
+type Props = {
   fallbackLat: number;
   fallbackLng: number;
-  label?: string;
-}) {
-  const [coords, setCoords] = useState<[number, number] | null>(null);
+  label: string;
+};
 
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      setCoords([fallbackLat, fallbackLng]);
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setCoords([pos.coords.latitude, pos.coords.longitude]);
-      },
-      () => {
-        setCoords([fallbackLat, fallbackLng]);
-      },
-      { enableHighAccuracy: false, timeout: 5000, maximumAge: 600000 },
-    );
-  }, [fallbackLat, fallbackLng]);
-
-  if (!coords) return null;
-
+export function LocationMap({ fallbackLat, fallbackLng, label }: Props) {
   return (
-    <div className="relative h-40 w-full rounded-md overflow-hidden border border-muted-foreground/20">
-      <MapContainer
-        center={coords}
-        zoom={10}
-        zoomControl={false}
-        attributionControl={false}
-        // placeholder="loading"
-        className="h-full w-full"
-      >
-        <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
-        <FlyToLocation coords={coords} />
-        <Marker position={coords}>{label && <Popup>{label}</Popup>}</Marker>
-      </MapContainer>
+    <div className="flex flex-col gap-3">
+      <div className="relative h-32 w-full overflow-hidden rounded-md border border-muted-foreground/20 [&_.leaflet-container]:h-full [&_.leaflet-container]:w-full">
+        <MapContainer
+          center={[fallbackLat, fallbackLng]}
+          zoom={10}
+          zoomControl={false}
+          attributionControl={false}
+        >
+          <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
+          <Marker position={[fallbackLat, fallbackLng]} icon={markerIcon}>
+            <Popup>{label}</Popup>
+          </Marker>
+        </MapContainer>
+      </div>
+      {/* <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <span>{label}</span>
+      </div> */}
     </div>
   );
 }

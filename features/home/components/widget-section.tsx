@@ -1,6 +1,7 @@
 import { APP_CONFIG } from "@/config/app-config";
 import { db } from "@/db/client";
 import { post } from "@/db/schema";
+import { asc } from "drizzle-orm";
 import {
   GitHubActivityWidget,
   KatibCommitItem,
@@ -8,7 +9,6 @@ import {
   KatibStreak,
 } from "./github-activity-widget";
 import { LatestPostsWidget } from "./latest-posts-widget";
-import { asc } from "drizzle-orm";
 
 const KATIB_BASE = "https://katib.jasoncameron.dev";
 
@@ -92,13 +92,13 @@ export async function WidgetSection() {
   ]);
 
   return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
+      <LatestPostsWidget posts={latestPosts} />
       <GitHubActivityWidget
         commits={katibCommits.commits}
         languages={katibCommits.languages}
         streak={katibStreak}
       />
-      <LatestPostsWidget posts={latestPosts} />
     </div>
   );
 }

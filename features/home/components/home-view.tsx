@@ -1,18 +1,27 @@
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ProjectShowcaseCard } from "@/features/projects/components/project-showcase-card";
 import { WorkExperienceWithRail } from "@/features/timeline/components/work-experience-with-rail";
 import { ProjectType, WorkType } from "@/types/index.type";
-import { Mail, MapPin, MoveRight } from "lucide-react";
+import { Info, Mail, MapPin, MoveRight } from "lucide-react";
 import Link from "next/link";
 import { ReactNode } from "react";
 import { FaFile, FaGithub, FaLinkedin } from "react-icons/fa";
 import { LuMessageCircleMore } from "react-icons/lu";
 import ReactMarkdown from "react-markdown";
-import { LocationMap } from "./location-map";
+import { LocationMapClient } from "./location-map-client";
 
 type Props = {
   experiences: WorkType[];
   residence: string;
+  lat: number;
+  lng: number;
   available: boolean;
   aboutMe: string;
   intro: string;
@@ -32,6 +41,8 @@ type Props = {
 export function HomeView({
   experiences,
   residence,
+  lat,
+  lng,
   available,
   intro,
   featuredProjects,
@@ -190,7 +201,21 @@ export function HomeView({
       {/* Widgets */}
       <section id="widgets" className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl space-y-6">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4">
+            {/* Currently Based In */}
+            <div className="surface-panel p-5 border border-muted-foreground/20 rounded-md col-span-2">
+              <div className="flex items-center gap-2 mb-4">
+                <MapPin className="h-4 w-4 text-primary" />
+                <h3 className="text-sm font-semibold">Currently Based In</h3>
+              </div>
+
+              <LocationMapClient
+                fallbackLat={lat}
+                fallbackLng={lng}
+                label={residence}
+              />
+            </div>
+
             {/* Let's Connect */}
             <div className="surface-panel flex flex-col justify-between p-5 border border-muted-foreground/20 rounded-md">
               <div className="space-y-4">
@@ -210,40 +235,30 @@ export function HomeView({
               </Button>
             </div>
 
-            {/* Currently Based In */}
-            <div className="surface-panel p-5 border border-muted-foreground/20 rounded-md">
-              <div className="flex items-center gap-2 mb-4">
-                <MapPin className="h-4 w-4 text-primary" />
-                <h3 className="text-sm font-semibold">Currently Based In</h3>
-              </div>
-              {/* <div className="space-y-3"> */}
-              {/* <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <span>{residence}</span>
-                </div> */}
-              <LocationMap
-                fallbackLat={16.8661}
-                fallbackLng={96.1951}
-                label={residence}
-              />
-              {/* </div> */}
-            </div>
-
             {/* Click me*/}
-            <div className="surface-panel p-5 border border-muted-foreground/20 rounded-md col-span-1">
-              {/* <h3 className=" text-sm font-semibold text-foreground mb-2">
-                Currently Based In <span className="text-primary">📍</span>
-              </h3>
-              <div className="flex items-center gap-2  text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4 text-primary" />
-                <span>{residence}</span>
-              </div> */}
+            <div className="surface-panel p-5 border border-muted-foreground/20 rounded-md flex flex-col">
+              <div className="self-end">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Info className="h-4 w-4 hover:text-primary cursor-pointer" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-50" align="end">
+                    <DropdownMenuGroup>
+                      <DropdownMenuLabel className="text-xs text-muted-foreground">
+                        of course, it won&apos;t take long
+                      </DropdownMenuLabel>
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              <div className="flex flex-1 items-center justify-center">
+                <p className="text-sm animate-bounce">cooking smth...</p>
+              </div>
             </div>
           </div>
 
           {/* GitHub Activity + Latest Posts */}
-          {/* <div className="grid grid-cols-1 gap-4 md:grid-cols-2"> */}
           {children}
-          {/* </div> */}
         </div>
       </section>
     </div>
