@@ -48,12 +48,12 @@ export default function CustomLoading() {
 
   return (
     <div className="flex items-center justify-center gap-1">
-      <span className="text-base text-primary hover:text-muted-foreground transition-colors shrink-0">
+      <span className="text-base text-primary/60 hover:text-muted-foreground transition-colors shrink-0">
         ~
       </span>
       <span className="flex items-center">
         <span className="mr-1">/</span>
-        <span className="text-base text-primary hover:text-muted-foreground transition-colors">
+        <span className="text-base text-primary/60 hover:text-muted-foreground transition-colors">
           {display}
         </span>
       </span>

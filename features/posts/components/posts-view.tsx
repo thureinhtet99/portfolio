@@ -25,7 +25,7 @@ export function PostsView({ posts }: { posts: PostType[] }) {
                       {post.title}
                     </h2>
                     <p className=" text-xs text-muted-foreground">
-                      {format(new Date(post.createdAt), "dd.MM.yyyy")}
+                      {format(new Date(post.createdAt), "dd MMM yyyy")}
                     </p>
                     {post.excerpt && (
                       <p className="text-sm leading-relaxed text-muted-foreground line-clamp-3">

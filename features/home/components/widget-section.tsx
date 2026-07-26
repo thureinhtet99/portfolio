@@ -1,48 +1,58 @@
 import { APP_CONFIG } from "@/config/app-config";
 import { db } from "@/db/client";
 import { post } from "@/db/schema";
-import { GitHubActivityWidget } from "./github-activity-widget";
+import {
+  GitHubActivityWidget,
+  KatibCommitItem,
+  KatibLanguage,
+  KatibStreak,
+} from "./github-activity-widget";
 import { LatestPostsWidget } from "./latest-posts-widget";
 import { asc } from "drizzle-orm";
 
-async function getGithubEvents(githubUrl?: string) {
-  if (!githubUrl) return [];
-  const username = githubUrl.split("/").pop();
-  if (!username) return [];
+const KATIB_BASE = "https://katib.jasoncameron.dev";
 
+function getKatibHeaders() {
+  const token = process.env.GITHUB_TOKEN;
+  return {
+    Accept: "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
+
+async function getKatibCommits(
+  username: string,
+  limit = 5,
+): Promise<{ commits: KatibCommitItem[]; languages: KatibLanguage[] }> {
   try {
-    const response = await fetch(
-      `https://api.github.com/users/${username}/events/public`,
-      { next: { revalidate: 60 * 30 } },
+    const res = await fetch(
+      `${KATIB_BASE}/v2/commits/latest?username=${username}&limit=${limit}`,
+      {
+        headers: getKatibHeaders(),
+        next: { revalidate: 60 * 15 },
+      },
     );
-    if (!response.ok) return [];
-    return await response.json();
+    if (!res.ok) return { commits: [], languages: [] };
+    const data = await res.json();
+    return {
+      commits: data.commits ?? [],
+      languages: data.languages ?? [],
+    };
   } catch {
-    return [];
+    return { commits: [], languages: [] };
   }
 }
 
-async function getGithubLanguages(githubUrl?: string) {
-  if (!githubUrl) return {};
-  const username = githubUrl.split("/").pop();
-  if (!username) return {};
-
+async function getKatibStreak(username: string): Promise<KatibStreak | null> {
   try {
-    const response = await fetch(
-      `https://api.github.com/users/${username}/repos?per_page=10&sort=updated`,
-      { next: { revalidate: 60 * 60 } },
-    );
-    if (!response.ok) return {};
-    const repos = await response.json();
-    const languageMap: Record<string, number> = {};
-    for (const repo of repos) {
-      if (repo.language) {
-        languageMap[repo.language] = (languageMap[repo.language] || 0) + 1;
-      }
-    }
-    return languageMap;
+    const res = await fetch(`${KATIB_BASE}/streak?username=${username}`, {
+      headers: getKatibHeaders(),
+      next: { revalidate: 60 * 15 },
+    });
+    if (!res.ok) return null;
+    return await res.json();
   } catch {
-    return {};
+    return null;
   }
 }
 
@@ -73,17 +83,20 @@ export async function WidgetSection() {
   const { data: settings } = await settingsRes.json();
   const githubUrl = settings?.githubUrl || null;
 
-  const [githubEvents, githubLanguages, latestPosts] = await Promise.all([
-    getGithubEvents(githubUrl),
-    getGithubLanguages(githubUrl),
+  const username = githubUrl?.split("/").pop() || "";
+
+  const [katibCommits, katibStreak, latestPosts] = await Promise.all([
+    username ? getKatibCommits(username, 5) : { commits: [], languages: [] },
+    username ? getKatibStreak(username) : null,
     getLatestPosts(),
   ]);
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <GitHubActivityWidget
-        events={githubEvents}
-        languages={githubLanguages}
+        commits={katibCommits.commits}
+        languages={katibCommits.languages}
+        streak={katibStreak}
       />
       <LatestPostsWidget posts={latestPosts} />
     </div>

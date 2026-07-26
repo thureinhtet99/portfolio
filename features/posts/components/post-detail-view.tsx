@@ -31,7 +31,7 @@ export function PostDetailView({ post }: { post: PostType }) {
             </h1>
 
             <span className="flex items-center text-xs gap-1">
-              {format(new Date(post.createdAt), "MMM yyyy")}
+              {format(new Date(post.createdAt), "dd MMM yyyy")}
             </span>
 
             {post.tags && post.tags.length > 0 && (

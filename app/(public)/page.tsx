@@ -4,12 +4,9 @@ import { project, setting } from "@/db/schema";
 import { ContributionsSection } from "@/features/home/components/contributions-section";
 import { HomeView } from "@/features/home/components/home-view";
 import { WidgetSection } from "@/features/home/components/widget-section";
-import { WidgetSectionSkeleton } from "@/features/home/components/widget-section-skeleton";
 import { ProjectType } from "@/types/index.type";
 import { asc, eq } from "drizzle-orm";
 import { Suspense } from "react";
-
-// export const dynamic = "force-dynamic";
 
 async function getSettings() {
   try {
@@ -173,7 +170,7 @@ export default async function Home() {
       }}
       contributionsSection={<ContributionsSection />}
     >
-      <Suspense fallback={<WidgetSectionSkeleton />}>
+      <Suspense>
         <WidgetSection />
       </Suspense>
     </HomeView>

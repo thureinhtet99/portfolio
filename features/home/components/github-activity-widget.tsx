@@ -1,28 +1,60 @@
 "use client";
 
-import { GitFork, Github, GitPullRequest, Star } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import Link from "next/link";
+import { BsActivity } from "react-icons/bs";
 
-type Event = {
-  type: string;
-  repo: { name: string };
-  payload: {
-    action?: string;
-    issue?: { title: string };
-    pull_request?: { title: string };
-  };
-  created_at: string;
+export type KatibCommitItem = {
+  repo: string;
+  additions: number;
+  deletions: number;
+  commitUrl: string;
+  committedDate: string;
+  oid: string;
+  messageHeadline: string;
+  messageBody: string;
+};
+
+export type KatibLanguage = {
+  size: number;
+  name: string;
+  color: string;
+};
+
+export type KatibStreak = {
+  currentStreak: number;
+  highestStreak: number;
+  active: boolean;
 };
 
 type Props = {
-  events: Event[];
-  languages: Record<string, number>;
+  commits: KatibCommitItem[];
+  languages: KatibLanguage[];
+  streak: KatibStreak | null;
 };
 
-export function GitHubActivityWidget({ events, languages }: Props) {
-  const hasEvents = events && events.length > 0;
-  const hasLanguages = Object.keys(languages).length > 0;
+function timeAgo(dateStr: string): string {
+  const now = Date.now();
+  const then = new Date(dateStr).getTime();
+  const seconds = Math.floor((now - then) / 1000);
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h`;
+  const days = Math.floor(hours / 24);
+  return `${days}d`;
+}
 
-  if (!hasEvents && !hasLanguages) {
+export function GitHubActivityWidget({ commits, languages, streak }: Props) {
+  const hasCommits = commits.length > 0;
+  const hasLanguages = languages.length > 0;
+
+  if (!hasCommits && !hasLanguages && !streak) {
     return (
       <div className="surface-panel p-5">
         <h3 className=" text-sm font-semibold text-foreground mb-3">
@@ -33,82 +65,52 @@ export function GitHubActivityWidget({ events, languages }: Props) {
     );
   }
 
-  const totalRepos = Object.values(languages).reduce(
-    (sum, count) => sum + count,
-    0,
-  );
-  const sortedLanguages = Object.entries(languages)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 5);
-
-  const eventIcon = (type: string) => {
-    switch (type) {
-      case "PushEvent":
-        return <Github className="h-4 w-4" />;
-      case "PullRequestEvent":
-        return <GitPullRequest className="h-4 w-4" />;
-      case "WatchEvent":
-        return <Star className="h-4 w-4" />;
-      case "ForkEvent":
-        return <GitFork className="h-4 w-4" />;
-      default:
-        return <Github className="h-4 w-4" />;
-    }
-  };
-
-  const eventTitle = (event: Event) => {
-    const repoName = event.repo.name.split("/").pop() || event.repo.name;
-    switch (event.type) {
-      case "PushEvent":
-        return (
-          <>
-            Pushed to <span className="text-foreground">{repoName}</span>
-          </>
-        );
-      case "PullRequestEvent":
-        return (
-          <>
-            {event.payload.action === "opened" ? "Opened" : "Closed"} PR in{" "}
-            <span className="text-foreground">{repoName}</span>
-          </>
-        );
-      case "WatchEvent":
-        return (
-          <>
-            Starred <span className="text-foreground">{repoName}</span>
-          </>
-        );
-      case "ForkEvent":
-        return (
-          <>
-            Forked <span className="text-foreground">{repoName}</span>
-          </>
-        );
-      default:
-        return (
-          <>
-            {event.type} on <span className="text-foreground">{repoName}</span>
-          </>
-        );
-    }
-  };
+  const totalSize = languages.reduce((sum, l) => sum + l.size, 0);
+  const topLanguages = languages.slice(0, 5);
 
   return (
-    <div className="surface-panel p-5">
-      <h3 className=" text-sm font-semibold text-foreground mb-3">
-        ✦ Recent Commits
-      </h3>
+    <div className="surface-panel p-5 border border-muted-foreground/20 rounded-md">
+      <div className="flex items-center gap-2 mb-4">
+        <BsActivity className="h-4 w-4 text-primary" />
+        <h3 className="text-sm font-semibold">Recent commits</h3>
+      </div>
 
-      {/* Event List */}
-      {hasEvents && (
+      {/* Commit List */}
+      {hasCommits && (
         <div className="space-y-2 mb-4">
-          {events.slice(0, 3).map((event, index) => (
+          {commits.slice(0, 3).map((commit) => (
             <div
-              key={index}
-              className="flex items-start gap-2  text-xs text-muted-foreground"
+              key={commit.oid}
+              className="flex items-start gap-2 text-sm text-muted-foreground"
             >
-              <span className="mt-0.5 shrink-0">{eventIcon(event.type)}</span>
-              <span className="truncate">{eventTitle(event)}</span>
+              <Link
+                href={commit.commitUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="truncate block text-white hover:text-primary transition-colors"
+              >
+                {commit.repo.split("/").pop()}
+              </Link>
+              :
+              <div className="min-w-0">
+                <Link
+                  href={commit.commitUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="truncate block hover:text-primary transition-colors"
+                >
+                  {commit.messageHeadline}
+                </Link>
+                <span className="text-muted-foreground/60">
+                  {timeAgo(commit.committedDate)}
+                  {commit.additions > 0 && (
+                    <span className="text-green-400"> +{commit.additions}</span>
+                  )}
+                  {commit.deletions > 0 && (
+                    <span className="text-red-400"> -{commit.deletions}</span>
+                  )}
+                </span>
+              </div>
             </div>
           ))}
         </div>
@@ -116,27 +118,27 @@ export function GitHubActivityWidget({ events, languages }: Props) {
 
       {/* Language Bar */}
       {hasLanguages && (
-        <div className="mt-auto">
-          <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-muted/50">
-            {sortedLanguages.map(([lang, count], i) => {
-              const percent = (count / totalRepos) * 100;
-              const colors = [
-                "bg-primary",
-                "bg-blue-500",
-                "bg-yellow-500",
-                "bg-red-500",
-                "bg-purple-500",
-              ];
-              return (
-                <div
-                  key={lang}
-                  className={`h-full transition-all ${colors[i] || "bg-muted"}`}
-                  style={{ width: `${percent}%` }}
-                  title={`${lang}: ${Math.round(percent)}%`}
-                />
-              );
-            })}
-          </div>
+        <div className="flex h-2 w-full overflow-hidden rounded-md border border-muted-foreground/20">
+          {topLanguages.map((lang) => {
+            const percent = totalSize > 0 ? (lang.size / totalSize) * 100 : 0;
+            return (
+              <Tooltip key={lang.name}>
+                <TooltipTrigger asChild>
+                  <div
+                    className="h-full transition-all"
+                    style={{
+                      width: `${percent}%`,
+                      backgroundColor: lang.color,
+                    }}
+                    title={`${lang.name}: ${Math.round(percent)}%`}
+                  />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{lang.name}</p>
+                </TooltipContent>
+              </Tooltip>
+            );
+          })}
         </div>
       )}
     </div>
