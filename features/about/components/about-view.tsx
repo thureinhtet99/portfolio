@@ -1,41 +1,38 @@
 "use client";
 
-import profileImg from "@/public/profile.svg";
-import { motion } from "framer-motion";
+import profileImg from "@/public/profile.jpg";
 import Image, { StaticImageData } from "next/image";
 import ReactMarkdown from "react-markdown";
 
 type Props = {
   aboutMe: string;
   profileImage: StaticImageData | string | null;
-  email: string | null;
-  socialLinks: {
-    github: string | null;
-    linkedin: string | null;
-    facebook: string | null;
-  };
+  // email: string | null;
+  // socialLinks: {
+  //   github: string | null;
+  //   linkedin: string | null;
+  //   facebook: string | null;
+  // };
 };
 
 export function AboutView({
   aboutMe,
   profileImage,
-  email,
-  socialLinks,
+  // email,
+  // socialLinks,
 }: Props) {
   return (
     <div className="page-shell">
       {/* About */}
       <section className="px-6 py-16 sm:py-20">
-        <motion.div className="mx-auto max-w-4xl">
-          <h1 className="text-5xl font-bold tracking-[-0.03em] mb-8 text-foreground">
-            About Me
-          </h1>
+        <div className="mx-auto max-w-4xl space-y-6">
+          <h1 className="text-4xl font-bold tracking-[-0.03em]">About me</h1>
 
           <div className="flex flex-col gap-8 md:flex-row">
             {/* Portrait */}
             {profileImage && (
               <div className="shrink-0">
-                <div className="relative h-64 w-64 overflow-hidden rounded-lg md:h-80 md:w-80">
+                <div className="relative h-64 w-84 overflow-hidden rounded-md md:h-100 md:w-80">
                   <Image
                     src={profileImg}
                     alt="Thu Rein Htet"
@@ -58,21 +55,18 @@ export function AboutView({
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* Techs */}
       <section className="px-6 py-16 sm:py-20">
-        <motion.div className="mx-auto max-w-4xl">
-          <motion.h2
-            // {...sectionReveal}
-            className=" text-4xl font-bold text-foreground tracking-[-0.02em]"
-          >
+        <div className="mx-auto max-w-4xl">
+          <h2 className=" text-4xl font-bold text-foreground tracking-[-0.02em]">
             Techs
-          </motion.h2>
+          </h2>
 
           <div className="flex">tech stacks</div>
-        </motion.div>
+        </div>
       </section>
     </div>
   );

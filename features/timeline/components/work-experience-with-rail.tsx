@@ -60,14 +60,14 @@ export function WorkExperienceWithRail({
   }, []);
 
   return (
-    <div ref={containerRef} className="flex gap-2">
+    <div ref={containerRef} className="flex">
       <TimelineYearRail
         experiences={experiences}
         entryHeights={entryHeights}
         onYearClick={handleYearClick}
       />
       <div className="flex-1">
-        <div className="text-muted-foreground px-2">
+        <div className="text-muted-foreground">
           {experiences.map((experience) => (
             <div
               key={experience.id}

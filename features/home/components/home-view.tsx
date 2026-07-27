@@ -1,10 +1,11 @@
+import { FadeAnimation } from "@/components/shared/fade-animation";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuLabel,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ProjectShowcaseCard } from "@/features/projects/components/project-showcase-card";
 import { WorkExperienceWithRail } from "@/features/timeline/components/work-experience-with-rail";
@@ -54,7 +55,7 @@ export function HomeView({
   return (
     <div className="page-shell">
       {/* Hero Section */}
-      <section id="hero-section" className="px-6 py-16 sm:py-20 ">
+      <section id="hero-section" className="px-6 py-20 sm:py-40">
         <div className="mx-auto max-w-5xl space-y-6">
           <div className="space-y-2">
             <span className="text-muted-foreground text-md sm:text-base ">
@@ -140,9 +141,44 @@ export function HomeView({
         </div>
       </section>
 
+      {/* Featured Projects */}
+      <section id="projects-section" className="px-6 py-16 sm:py-20">
+        <div className="mx-auto max-w-5xl space-y-10">
+          <div className="flex items-center justify-between">
+            <h2 className=" text-4xl font-bold text-muted-foreground tracking-[-0.02em]">
+              Featured Projects
+            </h2>
+            {featuredProjects.length > 0 && (
+              <div className="flex items-center gap-1 hover:bg-primary hover:text-background transition-colors">
+                <Link href="/projects" className="text-sm">
+                  View all
+                </Link>
+                <MoveRight className="h-4 w-4" />
+              </div>
+            )}
+          </div>
+
+          {featuredProjects.length > 0 ? (
+            <div className="flex flex-wrap justify-center gap-6">
+              {featuredProjects.map((project) => (
+                <FadeAnimation as="div" direction="up" key={project.id}>
+                  <ProjectShowcaseCard
+                    project={project}
+                    techLimit={4}
+                    className="w-full max-w-120"
+                  />
+                </FadeAnimation>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm">No featured projects yet.</p>
+          )}
+        </div>
+      </section>
+
       {/* Experiences */}
       <section id="experience-section" className="px-6 py-16 sm:py-20">
-        <div className="mx-auto max-w-5xl space-y-6">
+        <div className="mx-auto max-w-5xl space-y-10">
           <h2 className=" text-4xl font-bold text-foreground tracking-[-0.02em]">
             Experiences
           </h2>
@@ -164,40 +200,6 @@ export function HomeView({
         </div>
       </section>
 
-      {/* Featured Projects */}
-      <section id="projects-section" className="px-6 py-16 sm:py-20">
-        <div className="mx-auto max-w-5xl space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className=" text-4xl font-bold text-muted-foreground tracking-[-0.02em]">
-              Featured Projects
-            </h2>
-            {featuredProjects.length > 0 && (
-              <div className="flex items-center gap-1 hover:bg-primary hover:text-background transition-colors">
-                <Link href="/projects" className="text-sm">
-                  View all
-                </Link>
-                <MoveRight className="h-4 w-4" />
-              </div>
-            )}
-          </div>
-
-          {featuredProjects.length > 0 ? (
-            <div className="flex flex-wrap justify-center gap-6">
-              {featuredProjects.map((project) => (
-                <ProjectShowcaseCard
-                  key={project.id}
-                  project={project}
-                  techLimit={4}
-                  className="w-full max-w-120"
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm">No featured projects yet.</p>
-          )}
-        </div>
-      </section>
-
       {/* Widgets */}
       <section id="widgets" className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl space-y-6">
@@ -216,12 +218,12 @@ export function HomeView({
               />
             </div>
 
-            {/* Let's Connect */}
+            {/* Leave message */}
             <div className="surface-panel flex flex-col justify-between p-5 border border-muted-foreground/20 rounded-md">
               <div className="space-y-4">
                 <h3 className="text-sm font-semibold flex items-center gap-2">
                   <LuMessageCircleMore className="h-4 w-4 text-primary" />
-                  Let&apos;s Connect
+                  Leave a message
                 </h3>
                 <p className=" text-sm text-muted-foreground mb-4">
                   Always open to great projects and good conversations.

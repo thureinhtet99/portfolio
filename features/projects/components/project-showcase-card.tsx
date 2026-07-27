@@ -8,8 +8,6 @@ import { Tag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const GITHUB_USERNAME = "thureinhtet99";
-
 export function ProjectShowcaseCard({
   project,
   className,
@@ -49,10 +47,7 @@ export function ProjectShowcaseCard({
                 <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
                 <span className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
               </div>
-              <GitHubStars
-                repo={GITHUB_USERNAME}
-                stargazersCount={stargazersCount}
-              />
+              <GitHubStars stargazersCount={stargazersCount} />
             </div>
 
             {/* Terminal content */}

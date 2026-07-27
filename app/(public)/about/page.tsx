@@ -1,6 +1,5 @@
+import { APP_CONFIG } from "@/config/app-config";
 import { AboutView } from "@/features/about/components/about-view";
-import { db } from "@/db/client";
-import { setting } from "@/db/schema";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,39 +8,23 @@ export const metadata: Metadata = {
     "Learn more about Thu Rein Htet — software developer building modern web and mobile applications.",
 };
 
-export default async function AboutPage() {
-  let aboutMe = "";
-  let profileImage: string | null = null;
-  let email: string | null = null;
-  let githubUrl: string | null = null;
-  let linkedinUrl: string | null = null;
-  let facebookUrl: string | null = null;
-
+async function getSettings() {
   try {
-    const settings = await db.select().from(setting).all();
-    const settingsMap = Object.fromEntries(
-      settings.map((s) => [s.key, s.value])
-    );
-    aboutMe = settingsMap.aboutMe || "";
-    profileImage = settingsMap.profileImage || null;
-    email = settingsMap.email || null;
-    githubUrl = settingsMap.githubUrl || null;
-    linkedinUrl = settingsMap.linkedinUrl || null;
-    facebookUrl = settingsMap.facebookUrl || null;
+    const baseUrl = APP_CONFIG.BASE_URL;
+    const response = await fetch(`${baseUrl}/api/${APP_CONFIG.ROUTE.SETTINGS}`);
+    const { success, data } = await response.json();
+    if (success && data) return data;
+    return {};
   } catch (error) {
-    console.error("Failed to load about settings:", error);
+    console.error("Failed to load settings:", error);
+    return {};
   }
+}
 
-  return (
-    <AboutView
-      aboutMe={aboutMe}
-      profileImage={profileImage}
-      email={email}
-      socialLinks={{
-        github: githubUrl,
-        linkedin: linkedinUrl,
-        facebook: facebookUrl,
-      }}
-    />
-  );
+export default async function AboutPage() {
+  const settings = await getSettings();
+  const aboutMe = settings.aboutMe || "";
+  const profileImage = settings.profileImage || null;
+
+  return <AboutView aboutMe={aboutMe} profileImage={profileImage} />;
 }

@@ -99,10 +99,10 @@ export function ExperienceItem({ experience }: ExperienceItemProps) {
           )}
         </div>
 
-        <h3 className="text-lg leading-snug font-semibold text-white">
+        <h3 className="text-lg leading-snug text-white">
           {experience.companyWebsite ? (
             <a
-              className="link"
+              className="hover:bg-primary hover:text-background"
               href={experience.companyWebsite}
               target="_blank"
               rel="noopener noreferrer"

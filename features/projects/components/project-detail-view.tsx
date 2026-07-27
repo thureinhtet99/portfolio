@@ -29,7 +29,6 @@ export function ProjectDetailView({
   const org = githubParts[0] || "owner";
   const repo =
     githubParts[1] || project.title.toLowerCase().replace(/\s+/g, "-");
-  const projectUrl = project.githubUrl || "";
 
   return (
     <div className="page-shell">
@@ -46,10 +45,7 @@ export function ProjectDetailView({
                   <span className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
                 </div>
                 <div className="flex items-center gap-1 text-muted-foreground text-sm">
-                  <GitHubStars
-                    repo={projectUrl}
-                    stargazersCount={stargazersCount}
-                  />
+                  <GitHubStars stargazersCount={stargazersCount} />
                 </div>
               </div>
 
