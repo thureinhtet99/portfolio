@@ -12,6 +12,7 @@ const routeLabels: Record<string, string> = {
   posts: "posts",
   contact: "contact",
   admin: "admin",
+  "leave-a-note": "leave a note",
 };
 
 export function Breadcrumbs() {

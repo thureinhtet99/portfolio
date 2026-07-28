@@ -14,12 +14,14 @@ const routeLabels: Record<string, string> = {
   posts: "posts",
   contact: "contact",
   admin: "admin",
+  "leave-a-note": "leave-a-note",
 };
 
 const navLinks = [
   { href: "/projects", label: "Projects" },
   { href: "/posts", label: "Posts" },
   { href: "/about", label: "About" },
+  { href: "/leave-a-note", label: "Leave a Note" },
   // { href: "/api/resume", label: "Resume", external: true },
 ];
 

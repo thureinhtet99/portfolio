@@ -5,7 +5,6 @@ import Link from "next/link";
 import { FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
 
 export async function Footer() {
-  const currentYear = new Date().getFullYear();
   const commitHash = process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7);
 
   let viewCount = "0";
@@ -44,12 +43,7 @@ export async function Footer() {
       <div className="app-shell flex flex-col items-center justify-between gap-3 sm:flex-row">
         {/* Left */}
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <span>&copy; {currentYear} Thu Rein Htet</span>
-          {/* <span className="text-muted-foreground/30">·</span>
-          <div className="flex items-center gap-1.5">
-            <div className="h-2 w-2 rounded-full bg-primary" />
-            <span>All Services Nominal</span>
-          </div> */}
+          <span>&copy; 2026 Thu Rein Htet</span>
         </div>
 
         {/* Right */}

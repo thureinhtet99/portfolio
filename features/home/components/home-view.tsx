@@ -1,11 +1,10 @@
-import { FadeAnimation } from "@/components/shared/fade-animation";
 import { Button } from "@/components/ui/button";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ProjectShowcaseCard } from "@/features/projects/components/project-showcase-card";
 import { WorkExperienceWithRail } from "@/features/timeline/components/work-experience-with-rail";
@@ -161,13 +160,12 @@ export function HomeView({
           {featuredProjects.length > 0 ? (
             <div className="flex flex-wrap justify-center gap-6">
               {featuredProjects.map((project) => (
-                <FadeAnimation as="div" direction="up" key={project.id}>
-                  <ProjectShowcaseCard
-                    project={project}
-                    techLimit={4}
-                    className="w-full max-w-120"
-                  />
-                </FadeAnimation>
+                <ProjectShowcaseCard
+                  key={project.id}
+                  project={project}
+                  techLimit={4}
+                  className="w-full max-w-120"
+                />
               ))}
             </div>
           ) : (

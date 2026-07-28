@@ -57,10 +57,11 @@ export function GitHubActivityWidget({ commits, languages, streak }: Props) {
   if (!hasCommits && !hasLanguages && !streak) {
     return (
       <div className="surface-panel p-5">
-        <h3 className=" text-sm font-semibold text-foreground mb-3">
-          GitHub Activity
-        </h3>
-        <p className=" text-sm text-muted-foreground">Activity unavailable</p>
+        <div className="flex items-center gap-2 mb-4">
+          <BsActivity className="h-4 w-4 text-primary" />
+          <h3 className="text-sm font-semibold">Recent commits</h3>
+        </div>
+        <p className="text-sm text-muted-foreground/40">Activity unavailable</p>
       </div>
     );
   }
