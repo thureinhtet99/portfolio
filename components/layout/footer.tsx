@@ -39,7 +39,7 @@ export async function Footer() {
   }
 
   return (
-    <footer className="border-t border-border/20 px-6 py-4">
+    <footer className="border-t border-border/20 px-6 py-4" style={{ viewTransitionName: "site-footer" }}>
       <div className="app-shell flex flex-col items-center justify-between gap-3 sm:flex-row">
         {/* Left */}
         <div className="flex items-center gap-3 text-sm text-muted-foreground">

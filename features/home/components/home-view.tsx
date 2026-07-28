@@ -149,7 +149,11 @@ export function HomeView({
             </h2>
             {featuredProjects.length > 0 && (
               <div className="flex items-center gap-1 hover:bg-primary hover:text-background transition-colors">
-                <Link href="/projects" className="text-sm">
+                <Link
+                  href="/projects"
+                  transitionTypes={["nav-forward"]}
+                  className="text-sm"
+                >
                   View all
                 </Link>
                 <MoveRight className="h-4 w-4" />

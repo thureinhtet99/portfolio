@@ -59,11 +59,6 @@ export default function TimelineClientComponent({ work, education }: Props) {
                           <h3 className="text-base font-semibold text-foreground sm:text-lg">
                             {exp.companyName}
                           </h3>
-                          {exp.isCurrentEmployer && (
-                            <Badge className="text-[10px] px-1.5 py-0">
-                              Current
-                            </Badge>
-                          )}
                         </div>
 
                         {exp.companyWebsite && (

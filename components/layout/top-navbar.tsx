@@ -50,7 +50,7 @@ export function TopNavbar() {
   if (isAdmin) return null;
 
   return (
-    <nav className="sticky top-0 z-50 bg-transparent backdrop-blur-sm py-3">
+    <nav className="sticky top-0 z-50 bg-transparent backdrop-blur-sm py-3" style={{ viewTransitionName: "site-header" }}>
       <div className="app-shell flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-1">
           <Link

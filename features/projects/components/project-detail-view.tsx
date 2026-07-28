@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Suspense } from "react";
+import { ViewTransition } from "react";
 import { FaGithub } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import { ContributorsSection } from "./contributors-section";
@@ -34,59 +34,57 @@ export function ProjectDetailView({
     <div className="page-shell">
       <section className="px-6 py-12">
         <div className="mx-auto max-w-3xl space-y-6">
-          <div className="bg-muted-foreground p-6 rounded-lg">
-            {/* Terminal preview area */}
-            <div className="relative rounded-lg overflow-hidden bg-background">
-              {/* Terminal header */}
-              <div className="flex items-center px-3 justify-between">
-                <div className="flex gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
-                </div>
-                <div className="flex items-center gap-1 text-muted-foreground text-sm">
-                  <GitHubStars stargazersCount={stargazersCount} />
-                </div>
-              </div>
-
-              {/* Terminal content */}
-              <p className="text-sm text-muted-foreground line-clamp-1 px-3">
-                {org} / {repo}
-              </p>
-
-              {/* Image or summary */}
-              <div
-                className="pt-4"
-                style={{ viewTransitionName: `project-image-${project.slug}` }}
-              >
-                {project.image ? (
-                  <div className="relative w-full aspect-video overflow-hidden">
-                    <Image
-                      src={project.image}
-                      alt={project.title}
-                      fill
-                      priority
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
+          <ViewTransition name={`project-image-${project.slug}`}>
+            <div className="bg-muted-foreground p-6 rounded-lg">
+              {/* Terminal preview area */}
+              <div className="relative rounded-lg overflow-hidden bg-background">
+                {/* Terminal header */}
+                <div className="flex items-center px-3 justify-between">
+                  <div className="flex gap-1.5">
+                    <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
                   </div>
-                ) : (
-                  <div className="w-full aspect-video flex items-center justify-center px-3">
-                    {project.summary}
+                  <div className="flex items-center gap-1 text-muted-foreground text-sm">
+                    <GitHubStars stargazersCount={stargazersCount} />
                   </div>
-                )}
+                </div>
+
+                {/* Terminal content */}
+                <p className="text-sm text-muted-foreground line-clamp-1 px-3">
+                  {org} / {repo}
+                </p>
+
+                {/* Image or summary */}
+                <div className="pt-4">
+                  {project.image ? (
+                    <div className="relative w-full aspect-video overflow-hidden">
+                      <Image
+                        src={project.image}
+                        alt={project.title}
+                        fill
+                        priority
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-full aspect-video flex items-center justify-center px-3">
+                      {project.summary}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          </ViewTransition>
 
           {/* Project Info */}
           <div className="space-y-6">
-            <h1
-              className=" text-4xl font-bold tracking-[-0.03em]"
-              style={{ viewTransitionName: `project-title-${project.slug}` }}
-            >
-              {project.title}
-            </h1>
+            <ViewTransition name={`project-title-${project.slug}`}>
+              <h1 className=" text-4xl font-bold tracking-[-0.03em]">
+                {project.title}
+              </h1>
+            </ViewTransition>
 
             {/* Links */}
             <div className="flex items-center gap-6">
@@ -120,7 +118,6 @@ export function ProjectDetailView({
             {/* Tags */}
             {technologies.length > 0 && (
               <div className="flex flex-wrap items-center gap-1.5">
-                {/* <Tag className="h-4 w-4" /> */}
                 {technologies.map((tech) => (
                   <Badge key={tech} variant="outline">
                     {tech}
@@ -130,13 +127,11 @@ export function ProjectDetailView({
             )}
 
             {/* Collaborators */}
-            <Suspense>
-              <ContributorsSection
-                org={org}
-                repo={repo}
-                manualCollaborators={manualCollaborators}
-              />
-            </Suspense>
+            <ContributorsSection
+              org={org}
+              repo={repo}
+              manualCollaborators={manualCollaborators}
+            />
 
             <hr className="border-muted-foreground/20 my-10" />
 

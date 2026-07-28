@@ -132,39 +132,59 @@
   @apply prose-blockquote:border-l prose-blockquote:font-normal prose-blockquote:text-muted-foreground prose-blockquote:not-italic prose-blockquote:[&_p:first-of-type]:before:content-none prose-blockquote:[&_p:last-of-type]:after:content-none;
 }
 
-/* View Transitions — morph animation for card → detail */
-::view-transition-old(*),
-::view-transition-new(*) {
-  animation-duration: 0.3s;
-  animation-timing-function: ease-in-out;
+/* Disable default root cross-fade — let named elements morph natively */
+::view-transition-old(root) {
+  animation-duration: 0s;
+}
+::view-transition-new(root) {
+  animation-duration: 0s;
 }
 
+/* Slow down morph animation for all shared elements */
+::view-transition-group(*) {
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.1, 1);
+}
+::view-transition-image-pair(*) {
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.1, 1);
+}
 ::view-transition-old(*) {
-  animation-name: view-transition-fade-out;
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.1, 1);
 }
-
 ::view-transition-new(*) {
-  animation-name: view-transition-fade-in;
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.1, 1);
 }
 
-@keyframes view-transition-fade-out {
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.96);
-  }
+/* Persistent element isolation — prevent navbar/footer from animating */
+::view-transition-group(site-header) {
+  animation: ease-in-out;
+  z-index: 100;
+}
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(site-header) {
+  animation: none;
+}
+::view-transition-group(site-footer) {
+  animation: none;
+}
+::view-transition-old(site-footer) {
+  display: none;
+}
+::view-transition-new(site-footer) {
+  animation: none;
 }
 
-@keyframes view-transition-fade-in {
-  from {
-    opacity: 0;
-    transform: scale(1.04);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
   }
 }

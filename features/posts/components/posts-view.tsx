@@ -5,6 +5,7 @@ import { PostType } from "@/types/index.type";
 import { format } from "date-fns";
 import { Tag } from "lucide-react";
 import Link from "next/link";
+import { ViewTransition } from "react";
 
 export function PostsView({ posts }: { posts: PostType[] }) {
   return (
@@ -19,14 +20,14 @@ export function PostsView({ posts }: { posts: PostType[] }) {
                 <article key={post.id}>
                   <Link
                     href={`/posts/${post.slug}`}
+                    transitionTypes={["nav-forward"]}
                     className="group block space-y-2"
                   >
-                    <h2
-                      className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors"
-                      style={{ viewTransitionName: `post-title-${post.slug}` }}
-                    >
-                      {post.title}
-                    </h2>
+                    <ViewTransition name={`post-title-${post.slug}`}>
+                      <h2 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
+                        {post.title}
+                      </h2>
+                    </ViewTransition>
                     <p className=" text-xs text-muted-foreground">
                       {format(new Date(post.createdAt), "dd MMM yyyy")}
                     </p>

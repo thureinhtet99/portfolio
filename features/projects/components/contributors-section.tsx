@@ -1,3 +1,5 @@
+"use client";
+
 import { GitHubContributor } from "@/app/api/github/contributors/route";
 import {
   Avatar,
@@ -6,45 +8,9 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
-async function fetchContributors(
-  owner: string,
-  repo: string,
-): Promise<GitHubContributor[]> {
-  try {
-    const res = await fetch(
-      `https://api.github.com/repos/${owner}/${repo}/contributors?per_page=10`,
-      {
-        headers: {
-          Accept: "application/vnd.github.v3+json",
-          ...(process.env.GITHUB_TOKEN
-            ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
-            : {}),
-        },
-        next: { revalidate: 86400 },
-      },
-    );
-
-    if (!res.ok) return [];
-
-    const data: (GitHubContributor & { type?: string })[] = await res.json();
-
-    return data
-      .filter((c) => c.type !== "Bot")
-      .map((c) => ({
-        id: c.id,
-        login: c.login,
-        avatar_url: c.avatar_url,
-        html_url: c.html_url,
-        contributions: c.contributions,
-        type: c.type ?? "User",
-      }));
-  } catch {
-    return [];
-  }
-}
-
-export async function ContributorsSection({
+export function ContributorsSection({
   org,
   repo,
   manualCollaborators,
@@ -53,18 +19,26 @@ export async function ContributorsSection({
   repo: string;
   manualCollaborators: string[];
 }) {
-  const githubContributors = await fetchContributors(org, repo);
+  const [contributors, setContributors] = useState<GitHubContributor[]>([]);
+
+  useEffect(() => {
+    fetch(`/api/github/contributors?owner=${org}&repo=${repo}`)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data: GitHubContributor[]) => setContributors(data))
+      .catch(() => setContributors([]));
+  }, [org, repo]);
+
   const hasContributors =
-    githubContributors.length > 0 || manualCollaborators.length > 0;
+    contributors.length > 0 || manualCollaborators.length > 0;
 
   if (!hasContributors) return null;
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span>Contributor{githubContributors.length > 0 ? "s" : ""}: </span>
+      <span>Contributor{contributors.length > 0 ? "s" : ""}: </span>
 
       <AvatarGroup>
-        {githubContributors.map((contributor) => (
+        {contributors.map((contributor) => (
           <Link
             key={contributor.login}
             href={contributor.html_url}
