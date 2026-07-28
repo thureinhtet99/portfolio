@@ -55,7 +55,10 @@ export function ProjectDetailView({
               </p>
 
               {/* Image or summary */}
-              <div className="pt-4">
+              <div
+                className="pt-4"
+                style={{ viewTransitionName: `project-image-${project.slug}` }}
+              >
                 {project.image ? (
                   <div className="relative w-full aspect-video overflow-hidden">
                     <Image
@@ -78,7 +81,10 @@ export function ProjectDetailView({
 
           {/* Project Info */}
           <div className="space-y-6">
-            <h1 className=" text-4xl font-bold tracking-[-0.03em]">
+            <h1
+              className=" text-4xl font-bold tracking-[-0.03em]"
+              style={{ viewTransitionName: `project-title-${project.slug}` }}
+            >
               {project.title}
             </h1>
 

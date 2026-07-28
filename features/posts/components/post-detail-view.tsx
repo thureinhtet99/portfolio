@@ -13,7 +13,10 @@ export function PostDetailView({ post }: { post: PostType }) {
         <article className="mx-auto max-w-3xl space-y-6">
           {/* Decorative Title */}
           <div className="space-y-6 text-center">
-            <h1 className=" text-4xl font-bold tracking-[-0.02em] sm:text-5xl lg:text-6xl leading-tight">
+            <h1
+              className=" text-4xl font-bold tracking-[-0.02em] sm:text-5xl lg:text-6xl leading-tight"
+              style={{ viewTransitionName: `post-title-${post.slug}` }}
+            >
               {titleWords.map((word, i) => (
                 <span
                   key={i}

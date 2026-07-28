@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   /* config options here */
   output: "standalone",
   devIndicators: false,
+  experimental: {
+    viewTransition: true,
+  },
   images: {
     remotePatterns: [
       {

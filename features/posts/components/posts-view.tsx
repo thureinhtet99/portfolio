@@ -21,7 +21,10 @@ export function PostsView({ posts }: { posts: PostType[] }) {
                     href={`/posts/${post.slug}`}
                     className="group block space-y-2"
                   >
-                    <h2 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
+                    <h2
+                      className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors"
+                      style={{ viewTransitionName: `post-title-${post.slug}` }}
+                    >
                       {post.title}
                     </h2>
                     <p className=" text-xs text-muted-foreground">

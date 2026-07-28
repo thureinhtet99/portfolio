@@ -56,7 +56,10 @@ export function ProjectShowcaseCard({
             </p>
 
             {/* Image or summary */}
-            <div className="pt-4">
+            <div
+              className="pt-4"
+              style={{ viewTransitionName: `project-image-${project.slug}` }}
+            >
               {project.image ? (
                 <div className="relative w-full aspect-video overflow-hidden">
                   <Image
@@ -79,7 +82,10 @@ export function ProjectShowcaseCard({
 
         {/* Card body */}
         <div className="p-4 space-y-3">
-          <h3 className=" text-base font-semibold text-foreground group-hover:text-primary transition-colors">
+          <h3
+            className=" text-base font-semibold text-foreground group-hover:text-primary transition-colors"
+            style={{ viewTransitionName: `project-title-${project.slug}` }}
+          >
             {project.title}
           </h3>
 
