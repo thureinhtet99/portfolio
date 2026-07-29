@@ -132,7 +132,6 @@
   @apply prose-blockquote:border-l prose-blockquote:font-normal prose-blockquote:text-muted-foreground prose-blockquote:not-italic prose-blockquote:[&_p:first-of-type]:before:content-none prose-blockquote:[&_p:last-of-type]:after:content-none;
 }
 
-/* Disable default root cross-fade — let named elements morph natively */
 ::view-transition-old(root) {
   animation-duration: 0s;
 }
@@ -140,27 +139,9 @@
   animation-duration: 0s;
 }
 
-/* Slow down morph animation for all shared elements */
-::view-transition-group(*) {
-  animation-duration: 300ms;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.1, 1);
-}
-::view-transition-image-pair(*) {
-  animation-duration: 300ms;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.1, 1);
-}
-::view-transition-old(*) {
-  animation-duration: 300ms;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.1, 1);
-}
-::view-transition-new(*) {
-  animation-duration: 300ms;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.1, 1);
-}
-
 /* Persistent element isolation — prevent navbar/footer from animating */
 ::view-transition-group(site-header) {
-  animation: ease-in-out;
+  animation: none;
   z-index: 100;
 }
 ::view-transition-old(site-header) {

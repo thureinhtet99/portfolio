@@ -12,11 +12,13 @@ export function PostDetailView({ post }: { post: PostType }) {
       <section className="px-6 py-12">
         <article className="mx-auto max-w-3xl space-y-6">
           <div className="space-y-6 text-center">
-            <ViewTransition name={`post-title-${post.slug}`}>
-              <h1 className=" text-4xl font-bold tracking-[-0.02em] sm:text-5xl lg:text-6xl leading-tight">
-                {titleWords.map((word, i) => (
+            <h1 className=" text-4xl font-bold tracking-[-0.02em] sm:text-5xl lg:text-6xl leading-tight">
+              {titleWords.map((word, i) => (
+                <ViewTransition
+                  key={i}
+                  name={`_post-${post.slug}__${word.toLowerCase().replace(/[^a-z0-9]/g, "")}`}
+                >
                   <span
-                    key={i}
                     className={
                       i % 3 === 0
                         ? "text-muted-foreground"
@@ -27,9 +29,9 @@ export function PostDetailView({ post }: { post: PostType }) {
                   >
                     {word}{" "}
                   </span>
-                ))}
-              </h1>
-            </ViewTransition>
+                </ViewTransition>
+              ))}
+            </h1>
 
             <span className="flex items-center text-xs gap-1">
               {format(new Date(post.createdAt), "dd MMM yyyy")}

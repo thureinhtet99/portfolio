@@ -23,11 +23,16 @@ export function PostsView({ posts }: { posts: PostType[] }) {
                     transitionTypes={["nav-forward"]}
                     className="group block space-y-2"
                   >
-                    <ViewTransition name={`post-title-${post.slug}`}>
-                      <h2 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
-                        {post.title}
-                      </h2>
-                    </ViewTransition>
+                    <h2 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
+                      {post.title.split(" ").map((word, i) => (
+                        <ViewTransition
+                          key={i}
+                          name={`_post-${post.slug}__${word.toLowerCase().replace(/[^a-z0-9]/g, "")}`}
+                        >
+                          <span className="inline-block">{word} </span>
+                        </ViewTransition>
+                      ))}
+                    </h2>
                     <p className=" text-xs text-muted-foreground">
                       {format(new Date(post.createdAt), "dd MMM yyyy")}
                     </p>
