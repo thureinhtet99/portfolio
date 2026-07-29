@@ -2,6 +2,7 @@ import { Footer } from "@/components/layout/footer";
 import { TopNavbar } from "@/components/layout/top-navbar";
 import QueryProvider from "@/components/providers/query-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { APP_CONFIG } from "@/config/app-config";
 import { getSiteUrl } from "@/lib/base-url";
 import type { Metadata } from "next";
 import { Geist_Mono, JetBrains_Mono } from "next/font/google";
@@ -78,11 +79,27 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+async function getSettings() {
+  try {
+    const baseUrl = APP_CONFIG.BASE_URL;
+    const res = await fetch(`${baseUrl}/api/${APP_CONFIG.ROUTE.SETTINGS}`, {
+      cache: "no-store",
+    });
+    const { success, data } = await res.json();
+    if (success && data) return data;
+    return {};
+  } catch {
+    return {};
+  }
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: ReactNode;
 }>) {
+  const settings = await getSettings();
+
   return (
     <html lang="en">
       <body
@@ -91,7 +108,13 @@ export default function RootLayout({
         <QueryProvider>
           <main className="min-h-screen sm:px-6 lg:px-8">
             <div className="mx-auto flex w-full flex-col justify-center">
-              <TopNavbar />
+              <TopNavbar
+                footer={<Footer />}
+                viewCount={Number(settings.siteViews || "0").toLocaleString()}
+                githubUrl={settings.githubUrl || ""}
+                linkedinUrl={settings.linkedinUrl || ""}
+                emailUrl={settings.emailUrl || ""}
+              />
               <Suspense>
                 <TooltipProvider>{children}</TooltipProvider>
               </Suspense>

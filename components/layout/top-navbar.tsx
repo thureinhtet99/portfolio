@@ -1,37 +1,51 @@
 "use client";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown, Menu, MessageSquare, Trophy, X } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-
-const routeLabels: Record<string, string> = {
-  about: "about",
-  projects: "projects",
-  certificates: "certificates",
-  timeline: "timeline",
-  posts: "posts",
-  contact: "contact",
-  admin: "admin",
-  "leave-a-note": "leave-a-note",
-};
-
-const navLinks = [
-  { href: "/projects", label: "Projects" },
-  { href: "/posts", label: "Posts" },
-  { href: "/about", label: "About" },
-  { href: "/leave-a-note", label: "Leave a Note" },
-  // { href: "/api/resume", label: "Resume", external: true },
-];
+import { ReactNode, useState } from "react";
+import { FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
+import { imageCards, navLinks, routeLabels } from "./data/nav-links";
 
 const moreLinks = [
-  { href: "/posts", label: "Posts" },
-  // { href: "/timeline", label: "Timeline" },
-  // { href: "/contact", label: "Contact" },
+  {
+    href: "/achievements",
+    label: "Achievements",
+    description: "A collection of milestones",
+    icon: Trophy,
+  },
+  {
+    href: "/leave-a-note",
+    label: "Leave a Note",
+    description: "Leave me a message",
+    icon: MessageSquare,
+  },
 ];
 
-export function TopNavbar() {
+interface TopNavbarProps {
+  footer?: ReactNode;
+  viewCount?: string;
+  githubUrl?: string;
+  linkedinUrl?: string;
+  emailUrl?: string;
+}
+
+export function TopNavbar({
+  footer,
+  viewCount = "0",
+  githubUrl = "",
+  linkedinUrl = "",
+  emailUrl = "",
+}: TopNavbarProps) {
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -50,7 +64,10 @@ export function TopNavbar() {
   if (isAdmin) return null;
 
   return (
-    <nav className="sticky top-0 z-50 bg-transparent backdrop-blur-sm py-3" style={{ viewTransitionName: "site-header" }}>
+    <nav
+      className="sticky top-0 z-50 bg-transparent backdrop-blur-sm py-3"
+      style={{ viewTransitionName: "site-header" }}
+    >
       <div className="app-shell flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-1">
           <Link
@@ -94,13 +111,10 @@ export function TopNavbar() {
           ))}
 
           {/* More dropdown */}
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setMoreOpen(!moreOpen)}
-              onBlur={() => setTimeout(() => setMoreOpen(false), 150)}
+          <DropdownMenu open={moreOpen} onOpenChange={setMoreOpen}>
+            <DropdownMenuTrigger
               className={cn(
-                " text-sm transition-colors hover:text-foreground flex items-center gap-1",
+                "text-sm transition-colors hover:text-foreground flex items-center gap-1 bg-transparent border-none outline-none cursor-pointer",
                 isMoreActive ? "text-foreground" : "text-muted-foreground",
               )}
             >
@@ -111,39 +125,66 @@ export function TopNavbar() {
                   moreOpen && "rotate-180",
                 )}
               />
-            </button>
-            {moreOpen && (
-              <div className="absolute right-0 top-full z-50 mt-2 w-40 rounded-lg border border-border/70 bg-card/95 p-1 shadow-lg backdrop-blur-sm">
-                {moreLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={cn(
-                      "block rounded-md px-3 py-2  text-sm transition-colors hover:bg-foreground/5",
-                      isActive(link.href)
-                        ? "text-foreground"
-                        : "text-muted-foreground",
-                    )}
-                  >
-                    {link.label}
-                  </Link>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              sideOffset={12}
+              className="w-auto rounded-md bg-muted-foreground/5 p-2 flex gap-2"
+            >
+              {/* Left: Image cards */}
+              <div className="flex gap-2">
+                {imageCards.map((card) => (
+                  <DropdownMenuItem key={card.href} asChild>
+                    <Link
+                      href={card.href}
+                      className="relative flex h-[180px] w-auto flex-col justify-end overflow-hidden rounded-md cursor-pointer group"
+                    >
+                      <Image
+                        src={card.image}
+                        alt={card.label}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                      <div className="relative z-10 p-3">
+                        <div className="text-sm font-medium text-white">
+                          {card.label}
+                        </div>
+                        <div className="text-xs">{card.description}</div>
+                      </div>
+                    </Link>
+                  </DropdownMenuItem>
                 ))}
               </div>
-            )}
-          </div>
 
-          {/* <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                href="/api/resume"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <FileUser />
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent className="text-sm">Resume</TooltipContent>
-          </Tooltip> */}
+              {/* Right: Icon list */}
+              <div className="flex flex-col justify-start gap-2">
+                {moreLinks.map((link) => (
+                  <DropdownMenuItem key={link.href} asChild>
+                    <Link
+                      href={link.href}
+                      className={cn(
+                        "flex items-center px-2 text-sm transition-colors cursor-pointer",
+                        isActive(link.href)
+                          ? "text-white"
+                          : "text-muted-foreground",
+                      )}
+                    >
+                      <span className="flex h-6 w-6 items-start justify-center">
+                        <link.icon className="h-6 w-6" />
+                      </span>
+                      <div className="flex flex-col">
+                        <span className="w-fit font-medium hover:bg-primary hover:text-background">
+                          {link.label}
+                        </span>
+                        <span className="text-xs">{link.description}</span>
+                      </div>
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Mobile toggle */}
@@ -162,43 +203,93 @@ export function TopNavbar() {
       </div>
 
       {/* Mobile nav */}
-      {mobileOpen && (
-        <div className="border-t border-border/70 bg-background/95 px-6 py-4 sm:hidden">
-          <div className="flex flex-col gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className={cn(
-                  "rounded-md px-3 py-2  text-sm transition-colors hover:bg-foreground/5",
-                  isActive(link.href)
-                    ? "text-foreground"
-                    : "text-muted-foreground",
-                )}
-              >
-                {link.label}
-              </Link>
-            ))}
-            <div className="my-1 border-t border-border/40" />
-            {moreLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className={cn(
-                  "rounded-md px-3 py-2  text-sm transition-colors hover:bg-foreground/5",
-                  isActive(link.href)
-                    ? "text-foreground"
-                    : "text-muted-foreground",
-                )}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="overflow-hidden border-b border-muted-foreground/20 sm:hidden"
+          >
+            <div className="flex flex-col gap-6 px-6 py-4">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    "transition-colors hover:bg-primary hover:text-background",
+                    isActive(link.href)
+                      ? "text-white"
+                      : "text-muted-foreground",
+                  )}
+                >
+                  {link.label}
+                </Link>
+              ))}
+
+              <div className="flex flex-col justify-start gap-4">
+                {moreLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      "flex items-center gap-2 text-sm transition-colors cursor-pointer",
+                      isActive(link.href)
+                        ? "text-white"
+                        : "text-muted-foreground",
+                    )}
+                  >
+                    <span className="flex h-4 w-4 shrink-0 items-center justify-center">
+                      <link.icon className="h-4 w-4" />
+                    </span>
+                    <span className="font-medium text-base text-foreground hover:bg-primary hover:text-background">
+                      {link.label}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-xs">{viewCount} views</span>
+                <div className="flex items-center gap-4">
+                  {githubUrl && (
+                    <Link
+                      href={githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-primary transition-colors"
+                    >
+                      <FaGithub className="h-5 w-5" />
+                    </Link>
+                  )}
+                  {linkedinUrl && (
+                    <Link
+                      href={linkedinUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-primary transition-colors"
+                    >
+                      <FaLinkedin className="h-5 w-5" />
+                    </Link>
+                  )}
+                  {emailUrl && (
+                    <Link
+                      href={emailUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-primary transition-colors"
+                    >
+                      <FaEnvelope className="h-5 w-5" />
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }
