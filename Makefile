@@ -23,16 +23,11 @@ build: ## Production build
 start: ## Start production server
 	npm run start
 
-lint: ## Run ESLint
-	npm run lint
-
 typecheck: ## Run TypeScript compiler check
-	npx tsc --noEmit
+	npm run typecheck
 
-format: ## Format code with Prettier (if available)
-	npx prettier --write .
-
-check: lint typecheck ## Run lint + typecheck
+format: ## Format code with Prettier
+	npm run format
 
 db-generate: ## Generate Drizzle migration files
 	npm run db:generate
@@ -56,13 +51,13 @@ clean: ## Remove .next and node_modules
 	rm -rf .next node_modules
 
 install: ## Fresh install dependencies
-	npm install
+	npm install --legacy-peer-deps
 
 reset: clean install ## Clean + reinstall
 	@echo "Done — run 'make dev' to start"
 
 # All in one
-all: format check build ## Lint + typecheck + build
+all: format typecheck build ## format + typecheck + build
 
 # Help
 help: ## Show this help

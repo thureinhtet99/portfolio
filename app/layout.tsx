@@ -4,6 +4,7 @@ import QueryProvider from "@/components/providers/query-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { APP_CONFIG } from "@/config/app-config";
 import { getSiteUrl } from "@/lib/base-url";
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist_Mono, JetBrains_Mono } from "next/font/google";
 import { ReactNode, Suspense } from "react";
@@ -123,6 +124,7 @@ export default async function RootLayout({
           </main>
           <Footer />
         </QueryProvider>
+        <Analytics />
       </body>
     </html>
   );
