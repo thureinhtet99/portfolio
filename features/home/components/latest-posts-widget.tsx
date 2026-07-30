@@ -28,7 +28,7 @@ export function LatestPostsWidget({ posts }: Props) {
             >
               <Link
                 href={`/posts/${post.slug}`}
-                transitionTypes={['nav-forward']}
+                transitionTypes={["nav-forward"]}
                 className="truncate hover:text-primary"
               >
                 {post.title}

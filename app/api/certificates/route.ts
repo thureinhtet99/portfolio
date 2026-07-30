@@ -21,7 +21,7 @@ export async function GET() {
     console.error("Failed to fetch certificates:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch certificates" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
           success: false,
           error: "Title, issuer, and issue date are required",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
             ? error.message
             : "Failed to create certificate",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -101,7 +101,7 @@ export async function PUT(req: NextRequest) {
           success: false,
           error: "ID, title, issuer, and issue date are required",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -134,7 +134,7 @@ export async function PUT(req: NextRequest) {
     console.error("Failed to update certificate:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update certificate" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -148,7 +148,7 @@ export async function PATCH(req: NextRequest) {
     if (!updatedCertificates || !Array.isArray(updatedCertificates)) {
       return NextResponse.json(
         { success: false, error: "Invalid certificates data" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -158,8 +158,8 @@ export async function PATCH(req: NextRequest) {
         db
           .update(certificate)
           .set({ order: cert.order, updatedAt: new Date() })
-          .where(eq(certificate.id, cert.id))
-      )
+          .where(eq(certificate.id, cert.id)),
+      ),
     );
 
     return NextResponse.json({
@@ -170,7 +170,7 @@ export async function PATCH(req: NextRequest) {
     console.error("Failed to update certificate order:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update certificate order" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -184,7 +184,7 @@ export async function DELETE(req: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { success: false, error: "Certificate ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -198,7 +198,7 @@ export async function DELETE(req: NextRequest) {
     if (certificateData.length === 0) {
       return NextResponse.json(
         { success: false, error: "Certificate not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -222,7 +222,7 @@ export async function DELETE(req: NextRequest) {
       } catch (cloudinaryError) {
         console.error(
           "Failed to delete image from Cloudinary:",
-          cloudinaryError
+          cloudinaryError,
         );
         // Continue with project deletion even if Cloudinary deletion fails
       }
@@ -238,7 +238,7 @@ export async function DELETE(req: NextRequest) {
     console.error("Failed to delete certificate:", error);
     return NextResponse.json(
       { success: false, error: "Failed to delete certificate" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -32,14 +32,14 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       { message: "Message is sent successfully" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
     return NextResponse.json(
       { message: "Failed to send contact form", error: errorMessage },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -19,7 +19,9 @@ function getExperienceYearRange(exp: ExperienceItemType): {
     .map((p) => extractYear(p.employmentPeriod.start))
     .filter(Boolean);
   const allEnds = exp.positions
-    .map((p) => (p.employmentPeriod.end ? extractYear(p.employmentPeriod.end) : null))
+    .map((p) =>
+      p.employmentPeriod.end ? extractYear(p.employmentPeriod.end) : null,
+    )
     .filter((y): y is string => y !== null);
 
   const hasOngoing = exp.positions.some((p) => !p.employmentPeriod.end);
@@ -124,7 +126,10 @@ export function ExperienceYearTimeline({
               <div className="w-24 shrink-0 sm:w-28" />
               <div className="relative flex-1 space-y-3 pl-6 pt-3 before:absolute before:left-9 before:sm:left-10 before:h-full before:w-px before:bg-border/50">
                 {exp.positions.map((position) => (
-                  <ExperiencePositionItem key={position.id} position={position} />
+                  <ExperiencePositionItem
+                    key={position.id}
+                    position={position}
+                  />
                 ))}
               </div>
             </div>
