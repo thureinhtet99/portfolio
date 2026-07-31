@@ -1,58 +1,20 @@
 import { db } from "@/db/client";
-import { education, experience } from "@/db/schema";
+import { timeline } from "@/db/schema";
 import { asc, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
-// GET - Fetch all timelines (both work experience and education with ?type)
-export async function GET(req: NextRequest) {
+// GET - Fetch all timelines
+export async function GET() {
   try {
-    const { searchParams } = new URL(req.url);
-    const type = searchParams.get("type"); // "work" | "education" | null
-
-    const formattedExperiences =
-      type === "education"
-        ? []
-        : (
-            await db
-              .select()
-              .from(experience)
-              .orderBy(asc(experience.order))
-              .all()
-          ).map((exp) => ({
-            id: exp.id,
-            companyName: exp.companyName,
-            companyLogo: exp.companyLogo,
-            companyWebsite: exp.companyWebsite,
-            positions: exp.positions ? JSON.parse(exp.positions) : [],
-            type: "work" as const,
-            order: exp.order,
-            createdAt: exp.createdAt,
-            updatedAt: exp.updatedAt,
-          }));
-
-    const formattedEducations =
-      type === "work"
-        ? []
-        : (
-            await db
-              .select()
-              .from(education)
-              .orderBy(asc(education.order))
-              .all()
-          ).map((edu) => ({
-            id: edu.id,
-            institution: edu.institution,
-            location: edu.location,
-            period: edu.period,
-            type: "education" as const,
-            order: edu.order,
-            createdAt: edu.createdAt,
-            updatedAt: edu.updatedAt,
-          }));
+    const timelines = await db
+      .select()
+      .from(timeline)
+      .orderBy(asc(timeline.order))
+      .all();
 
     return NextResponse.json({
       success: true,
-      data: [...formattedExperiences, ...formattedEducations],
+      data: timelines,
     });
   } catch (error) {
     console.error("Failed to fetch timelines:", error);
@@ -62,66 +24,28 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
 // POST - Create new timeline
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const {
-      companyName,
-      companyLogo,
-      companyWebsite,
-      positions,
-      type,
-      // Education fields
-      institution,
-      location,
-      period,
-    } = body;
+    const { title, year, description } = body;
 
-    if (type === "education") {
-      if (!institution) {
-        return NextResponse.json(
-          { success: false, error: "Institution is required" },
-          { status: 400 },
-        );
-      }
-
-      const id = `education_${Date.now()}`;
-      const now = new Date();
-
-      await db.insert(education).values({
-        id,
-        institution,
-        location: location || null,
-        period: period || null,
-        order: 0,
-        createdAt: now,
-        updatedAt: now,
-      });
-
-      return NextResponse.json({
-        success: true,
-        data: { id, institution, location, period, type },
-      });
-    }
-
-    // Work experience
-    if (!companyName) {
+    if (!title || !year) {
       return NextResponse.json(
-        { success: false, error: "Company name is required" },
+        { success: false, error: "Title and year are required" },
         { status: 400 },
       );
     }
 
-    const id = `work_${Date.now()}`;
+    const id = `timeline_${Date.now()}`;
     const now = new Date();
 
-    await db.insert(experience).values({
+    await db.insert(timeline).values({
       id,
-      companyName,
-      companyLogo: companyLogo || null,
-      companyWebsite: companyWebsite || null,
-      positions: positions ? JSON.stringify(positions) : "[]",
+      title,
+      year,
+      description: description || null,
       order: 0,
       createdAt: now,
       updatedAt: now,
@@ -129,14 +53,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: {
-        id,
-        companyName,
-        companyLogo,
-        companyWebsite,
-        positions,
-        type,
-      },
+      data: { id, title, year, description },
     });
   } catch (error) {
     console.error("Failed to create timeline:", error);
@@ -155,80 +72,29 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
-    const {
-      id,
-      companyName,
-      companyLogo,
-      companyWebsite,
-      positions,
-      type,
-      // Education fields
-      institution,
-      location,
-      period,
-    } = body;
+    const { id, title, year, description } = body;
+    console.log(id, description);
 
-    if (!id) {
+    if (!id || !title || !year) {
       return NextResponse.json(
-        { success: false, error: "ID is required" },
-        { status: 400 },
-      );
-    }
-
-    const isEducation = id.startsWith("education_") || type === "education";
-
-    if (isEducation) {
-      if (!institution) {
-        return NextResponse.json(
-          { success: false, error: "Institution is required" },
-          { status: 400 },
-        );
-      }
-
-      await db
-        .update(education)
-        .set({
-          institution,
-          location: location || null,
-          period: period || null,
-          updatedAt: new Date(),
-        })
-        .where(eq(education.id, id));
-
-      return NextResponse.json({
-        success: true,
-        data: { id, institution, location, period, type: "education" },
-      });
-    }
-
-    if (!companyName) {
-      return NextResponse.json(
-        { success: false, error: "Company name is required" },
+        { success: false, error: "ID, title, and year are required" },
         { status: 400 },
       );
     }
 
     await db
-      .update(experience)
+      .update(timeline)
       .set({
-        companyName,
-        companyLogo: companyLogo || null,
-        companyWebsite: companyWebsite || null,
-        positions: positions ? JSON.stringify(positions) : "[]",
+        title,
+        year,
+        description: description || null,
         updatedAt: new Date(),
       })
-      .where(eq(experience.id, id));
+      .where(eq(timeline.id, id));
 
     return NextResponse.json({
       success: true,
-      data: {
-        id,
-        companyName,
-        companyLogo,
-        companyWebsite,
-        positions,
-        type: "work",
-      },
+      data: { id, title, year, description },
     });
   } catch (error) {
     console.error("Failed to update timeline:", error);
@@ -253,25 +119,17 @@ export async function PATCH(req: NextRequest) {
     }
 
     await Promise.all(
-      updatedTimelines.map((timeline: { id: string; order: number }) => {
-        const isEducation = timeline.id.startsWith("education_");
-        if (isEducation) {
-          return db
-            .update(education)
-            .set({ order: timeline.order, updatedAt: new Date() })
-            .where(eq(education.id, timeline.id));
-        } else {
-          return db
-            .update(experience)
-            .set({ order: timeline.order, updatedAt: new Date() })
-            .where(eq(experience.id, timeline.id));
-        }
-      }),
+      updatedTimelines.map((m: { id: string; order: number }) =>
+        db
+          .update(timeline)
+          .set({ order: m.order, updatedAt: new Date() })
+          .where(eq(timeline.id, m.id)),
+      ),
     );
 
     return NextResponse.json({
       success: true,
-      message: "Timeline order updated successfully",
+      message: "timeline order updated successfully",
     });
   } catch (error) {
     console.error("Failed to update timeline order:", error);
@@ -287,26 +145,19 @@ export async function DELETE(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
-    const type = searchParams.get("type");
 
     if (!id) {
       return NextResponse.json(
-        { success: false, error: "Timeline ID is required" },
+        { success: false, error: "timeline ID is required" },
         { status: 400 },
       );
     }
 
-    const isEducation = id.startsWith("education_") || type === "education";
-
-    if (isEducation) {
-      await db.delete(education).where(eq(education.id, id));
-    } else {
-      await db.delete(experience).where(eq(experience.id, id));
-    }
+    await db.delete(timeline).where(eq(timeline.id, id));
 
     return NextResponse.json({
       success: true,
-      message: "Timeline deleted successfully",
+      message: "timeline deleted successfully",
     });
   } catch (error) {
     console.error("Failed to delete timeline:", error);

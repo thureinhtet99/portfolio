@@ -1,12 +1,3 @@
-import { StaticImageData } from "next/image";
-import { Dispatch, ReactNode, SetStateAction } from "react";
-
-export type SocialLinkType = {
-  href: string;
-  label: "GitHub" | "Facebook" | "LinkedIn";
-};
-
-// Database Schema Types
 export type UserType = {
   id: string;
   name: string;
@@ -53,12 +44,6 @@ export type VerificationType = {
   updatedAt: Date | null;
 };
 
-export type DemoCredentialType = {
-  role: string;
-  email: string;
-  password: string;
-};
-
 export type ProjectType = {
   id: string;
   slug: string;
@@ -77,23 +62,10 @@ export type ProjectType = {
   stargazersCount?: number;
 };
 
-export type ProjectFormState = {
-  slug: string;
-  title: string;
-  description: string;
-  summary: string;
-  startDate: string;
-  technologies: string;
-  githubUrl: string;
-  liveUrl: string;
-  objectives: string;
-  collaborators: string;
-  image: string;
-  demoUserEmail: string;
-  demoUserPassword: string;
-  demoAdminEmail: string;
-  demoAdminPassword: string;
-  featured: boolean;
+export type DemoCredentialType = {
+  role: string;
+  email: string;
+  password: string;
 };
 
 export type CertificateType = {
@@ -108,7 +80,6 @@ export type CertificateType = {
 
 export type WorkType = {
   id: string;
-  type: "work";
   companyName: string;
   companyLogo?: string;
   companyWebsite?: string;
@@ -121,21 +92,6 @@ export type WorkType = {
     skills?: string[];
     isExpanded?: boolean;
   }[];
-};
-
-export type EducationType = {
-  id: string;
-  type: "education";
-  institution: string;
-  location?: string;
-  period: string;
-};
-
-export type SettingType = {
-  id: string;
-  key: string;
-  value: string;
-  updatedAt: Date;
 };
 
 export type PostType = {
@@ -151,80 +107,19 @@ export type PostType = {
   updatedAt: Date;
 };
 
-export type TimelineType = WorkType | EducationType;
+// export type TimelineType = {
+//   id: string;
+//   title: string;
+//   date: string;
+//   description?: string;
+//   order: number;
+//   createdAt: Date;
+//   updatedAt: Date;
+// };
 
-// Display Types for Components
-export type WorkDisplayType = {
-  id: string;
-  companyName: string;
-  companyLogo?: string;
-  companyWebsite?: string;
-  positions: {
-    id: string;
-    title: string;
-    employmentPeriod: { start: string; end?: string };
-    employmentType?: string;
-    description?: string;
-    skills?: string[];
-    isExpanded?: boolean;
-  }[];
-};
-
-export type EducationDisplayType = {
-  id: string;
-  institution: string;
-  location?: string;
-  period?: string;
-};
-
-export type MilestoneType = {
-  id: string;
-  title: string;
-  date: string;
-  description?: string;
-  order: number;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-export type TimelineItemType = {
+export type TimelineType = {
   id: string;
   year: string;
   title: string;
-  content: string;
-  type: "work" | "education" | "milestone";
-};
-
-// Component Props Types
-export type ProjectDetailModalType = {
-  project: {
-    image?: string | StaticImageData;
-    title: string;
-    summary: string;
-    description: string;
-    objectives?: string[];
-    collaborators?: string[];
-    techStacks: string[];
-    isGitHub: boolean;
-    isLiveDemo: boolean;
-    github: string;
-    liveDemo: string;
-    demoCredentials?: DemoCredentialType[];
-  };
-  children: ReactNode;
-};
-
-export type DeleteConfirmBoxType = {
-  deleteDialogOpen: boolean;
-  setDeleteDialogOpen: Dispatch<SetStateAction<boolean>>;
-  isLoading: boolean;
-  handleDelete: () => void;
-  title?: string;
-  description?: string;
-};
-
-export type FooterType = {
-  githubURL: string | "";
-  facebookURL: string | "";
-  linkedInURL: string | "";
+  description?: string | null;
 };

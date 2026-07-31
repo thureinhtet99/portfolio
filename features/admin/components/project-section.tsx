@@ -21,11 +21,7 @@ import { ProjectCredentialsPanel } from "@/features/projects/components/project-
 import { useCrudResource } from "@/hooks/use-crud";
 import { useImageUpload } from "@/hooks/use-image-upload";
 import { generateSlug } from "@/lib/utils";
-import {
-  DemoCredentialType,
-  ProjectFormState,
-  ProjectType,
-} from "@/types/index.type";
+import { DemoCredentialType, ProjectType } from "@/types/index.type";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
@@ -45,7 +41,26 @@ import { useState } from "react";
 import { FaGithub } from "react-icons/fa";
 import { toast } from "sonner";
 
-const createEmptyForm = (): ProjectFormState => ({
+type Props = {
+  slug: string;
+  title: string;
+  description: string;
+  summary: string;
+  startDate: string;
+  technologies: string;
+  githubUrl: string;
+  liveUrl: string;
+  objectives: string;
+  collaborators: string;
+  image: string;
+  demoUserEmail: string;
+  demoUserPassword: string;
+  demoAdminEmail: string;
+  demoAdminPassword: string;
+  featured: boolean;
+};
+
+const createEmptyForm = (): Props => ({
   slug: "",
   title: "",
   description: "",
@@ -67,9 +82,7 @@ const createEmptyForm = (): ProjectFormState => ({
 const hasPartialCredential = (email: string, password: string) =>
   (email.trim() && !password.trim()) || (!email.trim() && password.trim());
 
-const getDemoCredentialsFromForm = (
-  formData: ProjectFormState,
-): DemoCredentialType[] =>
+const getDemoCredentialsFromForm = (formData: Props): DemoCredentialType[] =>
   [
     {
       role: "User",
@@ -100,7 +113,7 @@ export default function ProjectsSection() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
-  const [formData, setFormData] = useState<ProjectFormState>(createEmptyForm());
+  const [formData, setFormData] = useState<Props>(createEmptyForm());
 
   const imageUpload = useImageUpload(formData.image || undefined);
 
@@ -115,7 +128,7 @@ export default function ProjectsSection() {
     setEditingId(null);
   };
 
-  const buildPayload = async (data: ProjectFormState) => {
+  const buildPayload = async (data: Props) => {
     const imageUrl = await imageUpload.upload();
     return {
       slug: data.slug,
@@ -327,10 +340,8 @@ function ProjectForm({
   editingId,
   generateSlug,
 }: {
-  formData: ProjectFormState;
-  setFormData: (
-    data: ProjectFormState | ((prev: ProjectFormState) => ProjectFormState),
-  ) => void;
+  formData: Props;
+  setFormData: (data: Props | ((prev: Props) => Props)) => void;
   imageUpload: ReturnType<typeof useImageUpload>;
   onSave: () => void;
   onCancel: () => void;

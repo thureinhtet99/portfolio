@@ -29,6 +29,9 @@ typecheck: ## Run TypeScript compiler check
 format: ## Format code with Prettier
 	npm run format
 
+lint: ## Linter
+	npm run lint
+
 db-generate: ## Generate Drizzle migration files
 	npm run db:generate
 

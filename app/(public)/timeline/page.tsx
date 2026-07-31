@@ -1,12 +1,12 @@
 import { APP_CONFIG } from "@/config/app-config";
 import TimelineView from "@/features/timeline/components/timeline-view";
-import { MilestoneType } from "@/types/index.type";
+import { TimelineType } from "@/types/index.type";
 
-async function getMilestones(): Promise<MilestoneType[]> {
+async function getTimelines(): Promise<TimelineType[]> {
   try {
     const baseUrl = APP_CONFIG.BASE_URL;
     const response = await fetch(
-      `${baseUrl}/api/${APP_CONFIG.ROUTE.MILESTONES}`,
+      `${baseUrl}/api/${APP_CONFIG.ROUTE.TIMELINES}`,
       { cache: "no-store" },
     );
     const data = await response.json();
@@ -15,13 +15,13 @@ async function getMilestones(): Promise<MilestoneType[]> {
     }
     return [];
   } catch (error) {
-    console.error("Failed to load milestones:", error);
+    console.error("Failed to load timelines:", error);
     return [];
   }
 }
 
 export default async function Timelines() {
-  const milestones = await getMilestones();
+  const timelines = await getTimelines();
 
-  return <TimelineView milestones={milestones} />;
+  return <TimelineView timelines={timelines} />;
 }

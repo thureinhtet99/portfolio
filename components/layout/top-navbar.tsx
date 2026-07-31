@@ -8,20 +8,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Menu, MessageSquare, Trophy, X } from "lucide-react";
+import { ChevronDown, Menu, MessageSquare, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode, useState } from "react";
 import { FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
+import { MdOutlineTimeline } from "react-icons/md";
 import { imageCards, navLinks, routeLabels } from "./data/nav-links";
 
 const moreLinks = [
   {
-    href: "/achievements",
-    label: "Achievements",
+    href: "/timeline",
+    label: "Timeline",
     description: "A collection of milestones",
-    icon: Trophy,
+    icon: MdOutlineTimeline,
   },
   {
     href: "/leave-a-note",
@@ -31,21 +32,18 @@ const moreLinks = [
   },
 ];
 
-interface TopNavbarProps {
+export function TopNavbar({
+  viewCount = "0",
+  githubUrl = "",
+  linkedinUrl = "",
+  emailUrl = "",
+}: {
   footer?: ReactNode;
   viewCount?: string;
   githubUrl?: string;
   linkedinUrl?: string;
   emailUrl?: string;
-}
-
-export function TopNavbar({
-  footer,
-  viewCount = "0",
-  githubUrl = "",
-  linkedinUrl = "",
-  emailUrl = "",
-}: TopNavbarProps) {
+}) {
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);

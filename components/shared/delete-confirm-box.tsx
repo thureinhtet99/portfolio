@@ -7,8 +7,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { DeleteConfirmBoxType } from "@/types/index.type";
 import { AlertTriangle } from "lucide-react";
+import { Dispatch, SetStateAction } from "react";
+
+type DeleteConfirmBoxType = {
+  deleteDialogOpen: boolean;
+  setDeleteDialogOpen: Dispatch<SetStateAction<boolean>>;
+  isLoading: boolean;
+  handleDelete: () => void;
+  title?: string;
+  description?: string;
+};
 
 export default function DeleteConfirmBox({
   deleteDialogOpen,

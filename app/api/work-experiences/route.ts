@@ -1,0 +1,186 @@
+import { db } from "@/db/client";
+import { workExperience } from "@/db/schema";
+import { asc, eq } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(req: NextRequest) {
+  try {
+    const exps = (
+      await db
+        .select()
+        .from(workExperience)
+        .orderBy(asc(workExperience.order))
+        .all()
+    ).map((exp) => ({
+      id: exp.id,
+      companyName: exp.companyName,
+      companyLogo: exp.companyLogo,
+      companyWebsite: exp.companyWebsite,
+      positions: exp.positions ? JSON.parse(exp.positions) : [],
+      order: exp.order,
+      createdAt: exp.createdAt,
+      updatedAt: exp.updatedAt,
+    }));
+
+    return NextResponse.json({
+      success: true,
+      data: exps,
+    });
+  } catch (error) {
+    console.error("Failed to fetch exps:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to fetch exps" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { companyName, companyLogo, companyWebsite, positions } = body;
+
+    if (!companyName) {
+      return NextResponse.json(
+        { success: false, error: "Company name is required" },
+        { status: 400 },
+      );
+    }
+
+    const id = `work_${Date.now()}`;
+    const now = new Date();
+
+    await db.insert(workExperience).values({
+      id,
+      companyName,
+      companyLogo: companyLogo || null,
+      companyWebsite: companyWebsite || null,
+      positions: positions ? JSON.stringify(positions) : "[]",
+      order: 0,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        id,
+        companyName,
+        companyLogo,
+        companyWebsite,
+        positions,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to create exp:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : "Failed to create exp",
+      },
+      { status: 500 },
+    );
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { id, companyName, companyLogo, companyWebsite, positions } = body;
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: "ID is required" },
+        { status: 400 },
+      );
+    }
+
+    if (!companyName) {
+      return NextResponse.json(
+        { success: false, error: "Company name is required" },
+        { status: 400 },
+      );
+    }
+
+    await db
+      .update(workExperience)
+      .set({
+        companyName,
+        companyLogo: companyLogo || null,
+        companyWebsite: companyWebsite || null,
+        positions: positions ? JSON.stringify(positions) : "[]",
+        updatedAt: new Date(),
+      })
+      .where(eq(workExperience.id, id));
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        id,
+        companyName,
+        companyLogo,
+        companyWebsite,
+        positions,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to update exp:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to update exp" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const updatedTimelines = await req.json();
+
+    await Promise.all(
+      updatedTimelines.map((timeline: { id: string; order: number }) => {
+        return db
+          .update(workExperience)
+          .set({ order: timeline.order, updatedAt: new Date() })
+          .where(eq(workExperience.id, timeline.id));
+      }),
+    );
+
+    return NextResponse.json({
+      success: true,
+      message: "Exp order updated successfully",
+    });
+  } catch (error) {
+    console.error("Failed to update exp order:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to update exp order" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: "Exp ID is required" },
+        { status: 400 },
+      );
+    }
+
+    await db.delete(workExperience).where(eq(workExperience.id, id));
+
+    return NextResponse.json({
+      success: true,
+      message: "Exp deleted successfully",
+    });
+  } catch (error) {
+    console.error("Failed to delete exp:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to delete exp" },
+      { status: 500 },
+    );
+  }
+}

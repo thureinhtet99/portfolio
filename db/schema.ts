@@ -90,22 +90,12 @@ export const certificate = sqliteTable("certificate", {
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
 
-export const experience = sqliteTable("work", {
+export const workExperience = sqliteTable("work_experience", {
   id: text("id").primaryKey(),
   companyName: text("company_name").notNull(),
   companyLogo: text("company_logo"),
   companyWebsite: text("company_website"),
   positions: text("positions").notNull(), // JSON array of positions
-  order: integer("order").notNull().default(0),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
-});
-
-export const education = sqliteTable("education", {
-  id: text("id").primaryKey(),
-  institution: text("institution").notNull(),
-  location: text("location"),
-  period: text("period"),
   order: integer("order").notNull().default(0),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
@@ -131,11 +121,11 @@ export const post = sqliteTable("post", {
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
 
-export const milestone = sqliteTable("milestone", {
+export const timeline = sqliteTable("timeline", {
   id: text("id").primaryKey(),
   title: text("title").notNull(),
-  date: text("date").notNull(), // "2024" (year only)
-  description: text("description"), // markdown
+  year: text("year").notNull(),
+  description: text("description"),
   order: integer("order").notNull().default(0),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),

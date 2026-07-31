@@ -122,14 +122,14 @@ async function getExperiences() {
   try {
     const baseUrl = APP_CONFIG.BASE_URL;
     const response = await fetch(
-      `${baseUrl}/api/${APP_CONFIG.ROUTE.TIMELINES}?type=work`,
+      `${baseUrl}/api/${APP_CONFIG.ROUTE.WORK_EXPERIENCES}`,
     );
     const { success, data } = await response.json();
     if (success && data) return data;
 
     return [];
   } catch (error) {
-    console.error("Failed to load published posts:", error);
+    console.error("Failed to load work experiences:", error);
     return [];
   }
 }

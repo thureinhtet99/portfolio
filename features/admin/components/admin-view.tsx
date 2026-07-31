@@ -1,10 +1,5 @@
 "use client";
 
-import { LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -18,13 +13,16 @@ import {
 import { APP_CONFIG } from "@/config/app-config";
 import { adminMenuItems } from "@/features/admin/data/menu-items";
 import { signOut } from "@/lib/auth-client";
-
+import { LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 import CertificatesSection from "./certificate-section";
-import MilestonesSection from "./milestone-section";
 import PostsSection from "./posts-section";
 import ProjectsSection from "./project-section";
 import SettingsSection from "./settings-section";
 import TimelinesSection from "./timeline-section";
+import WorkExperienceSection from "./work-exp-section";
 
 export function AdminView({ userName }: { userName: string | null }) {
   const [activeTab, setActiveTab] = useState("settings");
@@ -94,7 +92,7 @@ export function AdminView({ userName }: { userName: string | null }) {
         <div className="md:col-span-3">
           {activeTab === "settings" && <SettingsSection />}
           {activeTab === "timelines" && <TimelinesSection />}
-          {activeTab === "milestones" && <MilestonesSection />}
+          {activeTab === "work-experiences" && <WorkExperienceSection />}
           {activeTab === "projects" && <ProjectsSection />}
           {activeTab === "certificates" && <CertificatesSection />}
           {activeTab === "posts" && <PostsSection />}
