@@ -20,6 +20,7 @@ import { adminMenuItems } from "@/features/admin/data/menu-items";
 import { signOut } from "@/lib/auth-client";
 
 import CertificatesSection from "./certificate-section";
+import MilestonesSection from "./milestone-section";
 import PostsSection from "./posts-section";
 import ProjectsSection from "./project-section";
 import SettingsSection from "./settings-section";
@@ -93,6 +94,7 @@ export function AdminView({ userName }: { userName: string | null }) {
         <div className="md:col-span-3">
           {activeTab === "settings" && <SettingsSection />}
           {activeTab === "timelines" && <TimelinesSection />}
+          {activeTab === "milestones" && <MilestonesSection />}
           {activeTab === "projects" && <ProjectsSection />}
           {activeTab === "certificates" && <CertificatesSection />}
           {activeTab === "posts" && <PostsSection />}

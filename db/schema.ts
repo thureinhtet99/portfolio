@@ -130,3 +130,13 @@ export const post = sqliteTable("post", {
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
+
+export const milestone = sqliteTable("milestone", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  date: text("date").notNull(), // "2024" (year only)
+  description: text("description"), // markdown
+  order: integer("order").notNull().default(0),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+});

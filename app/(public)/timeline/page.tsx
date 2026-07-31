@@ -1,23 +1,13 @@
 import { APP_CONFIG } from "@/config/app-config";
 import TimelineView from "@/features/timeline/components/timeline-view";
-import {
-  EducationDisplayType,
-  EducationType,
-  TimelineType,
-  WorkDisplayType,
-  WorkType,
-} from "@/types/index.type";
+import { MilestoneType } from "@/types/index.type";
 
-// export const dynamic = "force-dynamic";
-
-async function getTimelines(): Promise<TimelineType[]> {
+async function getMilestones(): Promise<MilestoneType[]> {
   try {
     const baseUrl = APP_CONFIG.BASE_URL;
     const response = await fetch(
-      `${baseUrl}/api/${APP_CONFIG.ROUTE.TIMELINES}`,
-      {
-        cache: "no-store",
-      },
+      `${baseUrl}/api/${APP_CONFIG.ROUTE.MILESTONES}`,
+      { cache: "no-store" },
     );
     const data = await response.json();
     if (data.success && data.data) {
@@ -25,33 +15,13 @@ async function getTimelines(): Promise<TimelineType[]> {
     }
     return [];
   } catch (error) {
-    console.error("Failed to load timelines:", error);
+    console.error("Failed to load milestones:", error);
     return [];
   }
 }
 
 export default async function Timelines() {
-  const timelines = await getTimelines();
+  const milestones = await getMilestones();
 
-  // Separate work experiences and education
-  const work: WorkDisplayType[] = timelines
-    .filter((t): t is WorkType => t.type === "work")
-    .map((exp) => ({
-      id: exp.id,
-      companyName: exp.companyName,
-      companyLogo: exp.companyLogo,
-      companyWebsite: exp.companyWebsite,
-      positions: exp.positions || [],
-    }));
-
-  const education: EducationDisplayType[] = timelines
-    .filter((t): t is EducationType => t.type === "education")
-    .map((edu) => ({
-      id: edu.id,
-      institution: edu.institution,
-      location: edu.location,
-      period: edu.period,
-    }));
-
-  return <TimelineView work={work} education={education} />;
+  return <TimelineView milestones={milestones} />;
 }

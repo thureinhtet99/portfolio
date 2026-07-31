@@ -177,6 +177,24 @@ export type EducationDisplayType = {
   period?: string;
 };
 
+export type MilestoneType = {
+  id: string;
+  title: string;
+  date: string;
+  description?: string;
+  order: number;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type TimelineItemType = {
+  id: string;
+  year: string;
+  title: string;
+  content: string;
+  type: "work" | "education" | "milestone";
+};
+
 // Component Props Types
 export type ProjectDetailModalType = {
   project: {

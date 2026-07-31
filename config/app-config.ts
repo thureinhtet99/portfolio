@@ -13,5 +13,6 @@ export const APP_CONFIG = {
     CONTACT: "contact",
     SETTINGS: "settings",
     TIMELINES: "timelines",
+    MILESTONES: "milestones",
   },
 };
