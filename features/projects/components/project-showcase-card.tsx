@@ -43,7 +43,7 @@ export function ProjectShowcaseCard({
         )}
       >
         <ViewTransition name={`project-image-${project.slug}`}>
-          <div className="bg-muted-foreground p-6">
+          <div className="bg-muted-foreground p-4 sm:p-6">
             {/* Terminal preview area */}
             <div className="relative rounded-lg overflow-hidden bg-background">
               {/* Terminal header */}
@@ -87,13 +87,13 @@ export function ProjectShowcaseCard({
         {/* Card body */}
         <div className="p-4 space-y-3">
           <ViewTransition name={`project-title-${project.slug}`}>
-            <h3 className=" text-base font-semibold text-foreground group-hover:text-primary transition-colors">
+            <h3 className="inline-block text-base font-semibold text-muted-foreground group-hover:bg-primary group-hover:text-background transition-colors">
               {project.title}
             </h3>
           </ViewTransition>
 
           {project.description && (
-            <p className=" text-sm leading-relaxed text-muted-foreground line-clamp-2">
+            <p className="text-sm leading-relaxed text-muted-foreground line-clamp-2">
               {project.description}
             </p>
           )}

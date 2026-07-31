@@ -81,13 +81,13 @@ export function ProjectDetailView({
           {/* Project Info */}
           <div className="space-y-6">
             <ViewTransition name={`project-title-${project.slug}`}>
-              <h1 className=" text-4xl font-bold tracking-[-0.03em]">
+              <h1 className="text-4xl font-bold tracking-[-0.03em] flex items-center justify-center sm:justify-start">
                 {project.title}
               </h1>
             </ViewTransition>
 
             {/* Links */}
-            <div className="flex items-center gap-6">
+            <div className="flex items-center justify-center sm:justify-start gap-6">
               {project.startDate && (
                 <span className="flex items-center text-xs gap-1">
                   {format(new Date(project.startDate), "MMM yyyy")}
@@ -117,7 +117,7 @@ export function ProjectDetailView({
 
             {/* Tags */}
             {technologies.length > 0 && (
-              <div className="flex flex-wrap items-center gap-1.5">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5">
                 {technologies.map((tech) => (
                   <Badge key={tech} variant="outline">
                     {tech}

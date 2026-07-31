@@ -41,14 +41,11 @@ export async function GET(req: NextRequest) {
 
 async function handleCreateUser(req: NextRequest) {
   // Keep this endpoint unavailable in production by default.
-  if (
-    process.env.NODE_ENV === "production" &&
-    process.env.ALLOW_ADMIN_BOOTSTRAP !== "true"
-  ) {
+  if (process.env.NODE_ENV === "production") {
     return NextResponse.json(
       {
         success: false,
-        error: "Admin bootstrap endpoint is disabled in production",
+        error: "Admin creation is disabled in production",
       },
       { status: 403 },
     );

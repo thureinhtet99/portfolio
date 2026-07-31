@@ -143,8 +143,8 @@ export function HomeView({
       {/* Featured Projects */}
       <section id="projects-section" className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl space-y-10">
-          <div className="flex items-center justify-between">
-            <h2 className=" text-4xl font-bold text-muted-foreground tracking-[-0.02em]">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="text-3xl font-bold text-muted-foreground tracking-[-0.02em] sm:text-4xl">
               Featured Projects
             </h2>
             {featuredProjects.length > 0 && (
@@ -162,13 +162,13 @@ export function HomeView({
           </div>
 
           {featuredProjects.length > 0 ? (
-            <div className="flex flex-wrap justify-center gap-6">
+            <div className="flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:justify-center">
               {featuredProjects.map((project) => (
                 <ProjectShowcaseCard
                   key={project.id}
                   project={project}
                   techLimit={4}
-                  className="w-full max-w-120"
+                  className="w-full sm:max-w-120"
                 />
               ))}
             </div>
@@ -193,7 +193,7 @@ export function HomeView({
       </section>
 
       {/* Contribution */}
-      <section id="contributions" className="px-6 py-16 sm:py-20">
+      <section id="contributions-section" className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl space-y-6">
           <h2 className=" text-4xl font-bold text-foreground tracking-[-0.02em]">
             Contributions
@@ -203,11 +203,11 @@ export function HomeView({
       </section>
 
       {/* Widgets */}
-      <section id="widgets" className="px-6 py-16 sm:py-20">
+      <section id="widgets-section" className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl space-y-6">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4">
             {/* Currently Based In */}
-            <div className="surface-panel p-5 border border-muted-foreground/20 rounded-md col-span-2">
+            <div className="p-5 border border-muted-foreground/20 rounded-md col-span-2">
               <div className="flex items-center gap-2 mb-4">
                 <MapPin className="h-4 w-4 text-primary" />
                 <h3 className="text-sm font-semibold">Currently Based In</h3>
@@ -221,17 +221,17 @@ export function HomeView({
             </div>
 
             {/* Leave message */}
-            <div className="surface-panel flex flex-col justify-between p-5 border border-muted-foreground/20 rounded-md">
+            <div className="w-full max-w-sm flex flex-col justify-between p-4 sm:p-5 border border-muted-foreground/20 rounded-md">
               <div className="space-y-4">
                 <h3 className="text-sm font-semibold flex items-center gap-2">
                   <LuMessageCircleMore className="h-4 w-4 text-primary" />
                   Leave a message
                 </h3>
-                <p className=" text-sm text-muted-foreground mb-4">
+                <p className="text-sm text-muted-foreground mb-4">
                   Always open to great projects and good conversations.
                 </p>
               </div>
-              <Button asChild size="sm" className="w-1/2">
+              <Button asChild size="sm" className="w-full sm:w-1/2">
                 <Link href="/contact" className="flex items-center gap-2">
                   <Mail className="h-4 w-4" />
                   Send me
@@ -239,12 +239,12 @@ export function HomeView({
               </Button>
             </div>
 
-            {/* Click me*/}
-            <div className="surface-panel p-5 border border-muted-foreground/20 rounded-md flex flex-col">
+            {/* Something...*/}
+            <div className="w-full max-w-sm p-4 sm:p-5 border border-muted-foreground/20 rounded-md flex flex-col">
               <div className="self-end">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Info className="h-4 w-4 hover:text-primary cursor-pointer" />
+                    <Info className="h-4 w-4 hover:text-primary transition-colors cursor-pointer" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-50" align="end">
                     <DropdownMenuGroup>

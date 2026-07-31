@@ -1,19 +1,17 @@
 import { defineConfig } from "drizzle-kit";
 
-const isProduction = process.env.NODE_ENV === "production";
-const shouldUseTurso = isProduction && !!process.env.TURSO_DATABASE_URL;
+const isVercel = process.env.VERCEL === "1";
 
 const localDatabaseUrl = (() => {
-  const rawUrl = process.env.DATABASE_URL;
-  if (!rawUrl) return "./local.db";
-  return rawUrl.startsWith("file:") ? rawUrl.slice(5) : rawUrl;
+  const raw = process.env.SQLITE_DB_PATH || "./local.db";
+  return raw.startsWith("file:") ? raw.slice(5) : raw;
 })();
 
 export default defineConfig({
   schema: "./db/schema.ts",
   out: "./drizzle",
-  dialect: shouldUseTurso ? "turso" : "sqlite",
-  dbCredentials: shouldUseTurso
+  dialect: isVercel ? "turso" : "sqlite",
+  dbCredentials: isVercel
     ? {
         url: process.env.TURSO_DATABASE_URL!,
         authToken: process.env.TURSO_AUTH_TOKEN,

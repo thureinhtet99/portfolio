@@ -56,7 +56,7 @@ export function GitHubActivityWidget({ commits, languages, streak }: Props) {
 
   if (!hasCommits && !hasLanguages && !streak) {
     return (
-      <div className="surface-panel p-5 border border-muted-foreground/20 rounded-md col-span-2">
+      <div className="w-full p-4 sm:p-5 border border-muted-foreground/20 rounded-md">
         <div className="flex items-center gap-2 mb-4">
           <BsActivity className="h-4 w-4 text-primary" />
           <h3 className="text-sm font-semibold">Recent commits</h3>
@@ -70,7 +70,7 @@ export function GitHubActivityWidget({ commits, languages, streak }: Props) {
   const topLanguages = languages.slice(0, 5);
 
   return (
-    <div className="surface-panel p-5 border border-muted-foreground/20 rounded-md col-span-2">
+    <div className="w-full max-w-sm p-4 sm:p-5 border border-muted-foreground/20 rounded-md sm:col-span-2">
       <div className="flex items-center gap-2 mb-4">
         <BsActivity className="h-4 w-4 text-primary" />
         <h3 className="text-sm font-semibold">Recent commits</h3>

@@ -32,7 +32,7 @@ export default function LeaveANoteView() {
                 Thoughts, feedback, or just say &apos;
                 <span
                   onClick={handleHiClick}
-                  className="underline hover:bg-primary hover:text-background cursor-pointer"
+                  className="underline hover:bg-primary hover:text-background cursor-pointer transition-colors"
                 >
                   hi
                 </span>

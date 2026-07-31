@@ -39,23 +39,18 @@ function getPreferredEnvUrl(): string | undefined {
 }
 
 export function getBaseUrl(): string {
-  const envUrl = getPreferredEnvUrl();
-
-  if (envUrl) {
-    return envUrl;
-  }
-
-  if (process.env.VERCEL_URL) {
+  if (process.env.VERCEL_URL)
     return normalizeUrl(`https://${process.env.VERCEL_URL}`);
-  }
 
-  if (isProduction) {
-    throw new Error(
-      "Unable to resolve a valid production base URL. Set NEXT_PUBLIC_BASE_URL, NEXT_PUBLIC_SITE_URL, or BETTER_AUTH_URL.",
-    );
-  }
+  if (!isProduction) return LOCAL_BASE_URL;
 
-  return LOCAL_BASE_URL;
+  // Production (not on Vercel, e.g. self-hosted)
+  const envUrl = getPreferredEnvUrl();
+  if (envUrl) return envUrl;
+
+  throw new Error(
+    "Unable to resolve a valid production base URL. Set NEXT_PUBLIC_BASE_URL, NEXT_PUBLIC_SITE_URL, or BETTER_AUTH_URL.",
+  );
 }
 
 export function getSiteUrl(): string {

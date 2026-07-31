@@ -1,61 +1,18 @@
-import { drizzle as drizzleLibSQL } from "drizzle-orm/libsql";
-import { drizzle as drizzleSQLite } from "drizzle-orm/better-sqlite3";
-import { createClient } from "@libsql/client";
-import Database from "better-sqlite3";
-import * as schema from "./schema";
-import path from "path";
-import fs from "fs";
+import { createSqliteDb, type SqliteDb } from "./sqlite";
+import { createTursoDb, type TursoDb } from "./turso";
 
-// Use LibSQL (Turso) for production/Vercel, SQLite for local development
-const isProduction = process.env.NODE_ENV === "production";
-const tursoUrl = process.env.TURSO_DATABASE_URL;
-const tursoAuthToken = process.env.TURSO_AUTH_TOKEN;
-
-if (isProduction && !tursoUrl) {
-  throw new Error(
-    "Missing TURSO_DATABASE_URL in production. Refusing to fall back to local SQLite.",
-  );
+function isVercel(): boolean {
+  return process.env.VERCEL === "1";
 }
 
-if (isProduction && !tursoAuthToken) {
-  throw new Error(
-    "Missing TURSO_AUTH_TOKEN in production. Set Turso credentials for production runtime.",
-  );
+// function getVercelEnv(): string | undefined {
+//   return process.env.VERCEL_ENV;
+// }
+
+function createDatabase(): SqliteDb | TursoDb {
+  if (isVercel()) return createTursoDb();
+
+  return createSqliteDb();
 }
 
-const shouldUseTurso = isProduction;
-
-const resolveSqlitePath = () => {
-  const rawUrl = process.env.DATABASE_URL;
-  if (!rawUrl) return path.join(process.cwd(), "local.db");
-
-  const normalized = rawUrl.startsWith("file:") ? rawUrl.slice(5) : rawUrl;
-  return path.isAbsolute(normalized)
-    ? normalized
-    : path.join(process.cwd(), normalized);
-};
-
-let db: ReturnType<typeof drizzleLibSQL> | ReturnType<typeof drizzleSQLite>;
-
-if (shouldUseTurso) {
-  // Production: Use LibSQL/Turso (works on Vercel)
-  const client = createClient({
-    url: tursoUrl!,
-    authToken: tursoAuthToken,
-  });
-  db = drizzleLibSQL(client, { schema });
-} else {
-  // Local development: Use SQLite
-  const dbPath = resolveSqlitePath();
-
-  // Ensure the directory exists
-  const dbDir = path.dirname(dbPath);
-  if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
-  }
-
-  const sqlite = new Database(dbPath);
-  db = drizzleSQLite(sqlite, { schema });
-}
-
-export { db };
+export const db = createDatabase();

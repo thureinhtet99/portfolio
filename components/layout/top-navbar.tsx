@@ -65,7 +65,7 @@ export function TopNavbar({
 
   return (
     <nav
-      className="sticky top-0 z-50 bg-transparent backdrop-blur-sm py-3"
+      className="sticky top-0 z-50 bg-transparent backdrop-blur-md my-3"
       style={{ viewTransitionName: "site-header" }}
     >
       <div className="app-shell flex items-center justify-between px-6 py-4">
@@ -114,8 +114,8 @@ export function TopNavbar({
           <DropdownMenu open={moreOpen} onOpenChange={setMoreOpen}>
             <DropdownMenuTrigger
               className={cn(
-                "text-sm transition-colors hover:text-foreground flex items-center gap-1 bg-transparent border-none outline-none cursor-pointer",
-                isMoreActive ? "text-foreground" : "text-muted-foreground",
+                "text-sm transition-colors hover:text-background hover:bg-primary flex items-center gap-1 border-none outline-none cursor-pointer",
+                isMoreActive ? "text-white" : "text-muted-foreground",
               )}
             >
               More
@@ -129,7 +129,7 @@ export function TopNavbar({
             <DropdownMenuContent
               align="end"
               sideOffset={12}
-              className="w-auto rounded-md bg-muted-foreground/5 p-2 flex gap-2"
+              className="flex w-auto gap-2 rounded-md border border-background bg-muted-ground/5 p-2 shadow-lg shadow-black/10"
             >
               {/* Left: Image cards */}
               <div className="flex gap-2">
@@ -158,23 +158,32 @@ export function TopNavbar({
               </div>
 
               {/* Right: Icon list */}
-              <div className="flex flex-col justify-start gap-2">
+              <div className="flex flex-col justify-start gap-3">
                 {moreLinks.map((link) => (
-                  <DropdownMenuItem key={link.href} asChild>
+                  <DropdownMenuItem
+                    key={link.href}
+                    asChild
+                    className="group data-[highlighted]:bg-transparent"
+                  >
                     <Link
                       href={link.href}
                       className={cn(
-                        "flex items-center px-2 text-sm transition-colors cursor-pointer",
+                        "flex items-center px-2 text-sm cursor-pointer",
                         isActive(link.href)
                           ? "text-white"
                           : "text-muted-foreground",
                       )}
                     >
-                      <span className="flex h-6 w-6 items-start justify-center">
-                        <link.icon className="h-6 w-6" />
-                      </span>
+                      <link.icon
+                        className={cn(
+                          "h-6 w-6",
+                          isActive(link.href)
+                            ? "text-white"
+                            : "text-muted-foreground",
+                        )}
+                      />
                       <div className="flex flex-col">
-                        <span className="w-fit font-medium hover:bg-primary hover:text-background">
+                        <span className="w-fit transition-colors group-data-[highlighted]:bg-primary group-data-[highlighted]:text-background">
                           {link.label}
                         </span>
                         <span className="text-xs">{link.description}</span>
@@ -210,7 +219,7 @@ export function TopNavbar({
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="overflow-hidden border-b border-muted-foreground/20 sm:hidden"
+            className="overflow-hidden shadow-lg shadow-black/10 sm:hidden"
           >
             <div className="flex flex-col gap-6 px-6 py-4">
               {navLinks.map((link) => (
@@ -251,7 +260,7 @@ export function TopNavbar({
                 ))}
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mt-6">
                 <span className="text-xs">{viewCount} views</span>
                 <div className="flex items-center gap-4">
                   {githubUrl && (

@@ -5,12 +5,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-// type YearEntry = {
-//   year: string;
-//   startIdx: number;
-//   endIdx: number;
-// };
-
 type Props = {
   experiences: ExperienceItemType[];
   entryHeights: number[];
@@ -64,11 +58,7 @@ export function TimelineYearRail({
   }, [experiences, entryHeights]);
 
   if (isMobile) {
-    return (
-      <div className="flex flex-col items-center gap-2 w-8">
-        <div className="relative h-full w-px bg-muted-foreground/20" />
-      </div>
-    );
+    return null;
   }
 
   // Line endpoints: centered on first and last circle

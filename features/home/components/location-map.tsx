@@ -21,7 +21,7 @@ type Props = {
 export function LocationMap({ fallbackLat, fallbackLng, label }: Props) {
   return (
     <div className="flex flex-col gap-3">
-      <div className="relative h-32 w-full overflow-hidden rounded-md border border-muted-foreground/20 [&_.leaflet-container]:h-full [&_.leaflet-container]:w-full">
+      <div className="relative z-0 h-32 w-full overflow-hidden rounded-md border border-muted-foreground/20 [&_.leaflet-container]:h-full [&_.leaflet-container]:w-full">
         <MapContainer
           center={[fallbackLat, fallbackLng]}
           zoom={10}
@@ -34,9 +34,6 @@ export function LocationMap({ fallbackLat, fallbackLng, label }: Props) {
           </Marker>
         </MapContainer>
       </div>
-      {/* <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <span>{label}</span>
-      </div> */}
     </div>
   );
 }

@@ -12,7 +12,7 @@ export function PostDetailView({ post }: { post: PostType }) {
       <section className="px-6 py-12">
         <article className="mx-auto max-w-3xl space-y-6">
           <div className="space-y-6 text-center">
-            <h1 className=" text-4xl font-bold tracking-[-0.02em] sm:text-5xl lg:text-6xl leading-tight">
+            <h1 className="text-4xl font-bold tracking-[-0.02em] sm:text-5xl lg:text-6xl leading-tight">
               {titleWords.map((word, i) => (
                 <ViewTransition
                   key={i}
@@ -33,12 +33,12 @@ export function PostDetailView({ post }: { post: PostType }) {
               ))}
             </h1>
 
-            <span className="flex items-center text-xs gap-1">
+            <span className="flex items-center justify-center sm:justify-start text-xs gap-1">
               {format(new Date(post.createdAt), "dd MMM yyyy")}
             </span>
 
             {post.tags && post.tags.length > 0 && (
-              <div className="flex flex-wrap items-center gap-1.5">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5">
                 {post.tags.map((tag) => (
                   <Badge key={tag} variant="outline">
                     {tag}

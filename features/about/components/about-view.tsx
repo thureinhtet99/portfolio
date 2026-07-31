@@ -31,28 +31,25 @@ export function AboutView({
           <div className="flex flex-col gap-8 md:flex-row">
             {/* Portrait */}
             {profileImage && (
-              <div className="shrink-0">
-                <div className="relative h-64 w-84 overflow-hidden rounded-md md:h-100 md:w-80">
-                  <Image
-                    src={profileImg}
-                    alt="Thu Rein Htet"
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                </div>
+              <div className="relative h-64 w-full overflow-hidden rounded-sm md:h-100 md:w-80 shrink-0 self-center">
+                <Image
+                  src={profileImg}
+                  alt="Thu Rein Htet"
+                  fill
+                  sizes="(max-width: 768px) 336px, 320px"
+                  className="object-cover"
+                  priority
+                />
               </div>
             )}
 
             {/* Bio */}
-            <div className="flex-1 space-y-6">
-              <div className=" text-base leading-relaxed sm:text-md">
-                {aboutMe && (
-                  <div className="prose prose-base prose-invert sm:prose-md text-muted-foreground">
-                    <ReactMarkdown>{aboutMe}</ReactMarkdown>
-                  </div>
-                )}
-              </div>
+            <div className="flex-1 text-base leading-relaxed sm:text-md">
+              {aboutMe && (
+                <div className="prose prose-base prose-invert sm:prose-md text-muted-foreground">
+                  <ReactMarkdown>{aboutMe}</ReactMarkdown>
+                </div>
+              )}
             </div>
           </div>
         </div>

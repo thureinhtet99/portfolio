@@ -1,19 +1,13 @@
-"use client";
-
 import { PostType } from "@/types/index.type";
 import { format } from "date-fns";
 import Link from "next/link";
 import { FaRegFileAlt } from "react-icons/fa";
 
-type Props = {
-  posts: PostType[];
-};
-
-export function LatestPostsWidget({ posts }: Props) {
+export function LatestPostsWidget({ posts }: { posts: PostType[] }) {
   const visible = posts.slice(0, 4);
 
   return (
-    <div className="surface-panel p-5 border border-muted-foreground/20 rounded-md">
+    <div className="w-full p-4 sm:p-5 border border-muted-foreground/20 rounded-md">
       <div className="flex items-center gap-2 mb-4">
         <FaRegFileAlt className="h-4 w-4 text-primary" />
         <h3 className="text-sm font-semibold">Latest Posts</h3>
@@ -29,7 +23,7 @@ export function LatestPostsWidget({ posts }: Props) {
               <Link
                 href={`/posts/${post.slug}`}
                 transitionTypes={["nav-forward"]}
-                className="truncate hover:text-primary"
+                className="truncate hover:bg-primary hover:text-background"
               >
                 {post.title}
               </Link>
