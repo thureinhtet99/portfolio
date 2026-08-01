@@ -1,8 +1,6 @@
 import { APP_CONFIG } from "@/config/app-config";
 import { PostsView } from "@/features/posts/components/posts-view";
 
-// export const dynamic = "force-dynamic";
-
 async function getPublishedPosts() {
   try {
     const baseUrl = APP_CONFIG.BASE_URL;

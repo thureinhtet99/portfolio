@@ -14,5 +14,6 @@ export const APP_CONFIG = {
     SETTINGS: "settings",
     TIMELINES: "timelines",
     WORK_EXPERIENCES: "work-experiences",
+    LABS: "labs",
   },
 };

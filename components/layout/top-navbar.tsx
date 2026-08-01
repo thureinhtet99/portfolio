@@ -126,8 +126,8 @@ export function TopNavbar({
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              sideOffset={12}
-              className="flex w-auto gap-2 rounded-md border border-background bg-muted-ground/5 p-2 shadow-lg shadow-black/10"
+              sideOffset={14}
+              className="flex w-auto h-50 gap-2 rounded-md border border-background bg-muted-foreground/5 p-2 shadow-lg shadow-black/10"
             >
               {/* Left: Image cards */}
               <div className="flex gap-2">
@@ -135,19 +135,25 @@ export function TopNavbar({
                   <DropdownMenuItem key={card.href} asChild>
                     <Link
                       href={card.href}
-                      className="relative flex h-[180px] w-auto flex-col justify-end overflow-hidden rounded-md cursor-pointer group"
+                      className="relative flex h-auto w-50 flex-col justify-end overflow-hidden rounded-md cursor-pointer group"
                     >
                       <Image
                         src={card.image}
                         alt={card.label}
+                        priority
                         fill
+                        sizes="200px"
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                      <div className="relative z-10 p-3">
-                        <div className="text-sm font-medium text-white">
-                          {card.label}
-                        </div>
+                      <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
+                      <div
+                        className={`relative z-10 p-2 ${
+                          pathname === "labs"
+                            ? "text-white"
+                            : "text-muted-foreground"
+                        }`}
+                      >
+                        <div className="text-sm font-medium">{card.label}</div>
                         <div className="text-xs">{card.description}</div>
                       </div>
                     </Link>
@@ -161,7 +167,7 @@ export function TopNavbar({
                   <DropdownMenuItem
                     key={link.href}
                     asChild
-                    className="group data-[highlighted]:bg-transparent"
+                    className="group data-highlighted:bg-transparent"
                   >
                     <Link
                       href={link.href}
@@ -181,7 +187,7 @@ export function TopNavbar({
                         )}
                       />
                       <div className="flex flex-col">
-                        <span className="w-fit transition-colors group-data-[highlighted]:bg-primary group-data-[highlighted]:text-background">
+                        <span className="w-fit transition-colors group-data-highlighted:bg-primary group-data-highlighted:text-background">
                           {link.label}
                         </span>
                         <span className="text-xs">{link.description}</span>

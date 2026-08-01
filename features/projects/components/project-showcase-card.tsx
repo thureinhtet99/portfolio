@@ -87,7 +87,7 @@ export function ProjectShowcaseCard({
         {/* Card body */}
         <div className="p-4 space-y-3">
           <ViewTransition name={`project-title-${project.slug}`}>
-            <h3 className="inline-block text-base font-semibold text-muted-foreground group-hover:bg-primary group-hover:text-background transition-colors">
+            <h3 className="inline-block text-base font-semibold text-muted-foreground">
               {project.title}
             </h3>
           </ViewTransition>

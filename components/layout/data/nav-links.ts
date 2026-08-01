@@ -19,7 +19,7 @@ export const imageCards = [
   {
     href: "/labs",
     label: "Labs",
-    description: "New skills and adventures",
+    description: "Beyond coding",
     image: "/profile.jpg",
   },
 ];
