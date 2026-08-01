@@ -169,3 +169,21 @@
     animation-delay: 0s !important;
   }
 }
+
+.scroll-fade {
+  overflow: hidden; /* clips content to the mask edges */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 48px,
+    black calc(100% - 48px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 48px,
+    black calc(100% - 48px),
+    transparent 100%
+  );
+}

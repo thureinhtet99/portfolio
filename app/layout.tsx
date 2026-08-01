@@ -107,7 +107,7 @@ export default async function RootLayout({
         className={`${jetbrainsMono.variable} ${geistMono.variable} antialiased font-sans`}
       >
         <QueryProvider>
-          <main className="min-h-screen sm:px-6 lg:px-8">
+          <main className="min-h-screen">
             <div className="mx-auto flex w-full flex-col justify-center">
               <TopNavbar
                 footer={<Footer />}

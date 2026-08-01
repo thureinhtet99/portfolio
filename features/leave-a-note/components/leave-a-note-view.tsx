@@ -1,23 +1,8 @@
 "use client";
 
 import Giscus from "@giscus/react";
-import { useState } from "react";
-import { angryMessages } from "../data/message";
 
 export default function LeaveANoteView() {
-  const [scolding, setScolding] = useState(false);
-  const [angryMsg, setAngryMsg] = useState("");
-
-  const handleHiClick = () => {
-    setAngryMsg(
-      angryMessages[Math.floor(Math.random() * angryMessages.length)],
-    );
-    setScolding(true);
-    setTimeout(() => {
-      setScolding(false);
-    }, 1600);
-  };
-
   return (
     <div className="page-shell">
       <section className="px-6 py-16 sm:py-20">
@@ -30,20 +15,11 @@ export default function LeaveANoteView() {
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
                 Thoughts, feedback, or just say &apos;
-                <span
-                  onClick={handleHiClick}
-                  className="underline hover:bg-primary hover:text-background cursor-pointer transition-colors"
-                >
+                <span className="underline hover:bg-primary hover:text-background cursor-pointer transition-colors">
                   hi
                 </span>
                 &apos; to me
               </p>
-
-              {scolding && (
-                <p className="text-sm font-medium text-red-500 animate-bounce">
-                  {angryMsg}
-                </p>
-              )}
             </div>
           </div>
 

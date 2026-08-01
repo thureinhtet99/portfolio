@@ -1,15 +1,8 @@
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { ProjectShowcaseCard } from "@/features/projects/components/project-showcase-card";
 import { WorkExperienceWithRail } from "@/features/timeline/components/work-experience-with-rail";
 import { ProjectType, WorkType } from "@/types/index.type";
-import { Info, Mail, MapPin, MoveRight } from "lucide-react";
+import { Mail, MapPin, MoveRight, Quote } from "lucide-react";
 import Link from "next/link";
 import { ReactNode } from "react";
 import { FaFile, FaGithub, FaLinkedin } from "react-icons/fa";
@@ -240,25 +233,13 @@ export function HomeView({
             </div>
 
             {/* Something...*/}
-            <div className="w-full max-w-sm p-4 sm:p-5 border border-muted-foreground/20 rounded-md flex flex-col">
-              <div className="self-end">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Info className="h-4 w-4 hover:text-primary transition-colors cursor-pointer" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-50" align="end">
-                    <DropdownMenuGroup>
-                      <DropdownMenuLabel className="text-xs text-muted-foreground">
-                        of course, it won&apos;t take long
-                      </DropdownMenuLabel>
-                    </DropdownMenuGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-              <div className="flex flex-1 items-center justify-center">
-                <p className="text-sm animate-bounce">cooking smth...</p>
-              </div>
-            </div>
+            <blockquote className="relative w-full max-w-sm flex flex-col justify-between gap-4 p-5 sm:p-6 border border-muted-foreground/20 rounded-md">
+              <Quote className="absolute -top-3 -left-2 size-6 text-muted-foreground/20 fill-muted-foreground/20" />
+              <p className="text-sm leading-relaxed italic">
+                All that we are is the result of what we have thought.
+              </p>
+              <cite className="self-end text-sm not-italic">— Buddha</cite>
+            </blockquote>
           </div>
 
           {/* GitHub Activity + Latest Posts */}
