@@ -1,85 +1,138 @@
 # Portfolio
 
-Personal portfolio for **Thu Rein Htet** — a terminal-aesthetic site showcasing projects, work experience, blog posts, and adventures.
+Personal portfolio of **Thu Rein Htet** — a terminal-inspired website showcasing my projects, work experience, blog posts, and adventures beyond coding.
 
-**Live:** [thureinhtet-portfolio.vercel.app/](https://thureinhtet-portfolio.vercel.app/)
+## Features
 
-## Tech Stack
+- 💼 Showcase featured projects
+- 📝 Publish blog posts with MDX
+- 📖 Display work experience timeline
+- 🚀 Highlight skills and adventures beyond coding
+- 📄 Download resume
+- 📬 Contact form with email support
+- 🔒 Admin dashboard for content management
+- 🌙 Dark / Light mode
+- 📱 Fully responsive design
 
-| Concern              | Technology                                    |
-| -------------------- | --------------------------------------------- |
-| Framework            | Next.js 16 (App Router), React 19             |
-| Language             | TypeScript                                    |
-| Styling              | Tailwind CSS v4                               |
-| UI                   | shadcn/ui (Radix primitives)                  |
-| Database             | Drizzle ORM — SQLite locally, Turso on Vercel |
-| Auth                 | better-auth                                   |
-| Animation            | Framer Motion, React View Transitions         |
-| Image/Resume Storage | Cloudinary                                    |
-| Email                | Nodemailer                                    |
-| Makefile             | Automation tool                               |
+**Live Demo:** https://thureinhtet-portfolio.vercel.app
 
-## Plans
+## Built With
 
-- [ ] Add `labs` page which show my **skills and adventures beyond coding**
-- [ ] AI chat support
+| Category       | Technology                                      |
+| -------------- | ----------------------------------------------- |
+| Framework      | Next.js 16 (App Router)                         |
+| Language       | TypeScript                                      |
+| UI             | React 19, shadcn/ui (Radix UI)                  |
+| Styling        | Tailwind CSS v4                                 |
+| Database       | Drizzle ORM, SQLite (local), Turso (production) |
+| Authentication | Better Auth                                     |
+| Animation      | Framer Motion, React View Transitions           |
+| Storage        | Cloudinary                                      |
+| Email          | Nodemailer                                      |
+| Automation     | Makefile                                        |
 
 ## Project Structure
 
 ```text
 app/          Routes and API handlers
-features/     Feature-based modules (home, projects, posts, admin, etc.)
+features/     Feature-based modules
 components/   Shared UI components
 hooks/        Custom React hooks
-lib/          Utilities, auth config, base helpers
-db/           Drizzle schema, migrations, client
-docs/         Documentation
+lib/          Utilities and shared helpers
+db/           Drizzle schema and migrations
+public/       Static assets
+docs/         Project documentation
 ```
 
-## Agents Docs
+For a detailed overview, see [**PROJECT_MAP.md**](./docs/PROJECT_MAP.md) .
 
-This repo includes agent-oriented documentations for context-aware development and implementation.
+## Documentation
 
-- [AGENTS.md](/AGENTS.md) - Root instruction file for AI coding agents
-- [CODING_GUIDELINES.md](/docs/CODING_GUIDELINES.md) - Coding standards, conventions, and best practices used throughout the project.
-- [DESIGN_SYSTEM.md](/docs/DESIGN_SYSTEM.md) - Documentation of project's design principles, UI components, design tokens and styling conventions.
-- [PROJECT_MAP.md](/docs/PROJECT_MAP.md) - Overview of project's features, directories, and key points to help developers and AI agents navigate the codebase.
+This repository includes documentation for developers and AI coding agents.
+
+| Document                                            | Description                                                              |
+| --------------------------------------------------- | ------------------------------------------------------------------------ |
+| [AGENTS.md](./AGENTS.md)                            | Root instruction file for AI coding agents                               |
+| [CODING_GUIDELINES.md](./docs/CODING_GUIDELINES.md) | Coding standards, conventions, and best practices                        |
+| [DESIGN_SYSTEM.md](./docs/DESIGN_SYSTEM.md)         | Design principles, UI components, design tokens, and styling conventions |
+| [PROJECT_MAP.md](./docs/PROJECT_MAP.md)             | Overview of features, directories, and key entry points                  |
 
 ## Getting Started
+
+### Prerequisites
+
+- Node.js 22+
+- npm
+- Git
+
+### Clone the repository
 
 ```bash
 git clone https://github.com/thureinhtet99/portfolio.git
 cd portfolio
+```
+
+### Install dependencies
+
+```bash
 npm install --legacy-peer-deps
 ```
 
-```bash
-cp .env.example .env.local   # fill your values
-```
+### Configure environment variables
 
 ```bash
-npm run db:generate && npm run db:migrate
+cp .env.example .env.local
+```
+
+Fill in the required environment variables.
+
+### Prepare the database
+
+```bash
+npm run db:generate
+npm run db:migrate
+```
+
+### Start the development server
+
+```bash
 npm run dev
 ```
 
-## Scripts
+Open **http://localhost:3000** in your browser.
 
-| Command            | Description                 |
-| ------------------ | --------------------------- |
-| `make dev`         | Start dev server            |
-| `make build`       | Production build            |
-| `make typecheck`   | Type check                  |
-| `make db:generate` | Generate Drizzle migrations |
-| `make db:migrate`  | Apply migrations            |
-| `make db:studio`   | Open Drizzle Studio         |
+## Available Scripts
+
+| Command            | Description                  |
+| ------------------ | ---------------------------- |
+| `make dev`         | Start the development server |
+| `make build`       | Create a production build    |
+| `make lint`        | Run ESLint                   |
+| `make typecheck`   | Run TypeScript type checking |
+| `make db:generate` | Generate Drizzle migrations  |
+| `make db:migrate`  | Apply database migrations    |
+| `make db:studio`   | Open Drizzle Studio          |
+
+## Roadmap
+
+### Planned Features
+
+- [ ] Labs page showcasing skills and adventures
+- [ ] AI chat assistant
+- [ ] Portfolio analytics
+- [ ] Internationalization (i18n)
 
 ## Acknowledgements
 
-- [Jason Cameron](https://jasoncameron.dev) — terminal-aesthetic design inspiration
-- [theodorusclarence](https://theodorusclarence.com) — features, navbar and pages inspiration
-- [Chánh Đại](https://chanhdai.com) — timeline theme and work exps components idea
-- [Better Auth](https://better-auth.com) — authentication
+Special thanks to the following people and projects for inspiration:
+
+- [Jason Cameron](https://jasoncameron.dev) — Terminal-inspired design
+- [theodorusclarence](https://theodorusclarence.com) — Portfolio layout and feature inspiration
+- [Chánh Đại](https://chanhdai.com) — Timeline and work experience components
+- [Better Auth](https://better-auth.com) — Authentication library
 
 ## License
 
-Licensed under the MIT License.
+Distributed under the MIT License.
+
+See [`LICENSE`](./LICENSE) for more information.
