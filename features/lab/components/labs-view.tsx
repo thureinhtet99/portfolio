@@ -11,7 +11,7 @@ export function LabsView() {
             <Construction className="h-12 w-12 text-muted-foreground" />
           </div>
           <p className="text-sm text-center leading-relaxed">
-            This page is under construction. Check back later.
+            This page is coming soon. Check back later.
           </p>
         </div>
       </section>

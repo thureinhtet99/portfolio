@@ -148,7 +148,7 @@ export function TopNavbar({
                       <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
                       <div
                         className={`relative z-10 p-2 ${
-                          pathname === "labs"
+                          pathname === "/labs"
                             ? "text-white"
                             : "text-muted-foreground"
                         }`}
