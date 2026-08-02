@@ -38,7 +38,7 @@ export function TimescaleViewport({
     <div
       data-slot="timescale-viewport"
       className={cn(
-        "w-full min-h-[80vh]",
+        "w-full min-h-[60vh]",
         "overflow-x-auto",
         "scrollbar-thin",
         "scrollbar-thumb-muted-foreground/40 dark:scrollbar-thumb-muted-foreground/40",

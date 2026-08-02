@@ -1,84 +1,118 @@
 # Design System
 
-This document is the single source of truth for spacing, type, color, motion, and component rules across the site. Every new component or page should be checkable against this file.
+This document is the single source of truth for spacing, type, color, motion, and component rules across the site. Every new component or page should be checkable against this file. It reflects `app/globals.css` and the components that consume it as they currently exist.
 
 ---
 
 ## 1. Design Principles
 
-1. **One voice, not a theme picker.** The site locks to a **single fixed dark theme** (Catppuccin-Mocha-adjacent).
-2. **Content is the hero, chrome is quiet.** Cards, borders, and shadows exist to organize, not decorate. Prefer whitespace over borders where possible.
-3. **Motion signals hierarchy, not decoration.** Every animation should communicate "this is new," "this is now in focus," or "this responds to you" — never motion for its own sake.
-4. **Everything degrades to plain text.** Live widgets (GitHub activity, view counter, map) must have a calm skeleton/fallback state. Nothing should block first paint.
-5. **Terminal-adjacent, not terminal-cosplay.** We can borrow structural ideas (breadcrumb trail, status footer, monospace accents for metadata) without adopting the full hacker aesthetic — this is a professional/backend-leaning portfolio, not a novelty site.
+1. **One voice, not a theme picker.** The site locks to a **single fixed dark theme**. No light mode, no accent picker, no background-effect toggle.
+2. **Terminal-adjacent, all the way through.** Unlike a typical "monospace for metadata only" pattern, this site sets its primary UI font to a monospace face site-wide (see §3) and leans into developer-tool visual cues: a `~ / route / path` breadcrumb in the navbar, traffic-light dots on project preview cards, monospace status/footer text. It's a professional/backend-leaning portfolio, not a novelty terminal-cosplay site — the motif is consistent but restrained.
+3. **Content is the hero, chrome is quiet.** Cards, borders exist to organize, not decorate. Prefer whitespace over heavy borders where possible; borders are always low-opacity (`border-muted-foreground/20`).
+4. **Motion signals hierarchy, not decoration.** Entrance animation communicates "this is now in view" — nothing loops or draws attention for its own sake except the intentional loading-screen scramble and the availability-dot ping.
+5. **Everything degrades to plain text or a calm fallback.** Live widgets (GitHub activity, contributions heatmap, location map) must not block first paint and must fail quietly (empty state or "Activity unavailable" text), never a broken UI.
 
 ---
 
 ## 2. Color System
 
-The existing two-token architecture in `app/globals.css` (`--white` / `--dark-gray` driving all semantic tokens via oklch) is collapsed to a **single fixed dark theme** — the `.dark` class split is removed; the values that used to live under `.dark` are now the only values, applied directly on `:root`. A single **fixed accent** is used sparingly for interactive/emphasis moments (active nav state, status dot, language-bar segments, prose link hover). This gives visual life without becoming a "pick your vibe" feature.
-
-### 2.1 Accent (implemented)
-
-Accent token, fixed on `:root` in `app/globals.css`:
+Two raw values drive the entire palette in `app/globals.css`, mapped onto shadcn's semantic token set on `:root` (no `.dark` class split — the dark values are the only values):
 
 ```css
 :root {
-  --accent-signal: oklch(
-    0.72 0.17 250
-  ); /* muted blue-violet, tuned for dark bg */
-  --accent-signal-foreground: oklch(0.15 0 0);
+  --gray: #ababae;
+  --dark-gray: #1b1b1a;
+
+  --background: var(--dark-gray);
+  --foreground: var(--gray);
+
+  --primary: #40a9ff; /* accent — the one saturated color on the site */
+  --primary-foreground: var(--gray);
+
+  --secondary: #1b1b1a;
+  --secondary-foreground: var(--gray);
+
+  --muted: var(--dark-gray);
+  --muted-foreground: var(--gray);
+
+  --accent: var(--dark-gray);
+  --accent-foreground: var(--gray);
+
+  --destructive: var(--gray);
+  --destructive-foreground: var(--dark-gray);
+
+  --border: var(--gray);
+  --input: var(--gray);
+  --ring: var(--gray);
+  --card: var(--dark-gray);
+  --card-foreground: var(--gray);
+  --popover: var(--dark-gray);
+  --popover-foreground: var(--gray);
 }
 ```
 
-Mapped in `@theme inline` as `--color-accent-signal` and `--color-accent-signal-foreground`.
+These are re-exposed as Tailwind color utilities via `@theme inline` (`--color-background`, `--color-primary`, etc.) — always reach for the Tailwind utility (`bg-background`, `text-muted-foreground`) rather than a raw hex or `var()` in component code.
 
-**WCAG contrast:** `--accent-signal` on `--dark-gray` = **4.221:1** — passes AA 3:1 (UI components / large text), fails AA 4.5:1 (body text). Accent must not be used for body copy.
+### 2.1 `--primary` (`#40a9ff`)
 
-**Usage rules for `accent-signal`:**
+This is the site's single accent — a muted blue. It is **not** the oklch `--accent-signal` token described in older docs; that token does not exist in the current codebase. Current usage:
 
-- Active nav link underline/indicator
-- "Available for work" status dot
-- GitHub language-bar segments (one hue per language via opacity steps, not separate hues)
-- Primary link hover state inside prose (`aboutMe` / `intro` markdown)
-- Focus rings can stay on `--ring` (already white on the fixed dark background) — don't overload the accent
+- Primary buttons (`buttonVariants` `default` variant)
+- Active/hover link and nav states (`text-primary`, `hover:text-primary`)
+- Availability status dot and its ping animation
+- Badge `default` variant background
+- The `~` breadcrumb root segment
 
-**Do not** use the accent for: buttons (keep `bg-primary`), card backgrounds, or borders. It's a pointer, not a fill.
+**Usage rule:** treat `--primary` as the only saturated color allowed outside of the traffic-light dots on project cards (see §7.2) and language-bar colors pulled directly from the GitHub API. Don't introduce a second accent hue.
 
-### 2.2 Semantic token table
+### 2.2 Opacity as the hierarchy tool
 
-| Token                            | Fixed value         | Use                     |
-| -------------------------------- | ------------------- | ----------------------- |
-| `background` / `foreground`      | dark-gray / white   | Page base               |
-| `card` / `card-foreground`       | dark-gray / white   | Card surfaces           |
-| `primary` / `primary-foreground` | white / dark-gray   | Buttons, active states  |
-| `muted-foreground`               | white (translucent) | Secondary text          |
-| `border` / `input` / `ring`      | white               | Structural lines, focus |
+Nearly all secondary/structural styling is done by dimming `--muted-foreground` or `--border` rather than introducing new tokens:
 
-Opacity is the primary tool for hierarchy here (e.g. `text-muted-foreground/70`, `border-border/70`, `bg-card/92`) — this is already the pattern in `card.tsx` and `button.tsx`. **Standardize** on these opacity steps sitewide: `/10`, `/20`, `/60`, `/70`, `/80`, `/92`. Don't introduce arbitrary values like `/13` or `/55`.
+| Pattern                          | Use                                                                            |
+| -------------------------------- | ------------------------------------------------------------------------------ |
+| `border-muted-foreground/20`     | Default card/panel/input border (also the global `* { border-color }` default) |
+| `text-muted-foreground/50`–`/70` | De-emphasized text, unavailable-state color                                    |
+| `bg-card/…`, `border-border/…`   | Panel surfaces                                                                 |
+
+Stick to opacity steps already in use in the codebase (`/20`, `/30`, `/50`, `/60`, `/70`, `/85`, `/90`, `/92`) rather than inventing new fractions.
+
+### 2.3 Semantic token table
+
+| Token                            | Value                    | Use                                              |
+| -------------------------------- | ------------------------ | ------------------------------------------------ |
+| `background` / `foreground`      | `--dark-gray` / `--gray` | Page base                                        |
+| `card` / `card-foreground`       | `--dark-gray` / `--gray` | Card surfaces                                    |
+| `primary` / `primary-foreground` | `#40a9ff` / `--gray`     | Buttons, links, active states, badges            |
+| `muted` / `muted-foreground`     | `--dark-gray` / `--gray` | Secondary text (main body-copy color)            |
+| `border` / `input` / `ring`      | `--gray`                 | Structural lines, focus                          |
+| `destructive`                    | `--gray` / `--dark-gray` | Destructive actions (inverted contrast, not red) |
+
+Note: `--muted-foreground` is used as the default body text color (`body { @apply text-muted-foreground }`), not a "secondary only" tone — most running text on the site is `muted-foreground`, with `foreground` reserved for a smaller set of headings.
 
 ---
 
 ## 3. Typography
 
-**Font:** Inter (loaded as `--font-inter` via `next/font/google`), monospace fallback `Geist_Mono` reserved for _metadata only_ (timestamps, commit hashes, status footer, tag chips) — this is the one deliberate nod to the dev-terminal aesthetic, used surgically rather than site-wide.
+**Font:** JetBrains Mono, loaded via `next/font/google` as `--font-jetbrains-mono` and mapped to `--font-sans` in `@theme` — this is the site's only typeface, used for everything (headings, body, UI chrome), not reserved for metadata. Geist Mono is also loaded (`--font-geist-mono`) but is **not wired into the Tailwind theme** and is effectively unused — don't build on it; either remove the font load or wire it up deliberately if a second mono face is actually needed.
 
-### 3.1 Type scale
+### 3.1 Type scale (as used today — not yet formalized into reusable classes beyond `.section-heading`)
 
-| Role                                 | Class stack                                                         | Notes                                    |
-| ------------------------------------ | ------------------------------------------------------------------- | ---------------------------------------- |
-| Hero name/title                      | `text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-[-0.03em]` | One per page, homepage only              |
-| Section heading (`.section-heading`) | `text-3xl sm:text-4xl font-bold tracking-[-0.03em]`                 | Defined as reusable utility class        |
-| Card title                           | `text-lg sm:text-xl font-semibold tracking-[-0.02em]`               |                                          |
-| Body / prose                         | `text-base sm:text-lg leading-relaxed text-muted-foreground`        | Markdown-rendered about/intro            |
-| Small / meta                         | `text-xs sm:text-sm text-muted-foreground`                          | Dates, tags, captions                    |
-| Monospace meta                       | `font-mono text-xs text-muted-foreground`                           | Commit hashes, status footer, timestamps |
+| Role                                 | Class stack (as seen in components)                                      | Notes                                                                                                                                           |
+| ------------------------------------ | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Hero name                            | `text-3xl font-bold sm:text-4xl` (`HomeView`)                            | Homepage only                                                                                                                                   |
+| Section heading (`.section-heading`) | `text-3xl font-extrabold tracking-[-0.03em] sm:text-4xl text-foreground` | Defined in `globals.css`, use for major page/section titles                                                                                     |
+| Section heading (inline variant)     | `text-4xl font-bold text-foreground tracking-[-0.02em]`                  | Used directly in `HomeView` for "Experiences"/"Contributions"/"Techs" — prefer `.section-heading` for new work instead of repeating this inline |
+| Card title                           | `text-base font-semibold` / `text-lg font-semibold`                      | Project/certificate card titles                                                                                                                 |
+| Body / prose                         | `text-base leading-relaxed` / `prose prose-invert`                       | Markdown-rendered intro/bio                                                                                                                     |
+| Small / meta                         | `text-xs` / `text-sm text-muted-foreground`                              | Dates, tags, captions                                                                                                                           |
+| Tag chips                            | `text-xs lowercase` (via `Badge`)                                        | Badges render text lowercase by default                                                                                                         |
 
-**Tracking rule:** anything ≥ `text-2xl` gets `tracking-[-0.02em]` to `tracking-[-0.03em]`.
+**Tracking rule:** headings ≥ `text-3xl` get `tracking-[-0.02em]` to `tracking-[-0.03em]`.
 
 ### 3.2 Line-length
 
-Prose blocks (`aboutMe`, `intro`) should stay `max-w-3xl` — don't let markdown content stretch full-width on large screens.
+Prose blocks (bio, intro) stay readable via `prose` + a `max-w-*` wrapper on their containing section — don't let Markdown content stretch full-width on large screens.
 
 ---
 
@@ -86,106 +120,149 @@ Prose blocks (`aboutMe`, `intro`) should stay `max-w-3xl` — don't let markdown
 
 ### 4.1 Grid rhythm
 
-- Page-level vertical rhythm: `space-y-20` between major homepage sections — applied via `.page-shell` class.
-- Section internal padding: `px-6 py-14 sm:px-10` for full-bleed panels.
-- Card internal padding: keep shadcn defaults (`py-6`, `px-6` via `CardHeader`/`CardContent`) — don't override per-component.
+- Page-level vertical rhythm: `.page-shell` applies `space-y-20` between major sections.
+- Section internal padding: `px-6 py-16 sm:py-20` is the standard section wrapper (hero uses a taller `py-20 sm:py-40`).
+- Card internal padding: `p-4`/`p-5` for widget-style panels; shadcn `Card` defaults (`py-6`, `px-6` via `CardHeader`/`CardContent`) for dialogs and form cards.
 
 ### 4.2 Container widths
 
-| Context                   | Max width                                         |
-| ------------------------- | ------------------------------------------------- |
-| App shell (nav, footer)   | `max-w-7xl` — via `.app-shell` class              |
-| Page shell                | `max-w-7xl` with `space-y-20` — via `.page-shell` |
-| Prose / contact form      | `max-w-2xl`                                       |
-| Reading content (about)   | `max-w-3xl`                                       |
-| Project/certificate grids | `max-w-7xl`, 2-col on `lg:`                       |
+Defined once in `globals.css` `@layer components`:
+
+```css
+.app-shell {
+  @apply mx-auto w-full max-w-[90rem];
+}
+.page-shell {
+  @apply mx-auto w-full max-w-[90rem] space-y-20;
+}
+```
+
+| Context                 | Max width                                                 |
+| ----------------------- | --------------------------------------------------------- |
+| App shell (nav, footer) | `max-w-[90rem]` — via `.app-shell`                        |
+| Page shell              | `max-w-[90rem]` with `space-y-20` — via `.page-shell`     |
+| Section content         | `max-w-5xl` (most sections) or `max-w-4xl` (about, techs) |
+| Contact form            | `max-w-2xl` (implicit in form width)                      |
 
 ### 4.3 Radius
 
-Current `--radius: 0.625rem` (10px) is good — keep it as the single radius token. Card override to `rounded-[1.5rem]` (24px) creates a soft, editorial feel for primary content cards; **use this only for top-level Cards** (project cards, certificate cards, the hero card). Nested/inner elements (badges, buttons, inputs) stay on the smaller shadcn defaults (`rounded-md`/`rounded-xl`). Don't let radius escalate — max two radius sizes visible in any single component.
+`--radius: 0.625rem` (10px), exposed as `--radius-sm/md/lg/xl` via `@theme inline`. Components use Tailwind's derived scale directly (`rounded-md`, `rounded-lg`, `rounded-sm`) — there is **no** oversized `rounded-[1.5rem]` card treatment in the current codebase use `rounded-md`, badges use `rounded-sm`, buttons use `rounded-md`/`rounded-full` (icon size). Keep new components on this same small scale; don't introduce a larger radius.
 
 ---
 
 ## 5. Elevation & Surface
 
-Two elevation levels only:
+- **Flat** — text sections, no card, no shadow (about intro, contact copy).
+- **Panel** — bordered `div` (`border border-muted-foreground/20 rounded-md p-4`/`p-5`) for widget-style blocks (location, message, quote, GitHub activity).
+- **Card component** — `components/ui/card.tsx`: `rounded-lg py-6 shadow-[0_18px_50px_-38px_rgba(34,34,34,0.38)] backdrop-blur-sm`, no border by default. Used for admin panels, the login form (with an added `border`).
 
-1. **Flat** — text sections, no card, no shadow (about, contact intro copy)
-2. **Panel** — `bg-card/92 border border-border/70 shadow-[0_18px_50px_-38px_rgba(34,34,34,0.38)] backdrop-blur-sm rounded-[1.5rem]` (already the `Card` default) — used for every discrete content block: project cards, certificate cards, the GitHub activity widget, the status footer strip.
+**Known inconsistency:** several admin components (`admin-view.tsx`, `app/admin/page.tsx`) apply a `surface-panel` class that is **not defined anywhere** in `globals.css` — it currently does nothing. Either define `.surface-panel` in `globals.css @layer components` or replace those usages with the standard `Card`/panel treatment above.
 
-Don't invent a third shadow value. If something needs to feel "more important," use size/spacing/position (e.g. full-bleed hero panel) rather than a heavier shadow.
+**Texture:** a fixed, full-viewport SVG noise overlay (`body::before`, `feTurbulence`, `opacity: 0.08`) sits above everything (`z-index: 9999`, `pointer-events: none`) to add grain to the flat dark background. This is a deliberate global effect — don't add competing background textures per-page.
 
-**Utility classes** (defined in `app/globals.css` `@layer components`):
+**View transitions:** `next.config.ts` enables `experimental.viewTransition`. `app/globals.css` disables the default root cross-fade and explicitly isolates `site-header`/`site-footer` (named via `viewTransitionName` in `top-navbar.tsx`/`footer.tsx`) so nav/footer never re-animate between pages. Named per-item transitions are also used for project cards (`project-image-{slug}`, `project-title-{slug}`) via React's `<ViewTransition>` and `<Link transitionTypes={[...]}>`. New shared chrome should follow the same isolation pattern; new per-item transitions should use a unique, ID-suffixed `viewTransitionName`/`<ViewTransition name>`.
 
-```css
-.app-shell {
-  @apply mx-auto w-full max-w-7xl;
-}
-.page-shell {
-  @apply mx-auto w-full max-w-7xl space-y-20;
-}
+---
+
+## 6. Motion
+
+Framer Motion (imported as `motion/react`) is standardized through `lib/motion.ts` tokens, consumed by `components/shared/fade-animation.tsx` (`FadeAnimation`, `FadeStaggeredAnimation`).
+
+### 6.1 Motion tokens (`lib/motion.ts`)
+
+```ts
+export const EASE = {
+  out: [0.16, 1, 0.3, 1],
+  inOut: [0.65, 0, 0.35, 1],
+  in: [0.4, 0, 1, 1],
+};
+
+export const DURATION = { fast: 0.3, quick: 0.45, base: 0.8, slow: 1 };
+export const SPRING = {
+  smooth: { type: "spring", bounce: 0, duration: DURATION.base },
+};
+export const STAGGER = { base: 0.08, tight: 0.05 };
 ```
 
----
+### 6.2 Standard pattern
 
-## 6. Component-Specific Rules
+Use `<FadeAnimation direction="up">` for single-element scroll reveals and `<FadeStaggeredAnimation direction="up">` for a parent whose children should stagger in — both already wire in `useReducedMotion()` (falls back to an instant, no-offset appearance) and `useInView`/`whileInView` (`once: true`). Prefer these over writing new raw `initial`/`whileInView` props per component.
 
-### 6.1 Hero (homepage)
+### 6.3 Reduced motion
 
-- One `h1` for name, one supporting line for role.
-- Availability indicator: `available && !shouldReduceMotion` guard with `accent-signal` color for available, `muted-foreground/50` for unavailable.
-- CTA row: 3 buttons — "Get in Touch" (primary), "Book a Chat" (outline), and "View Resume" (outline, conditional on resume data).
-
-### 6.2 Project / Certificate Cards
-
-- Image aspect ratio locked to `aspect-video`.
-- Tag chips: `Badge` variant `secondary`, max 4 visible + "+N more".
-- Hover: `hover:shadow-[...]` + `hover:scale-[1.05]` on image only, never the whole card.
-
-### 6.3 GitHub Activity Widget (implemented)
-
-- Lives on homepage between hero and "Featured Projects".
-- Server-side fetch in `app/(public)/page.tsx` with `next: { revalidate: 60 * 30 }` (30 min).
-- Language bar: horizontal stacked bar with accent-signal opacity steps per language.
-- Empty/failure state: collapses to "Activity unavailable" text.
-- **TODO:** Add `Skeleton` shimmer state while loading.
-
-### 6.4 Status Footer (implemented)
-
-- `components/layout/footer.tsx` — server component.
-- Format: `● All systems nominal · {commitHash} · {viewCount} views` — monospace, single line.
-- Status dot uses `bg-[var(--accent-signal)]`.
-- Deploy hash from `VERCEL_GIT_COMMIT_SHA`.
-- View counter wired to `setting` table `siteViews` key.
-
-### 6.5 Resume CTA
-
-- Placed as secondary button in hero row, icon (`HardDriveDownload`) + label, same treatment as "Get in Touch". Conditional on `resume` data being present.
-
-### 6.6 Latest Posts Widget (implemented)
-
-- `features/home/components/latest-posts-widget.tsx` — renders up to 4 published posts (title + monospace date) with "View all →" link to `/posts`.
-- Empty state: "No posts yet" message, mirrors GitHub widget's failure pattern.
+`useReducedMotion()` is checked inside `FadeAnimation`/`FadeStaggeredAnimation` and inside the availability-dot ping (`HomeView`) — new ambient/looping motion must do the same.
 
 ---
 
-## 7. Accessibility Checklist (applies to every new component)
+## 7. Component-Specific Rules
 
-- [x] Contrast checked against the fixed dark theme — `--accent-signal` on `--dark-gray` = 4.221:1 (passes 3:1 UI/large-text, fails 4.5:1 body-text — accent is decorative/UI only)
-- [x] All ambient motion gated behind `useReducedMotion()` (scroll bounce, status-dot ping)
-- [x] Live/async widgets have failure states (GitHub activity, view counter, latest posts)
-- [x] Interactive elements (nav, buttons, form fields) keyboard-reachable with visible focus ring
-- [x] Images have meaningful `alt`; decorative images `alt=""`
-- [x] Status footer text isn't the _only_ signal of state — dot paired with text label
-- [ ] Skeleton shimmer states for GitHub activity widget and latest posts widget — **not yet implemented**
+### 7.1 Hero (homepage)
+
+- One `h1` for name; greeting line above it, Markdown intro below.
+- Social row: GitHub / LinkedIn / Resume links separated by `|`, then the availability indicator — `primary` dot with a ping when available, `muted-foreground/50` solid dot when not.
+
+### 7.2 Project Cards
+
+- "Terminal window" preview: traffic-light dots (`bg-red-500/80`, `bg-yellow-500/80`, `bg-green-500/80`) + `org / repo` label + star count, then the project image (or summary text as fallback) in an `aspect-video` frame.
+- Card container: `rounded-md border border-muted-foreground/20`, hover → `border-muted-foreground`.
+- Tag chips: `Badge` `secondary` variant, capped by a `techLimit` prop (default 4).
+- Named view transitions per card (`project-image-{slug}`, `project-title-{slug}`).
+
+### 7.3 GitHub Activity Widget
+
+- Lives in the homepage widgets grid, fed by `WidgetSection` (server component) hitting the Katib API.
+- Empty/failure state collapses to a muted "no activity" panel rather than erroring.
+- **Gap:** no `Skeleton` shimmer while loading — it renders once data resolves.
+
+### 7.4 Contributions Heatmap
+
+- `features/home/components/contributions-section.tsx` → `<GitHubContributions>` (client) wrapped in `<Suspense fallback={<GitHubContributionsFallback />}>`; data comes from a cached (`unstable_cache`, 24h) fetch in `lib/get-cached-contributions.ts`. Always keep the `Suspense` boundary when touching this section — it's how the calm-loading-state principle is enforced here.
+
+### 7.5 Location Widget
+
+- Live, not static: `LocationMapClient` dynamically imports a Leaflet `MapContainer` (`ssr: false`) pinned to a geocoded residence city (dark CARTO tile layer, no zoom/attribution controls). Falls back to a hardcoded lat/lng if geocoding fails. Keep the dynamic import — Leaflet is not SSR-safe.
+
+### 7.6 Status Footer
+
+- `components/layout/footer.tsx` — async server component. Left: copyright. Right: `{viewCount} views` + social icon links (GitHub/LinkedIn/email, each conditionally rendered from settings).
+- View count is read from and incremented against the `setting` table (`siteViews` key) — see `PROJECT_MAP.md` §3.
+
+### 7.7 Experiences (homepage)
+
+- `WorkExperienceWithRail` renders collapsible per-position entries (`components/ui/work-experience.tsx`) with a synced `TimelineYearRail` that highlights the year matching the currently-expanded/most-visible entry. Don't build a second version of this on top of `experience-year-timeline.tsx` — that file is superseded.
+
+### 7.8 Placeholder pages
+
+- `/labs`: centered `Construction` icon + "coming soon" text — follow this exact minimal pattern for any other stub page rather than leaving a route empty.
 
 ---
 
-## 8. Open Decisions
+## 8. Accessibility Checklist (apply to every new component)
 
-| Decision               | Status      | Resolution                                                      |
-| ---------------------- | ----------- | --------------------------------------------------------------- |
-| Location widget        | ✅ resolved | Static "Currently Based In" display with accent-signal pin.     |
-| View counter storage   | ✅ resolved | `setting` table `siteViews` key.                                |
-| Availability dot color | ✅ resolved | `primary` for available, `muted-foreground/40` for unavailable. |
-| View counter wiring    | ✅ resolved | Wired to `setting.siteViews` in the footer.                     |
+- [ ] Contrast checked against `--dark-gray` background for any new color — `--primary` (`#40a9ff`) on `--dark-gray` should be re-measured before reuse in a new context; don't assume it clears body-text contrast.
+- [ ] Ambient/looping motion gated behind `useReducedMotion()` (use `FadeAnimation`/`FadeStaggeredAnimation`, which already handle this)
+- [ ] Live/async widgets (GitHub activity, contributions, location map) have a calm failure or loading state, never a blank crash
+- [ ] Interactive elements keyboard-reachable with a visible focus ring (`focus-visible:ring-ring/50` is already baked into `button`/`input`/`badge` — don't strip it with a custom `className`)
+- [ ] Images have meaningful `alt`; decorative images use `alt=""`
+- [ ] Status/footer information isn't conveyed by color alone — pair dots/icons with text
+- [ ] New `Skeleton` states added for GitHub Activity Widget and Latest Posts Widget — **not yet implemented, still open**
+
+---
+
+## 9. What We're Explicitly Not Building
+
+No theme/accent picker, no per-accent-color picker UI, no user-facing "background effect" toggle, and **no light/dark toggle** — the site locks to a single fixed dark theme with zero visitor-controlled visual variables. Also out of scope unless explicitly requested: a novelty click counter, a webring, a `/pics` gallery, a `/tutorials` section. `next-themes`, `theme-provider.tsx`, and `theme-toggle.tsx` should never be reintroduced.
+
+This overrides anything in `References.md` (§2, §3, §10) that reads as inspiration toward those features — treat that document as structural/UX inspiration only, not as a feature list to implement.
+
+---
+
+## 10. Known Gaps / Open Items
+
+| Item                                                          | Status                                                                                                                                   |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `surface-panel` class used in admin components                | Undefined in `globals.css` — currently a no-op class. Needs a definition or removal.                                                     |
+| Geist Mono font load (`--font-geist-mono`)                    | Loaded in `layout.tsx` but not wired into the Tailwind theme — effectively unused.                                                       |
+| `Skeleton` shimmer for GitHub Activity / Latest Posts widgets | Not implemented — widgets show nothing/text until data resolves.                                                                         |
+| `features/timeline/components/experience-year-timeline.tsx`   | Superseded by `work-experience-with-rail.tsx` + `timeline-year-rail.tsx`; candidate for deletion.                                        |
+| About page                                                    | "Techs" section is a placeholder (`<div>tech stacks</div>`) — `data/skills.tsx` and `data/countries.json` exist but aren't wired in yet. |

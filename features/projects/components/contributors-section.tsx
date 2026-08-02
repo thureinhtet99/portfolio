@@ -23,8 +23,14 @@ export function ContributorsSection({
 
   useEffect(() => {
     fetch(`/api/github/contributors?owner=${org}&repo=${repo}`)
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data: GitHubContributor[]) => setContributors(data))
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && Array.isArray(json.data)) {
+          setContributors(json.data);
+        } else {
+          setContributors([]);
+        }
+      })
       .catch(() => setContributors([]));
   }, [org, repo]);
 

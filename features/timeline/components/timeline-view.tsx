@@ -8,7 +8,7 @@ import {
   TimescaleTrack,
   TimescaleViewport,
   TimescaleYear,
-} from "@/components/timescale";
+} from "@/components/ui/timescale";
 import { TimelineType } from "@/types/index.type";
 import ReactMarkdown from "react-markdown";
 
@@ -127,11 +127,9 @@ export default function TimelineView({
                       <TimescaleTick />
                       <TimescaleYear>{entry.year}</TimescaleYear>
                       <TimescaleContent className="space-y-4 typeset">
-                        <p className="text-base sm:text-lg mt-6">
-                          {entry.title}
-                        </p>
+                        <p className="text-base mt-6">{entry.title}</p>
                         {entry.description && (
-                          <div className="prose prose-base prose-invert sm:prose-lg text-muted-foreground">
+                          <div className="prose prose-base prose-invert text-muted-foreground">
                             <ReactMarkdown
                               components={{
                                 a: ({ children, href }) => (

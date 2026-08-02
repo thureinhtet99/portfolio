@@ -68,16 +68,6 @@ export type DemoCredentialType = {
   password: string;
 };
 
-export type CertificateType = {
-  id: string;
-  title: string;
-  issuer?: string;
-  issueDate?: string;
-  credentialId?: string;
-  credentialUrl?: string;
-  image?: string;
-};
-
 export type WorkType = {
   id: string;
   companyName: string;
@@ -106,16 +96,6 @@ export type PostType = {
   createdAt: Date;
   updatedAt: Date;
 };
-
-// export type TimelineType = {
-//   id: string;
-//   title: string;
-//   date: string;
-//   description?: string;
-//   order: number;
-//   createdAt: Date;
-//   updatedAt: Date;
-// };
 
 export type TimelineType = {
   id: string;
