@@ -7,7 +7,7 @@ type UploadResponse = { success: boolean; url?: string; error?: string };
 
 /**
  * Wraps the upload-to-/api/upload flow duplicated in
- * certificate-section.tsx and project-section.tsx (both hand-roll the same
+ * project-section.tsx (both hand-roll the same
  * FormData -> POST /api/upload -> read .url sequence).
  *
  * `existingUrl` is the current image URL already saved on the record being

@@ -24,11 +24,7 @@ export const adminMenuItems = [
     label: "Projects",
     icon: <FolderGit2 className="h-4 w-4" />,
   },
-  {
-    id: "certificates",
-    label: "Certificates",
-    icon: <Award className="h-4 w-4" />,
-  },
+
   {
     id: "posts",
     label: "Posts",

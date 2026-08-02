@@ -10,6 +10,7 @@ import { Geist_Mono, JetBrains_Mono } from "next/font/google";
 import { ReactNode, Suspense } from "react";
 import { Toaster } from "sonner";
 import "./globals.css";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
@@ -124,6 +125,7 @@ export default async function RootLayout({
           </main>
           <Footer />
         </QueryProvider>
+        <SpeedInsights />
         <Analytics />
       </body>
     </html>
