@@ -68,9 +68,7 @@ export async function GET(req: NextRequest) {
           image: proj.image,
           githubUrl: proj.githubUrl,
           liveUrl: proj.liveUrl,
-          objectives: proj.objectives
-            ? JSON.parse(proj.objectives)
-            : undefined,
+          objectives: proj.objectives ? JSON.parse(proj.objectives) : undefined,
           collaborators: proj.collaborators
             ? JSON.parse(proj.collaborators)
             : undefined,
