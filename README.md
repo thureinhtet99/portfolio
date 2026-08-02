@@ -1,188 +1,85 @@
 # Portfolio
 
-My personal portfolio built with **Next.js 16**, **Drizzle ORM**, **SQLite**, and **Better Auth**.
+Personal portfolio for **Thu Rein Htet** — a terminal-aesthetic site showcasing projects, work experience, blog posts, and adventures.
 
-It is designed for:
-
-- **Personal branding**
-- **Showcasing life-long events**
-- **Sharing knowledge**
-
-**Live Demo:** https://thureinhtet-portfolio.vercel.app
-
----
-
-## Features
-
-- Browse and search job listings
-- Apply for jobs
-- Organization management
-- Team member invitations and role management
-- Organization claim workflow
-- Notification system
-- Admin dashboard
-- User management
-- Authentication & Role-Based Access Control (RBAC)
-
----
+**Live:** [thureinhtet-portfolio.vercel.app/](https://thureinhtet-portfolio.vercel.app/)
 
 ## Tech Stack
 
-| Category         | Technology              |
-| ---------------- | ----------------------- |
-| Framework        | Next.js 16 (App Router) |
-| Language         | TypeScript              |
-| Database         | PostgreSQL              |
-| ORM              | Drizzle ORM             |
-| Authentication   | Better Auth             |
-| Styling          | Tailwind CSS            |
-| UI Components    | shadcn/ui               |
-| Rich Text Editor | MDXEditor               |
+| Concern              | Technology                                    |
+| -------------------- | --------------------------------------------- |
+| Framework            | Next.js 16 (App Router), React 19             |
+| Language             | TypeScript                                    |
+| Styling              | Tailwind CSS v4                               |
+| UI                   | shadcn/ui (Radix primitives)                  |
+| Database             | Drizzle ORM — SQLite locally, Turso on Vercel |
+| Auth                 | better-auth                                   |
+| Animation            | Framer Motion, React View Transitions         |
+| Image/Resume Storage | Cloudinary                                    |
+| Email                | Nodemailer                                    |
+| Makefile             | Automation tool                               |
 
----
+## Plans
+
+- [ ] Add `labs` page which show my **skills and adventures beyond coding**
+- [ ] AI chat support
 
 ## Project Structure
 
-The project follows a **feature-based architecture**.
-
 ```text
-app/          Next.js routes
-features/     Business logic by feature
+app/          Routes and API handlers
+features/     Feature-based modules (home, projects, posts, admin, etc.)
 components/   Shared UI components
-lib/          Shared utilities
-services/     External services
-drizzle/      Database schema and migrations
+hooks/        Custom React hooks
+lib/          Utilities, auth config, base helpers
+db/           Drizzle schema, migrations, client
 docs/         Documentation
 ```
 
-For a detailed explanation, see:
+## Agents Docs
 
-- [ARCHITECTURE.md](./docs/ARCHITECTURE.md)
+This repo includes agent-oriented documentations for context-aware development and implementation.
 
----
+- [AGENTS.md](/AGENTS.md) - Root instruction file for AI coding agents
+- [CODING_GUIDELINES.md](/docs/CODING_GUIDELINES.md) - Coding standards, conventions, and best practices used throughout the project.
+- [DESIGN_SYSTEM.md](/docs/DESIGN_SYSTEM.md) - Documentation of project's design principles, UI components, design tokens and styling conventions.
+- [PROJECT_MAP.md](/docs/PROJECT_MAP.md) - Overview of project's features, directories, and key points to help developers and AI agents navigate the codebase.
 
-## Screenshots
-
-> More features are available in the project.
-
-<p align="center">
-  <img src="./public/images/home-page.png" alt="Home Page" width="48%" />
-  <img src="./public/images/job-listing-detail.png" alt="Job Listing Detail" width="48%" />
-</p>
-
-<p align="center">
-  <img src="./public/images/application-form.png" alt="Application Form" width="48%" />
-  <img src="./public/images/sign-in-page.png" alt="Sign In" width="48%" />
-</p>
-
-<p align="center">
-  <img src="./public/images/job-listing.png" alt="Employer Dashboard" width="48%" />
-  <img src="./public/images/org-setting.png" alt="Organization Settings" width="48%" />
-</p>
-
-<p align="center">
-  <img src="./public/images/admin-user.png" alt="Admin Users" width="48%" />
-  <img src="./public/images/admin-org.png" alt="Admin Organizations" width="48%" />
-</p>
-
----
-
-## Project Documentation
-
-Additional documentation is available in the [`docs`](./docs) directory.
-
-- [Architecture](./docs/ARCHITECTURE.md)
-- [Project Diagram (PDF)](./docs/a-lote-lann-kyaung.drawio.pdf)
-- [Project Diagram (Draw.io)](./docs/a-lote-lann-kyaung.drawio)
-
----
-
-# Getting Started
-
-## 1. Clone the repository
+## Getting Started
 
 ```bash
 git clone https://github.com/thureinhtet99/portfolio.git
 cd portfolio
+npm install --legacy-peer-deps
 ```
-
-## 2. Install dependencies
 
 ```bash
-npm install (or) npm install --legacy-peer-deps
+cp .env.example .env.local   # fill your values
 ```
-
-## 3. Configure environment variables
-
-Copy the example environment file.
 
 ```bash
-cp .env.example .env.local
+npm run db:generate && npm run db:migrate
+npm run dev
 ```
 
-Required variables:
+## Scripts
 
-```env
-DATABASE_URL=
-BETTER_AUTH_SECRET=
-BETTER_AUTH_BASE_URL=
-NEXT_PUBLIC_APP_URL=
-UPLOADTHING_TOKEN=
+| Command            | Description                 |
+| ------------------ | --------------------------- |
+| `make dev`         | Start dev server            |
+| `make build`       | Production build            |
+| `make typecheck`   | Type check                  |
+| `make db:generate` | Generate Drizzle migrations |
+| `make db:migrate`  | Apply migrations            |
+| `make db:studio`   | Open Drizzle Studio         |
 
-SEED_ADMIN_EMAIL=
-SEED_ADMIN_NAME=
-SEED_ADMIN_PASSWORD=
-```
+## Acknowledgements
 
-Generate a Better Auth secret with either:
+- [Jason Cameron](https://jasoncameron.dev) — terminal-aesthetic design inspiration
+- [theodorusclarence](https://theodorusclarence.com) — features, navbar and pages inspiration
+- [Chánh Đại](https://chanhdai.com) — timeline theme and work exps components idea
+- [Better Auth](https://better-auth.com) — authentication
 
-```bash
-openssl rand -base64 32
-```
+## License
 
-or from the Better Auth documentation:
-
-https://better-auth.com/docs/installation
-
----
-
-## 4. Prepare the database
-
-Generate migrations, apply them, and seed the database.
-
-```bash
-make db:generate
-make db:migrate
-```
-
-The seed command creates default users, organizations, and sample job listings for local development.
-
----
-
-## 5. Start the development server
-
-```bash
-make dev
-```
-
-Visit:
-
-```
-http://localhost:3000
-```
-
----
-
-# Available Scripts
-
-| Command               | Description                                                |
-| --------------------- | ---------------------------------------------------------- |
-| `make help`           | See available commands                                     |
-| `npm run dev`         | Start the development server                               |
-| `npm run build`       | Build the application for production                       |
-| `npm run lint`        | Run ESLint                                                 |
-| `npm run db:generate` | Generate Drizzle migrations                                |
-| `npm run db:migrate`  | Apply database migrations                                  |
-| `npm run db:seed`     | Seed the database                                          |
-| `npm run db:studio`   | Open Drizzle Studio                                        |
-| `npm run detect`      | Run Knip to detect unused files, exports, and dependencies |
+Licensed under the MIT License.
