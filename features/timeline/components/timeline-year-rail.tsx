@@ -76,7 +76,7 @@ export function TimelineYearRail({
     >
       {/* Connecting line */}
       <div
-        className="absolute right-3 w-px bg-muted-foreground/20"
+        className="absolute right-3 w-px bg-muted-foreground/40"
         style={{ top: lineTop, bottom: lineBottom }}
       />
 

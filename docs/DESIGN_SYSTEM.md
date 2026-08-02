@@ -128,61 +128,21 @@ Don't invent a third shadow value. If something needs to feel "more important," 
 
 ---
 
-## 6. Motion
+## 6. Component-Specific Rules
 
-Framer Motion is already a dependency — standardize usage instead of ad-hoc `initial`/`animate` props per component.
-
-### 6.1 Motion tokens
-
-| Token           | Value                                                                | Use                                       |
-| --------------- | -------------------------------------------------------------------- | ----------------------------------------- |
-| `duration-fast` | `0.2s`                                                               | Hover states, toggles                     |
-| `duration-base` | `0.4–0.5s`                                                           | Section reveal on scroll                  |
-| `duration-slow` | `1.5s`                                                               | Ambient/looping (scroll indicator bounce) |
-| `ease`          | Framer default spring for interactive; `easeInOut` for ambient loops |                                           |
-| `stagger`       | `0.08–0.1s` per item                                                 | Lists (achievements, tech badges)         |
-
-### 6.2 Standard patterns (implemented in `lib/motion.ts`)
-
-```tsx
-// Section reveal — used for every major section
-const sectionReveal = {
-  initial: { opacity: 0, y: 20 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true },
-  transition: { duration: 0.5 },
-};
-
-// Card grid stagger
-const cardReveal = (index: number) => ({
-  initial: { opacity: 0, y: 20 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true },
-  transition: { duration: 0.5, delay: index * 0.08 },
-});
-```
-
-**Status:** Helpers extracted and consumed by `HomeView` and `projects-view.tsx`.
-
-**Reduced motion:** `useReducedMotion()` is wired into the scroll-down bounce and the status-dot ping in `HomeView`.
-
----
-
-## 7. Component-Specific Rules
-
-### 7.1 Hero (homepage)
+### 6.1 Hero (homepage)
 
 - One `h1` for name, one supporting line for role.
 - Availability indicator: `available && !shouldReduceMotion` guard with `accent-signal` color for available, `muted-foreground/50` for unavailable.
 - CTA row: 3 buttons — "Get in Touch" (primary), "Book a Chat" (outline), and "View Resume" (outline, conditional on resume data).
 
-### 7.2 Project / Certificate Cards
+### 6.2 Project / Certificate Cards
 
 - Image aspect ratio locked to `aspect-video`.
 - Tag chips: `Badge` variant `secondary`, max 4 visible + "+N more".
 - Hover: `hover:shadow-[...]` + `hover:scale-[1.05]` on image only, never the whole card.
 
-### 7.3 GitHub Activity Widget (implemented)
+### 6.3 GitHub Activity Widget (implemented)
 
 - Lives on homepage between hero and "Featured Projects".
 - Server-side fetch in `app/(public)/page.tsx` with `next: { revalidate: 60 * 30 }` (30 min).
@@ -190,7 +150,7 @@ const cardReveal = (index: number) => ({
 - Empty/failure state: collapses to "Activity unavailable" text.
 - **TODO:** Add `Skeleton` shimmer state while loading.
 
-### 7.4 Status Footer (implemented)
+### 6.4 Status Footer (implemented)
 
 - `components/layout/footer.tsx` — server component.
 - Format: `● All systems nominal · {commitHash} · {viewCount} views` — monospace, single line.
@@ -198,18 +158,18 @@ const cardReveal = (index: number) => ({
 - Deploy hash from `VERCEL_GIT_COMMIT_SHA`.
 - View counter wired to `setting` table `siteViews` key.
 
-### 7.5 Resume CTA
+### 6.5 Resume CTA
 
 - Placed as secondary button in hero row, icon (`HardDriveDownload`) + label, same treatment as "Get in Touch". Conditional on `resume` data being present.
 
-### 7.6 Latest Posts Widget (implemented)
+### 6.6 Latest Posts Widget (implemented)
 
 - `features/home/components/latest-posts-widget.tsx` — renders up to 4 published posts (title + monospace date) with "View all →" link to `/posts`.
 - Empty state: "No posts yet" message, mirrors GitHub widget's failure pattern.
 
 ---
 
-## 8. Accessibility Checklist (applies to every new component)
+## 7. Accessibility Checklist (applies to every new component)
 
 - [x] Contrast checked against the fixed dark theme — `--accent-signal` on `--dark-gray` = 4.221:1 (passes 3:1 UI/large-text, fails 4.5:1 body-text — accent is decorative/UI only)
 - [x] All ambient motion gated behind `useReducedMotion()` (scroll bounce, status-dot ping)
@@ -221,20 +181,11 @@ const cardReveal = (index: number) => ({
 
 ---
 
-## 9. What We're Explicitly Not Building
+## 8. Open Decisions
 
-No Catppuccin-style theme family switcher, no per-accent-color picker UI, no user-facing "background effect" toggle, and **no light/dark toggle** — this overrides `References.md` §2, which proposes theme/accent picking as inspiration from jasoncameron.dev. The site locks to a single fixed dark theme; there is no user-controlled visual variable at all. `next-themes`, `theme-provider.tsx`, and `theme-toggle.tsx` are removed from the codebase. If personality/novelty is wanted later (click counter, webring — also described in `References.md` §3/§10), treat it as a separate, deliberately small addition — not part of the core design system.
-
----
-
-## 10. Open Decisions
-
-All decisions are resolved. See `PROGRESS.md` for the full resolution history.
-
-| Decision               | Status      | Resolution                                                                              |
-| ---------------------- | ----------- | --------------------------------------------------------------------------------------- |
-| Accent hue             | ✅ resolved | `oklch(0.72 0.17 250)` — single dark-only value. WCAG check = 4.221:1 on `--dark-gray`. |
-| Location widget        | ✅ resolved | Static "Currently Based In" display with accent-signal pin.                             |
-| View counter storage   | ✅ resolved | `setting` table `siteViews` key.                                                        |
-| Availability dot color | ✅ resolved | `accent-signal` for available, `muted-foreground/50` for unavailable.                   |
-| View counter wiring    | ✅ resolved | Wired to `setting.siteViews` in the footer.                                             |
+| Decision               | Status      | Resolution                                                      |
+| ---------------------- | ----------- | --------------------------------------------------------------- |
+| Location widget        | ✅ resolved | Static "Currently Based In" display with accent-signal pin.     |
+| View counter storage   | ✅ resolved | `setting` table `siteViews` key.                                |
+| Availability dot color | ✅ resolved | `primary` for available, `muted-foreground/40` for unavailable. |
+| View counter wiring    | ✅ resolved | Wired to `setting.siteViews` in the footer.                     |

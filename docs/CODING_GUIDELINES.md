@@ -136,7 +136,7 @@ This is the current folder structure:
 ├── docs/
 │   ├── CODING_GUIDELINES.md
 │   ├── PROJECT_MAP.md
-│   └── References.md                          -> feature spec + locked styling/theme decisions (§12)
+│   └── REFERENCES.md                            -> feature spec + locked styling/theme decisions (§12)
 │
 ├── AGENTS.md                                    -> root agent instructions
 ├── drizzle.config.ts

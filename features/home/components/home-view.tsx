@@ -113,7 +113,7 @@ export function HomeView({
               >
                 <div
                   className={`relative h-2 w-2 rounded-full ${
-                    available ? "bg-primary" : "bg-muted-foreground/50"
+                    available ? "bg-primary" : "bg-muted-foreground/40"
                   }`}
                 >
                   {available && (
