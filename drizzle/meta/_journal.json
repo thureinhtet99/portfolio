@@ -43,6 +43,13 @@
       "when": 1785512733007,
       "tag": "0005_sweet_puppet_master",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1785689399212,
+      "tag": "0006_amazing_miracleman",
+      "breakpoints": true
     }
   ]
 }
