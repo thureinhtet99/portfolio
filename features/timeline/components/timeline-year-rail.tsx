@@ -104,7 +104,7 @@ export function TimelineYearRail({
             )}
             style={{ top: y }}
           >
-            <span className="tabular-nums text-3xl leading-none text-muted-foreground/40 hover:text-primary">
+            <span className="tabular-nums text-3xl leading-none text-muted-foreground/60 hover:text-primary">
               {year}
             </span>
             <span className="relative z-10 flex h-6 w-6 items-center justify-center">

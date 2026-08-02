@@ -56,7 +56,7 @@ export function AboutView({
       </section>
 
       {/* Techs */}
-      <section className="px-6 py-16 sm:py-20">
+      {/* <section className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-4xl">
           <h2 className=" text-4xl font-bold text-foreground tracking-[-0.02em]">
             Techs
@@ -64,7 +64,7 @@ export function AboutView({
 
           <div className="flex">tech stacks</div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }

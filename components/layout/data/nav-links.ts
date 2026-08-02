@@ -11,8 +11,8 @@ export const routeLabels: Record<string, string> = {
 
 export const navLinks = [
   { href: "/projects", label: "Projects" },
-  { href: "/posts", label: "Posts" },
   { href: "/about", label: "About" },
+  { href: "/posts", label: "Posts" },
 ];
 
 export const imageCards = [

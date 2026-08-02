@@ -38,8 +38,21 @@ export function TimescaleViewport({
     <div
       data-slot="timescale-viewport"
       className={cn(
-        "no-scrollbar w-full",
-        "group-data-[orientation=horizontal]/timescale:flex group-data-[orientation=horizontal]/timescale:flex-1 group-data-[orientation=horizontal]/timescale:scroll-fade-x group-data-[orientation=horizontal]/timescale:overflow-x-auto group-data-[orientation=horizontal]/timescale:overscroll-x-contain group-data-[orientation=horizontal]/timescale:pl-20 group-data-[orientation=horizontal]/timescale:scroll-fade-s-40",
+        "w-full min-h-[80vh]",
+        "overflow-x-auto",
+        "scrollbar-thin",
+        "scrollbar-thumb-muted-foreground/40 dark:scrollbar-thumb-muted-foreground/40",
+        "scrollbar-track-transparent",
+        "hover:scrollbar-thumb-muted-foreground dark:hover:scrollbar-thumb-muted-foreground",
+
+        "group-data-[orientation=horizontal]/timescale:flex",
+        "group-data-[orientation=horizontal]/timescale:flex-1",
+        "group-data-[orientation=horizontal]/timescale:scroll-fade-x",
+        "group-data-[orientation=horizontal]/timescale:overflow-x-auto",
+        "group-data-[orientation=horizontal]/timescale:overscroll-x-contain",
+        "group-data-[orientation=horizontal]/timescale:pl-10",
+        "group-data-[orientation=horizontal]/timescale:scroll-fade-s-40",
+
         className,
       )}
       {...props}
@@ -159,7 +172,7 @@ export function TimescaleYear({ className, ...props }: TimescaleYearProps) {
     <p
       data-slot="timescale-year"
       className={cn(
-        "text-xs leading-5 font-medium text-muted-foreground tabular-nums",
+        "text-sm leading-5 font-medium text-muted-foreground tabular-nums",
         "in-data-[slot=timescale-header]:tracking-widest in-data-[slot=timescale-header]:uppercase",
         "group-data-[orientation=vertical]/timescale:col-start-2 group-data-[orientation=vertical]/timescale:row-start-1",
         className,

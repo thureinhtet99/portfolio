@@ -1,3 +1,5 @@
+// "use client";
+
 import { Button } from "@/components/ui/button";
 import { ProjectShowcaseCard } from "@/features/projects/components/project-showcase-card";
 import { WorkExperienceWithRail } from "@/features/timeline/components/work-experience-with-rail";
@@ -44,26 +46,70 @@ export function HomeView({
   children,
   contributionsSection,
 }: Props) {
+  // const audioRef = useRef<HTMLAudioElement>(null);
+  // const [isPlaying, setIsPlaying] = useState(false);
+
+  // const toggleAudio = () => {
+  //   if (!audioRef.current) return;
+  //   if (isPlaying) {
+  //     audioRef.current.pause();
+  //   } else {
+  //     audioRef.current.play();
+  //   }
+  //   setIsPlaying(!isPlaying);
+  // };
+
   return (
     <div className="page-shell">
+      {/* <audio
+        ref={audioRef}
+        src="/pronounce.mp3"
+        onEnded={() => setIsPlaying(false)}
+      /> */}
       {/* Hero Section */}
       <section id="hero-section" className="px-6 py-20 sm:py-40">
         <div className="mx-auto max-w-5xl space-y-6">
-          <div className="space-y-2">
+          <div className="space-y-4">
             <span className="text-muted-foreground text-md sm:text-base ">
               Good to see you!
             </span>
-            <h1 className="font-bold text-3xl text-muted-foreground sm:text-4xl">
-              I&apos;m <span className="text-primary">Thu Rein Htet</span>
-            </h1>
-          </div>
+            <h1 className="group flex items-center gap-4 text-3xl font-bold text-muted-foreground sm:text-4xl">
+              <span>
+                I&apos;m <span className="text-primary">Thu Rein Htet</span>
+              </span>
 
-          <div className="text-base leading-relaxed sm:text-lg">
-            {intro && (
-              <div className="prose prose-base prose-invert sm:prose-lg text-muted-foreground">
-                <ReactMarkdown>{intro}</ReactMarkdown>
-              </div>
-            )}
+              {/* <button
+                type="button"
+                onClick={toggleAudio}
+                className="opacity-0 group-hover:opacity-100 focus:opacity-100"
+                aria-label="Play name pronunciation"
+              >
+                <Volume2 className="h-5 w-5 hover:text-primary cursor-pointer" />
+              </button> */}
+            </h1>
+
+            <div className="leading-relaxed">
+              {intro && (
+                <div className="prose prose-base prose-invert sm:prose-lg text-muted-foreground text-xl sm:text-lg">
+                  <ReactMarkdown
+                    components={{
+                      a: ({ children, href }) => (
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:bg-primary hover:text-background text-muted-foreground"
+                        >
+                          {children}
+                        </a>
+                      ),
+                    }}
+                  >
+                    {intro}
+                  </ReactMarkdown>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Social Links Row */}
@@ -73,10 +119,12 @@ export function HomeView({
                 href={socialLinks.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 hover:text-primary transition-colors"
+                className="group flex items-center gap-1.5"
               >
-                <FaGithub className="h-4 w-4" />
-                GitHub
+                <FaGithub className="h-4 w-4 group-hover:text-primary" />
+                <span className="transition-colors group-hover:bg-primary group-hover:text-background">
+                  GitHub
+                </span>
               </Link>
             )}
             {socialLinks.linkedin && (
@@ -86,10 +134,13 @@ export function HomeView({
                   href={socialLinks.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 hover:text-primary transition-colors"
+                  className="group flex items-center gap-1.5"
                 >
-                  <FaLinkedin className="h-4 w-4" />
-                  LinkedIn
+                  <FaLinkedin className="h-4 w-4 group-hover:text-primary" />
+
+                  <span className="transition-colors group-hover:bg-primary group-hover:text-background">
+                    LinkedIn
+                  </span>
                 </Link>
               </>
             )}
@@ -99,10 +150,12 @@ export function HomeView({
                 <Link
                   href="/api/resume"
                   target="_blank"
-                  className="flex items-center gap-1.5 hover:text-primary transition-colors"
+                  className="group flex items-center gap-1.5"
                 >
-                  <FaFile className="h-4 w-4" />
-                  Resume
+                  <FaFile className="h-4 w-4 group-hover:text-primary" />
+                  <span className="transition-colors group-hover:bg-primary group-hover:text-background">
+                    Resume
+                  </span>
                 </Link>
               </>
             )}
@@ -141,15 +194,17 @@ export function HomeView({
               Featured Projects
             </h2>
             {featuredProjects.length > 0 && (
-              <div className="flex items-center gap-1 hover:bg-primary hover:text-background transition-colors">
+              <div className="flex items-center gap-1">
                 <Link
                   href="/projects"
                   transitionTypes={["nav-forward"]}
-                  className="text-sm"
+                  className="group flex items-center gap-1.5"
                 >
-                  View all
+                  <span className="transition-colors group-hover:bg-primary group-hover:text-background">
+                    View all
+                  </span>
+                  <MoveRight className="h-4 w-4 group-hover:text-primary" />
                 </Link>
-                <MoveRight className="h-4 w-4" />
               </div>
             )}
           </div>
@@ -232,9 +287,9 @@ export function HomeView({
               </Button>
             </div>
 
-            {/* Something...*/}
+            {/* Quote */}
             <blockquote className="relative w-full max-w-sm flex flex-col justify-between gap-4 p-5 sm:p-6 border border-muted-foreground/20 rounded-md">
-              <Quote className="absolute -top-3 -left-2 size-6 text-muted-foreground/20 fill-muted-foreground/20" />
+              <Quote className="absolute -top-3 -left-2 size-6 text-muted-foreground/60 fill-muted-foreground/20" />
               <p className="text-sm leading-relaxed italic">
                 All that we are is the result of what we have thought.
               </p>

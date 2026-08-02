@@ -37,19 +37,6 @@ type Props = {
   streak: KatibStreak | null;
 };
 
-function timeAgo(dateStr: string): string {
-  const now = Date.now();
-  const then = new Date(dateStr).getTime();
-  const seconds = Math.floor((now - then) / 1000);
-  if (seconds < 60) return `${seconds}s`;
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h`;
-  const days = Math.floor(hours / 24);
-  return `${days}d`;
-}
-
 export function GitHubActivityWidget({ commits, languages, streak }: Props) {
   const hasCommits = commits.length > 0;
   const hasLanguages = languages.length > 0;
@@ -61,7 +48,7 @@ export function GitHubActivityWidget({ commits, languages, streak }: Props) {
           <BsActivity className="h-4 w-4 text-primary" />
           <h3 className="text-sm font-semibold">Recent commits</h3>
         </div>
-        <p className="text-sm text-muted-foreground/40">Activity unavailable</p>
+        <p className="text-sm text-muted-foreground/60">Activity unavailable</p>
       </div>
     );
   }
@@ -70,7 +57,7 @@ export function GitHubActivityWidget({ commits, languages, streak }: Props) {
   const topLanguages = languages.slice(0, 5);
 
   return (
-    <div className="w-full max-w-sm p-4 sm:p-5 border border-muted-foreground/20 rounded-md sm:col-span-2">
+    <div className="w-full p-4 sm:p-5 border border-muted-foreground/20 rounded-md">
       <div className="flex items-center gap-2 mb-4">
         <BsActivity className="h-4 w-4 text-primary" />
         <h3 className="text-sm font-semibold">Recent commits</h3>
@@ -82,18 +69,18 @@ export function GitHubActivityWidget({ commits, languages, streak }: Props) {
           {commits.slice(0, 3).map((commit) => (
             <div
               key={commit.oid}
-              className="flex items-start gap-2 text-sm text-muted-foreground"
+              className="flex items-start justify-between gap-2 text-sm"
             >
-              <Link
-                href={commit.commitUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="truncate block text-white hover:text-primary transition-colors"
-              >
-                {commit.repo.split("/").pop()}
-              </Link>
-              :
-              <div className="min-w-0">
+              <div className="flex items-center gap-1 truncate">
+                <Link
+                  href={commit.commitUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="truncate block text-white hover:text-primary transition-colors"
+                >
+                  {commit.repo.split("/").pop()}
+                </Link>
+                :
                 <Link
                   href={commit.commitUrl}
                   target="_blank"
@@ -102,15 +89,14 @@ export function GitHubActivityWidget({ commits, languages, streak }: Props) {
                 >
                   {commit.messageHeadline}
                 </Link>
-                <span className="text-muted-foreground/60">
-                  {timeAgo(commit.committedDate)}
-                  {commit.additions > 0 && (
-                    <span className="text-green-400"> +{commit.additions}</span>
-                  )}
-                  {commit.deletions > 0 && (
-                    <span className="text-red-400"> -{commit.deletions}</span>
-                  )}
-                </span>
+              </div>
+              <div className="flex items-center">
+                {commit.additions > 0 && (
+                  <span className="text-green-400"> +{commit.additions}</span>
+                )}
+                {commit.deletions > 0 && (
+                  <span className="text-red-400"> -{commit.deletions}</span>
+                )}
               </div>
             </div>
           ))}

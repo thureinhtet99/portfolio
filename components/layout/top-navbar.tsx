@@ -8,8 +8,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Menu, MessageSquare, X } from "lucide-react";
-import Image from "next/image";
+import {
+  ChevronDown,
+  Construction,
+  Menu,
+  MessageSquare,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode, useState } from "react";
@@ -127,7 +132,7 @@ export function TopNavbar({
             <DropdownMenuContent
               align="end"
               sideOffset={14}
-              className="flex w-auto h-50 gap-2 rounded-md border border-background bg-muted-foreground/5 p-2 shadow-lg shadow-black/10"
+              className="flex w-auto h-50 gap-2 rounded-md border border-background p-2 shadow-lg shadow-black/30"
             >
               {/* Left: Image cards */}
               <div className="flex gap-2">
@@ -137,14 +142,17 @@ export function TopNavbar({
                       href={card.href}
                       className="relative flex h-auto w-50 flex-col justify-end overflow-hidden rounded-md cursor-pointer group"
                     >
-                      <Image
+                      {/* <Image
                         src={card.image}
                         alt={card.label}
                         priority
                         fill
                         sizes="200px"
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
+                      /> */}
+                      <div className="flex items-center justify-center transition-transform duration-300 group-hover:scale-150">
+                        <Construction />
+                      </div>
                       <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
                       <div
                         className={`relative z-10 p-2 ${

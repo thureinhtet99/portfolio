@@ -40,7 +40,7 @@ export function Breadcrumbs() {
 
           return (
             <li key={href} className="flex items-center">
-              <span aria-hidden="true" className="text-muted-foreground/50">
+              <span aria-hidden="true" className="text-muted-foreground/60">
                 /
               </span>
               {index === segments.length - 1 ? (

@@ -1,6 +1,11 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { APP_CONFIG } from "@/config/app-config";
 import Link from "next/link";
-import { FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
+import { FaCode, FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
 
 export async function Footer() {
   let viewCount = "0";
@@ -70,6 +75,22 @@ export async function Footer() {
                 <FaEnvelope className="h-5 w-5" />
               </Link>
             )}
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href="https://github.com/thureinhtet99/portfolio"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors"
+                >
+                  <FaCode className="h-5 w-5" />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Source code</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
       </div>
