@@ -77,19 +77,6 @@ export const project = sqliteTable("project", {
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
 
-export const certificate = sqliteTable("certificate", {
-  id: text("id").primaryKey(),
-  title: text("title").notNull(),
-  issuer: text("issuer").notNull(),
-  issueDate: text("issue_date").notNull(),
-  credentialId: text("credential_id"),
-  credentialUrl: text("credential_url"),
-  image: text("image"),
-  order: integer("order").notNull().default(0),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
-});
-
 export const workExperience = sqliteTable("work_experience", {
   id: text("id").primaryKey(),
   companyName: text("company_name").notNull(),

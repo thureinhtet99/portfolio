@@ -12,7 +12,6 @@ const ROUTES = [
   "/about",
   "/projects",
   "/timeline",
-  "/certificates",
   "/posts",
   "/contact",
   "/leave-a-note",

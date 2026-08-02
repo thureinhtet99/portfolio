@@ -1,7 +1,6 @@
 export const routeLabels: Record<string, string> = {
   about: "about",
   projects: "projects",
-  certificates: "certificates",
   timeline: "timeline",
   posts: "posts",
   contact: "contact",
