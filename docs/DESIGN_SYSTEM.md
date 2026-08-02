@@ -63,7 +63,7 @@ This is the site's single accent — a muted blue. It is **not** the oklch `--ac
 - Badge `default` variant background
 - The `~` breadcrumb root segment
 
-**Usage rule:** treat `--primary` as the only saturated color allowed outside of the traffic-light dots on project cards (see §7.2) and language-bar colors pulled directly from the GitHub API. Don't introduce a second accent hue.
+**Usage rule:** treat `--primary` as the only saturated color allowed outside of the traffic-light dots on project cards (see §6.2) and language-bar colors pulled directly from the GitHub API. Don't introduce a second accent hue.
 
 ### 2.2 Opacity as the hierarchy tool
 
@@ -146,7 +146,7 @@ Defined once in `globals.css` `@layer components`:
 
 ### 4.3 Radius
 
-`--radius: 0.625rem` (10px), exposed as `--radius-sm/md/lg/xl` via `@theme inline`. Components use Tailwind's derived scale directly (`rounded-md`, `rounded-lg`, `rounded-sm`) — there is **no** oversized `rounded-[1.5rem]` card treatment in the current codebase use `rounded-md`, badges use `rounded-sm`, buttons use `rounded-md`/`rounded-full` (icon size). Keep new components on this same small scale; don't introduce a larger radius.
+`--radius: 0.625rem` (10px), exposed as `--radius-sm/md/lg/xl` via `@theme inline`. Components use Tailwind's derived scale directly (`rounded-md`, `rounded-lg`, `rounded-sm`) — there is **no** oversized `rounded-[1.5rem]` card treatment in the current codebase; the card uses `rounded-md`, badges use `rounded-sm`, buttons use `rounded-md`/`rounded-full` (icon size). Keep new components on this same small scale; don't introduce a larger radius.
 
 ---
 
@@ -164,83 +164,52 @@ Defined once in `globals.css` `@layer components`:
 
 ---
 
-## 6. Motion
+## 6. Component-Specific Rules
 
-Framer Motion (imported as `motion/react`) is standardized through `lib/motion.ts` tokens, consumed by `components/shared/fade-animation.tsx` (`FadeAnimation`, `FadeStaggeredAnimation`).
-
-### 6.1 Motion tokens (`lib/motion.ts`)
-
-```ts
-export const EASE = {
-  out: [0.16, 1, 0.3, 1],
-  inOut: [0.65, 0, 0.35, 1],
-  in: [0.4, 0, 1, 1],
-};
-
-export const DURATION = { fast: 0.3, quick: 0.45, base: 0.8, slow: 1 };
-export const SPRING = {
-  smooth: { type: "spring", bounce: 0, duration: DURATION.base },
-};
-export const STAGGER = { base: 0.08, tight: 0.05 };
-```
-
-### 6.2 Standard pattern
-
-Use `<FadeAnimation direction="up">` for single-element scroll reveals and `<FadeStaggeredAnimation direction="up">` for a parent whose children should stagger in — both already wire in `useReducedMotion()` (falls back to an instant, no-offset appearance) and `useInView`/`whileInView` (`once: true`). Prefer these over writing new raw `initial`/`whileInView` props per component.
-
-### 6.3 Reduced motion
-
-`useReducedMotion()` is checked inside `FadeAnimation`/`FadeStaggeredAnimation` and inside the availability-dot ping (`HomeView`) — new ambient/looping motion must do the same.
-
----
-
-## 7. Component-Specific Rules
-
-### 7.1 Hero (homepage)
+### 6.1 Hero (homepage)
 
 - One `h1` for name; greeting line above it, Markdown intro below.
-- Social row: GitHub / LinkedIn / Resume links separated by `|`, then the availability indicator — `primary` dot with a ping when available, `muted-foreground/50` solid dot when not.
+- Social row: GitHub / LinkedIn / Resume links separated by `|`, then the availability indicator — `primary` dot with a ping when available, `muted-foreground/40` solid dot when not.
 
-### 7.2 Project Cards
+### 6.2 Project Cards
 
 - "Terminal window" preview: traffic-light dots (`bg-red-500/80`, `bg-yellow-500/80`, `bg-green-500/80`) + `org / repo` label + star count, then the project image (or summary text as fallback) in an `aspect-video` frame.
 - Card container: `rounded-md border border-muted-foreground/20`, hover → `border-muted-foreground`.
 - Tag chips: `Badge` `secondary` variant, capped by a `techLimit` prop (default 4).
 - Named view transitions per card (`project-image-{slug}`, `project-title-{slug}`).
 
-### 7.3 GitHub Activity Widget
+### 6.3 GitHub Activity Widget
 
 - Lives in the homepage widgets grid, fed by `WidgetSection` (server component) hitting the Katib API.
 - Empty/failure state collapses to a muted "no activity" panel rather than erroring.
 - **Gap:** no `Skeleton` shimmer while loading — it renders once data resolves.
 
-### 7.4 Contributions Heatmap
+### 6.4 Contributions Heatmap
 
 - `features/home/components/contributions-section.tsx` → `<GitHubContributions>` (client) wrapped in `<Suspense fallback={<GitHubContributionsFallback />}>`; data comes from a cached (`unstable_cache`, 24h) fetch in `lib/get-cached-contributions.ts`. Always keep the `Suspense` boundary when touching this section — it's how the calm-loading-state principle is enforced here.
 
-### 7.5 Location Widget
+### 6.5 Location Widget
 
 - Live, not static: `LocationMapClient` dynamically imports a Leaflet `MapContainer` (`ssr: false`) pinned to a geocoded residence city (dark CARTO tile layer, no zoom/attribution controls). Falls back to a hardcoded lat/lng if geocoding fails. Keep the dynamic import — Leaflet is not SSR-safe.
 
-### 7.6 Status Footer
+### 6.6 Status Footer
 
 - `components/layout/footer.tsx` — async server component. Left: copyright. Right: `{viewCount} views` + social icon links (GitHub/LinkedIn/email, each conditionally rendered from settings).
 - View count is read from and incremented against the `setting` table (`siteViews` key) — see `PROJECT_MAP.md` §3.
 
-### 7.7 Experiences (homepage)
+### 6.7 Experiences (homepage)
 
 - `WorkExperienceWithRail` renders collapsible per-position entries (`components/ui/work-experience.tsx`) with a synced `TimelineYearRail` that highlights the year matching the currently-expanded/most-visible entry. Don't build a second version of this on top of `experience-year-timeline.tsx` — that file is superseded.
 
-### 7.8 Placeholder pages
+### 6.8 Placeholder pages
 
 - `/labs`: centered `Construction` icon + "coming soon" text — follow this exact minimal pattern for any other stub page rather than leaving a route empty.
 
 ---
 
-## 8. Accessibility Checklist (apply to every new component)
+## 7. Accessibility Checklist (apply to every new component)
 
 - [ ] Contrast checked against `--dark-gray` background for any new color — `--primary` (`#40a9ff`) on `--dark-gray` should be re-measured before reuse in a new context; don't assume it clears body-text contrast.
-- [ ] Ambient/looping motion gated behind `useReducedMotion()` (use `FadeAnimation`/`FadeStaggeredAnimation`, which already handle this)
 - [ ] Live/async widgets (GitHub activity, contributions, location map) have a calm failure or loading state, never a blank crash
 - [ ] Interactive elements keyboard-reachable with a visible focus ring (`focus-visible:ring-ring/50` is already baked into `button`/`input`/`badge` — don't strip it with a custom `className`)
 - [ ] Images have meaningful `alt`; decorative images use `alt=""`
@@ -249,20 +218,16 @@ Use `<FadeAnimation direction="up">` for single-element scroll reveals and `<Fad
 
 ---
 
-## 9. What We're Explicitly Not Building
+## 8. What We're Explicitly Not Building
 
-No theme/accent picker, no per-accent-color picker UI, no user-facing "background effect" toggle, and **no light/dark toggle** — the site locks to a single fixed dark theme with zero visitor-controlled visual variables. Also out of scope unless explicitly requested: a novelty click counter, a webring, a `/pics` gallery, a `/tutorials` section. `next-themes`, `theme-provider.tsx`, and `theme-toggle.tsx` should never be reintroduced.
-
-This overrides anything in `References.md` (§2, §3, §10) that reads as inspiration toward those features — treat that document as structural/UX inspiration only, not as a feature list to implement.
+No theme/accent picker, no per-accent-color picker UI, no user-facing "background effect" toggle, and **no light/dark toggle** — the site locks to a single fixed dark theme with zero visitor-controlled visual variables. Also out of scope unless explicitly requested: a novelty click counter, a webring and a `/pics` gallery.
 
 ---
 
-## 10. Known Gaps / Open Items
+## 9. Known Gaps / Open Items
 
 | Item                                                          | Status                                                                                                                                   |
 | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `surface-panel` class used in admin components                | Undefined in `globals.css` — currently a no-op class. Needs a definition or removal.                                                     |
 | Geist Mono font load (`--font-geist-mono`)                    | Loaded in `layout.tsx` but not wired into the Tailwind theme — effectively unused.                                                       |
 | `Skeleton` shimmer for GitHub Activity / Latest Posts widgets | Not implemented — widgets show nothing/text until data resolves.                                                                         |
-| `features/timeline/components/experience-year-timeline.tsx`   | Superseded by `work-experience-with-rail.tsx` + `timeline-year-rail.tsx`; candidate for deletion.                                        |
 | About page                                                    | "Techs" section is a placeholder (`<div>tech stacks</div>`) — `data/skills.tsx` and `data/countries.json` exist but aren't wired in yet. |

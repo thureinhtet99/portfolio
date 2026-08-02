@@ -1,9 +1,12 @@
 import { db } from "@/db/client";
 import { timeline } from "@/db/schema";
+import { UnauthorizedError, requireAdminSession } from "@/lib/require-admin";
 import { asc, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET - Fetch all timelines
+// Note: the timeline table has no `type` column; work/education filtering
+// is handled by the separate /api/work-experiences endpoint.
 export async function GET() {
   try {
     const timelines = await db
@@ -28,6 +31,7 @@ export async function GET() {
 // POST - Create new timeline
 export async function POST(req: NextRequest) {
   try {
+    await requireAdminSession(req);
     const body = await req.json();
     const { title, year, description } = body;
 
@@ -56,6 +60,12 @@ export async function POST(req: NextRequest) {
       data: { id, title, year, description },
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
     console.error("Failed to create timeline:", error);
     return NextResponse.json(
       {
@@ -71,6 +81,7 @@ export async function POST(req: NextRequest) {
 // PUT - Update timeline
 export async function PUT(req: NextRequest) {
   try {
+    await requireAdminSession(req);
     const body = await req.json();
     const { id, title, year, description } = body;
     console.log(id, description);
@@ -97,6 +108,12 @@ export async function PUT(req: NextRequest) {
       data: { id, title, year, description },
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
     console.error("Failed to update timeline:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update timeline" },
@@ -108,6 +125,7 @@ export async function PUT(req: NextRequest) {
 // PATCH - Update timeline order
 export async function PATCH(req: NextRequest) {
   try {
+    await requireAdminSession(req);
     const body = await req.json();
     const { timelines: updatedTimelines } = body;
 
@@ -132,6 +150,12 @@ export async function PATCH(req: NextRequest) {
       message: "timeline order updated successfully",
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
     console.error("Failed to update timeline order:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update timeline order" },
@@ -143,6 +167,7 @@ export async function PATCH(req: NextRequest) {
 // DELETE - Delete timeline
 export async function DELETE(req: NextRequest) {
   try {
+    await requireAdminSession(req);
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
@@ -160,6 +185,12 @@ export async function DELETE(req: NextRequest) {
       message: "timeline deleted successfully",
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
     console.error("Failed to delete timeline:", error);
     return NextResponse.json(
       { success: false, error: "Failed to delete timeline" },

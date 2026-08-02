@@ -46,7 +46,7 @@ Public-facing features are extracted into `features/`. Pages in `app/(public)/` 
 | `app/(public)/page.tsx`         | Home page. Server-fetches settings, featured projects (+ GitHub star counts), work experiences; increments the `siteViews` counter; geocodes the residence city; renders `<HomeView />`.                                                                                                                                                                                           |
 | `app/(public)/about/`           | Renders `<AboutView />` — portrait + Markdown bio. "Techs" section is a placeholder pending the About page rework (see §10).                                                                                                                                                                                                                                                       |
 | `app/(public)/projects/`        | Renders `<ProjectsView />` — full project grid, DB-backed.                                                                                                                                                                                                                                                                                                                         |
-| `app/(public)/projects/[slug]/` | Renders `<ProjectDetailView />` — single project page (not a modal): description, tech badges, GitHub stars, demo credentials, contributors.                                                                                                                                                                                                                                       |     |
+| `app/(public)/projects/[slug]/` | Renders `<ProjectDetailView />` — single project page (not a modal): description, tech badges, GitHub stars, demo credentials, contributors.                                                                                                                                                                                                                                       |
 | `app/(public)/timeline/`        | Renders `<TimelineView />` — horizontal single-axis timescale (`components/timescale.tsx`) built from `app/api/timelines`.                                                                                                                                                                                                                                                         |
 | `app/(public)/posts/`           | Renders `<PostsView />` — published posts list, DB-backed.                                                                                                                                                                                                                                                                                                                         |
 | `app/(public)/posts/[slug]/`    | Renders `<PostDetailView />` — single post with Markdown rendering.                                                                                                                                                                                                                                                                                                                |
@@ -57,7 +57,7 @@ Public-facing features are extracted into `features/`. Pages in `app/(public)/` 
 | `app/api/`                      | Server route handlers, one folder per resource: `projects`, `timelines`, `work-experiences`, `posts`, `settings`, `resume`, `send`, `upload`, `auth`, `admin/create-user`, `github/contributors`. No UI logic here.                                                                                                                                                                |
 | `features/home/`                | `home-view.tsx` (hero, featured projects, experiences, contributions, widgets grid), `widget-section.tsx` (server component: fetches Katib commits/streak + latest posts), `github-activity-widget.tsx`, `latest-posts-widget.tsx`, `contributions-section.tsx` (GitHub contribution heatmap), `location-map.tsx` / `location-map-client.tsx` (Leaflet map, dynamically imported). |
 | `features/about/`               | `about-view.tsx`.                                                                                                                                                                                                                                                                                                                                                                  |
-| `features/projects/`            | `projects-view.tsx`, `project-showcase-card.tsx`, `project-detail-view.tsx`, `project-credentials-panel.tsx`, `contributors-section.tsx`. No `data/` folder — all project data is DB-backed via `app/api/projects`.                                                                                                                                                                |     |
+| `features/projects/`            | `projects-view.tsx`, `project-showcase-card.tsx`, `project-detail-view.tsx`, `project-credentials-panel.tsx`, `contributors-section.tsx`. No `data/` folder — all project data is DB-backed via `app/api/projects`.                                                                                                                                                                |
 | `features/timeline/`            | `timeline-view.tsx` (renders the `/timeline` page via `components/timescale.tsx`)                                                                                                                                                                                                                                                                                                  |
 | `features/posts/`               | `posts-view.tsx`, `post-detail-view.tsx`. No `data/` — posts come from the DB.                                                                                                                                                                                                                                                                                                     |
 | `features/leave-a-note/`        | `leave-a-note-view.tsx` — giscus embed.                                                                                                                                                                                                                                                                                                                                            |
@@ -66,7 +66,7 @@ Public-facing features are extracted into `features/`. Pages in `app/(public)/` 
 | `components/ui/`                | shadcn/ui primitives (`button.tsx`, `card.tsx`, `dialog.tsx`, etc.) plus two vendored/registry components: `work-experience.tsx` and `contribution-graph.tsx`. Never feature-specific logic here.                                                                                                                                                                                  |
 | `components/layout/`            | App chrome shared across routes: `top-navbar.tsx` (hidden on `/admin`), `footer.tsx` (server component, fetches settings + view count), `breadcrumbs.tsx`, `data/nav-links.ts`.                                                                                                                                                                                                    |
 | `components/providers/`         | App-level providers: `query-provider.tsx`.                                                                                                                                                                                                                                                                                                                                         |
-| `components/shared/`            | Reusable non-UI components: `delete-confirm-box.tsx`, `empty-state.tsx`, `admin-section-header.tsx`, `custom-loading.tsx`.                                                                                                                                                                                                                                                         |     |
+| `components/shared/`            | Reusable non-UI components: `delete-confirm-box.tsx`, `empty-state.tsx`, `admin-section-header.tsx`, `custom-loading.tsx`.                                                                                                                                                                                                                                                         |
 | `lib/`                          | Core singletons and utilities: `auth.ts`/`auth-client.ts`, `base-url.ts` (resolves base URL for Vercel/production/local), `get-cached-contributions.ts` (cached GitHub contribution fetch), `utils.ts` (`cn()`).                                                                                                                                                                   |
 | `db/`                           | `schema.ts` (single source of truth for every table), `client.ts` (driver selector), `sqlite.ts`, `turso.ts`. The only place raw table definitions live.                                                                                                                                                                                                                           |
 | `drizzle/`                      | Auto-generated migration SQL and snapshots. Never hand-edited.                                                                                                                                                                                                                                                                                                                     |
@@ -153,21 +153,20 @@ features/admin/
 
 App Router, file-based. Route groups don't affect URLs.
 
-| Route                           | File                                    | Notes                                                                     |
-| ------------------------------- | --------------------------------------- | ------------------------------------------------------------------------- |
-| `/`                             | `app/(public)/page.tsx`                 | Server-fetches everything, renders `<HomeView />`, increments view count  |
-| `/about`                        | `app/(public)/about/page.tsx`           | Renders `<AboutView />`                                                   |
-| `/projects`                     | `app/(public)/projects/page.tsx`        | Renders `<ProjectsView />`                                                |
-| `/projects/[slug]`              | `app/(public)/projects/[slug]/page.tsx` | Renders `<ProjectDetailView />`, 404s via `notFound()` if slug is missing |     |
-| `/timeline`                     | `app/(public)/timeline/page.tsx`        | Renders `<TimelineView />`                                                |
-| `/posts`                        | `app/(public)/posts/page.tsx`           | Renders `<PostsView />`                                                   |
-| `/posts/[slug]`                 | `app/(public)/posts/[slug]/page.tsx`    | Renders `<PostDetailView />`, 404s via                                    |
-| `notFound()` if slug is missing |
-| `/contact`                      | `app/(public)/contact/page.tsx`         | Client contact form                                                       |
-| `/leave-a-note`                 | `app/(public)/leave-a-note/page.tsx`    | giscus embed                                                              |
-| `/labs`                         | `app/(public)/labs/page.tsx`            | "Coming soon" placeholder                                                 |
-| `/admin`                        | `app/admin/page.tsx` (+ `layout.tsx`)   | Protected; inline login form or `<AdminView />` depending on session      |
-| `/api/*`                        | `app/api/**/route.ts`                   | REST-style handlers, no pages                                             |
+| Route              | File                                    | Notes                                                                     |
+| ------------------ | --------------------------------------- | ------------------------------------------------------------------------- |
+| `/`                | `app/(public)/page.tsx`                 | Server-fetches everything, renders `<HomeView />`, increments view count  |
+| `/about`           | `app/(public)/about/page.tsx`           | Renders `<AboutView />`                                                   |
+| `/projects`        | `app/(public)/projects/page.tsx`        | Renders `<ProjectsView />`                                                |
+| `/projects/[slug]` | `app/(public)/projects/[slug]/page.tsx` | Renders `<ProjectDetailView />`, 404s via `notFound()` if slug is missing |
+| `/timeline`        | `app/(public)/timeline/page.tsx`        | Renders `<TimelineView />`                                                |
+| `/posts`           | `app/(public)/posts/page.tsx`           | Renders `<PostsView />`                                                   |
+| `/posts/[slug]`    | `app/(public)/posts/[slug]/page.tsx`    | Renders `<PostDetailView />`, 404s via `notFound()` if slug is missing    |
+| `/contact`         | `app/(public)/contact/page.tsx`         | Client contact form                                                       |
+| `/leave-a-note`    | `app/(public)/leave-a-note/page.tsx`    | giscus embed                                                              |
+| `/labs`            | `app/(public)/labs/page.tsx`            | "Coming soon" placeholder                                                 |
+| `/admin`           | `app/admin/page.tsx` (+ `layout.tsx`)   | Protected; inline login form or `<AdminView />` depending on session      |
+| `/api/*`           | `app/api/**/route.ts`                   | REST-style handlers, no pages                                             |
 
 ---
 
@@ -193,24 +192,20 @@ App Router, file-based. Route groups don't affect URLs.
 
 ## 8. Important Files
 
-| File                                     | Why it matters                                                                                                                             |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `app/layout.tsx`                         | Root layout — loads fonts (JetBrains Mono + Geist Mono), wraps the app in `QueryProvider`, mounts navbar/footer/toaster/analytics.         |
-| `app/(public)/page.tsx`                  | Home page — heaviest server component: settings, projects, experiences, geocoding, view-count increment.                                   |
-| `features/home/components/home-view.tsx` | Client component composing hero, featured projects, experiences, contributions, and the widgets grid.                                      |
-| `db/schema.ts`                           | Single source of truth for every table; drives migrations and all query typing.                                                            |
-| `db/client.ts`                           | Chooses Turso vs local SQLite based on `VERCEL` env — check here before debugging "works locally, not on Vercel" issues.                   |
-| `lib/auth.ts` / `lib/auth-client.ts`     | Auth boundary — every protected route/action depends on these.                                                                             |
-| `lib/base-url.ts`                        | Resolves the base URL used for internal `fetch()` calls across Vercel/production/local — check here first if server-side fetches 404/fail. |
-| `lib/utils.ts`                           | Houses `cn()`.                                                                                                                             |
-
-| `hooks/use-crud.ts` | Generic admin CRUD hook — reuse this before writing new fetch/mutation logic for any list resource. |
-
-| `config/app-config.ts` | Route-name constants and base URL — check here before hardcoding a route string elsewhere. |
-
-| `components/providers/query-provider.tsx` | TanStack Query client setup; if admin data isn't refreshing, check the config here first. |
-
-| `drizzle.config.ts` | Points Drizzle Kit at `db/schema.ts` and the migrations output folder — needed for any `db:generate`/`db:push` command. |
+| File                                      | Why it matters                                                                                                                             |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `app/layout.tsx`                          | Root layout — loads fonts (JetBrains Mono + Geist Mono), wraps the app in `QueryProvider`, mounts navbar/footer/toaster/analytics.         |
+| `app/(public)/page.tsx`                   | Home page — heaviest server component: settings, projects, experiences, geocoding, view-count increment.                                   |
+| `features/home/components/home-view.tsx`  | Client component composing hero, featured projects, experiences, contributions, and the widgets grid.                                      |
+| `db/schema.ts`                            | Single source of truth for every table; drives migrations and all query typing.                                                            |
+| `db/client.ts`                            | Chooses Turso vs local SQLite based on `VERCEL` env — check here before debugging "works locally, not on Vercel" issues.                   |
+| `lib/auth.ts` / `lib/auth-client.ts`      | Auth boundary — every protected route/action depends on these.                                                                             |
+| `lib/base-url.ts`                         | Resolves the base URL used for internal `fetch()` calls across Vercel/production/local — check here first if server-side fetches 404/fail. |
+| `lib/utils.ts`                            | Houses `cn()`.                                                                                                                             |
+| `hooks/use-crud.ts`                       | Generic admin CRUD hook — reuse this before writing new fetch/mutation logic for any list resource.                                        |
+| `config/app-config.ts`                    | Route-name constants and base URL — check here before hardcoding a route string elsewhere.                                                 |
+| `components/providers/query-provider.tsx` | TanStack Query client setup; if admin data isn't refreshing, check the config here first.                                                  |
+| `drizzle.config.ts`                       | Points Drizzle Kit at `db/schema.ts` and the migrations output folder — needed for any `db:generate`/`db:push` command.                    |
 
 ---
 

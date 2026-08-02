@@ -14,7 +14,6 @@ Personal portfolio for Thu Rein Htet — Next.js App Router, with a public site 
 - `docs/PROJECT_MAP.md` — architecture, data flow, routing, auth, state management
 - `docs/CODING_GUIDELINES.md` — folder structure, coding standards, naming conventions
 - `docs/DESIGN_SYSTEM.md` — colors, typography, spacing, motion, component and accessibility rules (current source of truth for anything visual)
-- `docs/References.md` — original jasoncameron.dev structural/UX inspiration (§1–11). Its §12 "Locked Decisions" is historical and superseded by `DESIGN_SYSTEM.md`/`PROJECT_MAP.md` wherever they disagree — check the current docs, not §12, before touching styling or theme.
 
 ## Stack
 
@@ -30,7 +29,6 @@ Personal portfolio for Thu Rein Htet — Next.js App Router, with a public site 
 | Auth                  | `better-auth`                                                                   |
 | Email                 | `nodemailer`                                                                    |
 | Media storage         | `cloudinary`                                                                    |
-| Maps                  | `leaflet` / `react-leaflet` (homepage "Currently Based In" widget)              |
 | Comments/notes        | `@giscus/react` (GitHub Discussions, `/leave-a-note`)                           |
 | Animation             | `framer-motion` (imported as `motion/react`)                                    |
 | Icons                 | `lucide-react`, `react-icons`                                                   |

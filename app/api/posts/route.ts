@@ -1,5 +1,6 @@
 import { db } from "@/db/client";
 import { post } from "@/db/schema";
+import { UnauthorizedError, requireAdminSession } from "@/lib/require-admin";
 import { asc, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -45,6 +46,7 @@ export async function GET(req: NextRequest) {
 // POST - Create new post
 export async function POST(req: NextRequest) {
   try {
+    await requireAdminSession(req);
     const body = await req.json();
     const { slug, title, excerpt, body: postBody, tags, published } = body;
 
@@ -76,6 +78,12 @@ export async function POST(req: NextRequest) {
       data: { id, slug, title, excerpt, body: postBody, tags, published },
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
     console.error("Failed to create post:", error);
     return NextResponse.json(
       {
@@ -90,6 +98,7 @@ export async function POST(req: NextRequest) {
 // PUT - Update post
 export async function PUT(req: NextRequest) {
   try {
+    await requireAdminSession(req);
     const body = await req.json();
     const { id, slug, title, excerpt, body: postBody, tags, published } = body;
 
@@ -118,6 +127,12 @@ export async function PUT(req: NextRequest) {
       data: { id, slug, title, excerpt, body: postBody, tags, published },
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
     console.error("Failed to update post:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update post" },
@@ -129,6 +144,7 @@ export async function PUT(req: NextRequest) {
 // PATCH - Update post order
 export async function PATCH(req: NextRequest) {
   try {
+    await requireAdminSession(req);
     const body = await req.json();
     const { posts: updatedPosts } = body;
 
@@ -153,6 +169,12 @@ export async function PATCH(req: NextRequest) {
       message: "Post order updated successfully",
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
     console.error("Failed to update post order:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update post order" },
@@ -164,6 +186,7 @@ export async function PATCH(req: NextRequest) {
 // DELETE - Delete post
 export async function DELETE(req: NextRequest) {
   try {
+    await requireAdminSession(req);
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
@@ -189,6 +212,12 @@ export async function DELETE(req: NextRequest) {
       message: "Post deleted successfully",
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
     console.error("Failed to delete post:", error);
     return NextResponse.json(
       { success: false, error: "Failed to delete post" },

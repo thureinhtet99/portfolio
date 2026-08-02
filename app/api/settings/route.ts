@@ -1,13 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db/client";
 import { setting } from "@/db/schema";
+import { UnauthorizedError, requireAdminSession } from "@/lib/require-admin";
 import { eq } from "drizzle-orm";
 import { v2 as cloudinary } from "cloudinary";
+import { NextRequest, NextResponse } from "next/server";
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
-  api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 // GET - Fetch a setting by key
@@ -52,6 +53,7 @@ export async function GET(req: NextRequest) {
 // POST - Create or update a setting
 export async function POST(req: NextRequest) {
   try {
+    await requireAdminSession(req);
     const body = await req.json();
     const { key, value } = body;
     if (!key || value === undefined) {
@@ -117,6 +119,12 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, message: "Setting saved" });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
     console.error("Error saving setting:", error);
     return NextResponse.json(
       { error: "Failed to save setting" },

@@ -1,49 +1,90 @@
 import { db } from "@/db/client";
 import { project } from "@/db/schema";
+import { UnauthorizedError, requireAdminSession } from "@/lib/require-admin";
 import { v2 as cloudinary } from "cloudinary";
 import { asc, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
-  api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// GET - Fetch all projects
-export async function GET() {
+// GET - Fetch all projects (or featured only via ?featured=true)
+export async function GET(req: NextRequest) {
   try {
-    const projects = await db
+    const { searchParams } = new URL(req.url);
+    const featuredOnly = searchParams.get("featured") === "true";
+
+    const allProjects = await db
       .select()
       .from(project)
       .orderBy(asc(project.order))
       .all();
 
-    const formattedProjects = projects.map((proj) => ({
-      id: proj.id,
-      slug: proj.slug,
-      title: proj.title,
-      summary: proj.summary,
-      startDate: proj.startDate,
-      description: proj.description,
-      technologies: proj.technologies
-        ? JSON.parse(proj.technologies)
-        : undefined,
-      image: proj.image,
-      githubUrl: proj.githubUrl,
-      liveUrl: proj.liveUrl,
-      objectives: proj.objectives ? JSON.parse(proj.objectives) : undefined,
-      collaborators: proj.collaborators
-        ? JSON.parse(proj.collaborators)
-        : undefined,
-      demoCredentials: proj.demoCredentials
-        ? JSON.parse(proj.demoCredentials)
-        : undefined,
-      featured: proj.featured,
-      order: proj.order,
-      createdAt: proj.createdAt,
-      updatedAt: proj.updatedAt,
-    }));
+    const filtered = featuredOnly
+      ? allProjects.filter((p) => p.featured)
+      : allProjects;
+
+    const formattedProjects = await Promise.all(
+      filtered.map(async (proj) => {
+        let stargazersCount = 0;
+        if (proj.githubUrl) {
+          const parts = proj.githubUrl.split("/").slice(-2);
+          if (parts.length === 2) {
+            try {
+              const ghRes = await fetch(
+                `https://api.github.com/repos/${parts[0]}/${parts[1]}`,
+                {
+                  headers: {
+                    Accept: "application/vnd.github.v3+json",
+                    ...(process.env.GITHUB_TOKEN
+                      ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
+                      : {}),
+                  },
+                  next: { revalidate: 86400 },
+                },
+              );
+              if (ghRes.ok) {
+                const ghData = await ghRes.json();
+                stargazersCount = ghData.stargazers_count ?? 0;
+              }
+            } catch {
+              // fallback to 0
+            }
+          }
+        }
+        return {
+          id: proj.id,
+          slug: proj.slug,
+          title: proj.title,
+          summary: proj.summary,
+          startDate: proj.startDate,
+          description: proj.description,
+          technologies: proj.technologies
+            ? JSON.parse(proj.technologies)
+            : undefined,
+          image: proj.image,
+          githubUrl: proj.githubUrl,
+          liveUrl: proj.liveUrl,
+          objectives: proj.objectives
+            ? JSON.parse(proj.objectives)
+            : undefined,
+          collaborators: proj.collaborators
+            ? JSON.parse(proj.collaborators)
+            : undefined,
+          demoCredentials: proj.demoCredentials
+            ? JSON.parse(proj.demoCredentials)
+            : undefined,
+          featured: proj.featured,
+          order: proj.order,
+          createdAt: proj.createdAt,
+          updatedAt: proj.updatedAt,
+          stargazersCount,
+        };
+      }),
+    );
 
     return NextResponse.json({
       success: true,
@@ -61,6 +102,7 @@ export async function GET() {
 // POST - Create new project
 export async function POST(req: NextRequest) {
   try {
+    await requireAdminSession(req);
     const body = await req.json();
     const {
       slug,
@@ -133,6 +175,12 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
     console.error("Failed to create project:", error);
     return NextResponse.json(
       {
@@ -148,6 +196,7 @@ export async function POST(req: NextRequest) {
 // PUT - Update project
 export async function PUT(req: NextRequest) {
   try {
+    await requireAdminSession(req);
     const body = await req.json();
     const {
       id,
@@ -216,6 +265,12 @@ export async function PUT(req: NextRequest) {
       },
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
     console.error("Failed to update project:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update project" },
@@ -227,6 +282,7 @@ export async function PUT(req: NextRequest) {
 // PATCH - Update project order
 export async function PATCH(req: NextRequest) {
   try {
+    await requireAdminSession(req);
     const body = await req.json();
     const { projects: updatedProjects } = body;
 
@@ -252,6 +308,12 @@ export async function PATCH(req: NextRequest) {
       message: "Project order updated successfully",
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
     console.error("Failed to update project order:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update project order" },
@@ -263,6 +325,7 @@ export async function PATCH(req: NextRequest) {
 // DELETE - Delete project
 export async function DELETE(req: NextRequest) {
   try {
+    await requireAdminSession(req);
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
@@ -320,6 +383,12 @@ export async function DELETE(req: NextRequest) {
       message: "Project deleted successfully",
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
     console.error("Failed to delete project:", error);
     return NextResponse.json(
       { success: false, error: "Failed to delete project" },

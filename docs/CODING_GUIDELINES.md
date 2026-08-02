@@ -72,7 +72,6 @@ This is the current folder structure:
 │   │       └── contributors-section.tsx
 │   │       (no data/ — DB-backed via app/api/projects)
 │   │
-│   │
 │   ├── timeline/
 │   │   └── components/
 │   │       ├── timeline-view.tsx

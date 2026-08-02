@@ -68,8 +68,8 @@ export default function WorkExperienceSection() {
     isMutating,
     create,
     update,
+    remove,
     reorder,
-    invalidate,
   } = useCrudResource<WorkExperienceType>({
     resource: APP_CONFIG.ROUTE.WORK_EXPERIENCES,
     labels: { singular: "work experience", plural: "work experiences" },
@@ -198,25 +198,11 @@ export default function WorkExperienceSection() {
     if (!workExpToDelete) return;
     setIsSaving(true);
     try {
-      const response = await fetch(
-        `/api/${APP_CONFIG.ROUTE.WORK_EXPERIENCES}?id=${workExpToDelete}`,
-        { method: "DELETE" },
-      );
-      const data = await response.json();
-      if (data.success) {
-        invalidate();
-        setDeleteDialogOpen(false);
-        setWorkExpToDelete(null);
-        toast.success("Work experience deleted successfully!");
-      } else {
-        throw new Error(data.error || "Failed to delete work experience");
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Failed to delete work experience";
-      toast.error(errorMessage);
+      await remove(workExpToDelete);
+      setDeleteDialogOpen(false);
+      setWorkExpToDelete(null);
+    } catch {
+      // toast handled by hook
     } finally {
       setIsSaving(false);
     }

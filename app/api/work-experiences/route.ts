@@ -1,5 +1,6 @@
 import { db } from "@/db/client";
 import { workExperience } from "@/db/schema";
+import { UnauthorizedError, requireAdminSession } from "@/lib/require-admin";
 import { asc, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -37,6 +38,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    await requireAdminSession(req);
     const body = await req.json();
     const { companyName, companyLogo, companyWebsite, positions } = body;
 
@@ -72,6 +74,12 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
     console.error("Failed to create exp:", error);
     return NextResponse.json(
       {
@@ -85,6 +93,7 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
+    await requireAdminSession(req);
     const body = await req.json();
     const { id, companyName, companyLogo, companyWebsite, positions } = body;
 
@@ -124,6 +133,12 @@ export async function PUT(req: NextRequest) {
       },
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
     console.error("Failed to update exp:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update exp" },
@@ -134,6 +149,7 @@ export async function PUT(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
+    await requireAdminSession(req);
     const updatedTimelines = await req.json();
 
     await Promise.all(
@@ -150,6 +166,12 @@ export async function PATCH(req: NextRequest) {
       message: "Exp order updated successfully",
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
     console.error("Failed to update exp order:", error);
     return NextResponse.json(
       { success: false, error: "Failed to update exp order" },
@@ -160,6 +182,7 @@ export async function PATCH(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
+    await requireAdminSession(req);
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
@@ -177,6 +200,12 @@ export async function DELETE(req: NextRequest) {
       message: "Exp deleted successfully",
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
     console.error("Failed to delete exp:", error);
     return NextResponse.json(
       { success: false, error: "Failed to delete exp" },

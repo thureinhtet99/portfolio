@@ -22,7 +22,7 @@
   --secondary-foreground: var(--gray);
 
   --muted: var(--dark-gray);
-  --muted-foreground: var(--gray);
+  --muted-foreground: #8a8a8e;
 
   --accent: var(--dark-gray);
   --accent-foreground: var(--gray);

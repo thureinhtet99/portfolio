@@ -17,7 +17,6 @@ import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import CertificatesSection from "./certificate-section";
 import PostsSection from "./posts-section";
 import ProjectsSection from "./project-section";
 import SettingsSection from "./settings-section";
@@ -94,7 +93,6 @@ export function AdminView({ userName }: { userName: string | null }) {
           {activeTab === "timelines" && <TimelinesSection />}
           {activeTab === "work-experiences" && <WorkExperienceSection />}
           {activeTab === "projects" && <ProjectsSection />}
-          {activeTab === "certificates" && <CertificatesSection />}
           {activeTab === "posts" && <PostsSection />}
         </div>
       </div>

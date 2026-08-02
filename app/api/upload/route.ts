@@ -1,14 +1,16 @@
-import { NextRequest, NextResponse } from "next/server";
+import { UnauthorizedError, requireAdminSession } from "@/lib/require-admin";
 import { v2 as cloudinary } from "cloudinary";
+import { NextRequest, NextResponse } from "next/server";
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
-  api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 export async function POST(req: NextRequest) {
   try {
+    await requireAdminSession(req);
     const formData = await req.formData();
     const file = formData.get("file") as File;
     const type = formData.get("type") as string; // 'image' or 'pdf'
@@ -43,6 +45,12 @@ export async function POST(req: NextRequest) {
       publicId: result.public_id,
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
     console.error("Upload error:", error);
     return NextResponse.json(
       { error: "Failed to upload file" },
