@@ -2,8 +2,8 @@ import { Footer } from "@/components/layout/footer";
 import { TopNavbar } from "@/components/layout/top-navbar";
 import QueryProvider from "@/components/providers/query-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { APP_CONFIG } from "@/config/app-config";
 import { getSiteUrl } from "@/lib/base-url";
+import { getSettings } from "@/lib/services/settings";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist_Mono, JetBrains_Mono } from "next/font/google";
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     siteName: "Thu Rein Htet Portfolio",
     images: [
       {
-        url: "@/public/TRH.png",
+        url: "/TRH.png",
         width: 1200,
         height: 630,
         alt: "Thu Rein Htet - Software Developer from Myanmar",
@@ -80,20 +80,6 @@ export const metadata: Metadata = {
     },
   },
 };
-
-async function getSettings() {
-  try {
-    const baseUrl = APP_CONFIG.BASE_URL;
-    const res = await fetch(`${baseUrl}/api/${APP_CONFIG.ROUTE.SETTINGS}`, {
-      cache: "no-store",
-    });
-    const { success, data } = await res.json();
-    if (success && data) return data;
-    return {};
-  } catch {
-    return {};
-  }
-}
 
 export default async function RootLayout({
   children,

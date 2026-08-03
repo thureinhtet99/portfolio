@@ -1,7 +1,8 @@
 import { db } from "@/db/client";
 import { timeline } from "@/db/schema";
+import { getTimelines } from "@/lib/services/timelines";
 import { UnauthorizedError, requireAdminSession } from "@/lib/require-admin";
-import { asc, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET - Fetch all timelines
@@ -9,11 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 // is handled by the separate /api/work-experiences endpoint.
 export async function GET() {
   try {
-    const timelines = await db
-      .select()
-      .from(timeline)
-      .orderBy(asc(timeline.order))
-      .all();
+    const timelines = await getTimelines();
 
     return NextResponse.json({
       success: true,

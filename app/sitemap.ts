@@ -1,4 +1,3 @@
-import { APP_CONFIG } from "@/config/app-config";
 import { db } from "@/db/client";
 import { post, project } from "@/db/schema";
 import { asc } from "drizzle-orm";
