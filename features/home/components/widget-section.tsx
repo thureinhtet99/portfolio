@@ -1,7 +1,5 @@
-import { APP_CONFIG } from "@/config/app-config";
-import { db } from "@/db/client";
-import { post } from "@/db/schema";
-import { asc } from "drizzle-orm";
+import { getPublishedPosts } from "@/lib/services/posts";
+import { getSettings } from "@/lib/services/settings";
 import {
   GitHubActivityWidget,
   KatibCommitItem,
@@ -56,39 +54,22 @@ async function getKatibStreak(username: string): Promise<KatibStreak | null> {
   }
 }
 
-async function getLatestPosts() {
-  try {
-    const allPosts = await db
-      .select()
-      .from(post)
-      .orderBy(asc(post.order), asc(post.createdAt))
-      .all();
-    return allPosts
-      .filter((p) => p.published)
-      .slice(0, 4)
-      .map((p) => ({
-        ...p,
-        tags: p.tags ? JSON.parse(p.tags) : [],
-      }));
-  } catch {
-    return [];
-  }
-}
-
 export async function WidgetSection() {
-  const settingsRes = await fetch(
-    `${APP_CONFIG.BASE_URL}/api/${APP_CONFIG.ROUTE.SETTINGS}`,
-    { cache: "no-store" },
-  );
-  const { data: settings } = await settingsRes.json();
-  const githubUrl = settings?.githubUrl || null;
+  const [settings, allPosts] = await Promise.all([
+    getSettings(),
+    getPublishedPosts(),
+  ]);
 
+  const githubUrl = settings.githubUrl || null;
   const username = githubUrl?.split("/").pop() || "";
 
-  const [katibCommits, katibStreak, latestPosts] = await Promise.all([
+  const latestPosts = allPosts
+    .slice(0, 4)
+    .map((p) => ({ ...p, tags: p.tags ? JSON.parse(p.tags) : [] }));
+
+  const [katibCommits, katibStreak] = await Promise.all([
     username ? getKatibCommits(username, 5) : { commits: [], languages: [] },
     username ? getKatibStreak(username) : null,
-    getLatestPosts(),
   ]);
 
   return (

@@ -68,7 +68,7 @@ export function TopNavbar({
 
   return (
     <nav
-      className="sticky top-0 z-50 bg-transparent backdrop-blur-md my-3"
+      className="sticky top-0 z-50 bg-transparent backdrop-blur-md py-3"
       style={{ viewTransitionName: "site-header" }}
     >
       <div className="app-shell flex items-center justify-between px-6 py-4">
@@ -131,8 +131,8 @@ export function TopNavbar({
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              sideOffset={14}
-              className="flex w-auto h-50 gap-2 rounded-md border border-background p-2 shadow-lg shadow-black/30"
+              sideOffset={16}
+              className="flex w-auto h-50 gap-2 rounded-md border border-muted-foreground/10 p-2"
             >
               {/* Left: Image cards */}
               <div className="flex gap-2">
@@ -153,7 +153,7 @@ export function TopNavbar({
                       <div className="flex items-center justify-center transition-transform duration-300 group-hover:scale-150">
                         <Construction />
                       </div>
-                      <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
+                      <div className="absolute inset-0 bg-black/40" />
                       <div
                         className={`relative z-10 p-2 ${
                           pathname === "/labs"

@@ -1,8 +1,9 @@
-import { APP_CONFIG } from "@/config/app-config";
 import { ContributionsSection } from "@/features/home/components/contributions-section";
 import { HomeView } from "@/features/home/components/home-view";
 import { WidgetSection } from "@/features/home/components/widget-section";
-import { ProjectType } from "@/types/index.type";
+import { getProjects } from "@/lib/services/projects";
+import { getSettings } from "@/lib/services/settings";
+import { getWorkExperiences } from "@/lib/services/work-experiences";
 import { Suspense } from "react";
 
 const FALLBACK_LAT = 16.8661;
@@ -29,73 +30,19 @@ async function geocodeCity(
     return null;
   }
 }
-async function getSettings() {
-  try {
-    const baseUrl = APP_CONFIG.BASE_URL;
-    const response = await fetch(
-      `${baseUrl}/api/${APP_CONFIG.ROUTE.SETTINGS}`,
-      {
-        cache: "no-store",
-      },
-    );
-    const { success, data } = await response.json();
-    if (success && data) return data;
-
-    return {};
-  } catch (error) {
-    console.error("Failed to load settings:", error);
-    return {};
-  }
-}
-
-async function getFeaturedProjects(): Promise<ProjectType[]> {
-  try {
-    const baseUrl = APP_CONFIG.BASE_URL;
-    const response = await fetch(
-      `${baseUrl}/api/${APP_CONFIG.ROUTE.PROJECTS}?featured=true`,
-      { cache: "no-store" },
-    );
-    const { success, data } = await response.json();
-    if (success && data) return data;
-    return [];
-  } catch (error) {
-    console.error("Failed to load featured projects:", error);
-    return [];
-  }
-}
-
-async function getExperiences() {
-  try {
-    const baseUrl = APP_CONFIG.BASE_URL;
-    const response = await fetch(
-      `${baseUrl}/api/${APP_CONFIG.ROUTE.WORK_EXPERIENCES}`,
-    );
-    const { success, data } = await response.json();
-    if (success && data) return data;
-
-    return [];
-  } catch (error) {
-    console.error("Failed to load work experiences:", error);
-    return [];
-  }
-}
 
 export default async function Home() {
-  const settings = await getSettings();
-  const featuredProjects = await getFeaturedProjects();
-  const experiences = await getExperiences();
-
-  // Increment view count (fire-and-forget)
-  fetch(`${APP_CONFIG.BASE_URL}/api/settings/increment-view`, {
-    method: "POST",
-  }).catch(() => {});
+  const [settings, featuredProjects, experiences] = await Promise.all([
+    getSettings(),
+    getProjects({ featured: true }),
+    getWorkExperiences(),
+  ]);
 
   const residence = settings.residence || "Myanmar";
   const location = await geocodeCity(residence);
   const lat = location?.lat ?? FALLBACK_LAT;
   const lng = location?.lng ?? FALLBACK_LNG;
-  const available =
-    settings.available === "true" || settings.available === true;
+  const available = settings.available === "true";
   const aboutMe = settings.aboutMe || "";
   const intro = settings.intro || "";
   const profileImage = settings.profileImage || null;

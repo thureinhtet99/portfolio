@@ -1,5 +1,6 @@
 import { db } from "@/db/client";
 import { post } from "@/db/schema";
+import { getPublishedPosts } from "@/lib/services/posts";
 import { UnauthorizedError, requireAdminSession } from "@/lib/require-admin";
 import { asc, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -10,17 +11,15 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const publishedOnly = searchParams.get("published") === "true";
 
-    const allPosts = await db
-      .select()
-      .from(post)
-      .orderBy(asc(post.order), asc(post.createdAt))
-      .all();
+    const allPosts = publishedOnly
+      ? await getPublishedPosts()
+      : await db
+          .select()
+          .from(post)
+          .orderBy(asc(post.order), asc(post.createdAt))
+          .all();
 
-    const filtered = publishedOnly
-      ? allPosts.filter((p) => p.published)
-      : allPosts;
-
-    const formatted = filtered.map((p) => ({
+    const formatted = allPosts.map((p) => ({
       id: p.id,
       slug: p.slug,
       title: p.title,

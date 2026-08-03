@@ -1,5 +1,6 @@
 import { db } from "@/db/client";
 import { setting } from "@/db/schema";
+import { getSettings } from "@/lib/services/settings";
 import { UnauthorizedError, requireAdminSession } from "@/lib/require-admin";
 import { eq } from "drizzle-orm";
 import { v2 as cloudinary } from "cloudinary";
@@ -19,15 +20,7 @@ export async function GET(req: NextRequest) {
 
     if (!key) {
       // Return all settings
-      const allSettings = await db.select().from(setting).all();
-      const settingsObj = allSettings.reduce(
-        (acc, item) => {
-          acc[item.key] = item.value;
-          return acc;
-        },
-        {} as Record<string, string>,
-      );
-
+      const settingsObj = await getSettings();
       return NextResponse.json({ success: true, data: settingsObj });
     }
 

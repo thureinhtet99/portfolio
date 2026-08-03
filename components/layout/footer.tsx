@@ -3,7 +3,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { APP_CONFIG } from "@/config/app-config";
+import { getSettings } from "@/lib/services/settings";
 import Link from "next/link";
 import { FaCode, FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
 
@@ -14,17 +14,11 @@ export async function Footer() {
   let emailUrl = "";
 
   try {
-    const baseUrl = APP_CONFIG.BASE_URL;
-    const res = await fetch(`${baseUrl}/api/${APP_CONFIG.ROUTE.SETTINGS}`, {
-      cache: "no-store",
-    });
-    const { success, data } = await res.json();
-    if (success && data) {
-      viewCount = Number(data.siteViews || "0").toLocaleString();
-      githubUrl = data.githubUrl || "";
-      linkedinUrl = data.linkedinUrl || "";
-      emailUrl = data.emailUrl || "";
-    }
+    const settings = await getSettings();
+    viewCount = Number(settings.siteViews || "0").toLocaleString();
+    githubUrl = settings.githubUrl || "";
+    linkedinUrl = settings.linkedinUrl || "";
+    emailUrl = settings.emailUrl || "";
   } catch {
     // ignore
   }

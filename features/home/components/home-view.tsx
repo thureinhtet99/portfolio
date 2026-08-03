@@ -73,7 +73,7 @@ export function HomeView({
             <span className="text-muted-foreground text-md sm:text-base ">
               Good to see you!
             </span>
-            <h1 className="group flex items-center gap-4 text-3xl font-bold text-muted-foreground sm:text-4xl">
+            <h1 className="group flex items-center gap-4 text-4xl font-bold text-muted-foreground sm:text-5xl">
               <span>
                 I&apos;m <span className="text-primary">Thu Rein Htet</span>
               </span>
@@ -98,7 +98,7 @@ export function HomeView({
                           href={href}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="hover:bg-primary hover:text-background text-muted-foreground"
+                          className="hover:bg-primary hover:text-background text-white"
                         >
                           {children}
                         </a>
@@ -229,9 +229,7 @@ export function HomeView({
       {/* Experiences */}
       <section id="experience-section" className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl space-y-10">
-          <h2 className=" text-4xl font-bold text-foreground tracking-[-0.02em]">
-            Experiences
-          </h2>
+          <h2 className="text-4xl font-bold tracking-[-0.02em]">Experiences</h2>
           {experiences.length > 0 ? (
             <WorkExperienceWithRail experiences={experiences} />
           ) : (
@@ -243,7 +241,7 @@ export function HomeView({
       {/* Contribution */}
       <section id="contributions-section" className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl space-y-6">
-          <h2 className=" text-4xl font-bold text-foreground tracking-[-0.02em]">
+          <h2 className=" text-4xl font-bold tracking-[-0.02em]">
             Contributions
           </h2>
           {contributionsSection}

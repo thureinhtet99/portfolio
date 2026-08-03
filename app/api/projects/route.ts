@@ -1,8 +1,9 @@
 import { db } from "@/db/client";
 import { project } from "@/db/schema";
+import { getProjects } from "@/lib/services/projects";
 import { UnauthorizedError, requireAdminSession } from "@/lib/require-admin";
 import { v2 as cloudinary } from "cloudinary";
-import { asc, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 cloudinary.config({
@@ -17,18 +18,12 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const featuredOnly = searchParams.get("featured") === "true";
 
-    const allProjects = await db
-      .select()
-      .from(project)
-      .orderBy(asc(project.order))
-      .all();
-
-    const filtered = featuredOnly
-      ? allProjects.filter((p) => p.featured)
-      : allProjects;
+    const allProjects = await getProjects(
+      featuredOnly ? { featured: true } : undefined,
+    );
 
     const formattedProjects = await Promise.all(
-      filtered.map(async (proj) => {
+      allProjects.map(async (proj) => {
         let stargazersCount = 0;
         if (proj.githubUrl) {
           const parts = proj.githubUrl.split("/").slice(-2);
