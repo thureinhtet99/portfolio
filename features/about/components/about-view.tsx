@@ -7,20 +7,11 @@ import ReactMarkdown from "react-markdown";
 type Props = {
   aboutMe: string;
   profileImage: StaticImageData | string | null;
-  // email: string | null;
-  // socialLinks: {
-  //   github: string | null;
-  //   linkedin: string | null;
-  //   facebook: string | null;
-  // };
 };
 
-export function AboutView({
-  aboutMe,
-  profileImage,
-  // email,
-  // socialLinks,
-}: Props) {
+export function AboutView({ aboutMe, profileImage }: Props) {
+  const imgSrc = profileImage || profileImg;
+
   return (
     <div className="page-shell">
       {/* About */}
@@ -30,18 +21,16 @@ export function AboutView({
 
           <div className="flex flex-col gap-8 md:flex-row">
             {/* Portrait */}
-            {profileImage && (
-              <div className="relative h-64 w-full overflow-hidden rounded-sm md:h-100 md:w-80 shrink-0 self-center">
-                <Image
-                  src={profileImg}
-                  alt="Thu Rein Htet"
-                  fill
-                  sizes="(max-width: 768px) 336px, 320px"
-                  className="object-cover"
-                  priority
-                />
-              </div>
-            )}
+            <div className="relative h-64 w-full overflow-hidden rounded-sm md:h-100 md:w-80 shrink-0 self-center">
+              <Image
+                src={imgSrc}
+                alt="Thu Rein Htet"
+                fill
+                sizes="(max-width: 768px) 336px, 320px"
+                className="object-cover"
+                priority
+              />
+            </div>
 
             {/* Bio */}
             <div className="flex-1 text-base leading-relaxed sm:text-md">

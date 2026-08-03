@@ -302,31 +302,6 @@ export default function SettingsSection() {
     }
   };
 
-  const handleSaveRoles = async () => {
-    setIsSaving(true);
-    try {
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.SETTINGS}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          key: "roles",
-          value: roles,
-        }),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        toast.success("Roles updated successfully!");
-      } else {
-        throw new Error("Failed to save");
-      }
-    } catch {
-      toast.error("Failed to update roles");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   return (
     <div className="space-y-6">
       {/* Profile Picture */}
@@ -392,36 +367,6 @@ export default function SettingsSection() {
               )}
             </Button>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Roles */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            Professional Roles
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="roles">Roles (comma-separated)</Label>
-            <Input
-              id="roles"
-              value={roles}
-              onChange={(e) => setRoles(e.target.value)}
-              placeholder="e.g. Frontend Developer, Backend Developer, Fullstack Developer"
-              className="h-11"
-            />
-          </div>
-          <Button
-            className="w-full"
-            size="lg"
-            onClick={handleSaveRoles}
-            disabled={isSaving}
-          >
-            <Save className="h-4 w-4" />
-            {isSaving ? "Updating..." : "Update Roles"}
-          </Button>
         </CardContent>
       </Card>
 
@@ -612,20 +557,6 @@ export default function SettingsSection() {
               value={githubUrl}
               onChange={(e) => setGithubUrl(e.target.value)}
               placeholder="https://github.com/username"
-              className="h-11"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="facebook" className="flex items-center gap-2">
-              <FaFacebook className="h-4 w-4" />
-              Facebook URL
-            </Label>
-            <Input
-              id="facebook"
-              type="url"
-              value={facebookUrl}
-              onChange={(e) => setFacebookUrl(e.target.value)}
-              placeholder="https://facebook.com/username"
               className="h-11"
             />
           </div>
