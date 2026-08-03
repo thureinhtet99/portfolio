@@ -23,7 +23,7 @@ export function PostsView({ posts }: { posts: PostType[] }) {
                     transitionTypes={["nav-forward"]}
                     className="group block space-y-2"
                   >
-                    <h2 className="inline-block text-xl font-semibold text-foreground group-hover:bg-primary group-hover:text-background transition-colors">
+                    <h2 className="inline-block text-xl font-semibold group-hover:bg-primary group-hover:text-background transition-colors">
                       {post.title.split(" ").map((word, i) => (
                         <ViewTransition
                           key={i}

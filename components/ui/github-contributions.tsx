@@ -69,7 +69,7 @@ export function GitHubContributions({
             <div className="text-muted-foreground">
               {totalCount.toLocaleString("en")} contributions in {year} on{" "}
               <a
-                className="text-foreground link-underline"
+                className="link-underline"
                 href={githubProfileUrl}
                 target="_blank"
                 rel="noopener"
