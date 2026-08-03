@@ -16,4 +16,8 @@ export const auth = betterAuth({
   },
   secret: process.env.BETTER_AUTH_SECRET || "change-this-to-a-random-secret",
   baseURL: getBaseUrl(),
+  trustedOrigins: [
+    "https://thureinhtet-portfolio.vercel.app",
+    "http://localhost:3000",
+  ],
 });
