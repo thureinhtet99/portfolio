@@ -2,6 +2,15 @@ import { db } from "@/db/client";
 import { project } from "@/db/schema";
 import { asc } from "drizzle-orm";
 
+function safeParseJson(value: string | null): unknown[] | undefined {
+  if (!value) return undefined;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value.split(",").map((s) => s.trim());
+  }
+}
+
 function formatProject(p: (typeof project.$inferSelect)[]) {
   return p.map((proj) => ({
     id: proj.id,
@@ -11,16 +20,14 @@ function formatProject(p: (typeof project.$inferSelect)[]) {
     startDate: proj.startDate ?? undefined,
     description: proj.description ?? undefined,
     image: proj.image ?? undefined,
-    technologies: proj.technologies ? JSON.parse(proj.technologies) : undefined,
+    technologies: safeParseJson(proj.technologies) as string[] | undefined,
     githubUrl: proj.githubUrl ?? undefined,
     liveUrl: proj.liveUrl ?? undefined,
-    objectives: proj.objectives ? JSON.parse(proj.objectives) : undefined,
-    collaborators: proj.collaborators
-      ? JSON.parse(proj.collaborators)
-      : undefined,
-    demoCredentials: proj.demoCredentials
-      ? JSON.parse(proj.demoCredentials)
-      : undefined,
+    objectives: safeParseJson(proj.objectives) as string[] | undefined,
+    collaborators: safeParseJson(proj.collaborators) as string[] | undefined,
+    demoCredentials: safeParseJson(proj.demoCredentials) as
+      | { role: string; email: string; password: string }[]
+      | undefined,
     featured: proj.featured,
     order: proj.order,
     createdAt: proj.createdAt,

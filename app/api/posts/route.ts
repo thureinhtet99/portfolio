@@ -1,6 +1,6 @@
 import { db } from "@/db/client";
 import { post } from "@/db/schema";
-import { getPublishedPosts } from "@/lib/services/posts";
+import { getPublishedPosts } from "@/features/posts/services/post.service";
 import { UnauthorizedError, requireAdminSession } from "@/lib/require-admin";
 import { asc, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -25,7 +25,15 @@ export async function GET(req: NextRequest) {
       title: p.title,
       excerpt: p.excerpt,
       body: p.body,
-      tags: p.tags ? JSON.parse(p.tags) : [],
+      tags: p.tags
+        ? (() => {
+            try {
+              return JSON.parse(p.tags);
+            } catch {
+              return p.tags.split(",").map((s) => s.trim());
+            }
+          })()
+        : [],
       published: p.published,
       order: p.order,
       createdAt: p.createdAt,

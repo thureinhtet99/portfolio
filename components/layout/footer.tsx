@@ -3,7 +3,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getSettings } from "@/lib/services/settings";
+import { getSettings } from "@/features/admin/services/settings.service";
 import Link from "next/link";
 import { FaCode, FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
 

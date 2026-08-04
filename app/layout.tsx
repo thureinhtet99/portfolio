@@ -3,7 +3,7 @@ import { TopNavbar } from "@/components/layout/top-navbar";
 import QueryProvider from "@/components/providers/query-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { getSiteUrl } from "@/lib/base-url";
-import { getSettings } from "@/lib/services/settings";
+import { getSettings } from "@/features/admin/services/settings.service";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist_Mono, JetBrains_Mono } from "next/font/google";

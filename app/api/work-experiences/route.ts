@@ -1,23 +1,13 @@
 import { db } from "@/db/client";
 import { workExperience } from "@/db/schema";
-import { getWorkExperiences } from "@/lib/services/work-experiences";
+import { getWorkExperiences } from "@/features/timeline/services/work-experience.service";
 import { UnauthorizedError, requireAdminSession } from "@/lib/require-admin";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const rawExps = await getWorkExperiences();
-    const exps = rawExps.map((exp) => ({
-      id: exp.id,
-      companyName: exp.companyName,
-      companyLogo: exp.companyLogo,
-      companyWebsite: exp.companyWebsite,
-      positions: exp.positions ? JSON.parse(exp.positions) : [],
-      order: exp.order,
-      createdAt: exp.createdAt,
-      updatedAt: exp.updatedAt,
-    }));
+    const exps = await getWorkExperiences();
 
     return NextResponse.json({
       success: true,

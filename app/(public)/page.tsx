@@ -1,9 +1,9 @@
 import { ContributionsSection } from "@/features/home/components/contributions-section";
 import { HomeView } from "@/features/home/components/home-view";
 import { WidgetSection } from "@/features/home/components/widget-section";
-import { getProjects } from "@/lib/services/projects";
-import { getSettings } from "@/lib/services/settings";
-import { getWorkExperiences } from "@/lib/services/work-experiences";
+import { getSettings } from "@/features/admin/services/settings.service";
+import { getProjects } from "@/features/projects/services/project.service";
+import { getWorkExperiences } from "@/features/timeline/services/work-experience.service";
 import { Suspense } from "react";
 
 const FALLBACK_LAT = 16.8661;

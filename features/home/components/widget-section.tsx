@@ -1,5 +1,5 @@
-import { getPublishedPosts } from "@/lib/services/posts";
-import { getSettings } from "@/lib/services/settings";
+import { getSettings } from "@/features/admin/services/settings.service";
+import { getPublishedPosts } from "@/features/posts/services/post.service";
 import {
   GitHubActivityWidget,
   KatibCommitItem,
@@ -63,9 +63,18 @@ export async function WidgetSection() {
   const githubUrl = settings.githubUrl || null;
   const username = githubUrl?.split("/").pop() || "";
 
-  const latestPosts = allPosts
-    .slice(0, 4)
-    .map((p) => ({ ...p, tags: p.tags ? JSON.parse(p.tags) : [] }));
+  const latestPosts = allPosts.slice(0, 4).map((p) => ({
+    ...p,
+    tags: p.tags
+      ? (() => {
+          try {
+            return JSON.parse(p.tags);
+          } catch {
+            return p.tags.split(",").map((s: string) => s.trim());
+          }
+        })()
+      : [],
+  }));
 
   const [katibCommits, katibStreak] = await Promise.all([
     username ? getKatibCommits(username, 5) : { commits: [], languages: [] },

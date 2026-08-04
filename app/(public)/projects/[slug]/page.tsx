@@ -5,6 +5,15 @@ import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+function safeParseJson(value: string | null): unknown[] | undefined {
+  if (!value) return undefined;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value.split(",").map((s) => s.trim());
+  }
+}
+
 async function getProject(slug: string) {
   try {
     const result = await db
@@ -24,10 +33,12 @@ async function getProject(slug: string) {
       image: p.image ?? undefined,
       githubUrl: p.githubUrl ?? undefined,
       liveUrl: p.liveUrl ?? undefined,
-      technologies: p.technologies ? JSON.parse(p.technologies) : [],
-      objectives: p.objectives ? JSON.parse(p.objectives) : [],
-      collaborators: p.collaborators ? JSON.parse(p.collaborators) : [],
-      demoCredentials: p.demoCredentials ? JSON.parse(p.demoCredentials) : [],
+      technologies: safeParseJson(p.technologies) as string[] | undefined,
+      objectives: safeParseJson(p.objectives) as string[] | undefined,
+      collaborators: safeParseJson(p.collaborators) as string[] | undefined,
+      demoCredentials: safeParseJson(p.demoCredentials) as
+        | { role: string; email: string; password: string }[]
+        | undefined,
       stargazersCount: 0,
     };
 

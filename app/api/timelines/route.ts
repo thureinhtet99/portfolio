@@ -1,6 +1,6 @@
 import { db } from "@/db/client";
 import { timeline } from "@/db/schema";
-import { getTimelines } from "@/lib/services/timelines";
+import { getTimelines } from "@/features/timeline/services/timeline.service";
 import { UnauthorizedError, requireAdminSession } from "@/lib/require-admin";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";

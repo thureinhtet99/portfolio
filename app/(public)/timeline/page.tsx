@@ -1,5 +1,5 @@
 import TimelineView from "@/features/timeline/components/timeline-view";
-import { getTimelines } from "@/lib/services/timelines";
+import { getTimelines } from "@/features/timeline/services/timeline.service";
 
 export default async function Timelines() {
   const timelines = await getTimelines();

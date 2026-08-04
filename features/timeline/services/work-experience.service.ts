@@ -2,6 +2,15 @@ import { db } from "@/db/client";
 import { workExperience } from "@/db/schema";
 import { asc } from "drizzle-orm";
 
+function safeParseJson<T>(value: string | null, fallback: T): T {
+  if (!value) return fallback;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return fallback;
+  }
+}
+
 export async function getWorkExperiences() {
   const rawExps = await db
     .select()
@@ -14,7 +23,7 @@ export async function getWorkExperiences() {
     companyName: exp.companyName,
     companyLogo: exp.companyLogo ?? undefined,
     companyWebsite: exp.companyWebsite ?? undefined,
-    positions: exp.positions ? JSON.parse(exp.positions) : [],
+    positions: safeParseJson(exp.positions, []),
     order: exp.order,
     createdAt: exp.createdAt,
     updatedAt: exp.updatedAt,

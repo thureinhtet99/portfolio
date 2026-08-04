@@ -487,11 +487,6 @@ export default function SettingsSection() {
 
       {/* About Me & Intro */}
       <Card>
-        {/* <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            About & Introduction
-          </CardTitle>
-        </CardHeader> */}
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="intro" className="text-lg">

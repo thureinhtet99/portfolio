@@ -1,6 +1,6 @@
 import { db } from "@/db/client";
 import { setting } from "@/db/schema";
-import { getSettings } from "@/lib/services/settings";
+import { getSettings } from "@/features/admin/services/settings.service";
 import { UnauthorizedError, requireAdminSession } from "@/lib/require-admin";
 import { eq } from "drizzle-orm";
 import { v2 as cloudinary } from "cloudinary";

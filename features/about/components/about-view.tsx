@@ -1,15 +1,14 @@
-"use client";
-
 import profileImg from "@/public/profile.jpg";
 import Image, { StaticImageData } from "next/image";
 import ReactMarkdown from "react-markdown";
 
-type Props = {
+export function AboutView({
+  aboutMe,
+  profileImage,
+}: {
   aboutMe: string;
   profileImage: StaticImageData | string | null;
-};
-
-export function AboutView({ aboutMe, profileImage }: Props) {
+}) {
   const imgSrc = profileImage || profileImg;
 
   return (
@@ -21,7 +20,7 @@ export function AboutView({ aboutMe, profileImage }: Props) {
 
           <div className="flex flex-col gap-8 md:flex-row">
             {/* Portrait */}
-            <div className="relative h-64 w-full overflow-hidden rounded-sm md:h-100 md:w-80 shrink-0 self-center">
+            <div className="relative h-64 w-full overflow-hidden rounded-sm md:h-100 md:w-80 shrink-0 self-start">
               <Image
                 src={imgSrc}
                 alt="Thu Rein Htet"

@@ -30,7 +30,15 @@ async function getPost(slug: string) {
     const p = result[0];
     return {
       ...p,
-      tags: p.tags ? JSON.parse(p.tags) : [],
+      tags: p.tags
+        ? (() => {
+            try {
+              return JSON.parse(p.tags);
+            } catch {
+              return p.tags.split(",").map((s) => s.trim());
+            }
+          })()
+        : [],
     };
   } catch (error) {
     console.error("Failed to fetch post:", error);
