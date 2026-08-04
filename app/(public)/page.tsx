@@ -1,20 +1,14 @@
 import { ContributionsSection } from "@/features/home/components/contributions-section";
 import { HomeView } from "@/features/home/components/home-view";
+import { getResidenceCoordinates } from "@/features/home/services/location.service";
 import { WidgetSection } from "@/features/home/components/widget-section";
 import { getSettings } from "@/features/admin/services/settings.service";
 import { getProjects } from "@/features/projects/services/project.service";
 import { getWorkExperiences } from "@/features/timeline/services/work-experience.service";
 import { Suspense } from "react";
 
-const FALLBACK_LAT = 16.8661;
-const FALLBACK_LNG = 96.1951;
-
 export default async function Home() {
-  const [settings, featuredProjects, experiences] = await Promise.all([
-    getSettings(),
-    getProjects({ featured: true }),
-    getWorkExperiences(),
-  ]);
+  const settings = await getSettings();
 
   const residence = settings.residence || "Myanmar";
   const available = settings.available === "true";
@@ -27,12 +21,18 @@ export default async function Home() {
   const linkedinUrl = settings.linkedinUrl || null;
   const facebookUrl = settings.facebookUrl || null;
 
+  const [featuredProjects, experiences, location] = await Promise.all([
+    getProjects({ featured: true }),
+    getWorkExperiences(),
+    getResidenceCoordinates(residence),
+  ]);
+
   return (
     <HomeView
       experiences={experiences}
       residence={residence}
-      lat={FALLBACK_LAT}
-      lng={FALLBACK_LNG}
+      lat={location.lat}
+      lng={location.lng}
       available={available}
       aboutMe={aboutMe}
       intro={intro}

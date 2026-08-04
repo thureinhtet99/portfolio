@@ -254,9 +254,12 @@ export function HomeView({
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4">
             {/* Currently Based In */}
             <div className="p-5 border border-muted-foreground/20 rounded-md col-span-2">
-              <div className="flex items-center gap-2 mb-4">
-                <MapPin className="h-4 w-4 text-primary" />
-                <h3 className="text-sm font-semibold">Currently Based In</h3>
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-primary" />
+                  <h3 className="text-sm font-semibold">Currently Based In</h3>
+                </div>
+                <p className="capitalize text-sm">{residence}</p>
               </div>
 
               <LocationMapClient
@@ -273,7 +276,7 @@ export function HomeView({
                   <LuMessageCircleMore className="h-4 w-4 text-primary" />
                   Leave a message
                 </h3>
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="text-sm mb-4">
                   Always open to great projects and good conversations.
                 </p>
               </div>
