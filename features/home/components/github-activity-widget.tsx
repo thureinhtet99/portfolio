@@ -25,23 +25,16 @@ export type KatibLanguage = {
   color: string;
 };
 
-export type KatibStreak = {
-  currentStreak: number;
-  highestStreak: number;
-  active: boolean;
-};
-
 type Props = {
   commits: KatibCommitItem[];
   languages: KatibLanguage[];
-  streak: KatibStreak | null;
 };
 
-export function GitHubActivityWidget({ commits, languages, streak }: Props) {
+export function GitHubActivityWidget({ commits, languages }: Props) {
   const hasCommits = commits.length > 0;
   const hasLanguages = languages.length > 0;
 
-  if (!hasCommits && !hasLanguages && !streak) {
+  if (!hasCommits && !hasLanguages) {
     return (
       <div className="w-full p-4 sm:p-5 border border-muted-foreground/20 rounded-md">
         <div className="flex items-center gap-2 mb-4">
@@ -54,7 +47,6 @@ export function GitHubActivityWidget({ commits, languages, streak }: Props) {
   }
 
   const totalSize = languages.reduce((sum, l) => sum + l.size, 0);
-  const topLanguages = languages.slice(0, 5);
 
   return (
     <div className="w-full p-4 sm:p-5 border border-muted-foreground/20 rounded-md">
@@ -106,7 +98,7 @@ export function GitHubActivityWidget({ commits, languages, streak }: Props) {
       {/* Language Bar */}
       {hasLanguages && (
         <div className="flex h-2 w-full overflow-hidden rounded-md border border-muted-foreground/20">
-          {topLanguages.map((lang) => {
+          {languages.map((lang) => {
             const percent = totalSize > 0 ? (lang.size / totalSize) * 100 : 0;
             return (
               <Tooltip key={lang.name}>

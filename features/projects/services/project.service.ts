@@ -1,6 +1,7 @@
 import { db } from "@/db/client";
 import { project } from "@/db/schema";
 import { asc } from "drizzle-orm";
+import { unstable_cache } from "next/cache";
 
 function safeParseJson(value: string | null): unknown[] | undefined {
   if (!value) return undefined;
@@ -34,16 +35,20 @@ function formatProject(p: (typeof project.$inferSelect)[]) {
   }));
 }
 
-export async function getProjects(options?: { featured?: boolean }) {
-  const allProjects = await db
-    .select()
-    .from(project)
-    .orderBy(asc(project.order))
-    .all();
+export const getProjects = unstable_cache(
+  async (options?: { featured?: boolean }) => {
+    const allProjects = await db
+      .select()
+      .from(project)
+      .orderBy(asc(project.order))
+      .all();
 
-  const filtered = options?.featured
-    ? allProjects.filter((p) => p.featured)
-    : allProjects;
+    const filtered = options?.featured
+      ? allProjects.filter((p) => p.featured)
+      : allProjects;
 
-  return formatProject(filtered);
-}
+    return formatProject(filtered);
+  },
+  ["projects"],
+  { revalidate: 600 },
+);

@@ -97,7 +97,6 @@ export default async function RootLayout({
           <main className="min-h-screen">
             <div className="mx-auto flex w-full flex-col justify-center">
               <TopNavbar
-                footer={<Footer />}
                 viewCount={Number(settings.siteViews || "0").toLocaleString()}
                 githubUrl={settings.githubUrl || ""}
                 linkedinUrl={settings.linkedinUrl || ""}

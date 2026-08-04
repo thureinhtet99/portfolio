@@ -4,6 +4,7 @@ import { PostDetailView } from "@/features/posts/components/post-detail-view";
 import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 
 export async function generateMetadata({
   params,
@@ -19,7 +20,7 @@ export async function generateMetadata({
   };
 }
 
-async function getPost(slug: string) {
+const getPost = cache(async (slug: string) => {
   try {
     const result = await db
       .select()
@@ -44,7 +45,7 @@ async function getPost(slug: string) {
     console.error("Failed to fetch post:", error);
     return null;
   }
-}
+});
 
 export default async function PostPage({
   params,

@@ -43,7 +43,6 @@ export function TopNavbar({
   linkedinUrl = "",
   emailUrl = "",
 }: {
-  footer?: ReactNode;
   viewCount?: string;
   githubUrl?: string;
   linkedinUrl?: string;

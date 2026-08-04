@@ -179,6 +179,19 @@
   }
 }
 
+/* Text morph — avoids raster scaling artifacts on shared text elements */
+::view-transition-group(.text-morph) {
+  animation-duration: 400ms;
+}
+::view-transition-old(.text-morph) {
+  display: none;
+}
+::view-transition-new(.text-morph) {
+  animation: none;
+  object-fit: none;
+  object-position: left top;
+}
+
 .scroll-fade {
   overflow: hidden; /* clips content to the mask edges */
   -webkit-mask-image: linear-gradient(

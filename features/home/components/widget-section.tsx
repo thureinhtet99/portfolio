@@ -1,10 +1,10 @@
 import { getSettings } from "@/features/admin/services/settings.service";
 import { getPublishedPosts } from "@/features/posts/services/post.service";
+import { unstable_cache } from "next/cache";
 import {
   GitHubActivityWidget,
   KatibCommitItem,
   KatibLanguage,
-  KatibStreak,
 } from "./github-activity-widget";
 import { LatestPostsWidget } from "./latest-posts-widget";
 
@@ -18,41 +18,31 @@ function getKatibHeaders() {
   };
 }
 
-async function getKatibCommits(
-  username: string,
-  limit = 5,
-): Promise<{ commits: KatibCommitItem[]; languages: KatibLanguage[] }> {
-  try {
-    const res = await fetch(
-      `${KATIB_BASE}/v2/commits/latest?username=${username}&limit=${limit}`,
-      {
-        headers: getKatibHeaders(),
-        next: { revalidate: 60 * 15 },
-      },
-    );
-    if (!res.ok) return { commits: [], languages: [] };
-    const data = await res.json();
-    return {
-      commits: data.commits ?? [],
-      languages: data.languages ?? [],
-    };
-  } catch {
-    return { commits: [], languages: [] };
-  }
-}
-
-async function getKatibStreak(username: string): Promise<KatibStreak | null> {
-  try {
-    const res = await fetch(`${KATIB_BASE}/streak?username=${username}`, {
-      headers: getKatibHeaders(),
-      next: { revalidate: 60 * 15 },
-    });
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
+const getKatibCommits = unstable_cache(
+  async (
+    username: string,
+    limit = 5,
+  ): Promise<{ commits: KatibCommitItem[]; languages: KatibLanguage[] }> => {
+    try {
+      const res = await fetch(
+        `${KATIB_BASE}/v2/commits/latest?username=${username}&limit=${limit}`,
+        {
+          headers: getKatibHeaders(),
+        },
+      );
+      if (!res.ok) return { commits: [], languages: [] };
+      const data = await res.json();
+      return {
+        commits: data.commits ?? [],
+        languages: data.languages ?? [],
+      };
+    } catch {
+      return { commits: [], languages: [] };
+    }
+  },
+  ["katib-commits"],
+  { revalidate: 900 },
+);
 
 export async function WidgetSection() {
   const [settings, allPosts] = await Promise.all([
@@ -76,10 +66,9 @@ export async function WidgetSection() {
       : [],
   }));
 
-  const [katibCommits, katibStreak] = await Promise.all([
-    username ? getKatibCommits(username, 5) : { commits: [], languages: [] },
-    username ? getKatibStreak(username) : null,
-  ]);
+  const katibCommits = username
+    ? await getKatibCommits(username, 5)
+    : { commits: [], languages: [] };
 
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -87,7 +76,6 @@ export async function WidgetSection() {
       <GitHubActivityWidget
         commits={katibCommits.commits}
         languages={katibCommits.languages}
-        streak={katibStreak}
       />
     </div>
   );

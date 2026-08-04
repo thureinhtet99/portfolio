@@ -4,15 +4,13 @@ Personal portfolio of **Thu Rein Htet** — a terminal-inspired website showcasi
 
 ## Features
 
-- 💼 Showcase featured projects
-- 📝 Publish blog posts with MDX
-- 📖 Display work experience timeline
-- 🚀 Highlight skills and adventures beyond coding
-- 📄 Download resume
-- 📬 Contact form with email support
-- 🔒 Admin dashboard for content management
-- 🌙 Dark / Light mode
-- 📱 Fully responsive design
+- Showcase featured projects
+- Publish blog posts with MDX
+- Display work experience
+- View resume
+- Contact form with email support
+- Admin dashboard for content management
+- Fully responsive design
 
 **Live Demo:** https://thureinhtet-portfolio.vercel.app
 

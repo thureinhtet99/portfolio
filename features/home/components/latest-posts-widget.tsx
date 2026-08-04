@@ -1,6 +1,7 @@
 import { PostType } from "@/types/index.type";
 import { format } from "date-fns";
 import Link from "next/link";
+import { ViewTransition } from "react";
 import { FaRegFileAlt } from "react-icons/fa";
 
 export function LatestPostsWidget({ posts }: { posts: PostType[] }) {
@@ -20,13 +21,18 @@ export function LatestPostsWidget({ posts }: { posts: PostType[] }) {
               key={post.id}
               className="group flex items-baseline justify-between text-sm"
             >
-              <Link
-                href={`/posts/${post.slug}`}
-                transitionTypes={["nav-forward"]}
-                className="truncate hover:bg-primary hover:text-background"
+              <ViewTransition
+                name={`post-title-${post.slug}`}
+                share="text-morph"
               >
-                {post.title}
-              </Link>
+                <Link
+                  href={`/posts/${post.slug}`}
+                  transitionTypes={["nav-forward"]}
+                  className="truncate hover:bg-primary hover:text-background"
+                >
+                  {post.title}
+                </Link>
+              </ViewTransition>
               <span className="shrink-0 flex items-center gap-x-4">
                 <span className="text-muted-foreground/60">-</span>
                 {format(new Date(post.createdAt), "dd MMM yyyy")}

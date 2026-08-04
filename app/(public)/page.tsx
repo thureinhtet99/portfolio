@@ -9,28 +9,6 @@ import { Suspense } from "react";
 const FALLBACK_LAT = 16.8661;
 const FALLBACK_LNG = 96.1951;
 
-async function geocodeCity(
-  city: string,
-): Promise<{ lat: number; lng: number } | null> {
-  try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1`,
-      {
-        headers: { "User-Agent": "thureinhtet-portfolio/3.0" },
-        next: { revalidate: 86400 * 7 },
-      },
-    );
-    if (!res.ok) return null;
-
-    const data = await res.json();
-    if (data.length === 0) return null;
-
-    return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
-  } catch {
-    return null;
-  }
-}
-
 export default async function Home() {
   const [settings, featuredProjects, experiences] = await Promise.all([
     getSettings(),
@@ -39,9 +17,6 @@ export default async function Home() {
   ]);
 
   const residence = settings.residence || "Myanmar";
-  const location = await geocodeCity(residence);
-  const lat = location?.lat ?? FALLBACK_LAT;
-  const lng = location?.lng ?? FALLBACK_LNG;
   const available = settings.available === "true";
   const aboutMe = settings.aboutMe || "";
   const intro = settings.intro || "";
@@ -56,8 +31,8 @@ export default async function Home() {
     <HomeView
       experiences={experiences}
       residence={residence}
-      lat={lat}
-      lng={lng}
+      lat={FALLBACK_LAT}
+      lng={FALLBACK_LNG}
       available={available}
       aboutMe={aboutMe}
       intro={intro}

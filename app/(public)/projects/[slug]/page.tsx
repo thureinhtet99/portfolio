@@ -4,6 +4,7 @@ import { ProjectDetailView } from "@/features/projects/components/project-detail
 import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 
 function safeParseJson(value: string | null): unknown[] | undefined {
   if (!value) return undefined;
@@ -14,7 +15,7 @@ function safeParseJson(value: string | null): unknown[] | undefined {
   }
 }
 
-async function getProject(slug: string) {
+const getProject = cache(async (slug: string) => {
   try {
     const result = await db
       .select()
@@ -72,7 +73,7 @@ async function getProject(slug: string) {
     console.error("Failed to load project:", error);
     return null;
   }
-}
+});
 
 export async function generateMetadata({
   params,
