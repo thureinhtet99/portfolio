@@ -26,8 +26,7 @@ function formatProject(p: (typeof project.$inferSelect)[]) {
     objectives: safeParseJson(proj.objectives) as string[] | undefined,
     collaborators: safeParseJson(proj.collaborators) as string[] | undefined,
     demoCredentials: safeParseJson(proj.demoCredentials) as
-      | { role: string; email: string; password: string }[]
-      | undefined,
+      { role: string; email: string; password: string }[] | undefined,
     featured: proj.featured,
     order: proj.order,
     createdAt: proj.createdAt,

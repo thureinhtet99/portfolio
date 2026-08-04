@@ -16,7 +16,11 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error("Failed to fetch exps:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to fetch exps" },
+      {
+        success: false,
+        error: "Failed to fetch exps",
+        details: error instanceof Error ? error.message : String(error),
+      },
       { status: 500 },
     );
   }

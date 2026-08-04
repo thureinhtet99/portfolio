@@ -37,8 +37,7 @@ async function getProject(slug: string) {
       objectives: safeParseJson(p.objectives) as string[] | undefined,
       collaborators: safeParseJson(p.collaborators) as string[] | undefined,
       demoCredentials: safeParseJson(p.demoCredentials) as
-        | { role: string; email: string; password: string }[]
-        | undefined,
+        { role: string; email: string; password: string }[] | undefined,
       stargazersCount: 0,
     };
 
