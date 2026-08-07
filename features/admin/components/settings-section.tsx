@@ -11,7 +11,7 @@ import { FileText, Save, Upload } from "lucide-react";
 import Image from "next/image";
 import NextLink from "next/link";
 import { useEffect, useState } from "react";
-import { FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { toast } from "sonner";
 
 export default function SettingsSection() {
@@ -493,7 +493,8 @@ export default function SettingsSection() {
               Introduction
             </Label>
             <p className="text-xs text-muted-foreground">
-              Supports Markdown formatting (e.g., **bold**, *italic*, [links]())
+              Supports Markdown formatting (e.g., **bold**, *italic*, [links](),
+              lists)
             </p>
             <Textarea
               id="intro"

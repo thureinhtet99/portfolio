@@ -253,7 +253,7 @@ export function HomeView({
         <div className="mx-auto max-w-5xl space-y-6">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4">
             {/* Currently Based In */}
-            <div className="p-5 border border-muted-foreground/20 rounded-md col-span-2">
+            <div className="p-5 border border-muted-foreground/20 rounded-md lg:col-span-2 md:col-span-4">
               <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-primary" />
@@ -270,7 +270,7 @@ export function HomeView({
             </div>
 
             {/* Leave message */}
-            <div className="w-full max-w-sm flex flex-col justify-between p-4 sm:p-5 border border-muted-foreground/20 rounded-md">
+            <div className="p-5 border border-muted-foreground/20 rounded-md lg:col-span-1 md:col-span-2">
               <div className="space-y-4">
                 <h3 className="text-sm font-semibold flex items-center gap-2">
                   <LuMessageCircleMore className="h-4 w-4 text-primary" />
@@ -289,7 +289,7 @@ export function HomeView({
             </div>
 
             {/* Quote */}
-            <blockquote className="relative w-full max-w-sm flex flex-col justify-between gap-4 p-5 sm:p-6 border border-muted-foreground/20 rounded-md">
+            <blockquote className="relative p-5 border border-muted-foreground/20 rounded-md lg:col-span-1 md:col-span-2">
               <Quote className="absolute -top-3 -left-2 size-6 text-muted-foreground/60 fill-muted-foreground/20" />
               <p className="text-sm leading-relaxed italic">
                 All that we are is the result of what we have thought.

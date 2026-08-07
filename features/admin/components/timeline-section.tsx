@@ -235,7 +235,8 @@ function TimelineForm({
         <div className="space-y-2">
           <Label>Content</Label>
           <p className="text-xs text-muted-foreground">
-            Supports Markdown formatting (e.g., **bold**, *italic*, [links]())
+            Supports Markdown formatting (e.g., **bold**, *italic*, [links](),
+            lists)
           </p>
           <Textarea
             value={form.description ?? ""}

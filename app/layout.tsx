@@ -2,15 +2,18 @@ import { Footer } from "@/components/layout/footer";
 import { TopNavbar } from "@/components/layout/top-navbar";
 import QueryProvider from "@/components/providers/query-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import {
+  getSettings,
+  getSiteViews,
+} from "@/features/admin/services/settings.service";
 import { getSiteUrl } from "@/lib/base-url";
-import { getSettings } from "@/features/admin/services/settings.service";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Geist_Mono, JetBrains_Mono } from "next/font/google";
 import { ReactNode, Suspense } from "react";
 import { Toaster } from "sonner";
 import "./globals.css";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
@@ -86,7 +89,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const settings = await getSettings();
+  const [settings, siteViews] = await Promise.all([
+    getSettings(),
+    getSiteViews(),
+  ]);
+  const viewCount = siteViews.toLocaleString();
 
   return (
     <html lang="en">
@@ -97,7 +104,7 @@ export default async function RootLayout({
           <main className="min-h-screen">
             <div className="mx-auto flex w-full flex-col justify-center">
               <TopNavbar
-                viewCount={Number(settings.siteViews || "0").toLocaleString()}
+                viewCount={viewCount}
                 githubUrl={settings.githubUrl || ""}
                 linkedinUrl={settings.linkedinUrl || ""}
                 emailUrl={settings.emailUrl || ""}
@@ -108,7 +115,12 @@ export default async function RootLayout({
             </div>
             <Toaster />
           </main>
-          <Footer />
+          <Footer
+            viewCount={viewCount}
+            githubUrl={settings.githubUrl || ""}
+            linkedinUrl={settings.linkedinUrl || ""}
+            emailUrl={settings.emailUrl || ""}
+          />
         </QueryProvider>
         <SpeedInsights />
         <Analytics />

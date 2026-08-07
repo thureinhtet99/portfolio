@@ -525,7 +525,8 @@ function ProjectForm({
         <div className="space-y-2">
           <Label>Description</Label>
           <p className="text-xs text-muted-foreground">
-            Supports Markdown formatting (e.g., **bold**, *italic*, [links]())
+            Supports Markdown formatting (e.g., **bold**, *italic*, [links](),
+            lists)
           </p>
           <Textarea
             value={formData.description}
@@ -713,18 +714,22 @@ function ProjectCard({
   const org = githubParts[0];
   const repo = githubParts[1];
 
-  const { data: githubContributors = [] } = useQuery<GitHubContributor[]>({
-    queryKey: ["github-contributors", org, repo],
-    queryFn: async () => {
-      const res = await fetch(
-        `/api/github/contributors?owner=${org}&repo=${repo}`,
-      );
-      const json = await res.json();
-      return json.success ? json.data : [];
-    },
-    enabled: !!org && !!repo,
-    staleTime: 86400_000,
-  });
+  const { data: githubContributorsData } = useQuery<GitHubContributor[]>({
+      queryKey: ["github-contributors", org, repo],
+      queryFn: async (): Promise<GitHubContributor[]> => {
+        const res = await fetch(
+          `/api/github/contributors?owner=${org}&repo=${repo}`,
+        );
+        const json = (await res.json()) as {
+          success: boolean;
+          data?: GitHubContributor[];
+        };
+        return json.success ? (json.data ?? []) : [];
+      },
+      enabled: !!org && !!repo,
+      staleTime: 86400_000,
+    });
+  const githubContributors: GitHubContributor[] = githubContributorsData ?? [];
 
   const manualCollaborators = project.collaborators || [];
 

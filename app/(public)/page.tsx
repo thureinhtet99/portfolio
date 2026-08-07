@@ -1,13 +1,18 @@
+import {
+  getSettings,
+  incrementSiteViews,
+} from "@/features/admin/services/settings.service";
 import { ContributionsSection } from "@/features/home/components/contributions-section";
 import { HomeView } from "@/features/home/components/home-view";
-import { getResidenceCoordinates } from "@/features/home/services/location.service";
 import { WidgetSection } from "@/features/home/components/widget-section";
-import { getSettings } from "@/features/admin/services/settings.service";
+import { getResidenceCoordinates } from "@/features/home/services/location.service";
 import { getProjects } from "@/features/projects/services/project.service";
 import { getWorkExperiences } from "@/features/timeline/services/work-experience.service";
 import { Suspense } from "react";
 
 export default async function Home() {
+  await incrementSiteViews();
+
   const settings = await getSettings();
 
   const residence = settings.residence || "Myanmar";

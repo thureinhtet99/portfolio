@@ -3,25 +3,20 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getSettings } from "@/features/admin/services/settings.service";
 import Link from "next/link";
 import { FaCode, FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
 
-export async function Footer() {
-  let viewCount = "0";
-  let githubUrl = "";
-  let linkedinUrl = "";
-  let emailUrl = "";
-
-  try {
-    const settings = await getSettings();
-    viewCount = Number(settings.siteViews || "0").toLocaleString();
-    githubUrl = settings.githubUrl || "";
-    linkedinUrl = settings.linkedinUrl || "";
-    emailUrl = settings.emailUrl || "";
-  } catch {
-    // ignore
-  }
+export function Footer({
+  viewCount = "0",
+  githubUrl = "",
+  linkedinUrl = "",
+  emailUrl = "",
+}: {
+  viewCount?: string;
+  githubUrl?: string;
+  linkedinUrl?: string;
+  emailUrl?: string;
+}) {
 
   return (
     <footer

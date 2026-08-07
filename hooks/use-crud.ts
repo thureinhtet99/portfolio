@@ -10,15 +10,27 @@ type UseCrudResourceOptions = {
   labels: { singular: string; plural: string };
 };
 
+type UseCrudResourceReturn<T extends { id: string }> = {
+  items: T[];
+  isLoading: boolean;
+  isError: boolean;
+  create: (payload: Partial<T>) => Promise<T>;
+  update: (payload: Partial<T> & { id: string }) => Promise<T>;
+  remove: (id: string) => Promise<string>;
+  reorder: (items: { id: string; order: number }[]) => Promise<{ id: string; order: number }[]>;
+  invalidate: () => void;
+  isMutating: boolean;
+};
+
 export function useCrudResource<T extends { id: string }>({
   resource,
   labels,
-}: UseCrudResourceOptions) {
+}: UseCrudResourceOptions): UseCrudResourceReturn<T> {
   const queryClient = useQueryClient();
   const queryKey = ["resource", resource];
   const endpoint = `/api/${resource}`;
 
-  const listQuery = useQuery({
+  const listQuery = useQuery<T[]>({
     queryKey,
     queryFn: async (): Promise<T[]> => {
       const res = await fetch(endpoint);
@@ -109,7 +121,7 @@ export function useCrudResource<T extends { id: string }>({
   });
 
   return {
-    items: listQuery.data ?? [],
+    items: listQuery.data ?? ([] as T[]),
     isLoading: listQuery.isLoading,
     isError: listQuery.isError,
     create: createMutation.mutateAsync,
