@@ -98,10 +98,10 @@ export default function TimelineView({
     <div className="py-16 sm:py-20 space-y-20 overflow-x-hidden">
       <div className="mx-auto max-w-5xl space-y-16 px-6">
         <header className="space-y-2">
-          <h2 className="text-3xl font-bold tracking-[-0.02em] sm:text-4xl">
+          <h1 className="text-3xl font-bold tracking-[-0.02em] sm:text-4xl">
             Timeline
-          </h2>
-          <p className="text-sm max-w-prose text-muted-foreground/70">
+          </h1>
+          <p className="text-sm max-w-prose text-muted-foreground">
             Notable moments, plotted along a single-axis timescale. Scroll
             horizontally to move through the years.
           </p>

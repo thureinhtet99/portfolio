@@ -72,10 +72,13 @@ Nearly all secondary/structural styling is done by dimming `--muted-foreground` 
 | Pattern                          | Use                                                                            |
 | -------------------------------- | ------------------------------------------------------------------------------ |
 | `border-muted-foreground/20`     | Default card/panel/input border (also the global `* { border-color }` default) |
-| `text-muted-foreground/50`–`/70` | De-emphasized text, unavailable-state color                                    |
+| `text-muted-foreground/85`–`/92` | De-emphasized body text (passes 4.5:1 contrast on `#1b1b1a`)                  |
+| `text-muted-foreground/50`–`/70` | **Unsafe for body text** — use only for decorative/non-text elements (icons, borders) |
 | `bg-card/…`, `border-border/…`   | Panel surfaces                                                                 |
 
 Stick to opacity steps already in use in the codebase (`/20`, `/30`, `/50`, `/60`, `/70`, `/85`, `/90`, `/92`) rather than inventing new fractions.
+
+**Contrast note:** On `#1b1b1a`, `--muted-foreground` (`#a7a7ac`) needs ≥85% opacity to clear 4.5:1 for normal-size text. Steps `/50`–`/70` fail WCAG AA for body text — reserve them for decorative elements (icons, borders, `aria-hidden` content).
 
 ### 2.3 Semantic token table
 

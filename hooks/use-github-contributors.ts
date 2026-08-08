@@ -4,7 +4,7 @@ import { GitHubContributor } from "@/app/api/github/contributors/route";
 import { useQuery } from "@tanstack/react-query";
 
 export function useGithubContributors(org: string, repo: string) {
-  return useQuery({
+  return useQuery<GitHubContributor[]>({
     queryKey: ["github-contributors", org, repo],
     queryFn: async () => {
       const res = await fetch(
@@ -12,9 +12,8 @@ export function useGithubContributors(org: string, repo: string) {
       );
       const json = await res.json();
 
-      if (!json.success || !Array.isArray(json.data)) {
+      if (!json.success || !Array.isArray(json.data))
         throw new Error(json.error || "Failed to fetch contributors");
-      }
 
       return json.data as GitHubContributor[];
     },

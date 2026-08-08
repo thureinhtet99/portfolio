@@ -1,3 +1,4 @@
+import { GitHubContributor } from "@/app/api/github/contributors/route";
 import { AdminItemActions } from "@/components/shared/admin-item-actions";
 import { ProjectCredentialsPanel } from "@/features/projects/components/project-credentials-panel";
 import { useCrudResource } from "@/hooks/use-crud";
@@ -672,10 +673,11 @@ function ProjectCard({
   isLast?: boolean;
 }) {
   const githubParts = project.githubUrl?.split("/").slice(-2) || [];
-  const org = githubParts[0];
-  const repo = githubParts[1];
+  const org = githubParts[0] ?? "";
+  const repo = githubParts[1] ?? "";
 
-  const { data: githubContributors = [] } = useGithubContributors(org, repo);
+  const { data } = useGithubContributors(org, repo);
+  const githubContributors: GitHubContributor[] = data ?? [];
 
   const manualCollaborators = project.collaborators || [];
 
@@ -802,7 +804,7 @@ function ProjectCard({
                   >
                     <FaGithub className="h-4 w-4" />
                     {contributor.login}
-                    <span className="text-xs text-muted-foreground/70">
+                    <span className="text-xs text-muted-foreground/85">
                       ({contributor.contributions})
                     </span>
                   </Link>
