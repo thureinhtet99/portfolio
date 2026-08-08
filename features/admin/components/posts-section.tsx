@@ -300,7 +300,11 @@ export default function PostsSection() {
                             size="sm"
                             variant="ghost"
                             onClick={() => togglePublished(post)}
-                            aria-label={post.published ? `Unpublish post ${post.title}` : `Publish post ${post.title}`}
+                            aria-label={
+                              post.published
+                                ? `Unpublish post ${post.title}`
+                                : `Publish post ${post.title}`
+                            }
                             title={post.published ? "Unpublish" : "Publish"}
                             className="h-9 w-9 p-0"
                           >
