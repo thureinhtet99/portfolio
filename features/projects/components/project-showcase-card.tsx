@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { GitHubStars } from "@/components/ui/github-stars";
+import { TerminalDots } from "@/components/ui/terminal-dots";
 import { cn } from "@/lib/utils";
 import { ProjectType } from "@/types/index.type";
 import { Tag } from "lucide-react";
@@ -12,7 +13,7 @@ import { ViewTransition } from "react";
 export function ProjectShowcaseCard({
   project,
   className,
-  techLimit = 4,
+  techLimit = 3,
 }: {
   project: ProjectType;
   className?: string;
@@ -48,11 +49,7 @@ export function ProjectShowcaseCard({
             <div className="relative rounded-lg overflow-hidden bg-background">
               {/* Terminal header */}
               <div className="flex items-center justify-between px-3">
-                <div className="flex gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
-                </div>
+                <TerminalDots />
                 <GitHubStars stargazersCount={stargazersCount} />
               </div>
 

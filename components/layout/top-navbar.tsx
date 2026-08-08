@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import { FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
 import { MdOutlineTimeline } from "react-icons/md";
 import { imageCards, navLinks, routeLabels } from "./data/nav-links";
@@ -67,7 +67,7 @@ export function TopNavbar({
 
   return (
     <nav
-      className="sticky top-0 z-50 bg-transparent backdrop-blur-md py-3"
+      className="sticky top-0 z-50 bg-transparent backdrop-blur-md pt-3"
       style={{ viewTransitionName: "site-header" }}
     >
       <div className="app-shell flex items-center justify-between px-6 py-4">
@@ -239,6 +239,21 @@ export function TopNavbar({
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
                   className={cn(
+                    "transition-colors hover:bg-primary hover:text-backgroundq",
+                    isActive(link.href)
+                      ? "text-white"
+                      : "text-muted-foreground",
+                  )}
+                >
+                  {link.label}
+                </Link>
+              ))}
+
+              {moreLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
                     "transition-colors hover:bg-primary hover:text-background",
                     isActive(link.href)
                       ? "text-white"
@@ -249,28 +264,6 @@ export function TopNavbar({
                 </Link>
               ))}
 
-              <div className="flex flex-col justify-start gap-4">
-                {moreLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={cn(
-                      "flex items-center gap-2 text-sm transition-colors cursor-pointer",
-                      isActive(link.href)
-                        ? "text-white"
-                        : "text-muted-foreground",
-                    )}
-                  >
-                    <span className="flex h-4 w-4 shrink-0 items-center justify-center">
-                      <link.icon className="h-4 w-4" />
-                    </span>
-                    <span className="font-medium text-base text-foreground hover:bg-primary hover:text-background">
-                      {link.label}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-
               <div className="flex items-center justify-between mt-6">
                 <span className="text-xs">{viewCount} views</span>
                 <div className="flex items-center gap-4">
@@ -279,9 +272,10 @@ export function TopNavbar({
                       href={githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      aria-label="GitHub profile"
                       className="hover:text-primary transition-colors"
                     >
-                      <FaGithub className="h-5 w-5" />
+                      <FaGithub className="h-5 w-5" aria-hidden="true" />
                     </Link>
                   )}
                   {linkedinUrl && (
@@ -289,9 +283,10 @@ export function TopNavbar({
                       href={linkedinUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      aria-label="LinkedIn profile"
                       className="hover:text-primary transition-colors"
                     >
-                      <FaLinkedin className="h-5 w-5" />
+                      <FaLinkedin className="h-5 w-5" aria-hidden="true" />
                     </Link>
                   )}
                   {emailUrl && (
@@ -299,9 +294,10 @@ export function TopNavbar({
                       href={emailUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      aria-label="Send email"
                       className="hover:text-primary transition-colors"
                     >
-                      <FaEnvelope className="h-5 w-5" />
+                      <FaEnvelope className="h-5 w-5" aria-hidden="true" />
                     </Link>
                   )}
                 </div>

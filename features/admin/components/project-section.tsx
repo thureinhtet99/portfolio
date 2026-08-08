@@ -1,4 +1,19 @@
-import { GitHubContributor } from "@/app/api/github/contributors/route";
+import { AdminItemActions } from "@/components/shared/admin-item-actions";
+import { ProjectCredentialsPanel } from "@/features/projects/components/project-credentials-panel";
+import { useCrudResource } from "@/hooks/use-crud";
+import { useGithubContributors } from "@/hooks/use-github-contributors";
+import { useImageUpload } from "@/hooks/use-image-upload";
+import { generateSlug } from "@/lib/utils";
+import { DemoCredentialType, ProjectType } from "@/types/index.type";
+import { format } from "date-fns";
+import { CalendarIcon, ExternalLink, Save, Upload, X } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+import { FaGithub } from "react-icons/fa";
+import { toast } from "sonner";
+import { DEMO_CREDENTIAL_ROLES } from "../constants";
+
 import AdminSectionHeader from "@/components/shared/admin-section-header";
 import CustomLoading from "@/components/shared/custom-loading";
 import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
@@ -17,29 +32,6 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { APP_CONFIG } from "@/config/app-config";
-import { ProjectCredentialsPanel } from "@/features/projects/components/project-credentials-panel";
-import { useCrudResource } from "@/hooks/use-crud";
-import { useImageUpload } from "@/hooks/use-image-upload";
-import { generateSlug } from "@/lib/utils";
-import { DemoCredentialType, ProjectType } from "@/types/index.type";
-import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
-import {
-  ArrowDown,
-  ArrowUp,
-  CalendarIcon,
-  Edit,
-  ExternalLink,
-  Save,
-  Trash2,
-  Upload,
-  X,
-} from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
-import { FaGithub } from "react-icons/fa";
-import { toast } from "sonner";
 
 type Props = {
   slug: string;
@@ -85,12 +77,12 @@ const hasPartialCredential = (email: string, password: string) =>
 const getDemoCredentialsFromForm = (formData: Props): DemoCredentialType[] =>
   [
     {
-      role: "User",
+      role: DEMO_CREDENTIAL_ROLES.USER,
       email: formData.demoUserEmail.trim(),
       password: formData.demoUserPassword.trim(),
     },
     {
-      role: "Admin",
+      role: DEMO_CREDENTIAL_ROLES.ADMIN,
       email: formData.demoAdminEmail.trim(),
       password: formData.demoAdminPassword.trim(),
     },
@@ -103,7 +95,8 @@ export default function ProjectsSection() {
     create,
     update,
     remove,
-    reorder,
+    moveUp,
+    moveDown,
   } = useCrudResource<ProjectType>({
     resource: APP_CONFIG.ROUTE.PROJECTS,
     labels: { singular: "project", plural: "projects" },
@@ -201,19 +194,23 @@ export default function ProjectsSection() {
       image: project.image || "",
       demoUserEmail:
         project.demoCredentials?.find(
-          (credential) => credential.role.toLowerCase() === "user",
+          (credential) =>
+            credential.role.toLowerCase() === DEMO_CREDENTIAL_ROLES.USER,
         )?.email || "",
       demoUserPassword:
         project.demoCredentials?.find(
-          (credential) => credential.role.toLowerCase() === "user",
+          (credential) =>
+            credential.role.toLowerCase() === DEMO_CREDENTIAL_ROLES.USER,
         )?.password || "",
       demoAdminEmail:
         project.demoCredentials?.find(
-          (credential) => credential.role.toLowerCase() === "admin",
+          (credential) =>
+            credential.role.toLowerCase() === DEMO_CREDENTIAL_ROLES.ADMIN,
         )?.email || "",
       demoAdminPassword:
         project.demoCredentials?.find(
-          (credential) => credential.role.toLowerCase() === "admin",
+          (credential) =>
+            credential.role.toLowerCase() === DEMO_CREDENTIAL_ROLES.ADMIN,
         )?.password || "",
       featured: project.featured || false,
     });
@@ -231,42 +228,6 @@ export default function ProjectsSection() {
     await remove(projectToDelete);
     setDeleteDialogOpen(false);
     setProjectToDelete(null);
-  };
-
-  const moveUp = async (index: number) => {
-    if (index === 0) return;
-    const reordered = [...projects];
-    [reordered[index], reordered[index - 1]] = [
-      reordered[index - 1],
-      reordered[index],
-    ];
-    const updates = reordered.map((project, idx) => ({
-      id: project.id,
-      order: idx,
-    }));
-    try {
-      await reorder(updates);
-    } catch {
-      // toast handled by hook
-    }
-  };
-
-  const moveDown = async (index: number) => {
-    if (index === projects.length - 1) return;
-    const reordered = [...projects];
-    [reordered[index], reordered[index + 1]] = [
-      reordered[index + 1],
-      reordered[index],
-    ];
-    const updates = reordered.map((project, idx) => ({
-      id: project.id,
-      order: idx,
-    }));
-    try {
-      await reorder(updates);
-    } catch {
-      // toast handled by hook
-    }
   };
 
   return (
@@ -409,7 +370,7 @@ function ProjectForm({
           )}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>Title *</Label>
             <Input
@@ -525,7 +486,8 @@ function ProjectForm({
         <div className="space-y-2">
           <Label>Description</Label>
           <p className="text-xs text-muted-foreground">
-            Supports Markdown formatting (e.g., **bold**, *italic*, [links]())
+            Supports Markdown formatting (e.g., **bold**, *italic*, [links](),
+            lists)
           </p>
           <Textarea
             value={formData.description}
@@ -573,7 +535,7 @@ function ProjectForm({
             </p>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="p-4">
               <div className="mb-3">
                 <p className="text-sm font-medium">Standard User</p>
@@ -713,18 +675,7 @@ function ProjectCard({
   const org = githubParts[0];
   const repo = githubParts[1];
 
-  const { data: githubContributors = [] } = useQuery<GitHubContributor[]>({
-    queryKey: ["github-contributors", org, repo],
-    queryFn: async () => {
-      const res = await fetch(
-        `/api/github/contributors?owner=${org}&repo=${repo}`,
-      );
-      const json = await res.json();
-      return json.success ? json.data : [];
-    },
-    enabled: !!org && !!repo,
-    staleTime: 86400_000,
-  });
+  const { data: githubContributors = [] } = useGithubContributors(org, repo);
 
   const manualCollaborators = project.collaborators || [];
 
@@ -751,42 +702,15 @@ function ProjectCard({
             <h3 className="font-semibold text-base sm:text-lg capitalize wrap-break-word">
               {project.title}
             </h3>
-            <div className="flex gap-1 shrink-0">
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={onMoveUp}
-                disabled={isFirst}
-                className="h-9 w-9 p-0"
-              >
-                <ArrowUp className="h-4 w-4" />
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={onMoveDown}
-                disabled={isLast}
-                className="h-9 w-9 p-0"
-              >
-                <ArrowDown className="h-4 w-4" />
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => onEdit(project)}
-                className="h-9 w-9 p-0"
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => onDelete(project.id)}
-                className="h-9 w-9 p-0"
-              >
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
-            </div>
+            <AdminItemActions
+              onMoveUp={onMoveUp}
+              onMoveDown={onMoveDown}
+              onEdit={() => onEdit(project)}
+              onDelete={() => onDelete(project.id)}
+              isFirst={isFirst}
+              isLast={isLast}
+              itemTypeName="project"
+            />
           </div>
 
           {/* Links */}
@@ -878,7 +802,7 @@ function ProjectCard({
                   >
                     <FaGithub className="h-4 w-4" />
                     {contributor.login}
-                    <span className="text-xs text-muted-foreground/60">
+                    <span className="text-xs text-muted-foreground/70">
                       ({contributor.contributions})
                     </span>
                   </Link>

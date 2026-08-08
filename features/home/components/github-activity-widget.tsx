@@ -41,7 +41,7 @@ export function GitHubActivityWidget({ commits, languages }: Props) {
           <BsActivity className="h-4 w-4 text-primary" />
           <h3 className="text-sm font-semibold">Recent commits</h3>
         </div>
-        <p className="text-sm text-muted-foreground/60">Activity unavailable</p>
+        <p className="text-sm text-muted-foreground/80">Activity unavailable</p>
       </div>
     );
   }

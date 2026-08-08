@@ -8,7 +8,7 @@ export default function LeaveANoteView() {
       <section className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-2xl space-y-6">
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold tracking-[-0.03em]">
+            <h1 className="text-4xl font-bold tracking-[-0.03em] sm:text-5xl">
               Leave a note
             </h1>
 

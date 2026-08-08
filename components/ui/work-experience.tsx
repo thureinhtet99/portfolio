@@ -182,19 +182,15 @@ export function ExperiencePositionItem({
             </div>
           </div>
 
-          <dl className="relative z-1 flex items-center gap-2 pl-9 text-sm text-muted-foreground">
+          <dl className="relative z-1 flex items-center gap-2 pl-9 text-sm text-muted-foreground divide-x divide-muted-foreground/30">
             {position.employmentType && (
-              <>
-                <div>
-                  <dt className="sr-only">Employment Type</dt>
-                  <dd>{position.employmentType}</dd>
-                </div>
-
-                <span className="text-muted-foreground/30">|</span>
-              </>
+              <div className="pr-2">
+                <dt className="sr-only">Employment Type</dt>
+                <dd>{position.employmentType}</dd>
+              </div>
             )}
 
-            <div>
+            <div className={cn("pr-2", position.employmentType && "pl-2")}>
               <dt className="sr-only">Employment Period</dt>
               <dd className="flex items-center gap-1 tabular-nums">
                 <span>{start}</span>
@@ -211,14 +207,10 @@ export function ExperiencePositionItem({
             </div>
 
             {duration && (
-              <>
-                <span className="text-muted-foreground/30">|</span>
-
-                <div>
-                  <dt className="sr-only">Duration</dt>
-                  <dd className="tabular-nums">{duration}</dd>
-                </div>
-              </>
+              <div className="pl-2">
+                <dt className="sr-only">Duration</dt>
+                <dd className="tabular-nums">{duration}</dd>
+              </div>
             )}
           </dl>
         </CollapsibleTrigger>

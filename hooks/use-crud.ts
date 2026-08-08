@@ -10,15 +10,31 @@ type UseCrudResourceOptions = {
   labels: { singular: string; plural: string };
 };
 
+type UseCrudResourceReturn<T extends { id: string }> = {
+  items: T[];
+  isLoading: boolean;
+  isError: boolean;
+  create: (payload: Partial<T>) => Promise<T>;
+  update: (payload: Partial<T> & { id: string }) => Promise<T>;
+  remove: (id: string) => Promise<string>;
+  reorder: (
+    items: { id: string; order: number }[],
+  ) => Promise<{ id: string; order: number }[]>;
+  moveUp: (index: number) => Promise<void>;
+  moveDown: (index: number) => Promise<void>;
+  invalidate: () => void;
+  isMutating: boolean;
+};
+
 export function useCrudResource<T extends { id: string }>({
   resource,
   labels,
-}: UseCrudResourceOptions) {
+}: UseCrudResourceOptions): UseCrudResourceReturn<T> {
   const queryClient = useQueryClient();
   const queryKey = ["resource", resource];
   const endpoint = `/api/${resource}`;
 
-  const listQuery = useQuery({
+  const listQuery = useQuery<T[]>({
     queryKey,
     queryFn: async (): Promise<T[]> => {
       const res = await fetch(endpoint);
@@ -29,6 +45,8 @@ export function useCrudResource<T extends { id: string }>({
       return json.data ?? [];
     },
   });
+
+  const items = listQuery.data ?? ([] as T[]);
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey });
 
@@ -108,14 +126,52 @@ export function useCrudResource<T extends { id: string }>({
     onError: (error: Error) => toast.error(error.message),
   });
 
+  const moveUp = async (index: number) => {
+    if (index === 0 || !items) return;
+    const reordered = [...items];
+    [reordered[index], reordered[index - 1]] = [
+      reordered[index - 1],
+      reordered[index],
+    ];
+    const updates = reordered.map((item, idx) => ({
+      id: item.id,
+      order: idx,
+    }));
+    try {
+      await reorderMutation.mutateAsync(updates);
+    } catch {
+      // errors handled by mutation
+    }
+  };
+
+  const moveDown = async (index: number) => {
+    if (!items || index === items.length - 1) return;
+    const reordered = [...items];
+    [reordered[index], reordered[index + 1]] = [
+      reordered[index + 1],
+      reordered[index],
+    ];
+    const updates = reordered.map((item, idx) => ({
+      id: item.id,
+      order: idx,
+    }));
+    try {
+      await reorderMutation.mutateAsync(updates);
+    } catch {
+      // errors handled by mutation
+    }
+  };
+
   return {
-    items: listQuery.data ?? [],
+    items,
     isLoading: listQuery.isLoading,
     isError: listQuery.isError,
     create: createMutation.mutateAsync,
     update: updateMutation.mutateAsync,
     remove: deleteMutation.mutateAsync,
     reorder: reorderMutation.mutateAsync,
+    moveUp,
+    moveDown,
     invalidate,
     isMutating:
       createMutation.isPending ||

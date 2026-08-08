@@ -49,7 +49,8 @@ export default function AdminDashboard() {
   if (!session) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <Card className="surface-panel w-full max-w-md">
+        {/* surface-panel removed — Card already provides the correct dark bg treatment */}
+        <Card className="w-full max-w-md border border-muted-foreground/20">
           <CardHeader className="space-y-1">
             <CardTitle className="text-center text-2xl font-bold tracking-[-0.02em]">
               Admin Portal
@@ -92,12 +93,13 @@ export default function AdminDashboard() {
                   <button
                     type="button"
                     onClick={() => setShowPassword((current) => !current)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:rounded-sm"
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <EyeOff className="h-4 w-4" aria-hidden="true" />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Eye className="h-4 w-4" aria-hidden="true" />
                     )}
                   </button>
                 </div>

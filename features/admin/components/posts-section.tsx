@@ -12,15 +12,8 @@ import { APP_CONFIG } from "@/config/app-config";
 import { useCrudResource } from "@/hooks/use-crud";
 import { generateSlug } from "@/lib/utils";
 import { PostType } from "@/types/index.type";
-import {
-  ArrowDown,
-  ArrowUp,
-  Edit,
-  Eye,
-  EyeOff,
-  Save,
-  Trash2,
-} from "lucide-react";
+import { AdminItemActions } from "@/components/shared/admin-item-actions";
+import { Eye, EyeOff, Save } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -31,7 +24,8 @@ export default function PostsSection() {
     create,
     update,
     remove,
-    reorder,
+    moveUp,
+    moveDown,
   } = useCrudResource<PostType>({
     resource: APP_CONFIG.ROUTE.POSTS,
     labels: { singular: "post", plural: "posts" },
@@ -138,36 +132,6 @@ export default function PostsSection() {
     });
   };
 
-  const moveUp = async (index: number) => {
-    if (index === 0) return;
-    const reordered = [...posts];
-    [reordered[index], reordered[index - 1]] = [
-      reordered[index - 1],
-      reordered[index],
-    ];
-    const updates = reordered.map((p, i) => ({ id: p.id, order: i }));
-    try {
-      await reorder(updates);
-    } catch {
-      // toast handled by hook
-    }
-  };
-
-  const moveDown = async (index: number) => {
-    if (index === posts.length - 1) return;
-    const reordered = [...posts];
-    [reordered[index], reordered[index + 1]] = [
-      reordered[index + 1],
-      reordered[index],
-    ];
-    const updates = reordered.map((p, i) => ({ id: p.id, order: i }));
-    try {
-      await reorder(updates);
-    } catch {
-      // toast handled by hook
-    }
-  };
-
   return (
     <Card>
       <AdminSectionHeader
@@ -180,7 +144,7 @@ export default function PostsSection() {
         {(isAdding || editingId) && (
           <Card>
             <CardContent className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Title *</Label>
                   <Input
@@ -323,57 +287,31 @@ export default function PostsSection() {
                         )}
                       </div>
 
-                      <div className="flex gap-1 shrink-0">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => moveUp(index)}
-                          disabled={index === 0}
-                          className="h-9 w-9 p-0"
-                          title="Move up"
-                        >
-                          <ArrowUp className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => moveDown(index)}
-                          disabled={index === posts.length - 1}
-                          className="h-9 w-9 p-0"
-                          title="Move down"
-                        >
-                          <ArrowDown className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => togglePublished(post)}
-                          className="h-9 w-9 p-0"
-                          title={post.published ? "Unpublish" : "Publish"}
-                        >
-                          {post.published ? (
-                            <Eye className="h-4 w-4" />
-                          ) : (
-                            <EyeOff className="h-4 w-4" />
-                          )}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleEdit(post)}
-                          className="h-9 w-9 p-0"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => openDeleteDialog(post.id)}
-                          className="h-9 w-9 p-0"
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
+                      <AdminItemActions
+                        onMoveUp={() => moveUp(index)}
+                        onMoveDown={() => moveDown(index)}
+                        onEdit={() => handleEdit(post)}
+                        onDelete={() => openDeleteDialog(post.id)}
+                        isFirst={index === 0}
+                        isLast={index === posts.length - 1}
+                        itemTypeName="post"
+                        extra={
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => togglePublished(post)}
+                            aria-label={post.published ? `Unpublish post ${post.title}` : `Publish post ${post.title}`}
+                            title={post.published ? "Unpublish" : "Publish"}
+                            className="h-9 w-9 p-0"
+                          >
+                            {post.published ? (
+                              <Eye className="h-4 w-4" aria-hidden="true" />
+                            ) : (
+                              <EyeOff className="h-4 w-4" aria-hidden="true" />
+                            )}
+                          </Button>
+                        }
+                      />
                     </div>
                   </CardContent>
                 </Card>

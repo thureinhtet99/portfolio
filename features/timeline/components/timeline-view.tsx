@@ -101,7 +101,7 @@ export default function TimelineView({
           <h2 className="text-3xl font-bold tracking-[-0.02em] sm:text-4xl">
             Timeline
           </h2>
-          <p className="text-sm max-w-prose text-muted-foreground/60">
+          <p className="text-sm max-w-prose text-muted-foreground/70">
             Notable moments, plotted along a single-axis timescale. Scroll
             horizontally to move through the years.
           </p>

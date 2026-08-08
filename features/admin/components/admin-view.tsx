@@ -47,16 +47,16 @@ export function AdminView({ userName }: { userName: string | null }) {
 
   return (
     <div className="app-shell space-y-6 py-2 md:py-4">
-      <div className="surface-panel flex flex-row items-center justify-between px-6">
-        <h2>
+      <div className="rounded-md bg-card flex flex-row items-center justify-between px-6 py-4">
+        <h2 className="min-w-0 truncate pr-4">
           Welcome back,{" "}
-          <b className="text-muted-foreground text-xl">{userName}</b>
+          <b className="text-muted-foreground text-xl truncate">{userName}</b>
         </h2>
 
         <Button
           variant="outline"
           onClick={() => setLogoutDialogOpen(true)}
-          className="w-auto rounded-md"
+          className="w-auto rounded-md shrink-0"
         >
           <LogOut className="h-4 w-4" />
           <span className="hidden sm:inline">Logout</span>
@@ -64,7 +64,7 @@ export function AdminView({ userName }: { userName: string | null }) {
       </div>
 
       <div className="grid gap-6 md:grid-cols-4">
-        <Card className="surface-panel h-fit md:col-span-1 border-none">
+        <Card className="h-fit md:col-span-1 border-none">
           <CardHeader>
             <CardTitle className="text-lg">Menu</CardTitle>
           </CardHeader>

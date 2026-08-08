@@ -11,8 +11,12 @@ import { FileText, Save, Upload } from "lucide-react";
 import Image from "next/image";
 import NextLink from "next/link";
 import { useEffect, useState } from "react";
-import { FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { toast } from "sonner";
+import { SETTINGS_KEYS } from "../constants";
+
+/** Maximum resume upload size in bytes (5MB). */
+const MAX_RESUME_SIZE_BYTES = 5 * 1024 * 1024;
 
 export default function SettingsSection() {
   const profileImageUpload = useImageUpload();
@@ -29,6 +33,15 @@ export default function SettingsSection() {
   const [aboutMe, setAboutMe] = useState("");
   const [intro, setIntro] = useState("");
   const [roles, setRoles] = useState("");
+
+  const saveSetting = async (key: string, value: string) => {
+    const res = await fetch(`/api/${APP_CONFIG.ROUTE.SETTINGS}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key, value }),
+    });
+    return res.json();
+  };
 
   const loadSettings = async () => {
     try {
@@ -73,16 +86,7 @@ export default function SettingsSection() {
 
     setIsUploading(true);
     try {
-      const saveRes = await fetch(`/api/${APP_CONFIG.ROUTE.SETTINGS}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          key: "profileImage",
-          value: url,
-        }),
-      });
-
-      const saveData = await saveRes.json();
+      const saveData = await saveSetting(SETTINGS_KEYS.PROFILE_IMAGE, url);
       if (saveData.success) {
         toast.success("Profile picture saved successfully!");
       }
@@ -109,7 +113,7 @@ export default function SettingsSection() {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > MAX_RESUME_SIZE_BYTES) {
       toast.error("Resume must be smaller than 5MB");
       return;
     }
@@ -142,16 +146,7 @@ export default function SettingsSection() {
       }
 
       // Save URL to database
-      const saveRes = await fetch(`/api/${APP_CONFIG.ROUTE.SETTINGS}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          key: "resume",
-          value: uploadData.url,
-        }),
-      });
-
-      const saveData = await saveRes.json();
+      const saveData = await saveSetting(SETTINGS_KEYS.RESUME, uploadData.url);
       if (saveData.success) {
         setResumeUrl(uploadData.url);
         setResumeFile(null);
@@ -170,16 +165,7 @@ export default function SettingsSection() {
   const handleSaveResidence = async () => {
     setIsSaving(true);
     try {
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.SETTINGS}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          key: "residence",
-          value: residence,
-        }),
-      });
-
-      const data = await response.json();
+      const data = await saveSetting(SETTINGS_KEYS.RESIDENCE, residence);
       if (data.success) {
         toast.success("Residence updated successfully!");
       } else {
@@ -195,16 +181,7 @@ export default function SettingsSection() {
   const handleAvailableToggle = async (checked: boolean) => {
     setAvailable(checked);
     try {
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.SETTINGS}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          key: "available",
-          value: String(checked),
-        }),
-      });
-
-      const data = await response.json();
+      const data = await saveSetting(SETTINGS_KEYS.AVAILABLE, String(checked));
       if (data.success) {
         toast.success(
           `Availability status ${checked ? "enabled" : "disabled"}!`,
@@ -221,35 +198,11 @@ export default function SettingsSection() {
   const handleSaveSocialLinks = async () => {
     setIsSaving(true);
     try {
-      const promises = [
-        fetch(`/api/${APP_CONFIG.ROUTE.SETTINGS}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            key: "githubUrl",
-            value: githubUrl,
-          }),
-        }),
-        fetch(`/api/${APP_CONFIG.ROUTE.SETTINGS}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            key: "facebookUrl",
-            value: facebookUrl,
-          }),
-        }),
-        fetch(`/api/${APP_CONFIG.ROUTE.SETTINGS}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            key: "linkedinUrl",
-            value: linkedinUrl,
-          }),
-        }),
-      ];
-
-      const responses = await Promise.all(promises);
-      const results = await Promise.all(responses.map((res) => res.json()));
+      const results = await Promise.all([
+        saveSetting(SETTINGS_KEYS.GITHUB_URL, githubUrl),
+        saveSetting(SETTINGS_KEYS.FACEBOOK_URL, facebookUrl),
+        saveSetting(SETTINGS_KEYS.LINKEDIN_URL, linkedinUrl),
+      ]);
       const allSuccess = results.every((data) => data.success);
 
       if (allSuccess) {
@@ -267,27 +220,10 @@ export default function SettingsSection() {
   const handleSaveAboutIntro = async () => {
     setIsSaving(true);
     try {
-      const promises = [
-        fetch(`/api/${APP_CONFIG.ROUTE.SETTINGS}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            key: "aboutMe",
-            value: aboutMe,
-          }),
-        }),
-        fetch(`/api/${APP_CONFIG.ROUTE.SETTINGS}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            key: "intro",
-            value: intro,
-          }),
-        }),
-      ];
-
-      const responses = await Promise.all(promises);
-      const results = await Promise.all(responses.map((res) => res.json()));
+      const results = await Promise.all([
+        saveSetting(SETTINGS_KEYS.ABOUT_ME, aboutMe),
+        saveSetting(SETTINGS_KEYS.INTRO, intro),
+      ]);
       const allSuccess = results.every((data) => data.success);
 
       if (allSuccess) {
@@ -493,7 +429,8 @@ export default function SettingsSection() {
               Introduction
             </Label>
             <p className="text-xs text-muted-foreground">
-              Supports Markdown formatting (e.g., **bold**, *italic*, [links]())
+              Supports Markdown formatting (e.g., **bold**, *italic*, [links](),
+              lists)
             </p>
             <Textarea
               id="intro"

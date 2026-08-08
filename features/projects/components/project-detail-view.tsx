@@ -8,6 +8,7 @@ import Link from "next/link";
 import { ViewTransition } from "react";
 import { FaGithub } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
+import { TerminalDots } from "@/components/ui/terminal-dots";
 import { ContributorsSection } from "./contributors-section";
 
 export function ProjectDetailView({
@@ -40,11 +41,7 @@ export function ProjectDetailView({
               <div className="relative rounded-lg overflow-hidden bg-background">
                 {/* Terminal header */}
                 <div className="flex items-center px-3 justify-between">
-                  <div className="flex gap-1.5">
-                    <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
-                    <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
-                    <span className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
-                  </div>
+                  <TerminalDots />
                   <div className="flex items-center gap-1 text-muted-foreground text-sm">
                     <GitHubStars stargazersCount={stargazersCount} />
                   </div>
@@ -81,7 +78,7 @@ export function ProjectDetailView({
           {/* Project Info */}
           <div className="space-y-6">
             <ViewTransition name={`project-title-${project.slug}`}>
-              <h1 className="text-4xl font-bold tracking-[-0.03em] flex items-center justify-center sm:justify-start">
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-[-0.03em] flex items-center justify-center sm:justify-start">
                 {project.title}
               </h1>
             </ViewTransition>
@@ -98,9 +95,10 @@ export function ProjectDetailView({
                   href={project.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={`View ${project.title} source on GitHub`}
                   className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
                 >
-                  <FaGithub className="h-4 w-4" />
+                  <FaGithub className="h-4 w-4" aria-hidden="true" />
                 </Link>
               )}
               {project.liveUrl && (
@@ -108,9 +106,10 @@ export function ProjectDetailView({
                   href={project.liveUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={`Open ${project.title} live demo`}
                   className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
                 >
-                  <ExternalLink className="h-4 w-4" />
+                  <ExternalLink className="h-4 w-4" aria-hidden="true" />
                 </Link>
               )}
             </div>
