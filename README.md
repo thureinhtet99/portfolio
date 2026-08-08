@@ -55,6 +55,10 @@ This repository includes documentation for developers and AI coding agents.
 | [DESIGN_SYSTEM.md](./docs/DESIGN_SYSTEM.md)         | Design principles, UI components, design tokens, and styling conventions |
 | [PROJECT_MAP.md](./docs/PROJECT_MAP.md)             | Overview of features, directories, and key entry points                  |
 
+## Lighthouse
+
+<img src="./public/screenshots/lightscore.png" width="50%">
+
 ## Getting Started
 
 ### Prerequisites
@@ -117,7 +121,7 @@ Open **http://localhost:3000** in your browser.
 
 - [ ] Labs page showcasing skills and adventures
 - [ ] AI chat assistant
-- [ ] Portfolio analytics
+- [x] Portfolio analytics
 - [ ] Internationalization (i18n)
 
 ## Acknowledgements
@@ -127,7 +131,7 @@ Special thanks to the following people and projects for inspiration:
 - [Jason Cameron](https://jasoncameron.dev) — Terminal-inspired design
 - [theodorusclarence](https://theodorusclarence.com) — Portfolio layout and feature inspiration
 - [Chánh Đại](https://chanhdai.com) — Timeline and work experience components
-- [Better Auth](https://better-auth.com) — Authentication library
+- [better-auth](https://better-auth.com) — Authentication library
 
 ## License
 
