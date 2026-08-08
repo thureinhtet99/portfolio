@@ -126,12 +126,7 @@ export default async function RootLayout({
             </div>
             <Toaster />
           </main>
-          <Footer
-            viewCount={viewCount}
-            githubUrl={settings.githubUrl || ""}
-            linkedinUrl={settings.linkedinUrl || ""}
-            emailUrl={settings.emailUrl || ""}
-          />
+          <Footer />
         </QueryProvider>
         <SpeedInsights />
         <Analytics />
