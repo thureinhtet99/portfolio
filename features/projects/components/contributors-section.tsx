@@ -8,7 +8,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useGithubContributors } from "@/hooks/use-github-contributors";
 
 export function ContributorsSection({
   org,
@@ -19,20 +19,7 @@ export function ContributorsSection({
   repo: string;
   manualCollaborators: string[];
 }) {
-  const [contributors, setContributors] = useState<GitHubContributor[]>([]);
-
-  useEffect(() => {
-    fetch(`/api/github/contributors?owner=${org}&repo=${repo}`)
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.success && Array.isArray(json.data)) {
-          setContributors(json.data);
-        } else {
-          setContributors([]);
-        }
-      })
-      .catch(() => setContributors([]));
-  }, [org, repo]);
+  const { data: contributors = [] } = useGithubContributors(org, repo);
 
   const hasContributors =
     contributors.length > 0 || manualCollaborators.length > 0;

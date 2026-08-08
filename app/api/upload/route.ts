@@ -8,6 +8,15 @@ cloudinary.config({
   api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET,
 });
 
+/**
+ * Cloudinary folder paths used by the upload endpoint. Grouped here so a
+ * future folder rename doesn't require hunting through the request handler.
+ */
+const CLOUDINARY_FOLDERS = {
+  images: "my-portfolio/images",
+  resumes: "my-portfolio/resumes",
+} as const;
+
 export async function POST(req: NextRequest) {
   try {
     await requireAdminSession(req);
@@ -31,7 +40,8 @@ export async function POST(req: NextRequest) {
       resource_type: "raw" | "image";
       allowed_formats: string[];
     } = {
-      folder: type === "pdf" ? "my-portfolio/resumes" : "my-portfolio/images",
+      folder:
+        type === "pdf" ? CLOUDINARY_FOLDERS.resumes : CLOUDINARY_FOLDERS.images,
       resource_type: type === "pdf" ? "raw" : "image",
       allowed_formats:
         type === "pdf" ? ["pdf"] : ["jpg", "png", "jpeg", "webp"],

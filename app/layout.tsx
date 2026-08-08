@@ -91,8 +91,11 @@ export default async function RootLayout({
 }>) {
   const [settings, siteViews] = await Promise.all([
     getSettings(),
+    // Read live (uncached) so the navbar reflects the latest count
+    // immediately after the homepage has incremented it.
     getSiteViews(),
   ]);
+
   const viewCount = siteViews.toLocaleString();
 
   return (
@@ -101,6 +104,12 @@ export default async function RootLayout({
         className={`${jetbrainsMono.variable} ${geistMono.variable} antialiased font-sans`}
       >
         <QueryProvider>
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:bg-primary focus:text-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium"
+          >
+            Skip to main content
+          </a>
           <main className="min-h-screen">
             <div className="mx-auto flex w-full flex-col justify-center">
               <TopNavbar
@@ -110,7 +119,9 @@ export default async function RootLayout({
                 emailUrl={settings.emailUrl || ""}
               />
               <Suspense>
-                <TooltipProvider>{children}</TooltipProvider>
+                <TooltipProvider>
+                  <div id="main-content">{children}</div>
+                </TooltipProvider>
               </Suspense>
             </div>
             <Toaster />

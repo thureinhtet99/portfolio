@@ -1,18 +1,8 @@
 "use client";
 
+import { routeLabels } from "@/components/layout/data/nav-links";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const routeLabels: Record<string, string> = {
-  "": "~",
-  about: "about",
-  projects: "projects",
-  timeline: "timeline",
-  posts: "posts",
-  contact: "contact",
-  admin: "admin",
-  "leave-a-note": "leave a note",
-};
 
 export function Breadcrumbs() {
   const pathname = usePathname();
@@ -35,7 +25,7 @@ export function Breadcrumbs() {
         </li>
         {segments.map((segment, index) => {
           const href = `/${segments.slice(0, index + 1).join("/")}`;
-          const label = routeLabels[segment] || segment;
+          const label = routeLabels[segment] ?? segment;
 
           return (
             <li key={href} className="flex items-center">

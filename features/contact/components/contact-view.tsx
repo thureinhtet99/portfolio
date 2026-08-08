@@ -63,7 +63,9 @@ export function ContactView() {
       <section className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-2xl space-y-12">
           <div className="space-y-2 text-center">
-            <h1 className="text-4xl font-bold tracking-[-0.03em]">Contact</h1>
+            <h1 className="text-4xl font-bold tracking-[-0.03em] sm:text-5xl">
+              Contact
+            </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Have a question or want to work together? Send me a message and
               I&apos;ll get back to you as soon as possible.

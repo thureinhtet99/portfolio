@@ -29,15 +29,15 @@ export function PostsView({ posts }: { posts: PostType[] }) {
                           key={i}
                           name={`_post-${post.slug}__${word.toLowerCase().replace(/[^a-z0-9]/g, "")}`}
                         >
-                          <span className="inline-block">{word} </span>
+                          <span className="inline-block ">{word}</span>
                         </ViewTransition>
                       ))}
                     </h2>
-                    <p className=" text-xs text-muted-foreground">
+                    <p className="text-xs">
                       {format(new Date(post.createdAt), "dd MMM yyyy")}
                     </p>
                     {post.excerpt && (
-                      <p className="text-sm leading-relaxed text-muted-foreground line-clamp-3">
+                      <p className="text-sm leading-relaxed line-clamp-3">
                         {post.excerpt}
                       </p>
                     )}
@@ -57,7 +57,7 @@ export function PostsView({ posts }: { posts: PostType[] }) {
               ))}
             </div>
           ) : (
-            <p className=" text-sm text-muted-foreground">No posts yet.</p>
+            <p className=" text-sm">No posts yet.</p>
           )}
         </div>
       </section>

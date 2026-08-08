@@ -17,7 +17,11 @@ type UseCrudResourceReturn<T extends { id: string }> = {
   create: (payload: Partial<T>) => Promise<T>;
   update: (payload: Partial<T> & { id: string }) => Promise<T>;
   remove: (id: string) => Promise<string>;
-  reorder: (items: { id: string; order: number }[]) => Promise<{ id: string; order: number }[]>;
+  reorder: (
+    items: { id: string; order: number }[],
+  ) => Promise<{ id: string; order: number }[]>;
+  moveUp: (index: number) => Promise<void>;
+  moveDown: (index: number) => Promise<void>;
   invalidate: () => void;
   isMutating: boolean;
 };
@@ -41,6 +45,8 @@ export function useCrudResource<T extends { id: string }>({
       return json.data ?? [];
     },
   });
+
+  const items = listQuery.data ?? ([] as T[]);
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey });
 
@@ -120,14 +126,52 @@ export function useCrudResource<T extends { id: string }>({
     onError: (error: Error) => toast.error(error.message),
   });
 
+  const moveUp = async (index: number) => {
+    if (index === 0 || !items) return;
+    const reordered = [...items];
+    [reordered[index], reordered[index - 1]] = [
+      reordered[index - 1],
+      reordered[index],
+    ];
+    const updates = reordered.map((item, idx) => ({
+      id: item.id,
+      order: idx,
+    }));
+    try {
+      await reorderMutation.mutateAsync(updates);
+    } catch {
+      // errors handled by mutation
+    }
+  };
+
+  const moveDown = async (index: number) => {
+    if (!items || index === items.length - 1) return;
+    const reordered = [...items];
+    [reordered[index], reordered[index + 1]] = [
+      reordered[index + 1],
+      reordered[index],
+    ];
+    const updates = reordered.map((item, idx) => ({
+      id: item.id,
+      order: idx,
+    }));
+    try {
+      await reorderMutation.mutateAsync(updates);
+    } catch {
+      // errors handled by mutation
+    }
+  };
+
   return {
-    items: listQuery.data ?? ([] as T[]),
+    items,
     isLoading: listQuery.isLoading,
     isError: listQuery.isError,
     create: createMutation.mutateAsync,
     update: updateMutation.mutateAsync,
     remove: deleteMutation.mutateAsync,
     reorder: reorderMutation.mutateAsync,
+    moveUp,
+    moveDown,
     invalidate,
     isMutating:
       createMutation.isPending ||

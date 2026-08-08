@@ -11,6 +11,10 @@ import { getWorkExperiences } from "@/features/timeline/services/work-experience
 import { Suspense } from "react";
 
 export default async function Home() {
+  // Increment the siteViews counter on every homepage render. Reading happens
+  // separately via `getSiteViews()` so the footer/navbar always see the
+  // freshest count (the cached `getSettings()` would otherwise hold a stale
+  // value for up to its revalidate window).
   await incrementSiteViews();
 
   const settings = await getSettings();

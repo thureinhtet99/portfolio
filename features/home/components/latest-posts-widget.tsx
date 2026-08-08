@@ -34,7 +34,7 @@ export function LatestPostsWidget({ posts }: { posts: PostType[] }) {
                 </Link>
               </ViewTransition>
               <span className="shrink-0 flex items-center gap-x-4">
-                <span className="text-muted-foreground/60">-</span>
+                <span className="text-muted-foreground/70">-</span>
                 {format(new Date(post.createdAt), "dd MMM yyyy")}
               </span>
             </li>

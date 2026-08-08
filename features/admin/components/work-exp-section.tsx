@@ -17,7 +17,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { APP_CONFIG } from "@/config/app-config";
 import { useCrudResource } from "@/hooks/use-crud";
-import { ArrowDown, ArrowUp, Edit, Plus, Save, Trash2 } from "lucide-react";
+import { AdminItemActions } from "@/components/shared/admin-item-actions";
+import { Plus, Save, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -69,7 +70,8 @@ export default function WorkExperienceSection() {
     create,
     update,
     remove,
-    reorder,
+    moveUp,
+    moveDown,
   } = useCrudResource<WorkExperienceType>({
     resource: APP_CONFIG.ROUTE.WORK_EXPERIENCES,
     labels: { singular: "work experience", plural: "work experiences" },
@@ -208,42 +210,6 @@ export default function WorkExperienceSection() {
     }
   };
 
-  const moveUp = async (index: number) => {
-    if (index === 0) return;
-    const reordered = [...workTimelines];
-    [reordered[index], reordered[index - 1]] = [
-      reordered[index - 1],
-      reordered[index],
-    ];
-    const updates = reordered.map((timeline, idx) => ({
-      id: timeline.id,
-      order: idx,
-    }));
-    try {
-      await reorder(updates);
-    } catch {
-      // toast handled by hook
-    }
-  };
-
-  const moveDown = async (index: number) => {
-    if (index === workTimelines.length - 1) return;
-    const reordered = [...workTimelines];
-    [reordered[index], reordered[index + 1]] = [
-      reordered[index + 1],
-      reordered[index],
-    ];
-    const updates = reordered.map((timeline, idx) => ({
-      id: timeline.id,
-      order: idx,
-    }));
-    try {
-      await reorder(updates);
-    } catch {
-      // toast handled by hook
-    }
-  };
-
   const workTimelines = timelines;
 
   return (
@@ -346,7 +312,7 @@ function WorkForm({
   return (
     <Card>
       <CardContent className="pt-6 space-y-4">
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>Company Name *</Label>
             <Input
@@ -410,13 +376,15 @@ function WorkForm({
                       variant="ghost"
                       size="sm"
                       onClick={() => onRemovePosition(idx)}
+                      aria-label={`Remove position ${idx + 1}`}
+                      title={`Remove position ${idx + 1}`}
                       className="h-7 px-2 text-destructive"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
                     </Button>
                   )}
                 </div>
-                <div className="grid md:grid-cols-2 gap-3">
+                <div className="grid sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <Label>Title *</Label>
                     <Input
@@ -549,42 +517,15 @@ function WorkCard({
                 </p>
               )}
             </div>
-            <div className="flex gap-1 shrink-0">
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={onMoveUp}
-                disabled={isFirst}
-                className="h-9 w-9 p-0"
-              >
-                <ArrowUp className="h-4 w-4" />
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={onMoveDown}
-                disabled={isLast}
-                className="h-9 w-9 p-0"
-              >
-                <ArrowDown className="h-4 w-4" />
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => onEdit(timeline)}
-                className="h-9 w-9 p-0"
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => onDelete(timeline.id)}
-                className="h-9 w-9 p-0"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
+            <AdminItemActions
+              onMoveUp={onMoveUp}
+              onMoveDown={onMoveDown}
+              onEdit={() => onEdit(timeline)}
+              onDelete={() => onDelete(timeline.id)}
+              isFirst={isFirst}
+              isLast={isLast}
+              itemTypeName="work experience"
+            />
           </div>
 
           {t.positions && t.positions.length > 0 && (

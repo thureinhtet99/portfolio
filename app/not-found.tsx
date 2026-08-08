@@ -1,5 +1,6 @@
 "use client";
 
+import { TerminalDots } from "@/components/ui/terminal-dots";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -77,13 +78,11 @@ export default function NotFound() {
   }, [isTypingComplete, isRedirectCancelled, remainingSeconds]);
 
   return (
-    <div className="page-shell flex min-h-[80vh] items-center justify-center px-4 py-16">
+    <div className="page-shell flex min-h-[80vh] items-center justify-center px-3 py-10 sm:px-4 sm:py-16">
       <div className="w-full max-w-2xl overflow-hidden rounded-md border border-muted-foreground/20">
         {/* Header */}
-        <div className="flex items-center gap-2 px-3 py-2.5 text-sm">
-          <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
-          <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
-          <span className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
+        <div className="flex items-center gap-2 px-2 py-2 text-sm sm:px-3 sm:py-2.5">
+          <TerminalDots />
 
           <span className="ml-2 truncate text-xs">
             guest@thureinhtet:~{pathname}
@@ -91,7 +90,7 @@ export default function NotFound() {
         </div>
 
         {/* Body */}
-        <div className="space-y-3 px-5 py-6 text-sm leading-relaxed">
+        <div className="space-y-3 px-3 py-4 text-sm leading-relaxed sm:px-5 sm:py-6">
           <p className="flex flex-wrap gap-2">
             <span className="shrink-0 text-accent">guest@thureinhtet:~$</span>
             <span>cd {typedPath}</span>
@@ -112,12 +111,12 @@ export default function NotFound() {
                 <span>ls ./routes</span>
               </p>
 
-              <div className="grid grid-cols-2 gap-x-6 gap-y-1 sm:grid-cols-3">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 sm:grid-cols-3 sm:gap-x-6">
                 {ROUTES.map((route) => (
                   <Link
                     key={route}
                     href={route}
-                    className="inline-block hover:bg-primary hover:text-background"
+                    className="inline-block truncate hover:bg-primary hover:text-background"
                   >
                     {route === "/" ? "~" : route}
                   </Link>
@@ -146,7 +145,7 @@ export default function NotFound() {
                 ) : (
                   <>
                     auto-redirecting in{" "}
-                    <span className="tabular-nums text-white text-base">
+                    <span className="tabular-nums text-white text-sm sm:text-base">
                       {remainingSeconds}s
                     </span>{" "}
                     —{" "}

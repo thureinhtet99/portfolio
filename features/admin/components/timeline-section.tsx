@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminItemActions } from "@/components/shared/admin-item-actions";
 import AdminSectionHeader from "@/components/shared/admin-section-header";
 import CustomLoading from "@/components/shared/custom-loading";
 import DeleteConfirmBox from "@/components/shared/delete-confirm-box";
@@ -12,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { APP_CONFIG } from "@/config/app-config";
 import { useCrudResource } from "@/hooks/use-crud";
 import { TimelineType } from "@/types/index.type";
-import { ArrowDown, ArrowUp, Edit, Save, Trash2 } from "lucide-react";
+import { Save } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -35,7 +36,8 @@ export default function TimelinesSection() {
     create,
     update,
     remove,
-    reorder,
+    moveUp,
+    moveDown,
   } = useCrudResource<TimelineType>({
     resource: APP_CONFIG.ROUTE.TIMELINES,
     labels: { singular: "timeline", plural: "timelines" },
@@ -107,26 +109,6 @@ export default function TimelinesSection() {
     } catch {
       // toast handled by hook
     }
-  };
-
-  const moveUp = async (index: number) => {
-    if (index === 0) return;
-    const reordered = [...timelines];
-    [reordered[index], reordered[index - 1]] = [
-      reordered[index - 1],
-      reordered[index],
-    ];
-    await reorder(reordered.map((t, idx) => ({ id: t.id, order: idx })));
-  };
-
-  const moveDown = async (index: number) => {
-    if (index === timelines.length - 1) return;
-    const reordered = [...timelines];
-    [reordered[index], reordered[index + 1]] = [
-      reordered[index + 1],
-      reordered[index],
-    ];
-    await reorder(reordered.map((t, idx) => ({ id: t.id, order: idx })));
   };
 
   return (
@@ -211,7 +193,7 @@ function TimelineForm({
   return (
     <Card>
       <CardContent className="pt-6 space-y-4">
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>Year *</Label>
             <Input
@@ -308,42 +290,15 @@ function TimelineCard({
               </p>
             )}
           </div>
-          <div className="flex gap-1 shrink-0">
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={onMoveUp}
-              disabled={isFirst}
-              className="h-9 w-9 p-0"
-            >
-              <ArrowUp className="h-4 w-4" />
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={onMoveDown}
-              disabled={isLast}
-              className="h-9 w-9 p-0"
-            >
-              <ArrowDown className="h-4 w-4" />
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => onEdit(item)}
-              className="h-9 w-9 p-0"
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => onDelete(item.id)}
-              className="h-9 w-9 p-0"
-            >
-              <Trash2 className="h-4 w-4 text-destructive" />
-            </Button>
-          </div>
+          <AdminItemActions
+            onMoveUp={onMoveUp}
+            onMoveDown={onMoveDown}
+            onEdit={() => onEdit(item)}
+            onDelete={() => onDelete(item.id)}
+            isFirst={isFirst}
+            isLast={isLast}
+            itemTypeName="timeline item"
+          />
         </div>
       </CardContent>
     </Card>

@@ -3,20 +3,33 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  getSettings,
+  getSiteViews,
+} from "@/features/admin/services/settings.service";
 import Link from "next/link";
 import { FaCode, FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
 
-export function Footer({
-  viewCount = "0",
-  githubUrl = "",
-  linkedinUrl = "",
-  emailUrl = "",
-}: {
-  viewCount?: string;
-  githubUrl?: string;
-  linkedinUrl?: string;
-  emailUrl?: string;
-}) {
+export async function Footer() {
+  let viewCount = "0";
+  let githubUrl = "";
+  let linkedinUrl = "";
+  let emailUrl = "";
+
+  try {
+    const [settings, siteViews] = await Promise.all([
+      getSettings(),
+      // Live (uncached) read so the footer reflects the latest count
+      // immediately after the homepage has incremented it.
+      getSiteViews(),
+    ]);
+    viewCount = siteViews.toLocaleString();
+    githubUrl = settings.githubUrl || "";
+    linkedinUrl = settings.linkedinUrl || "";
+    emailUrl = settings.emailUrl || "";
+  } catch {
+    // ignore
+  }
 
   return (
     <footer
@@ -39,9 +52,10 @@ export function Footer({
                 href={githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="GitHub profile"
                 className="hover:text-primary transition-colors"
               >
-                <FaGithub className="h-5 w-5" />
+                <FaGithub className="h-5 w-5" aria-hidden="true" />
               </Link>
             )}
             {linkedinUrl && (
@@ -49,9 +63,10 @@ export function Footer({
                 href={linkedinUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="LinkedIn profile"
                 className="hover:text-primary transition-colors"
               >
-                <FaLinkedin className="h-5 w-5" />
+                <FaLinkedin className="h-5 w-5" aria-hidden="true" />
               </Link>
             )}
             {emailUrl && (
@@ -59,9 +74,10 @@ export function Footer({
                 href={emailUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Send email"
                 className="hover:text-primary transition-colors"
               >
-                <FaEnvelope className="h-5 w-5" />
+                <FaEnvelope className="h-5 w-5" aria-hidden="true" />
               </Link>
             )}
 
@@ -71,9 +87,10 @@ export function Footer({
                   href="https://github.com/thureinhtet99/portfolio"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="View source code on GitHub"
                   className="hover:text-primary transition-colors"
                 >
-                  <FaCode className="h-5 w-5" />
+                  <FaCode className="h-5 w-5" aria-hidden="true" />
                 </Link>
               </TooltipTrigger>
               <TooltipContent>
