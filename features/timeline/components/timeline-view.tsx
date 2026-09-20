@@ -95,68 +95,91 @@ export default function TimelineView({
   }
 
   return (
-    <div className="py-16 sm:py-20 space-y-20 overflow-x-hidden">
+    <div className="py-16 sm:py-20">
       <div className="mx-auto max-w-5xl space-y-16 px-6">
         <header className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-[-0.02em] sm:text-4xl">
-            Timeline
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="section-heading">Timeline</h1>
+            <span className="text-xs hidden sm:inline">
+              (Scroll horizontally on desktop to move through the years)
+            </span>
+          </div>
           <p className="text-sm max-w-prose text-muted-foreground">
-            Notable moments, plotted along a single-axis timescale. Scroll
-            horizontally to move through the years.
+            Notable moments
           </p>
         </header>
-      </div>
-      <div className="overflow-x-hidden w-full max-w-full">
-        <TimescaleIntroScroll>
-          <TimescaleRoot
-            orientation="horizontal"
-            className="w-full max-w-full scroll-fade overflow-x-hidden"
-          >
-            <TimescaleViewport className="max-w-full">
-              <TimescaleTrack>
-                <TimescaleRail />
-                {entries.map((entry) =>
-                  entry.kind === "empty" ? (
-                    <TimescaleItem key={entry.id}>
-                      <TimescaleTick />
-                      <TimescaleYear>{entry.year}</TimescaleYear>
-                    </TimescaleItem>
-                  ) : (
-                    <TimescaleItem key={entry.id}>
-                      <TimescaleTick />
-                      <TimescaleYear>{entry.year}</TimescaleYear>
-                      <TimescaleContent className="space-y-4 typeset">
-                        <p className="text-base mt-6">{entry.title}</p>
-                        {entry.description && (
-                          <div className="prose prose-base prose-invert text-muted-foreground">
-                            <ReactMarkdown
-                              components={{
-                                a: ({ children, href }) => (
-                                  <a
-                                    href={href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="hover:bg-primary hover:text-background text-muted-foreground underline"
-                                  >
-                                    {children}
-                                  </a>
-                                ),
-                              }}
-                            >
-                              {entry.description}
-                            </ReactMarkdown>
-                          </div>
-                        )}
-                      </TimescaleContent>
-                    </TimescaleItem>
-                  ),
-                )}
-              </TimescaleTrack>
-            </TimescaleViewport>
-          </TimescaleRoot>
-        </TimescaleIntroScroll>
+        {/* Desktop: horizontal timescale */}
+        <div className="hidden md:block overflow-x-hidden w-full max-w-full">
+          <TimescaleIntroScroll>
+            <TimescaleRoot
+              orientation="horizontal"
+              className="w-full max-w-full scroll-fade overflow-x-hidden"
+            >
+              <TimescaleViewport className="max-w-full">
+                <TimescaleTrack>
+                  <TimescaleRail />
+                  <TimelineEntries entries={entries} />
+                </TimescaleTrack>
+              </TimescaleViewport>
+            </TimescaleRoot>
+          </TimescaleIntroScroll>
+        </div>
+        {/* Mobile: vertical timescale */}
+        <TimescaleRoot
+          orientation="vertical"
+          className="w-full max-w-full md:hidden"
+        >
+          <TimescaleViewport className="max-w-full">
+            <TimescaleTrack>
+              <TimescaleRail />
+              <TimelineEntries entries={entries} />
+            </TimescaleTrack>
+          </TimescaleViewport>
+        </TimescaleRoot>
       </div>
     </div>
+  );
+}
+
+function TimelineEntries({ entries }: { entries: TimescaleEntry[] }) {
+  return (
+    <>
+      {entries.map((entry) =>
+        entry.kind === "empty" ? (
+          <TimescaleItem key={entry.id}>
+            <TimescaleTick />
+            <TimescaleYear>{entry.year}</TimescaleYear>
+          </TimescaleItem>
+        ) : (
+          <TimescaleItem key={entry.id}>
+            <TimescaleTick />
+            <TimescaleYear>{entry.year}</TimescaleYear>
+            <TimescaleContent className="space-y-4 typeset">
+              <p className="text-base mt-6">{entry.title}</p>
+              {entry.description && (
+                <div className="prose prose-base prose-invert text-muted-foreground">
+                  <ReactMarkdown
+                    components={{
+                      a: ({ children, href }) => (
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:bg-primary hover:text-background text-muted-foreground underline"
+                        >
+                          {children}
+                        </a>
+                      ),
+                    }}
+                  >
+                    {entry.description}
+                  </ReactMarkdown>
+                </div>
+              )}
+            </TimescaleContent>
+          </TimescaleItem>
+        ),
+      )}
+    </>
   );
 }

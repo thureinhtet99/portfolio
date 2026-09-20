@@ -7,6 +7,13 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TimelineYearRail } from "./timeline-year-rail";
 
+function entryYears(experience: ExperienceItemType): string {
+  const years = experience.positions
+    .map((p) => p.employmentPeriod.start.match(/\d{4}/)?.[0])
+    .filter((y): y is string => !!y);
+  return Array.from(new Set(years)).sort().reverse().join(" · ");
+}
+
 export function WorkExperienceWithRail({
   experiences,
 }: {
@@ -60,20 +67,23 @@ export function WorkExperienceWithRail({
   }, []);
 
   return (
-    <div ref={containerRef} className="flex">
+    <div ref={containerRef} className="flex flex-col md:flex-row">
       <TimelineYearRail
         experiences={experiences}
         entryHeights={entryHeights}
         onYearClick={handleYearClick}
       />
-      <div className="flex-1">
-        <div className="text-muted-foreground">
+      <div className="min-w-0 flex-1">
+        <div className="space-y-4 text-muted-foreground md:space-y-0">
           {experiences.map((experience) => (
             <div
               key={experience.id}
               data-experience-entry
               className="space-y-4"
             >
+              <p className="mb-1 text-2xl tabular-nums leading-none text-muted-foreground/60 md:hidden">
+                {entryYears(experience)}
+              </p>
               <ExperienceItem experience={experience} />
             </div>
           ))}

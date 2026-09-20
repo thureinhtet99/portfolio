@@ -21,7 +21,7 @@ export default function ProjectsView({ projects }: { projects: Project[] }) {
     <div className="page-shell">
       <section className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-7xl space-y-6">
-          <h1 className="text-4xl font-bold tracking-[-0.03em]">Projects</h1>
+          <h1 className="text-4xl font-bold tracking-[-0.02em]">Projects</h1>
           {projects.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {projects.map((project) => (

@@ -1,14 +1,14 @@
 import { Badge } from "@/components/ui/badge";
 import { GitHubStars } from "@/components/ui/github-stars";
+import { TerminalDots } from "@/components/ui/terminal-dots";
 import { ProjectType } from "@/types/index.type";
 import { format } from "date-fns";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Tag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { ViewTransition } from "react";
 import { FaGithub } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
-import { TerminalDots } from "@/components/ui/terminal-dots";
 import { ContributorsSection } from "./contributors-section";
 
 export function ProjectDetailView({
@@ -78,45 +78,48 @@ export function ProjectDetailView({
           {/* Project Info */}
           <div className="space-y-6">
             <ViewTransition name={`project-title-${project.slug}`}>
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-[-0.03em] flex items-center justify-center sm:justify-start">
-                {project.title}
-              </h1>
+              <div className="flex flex-col sm:flex-row gap-6 justify-between items-center">
+                <h1 className="text-3xl sm:text-4xl font-bold tracking-[-0.03em] flex items-center justify-center sm:justify-start">
+                  {project.title}
+                </h1>
+                {/* Links */}
+                <div className="flex items-center justify-center sm:justify-start gap-6">
+                  {project.startDate && (
+                    <span className="flex items-center text-xs gap-1">
+                      {format(new Date(project.startDate), "MMM yyyy")}
+                    </span>
+                  )}
+                  {project.githubUrl && (
+                    <Link
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`View ${project.title} source on GitHub`}
+                      className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      <FaGithub className="h-4 w-4" aria-hidden="true" />
+                    </Link>
+                  )}
+                  {project.liveUrl && (
+                    <Link
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Open ${project.title} live demo`}
+                      className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                    </Link>
+                  )}
+                </div>
+              </div>
             </ViewTransition>
-
-            {/* Links */}
-            <div className="flex items-center justify-center sm:justify-start gap-6">
-              {project.startDate && (
-                <span className="flex items-center text-xs gap-1">
-                  {format(new Date(project.startDate), "MMM yyyy")}
-                </span>
-              )}
-              {project.githubUrl && (
-                <Link
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`View ${project.title} source on GitHub`}
-                  className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
-                >
-                  <FaGithub className="h-4 w-4" aria-hidden="true" />
-                </Link>
-              )}
-              {project.liveUrl && (
-                <Link
-                  href={project.liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Open ${project.title} live demo`}
-                  className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
-                >
-                  <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                </Link>
-              )}
-            </div>
 
             {/* Tags */}
             {technologies.length > 0 && (
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5">
+                <Tag className="h-4 w-4" />
+
                 {technologies.map((tech) => (
                   <Badge key={tech} variant="outline">
                     {tech}

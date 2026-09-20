@@ -1,14 +1,13 @@
 "use client";
 
-import { GitHubContributor } from "@/app/api/github/contributors/route";
 import {
   Avatar,
   AvatarFallback,
   AvatarGroup,
   AvatarImage,
 } from "@/components/ui/avatar";
-import Link from "next/link";
 import { useGithubContributors } from "@/hooks/use-github-contributors";
+import Link from "next/link";
 
 export function ContributorsSection({
   org,
@@ -28,7 +27,9 @@ export function ContributorsSection({
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span>Contributor{contributors.length > 0 ? "s" : ""}: </span>
+      <span className="text-sm">
+        Contributor{contributors.length > 0 ? "s" : ""}:{" "}
+      </span>
 
       <AvatarGroup>
         {contributors.map((contributor) => (

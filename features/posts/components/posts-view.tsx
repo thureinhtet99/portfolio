@@ -12,7 +12,7 @@ export function PostsView({ posts }: { posts: PostType[] }) {
     <div className="page-shell">
       <section className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-2xl space-y-6">
-          <h1 className="text-4xl font-bold tracking-[-0.03em]">Posts</h1>
+          <h1 className="text-4xl font-bold tracking-[-0.02em]">Posts</h1>
 
           {posts.length > 0 ? (
             <div className="space-y-8">
@@ -21,19 +21,17 @@ export function PostsView({ posts }: { posts: PostType[] }) {
                   <Link
                     href={`/posts/${post.slug}`}
                     transitionTypes={["nav-forward"]}
-                    className="group block space-y-2"
+                    className="group block space-y-4"
                   >
-                    <h2 className="inline-block text-xl font-semibold group-hover:bg-primary group-hover:text-background transition-colors">
-                      {post.title.split(" ").map((word, i) => (
-                        <ViewTransition
-                          key={i}
-                          name={`_post-${post.slug}__${word.toLowerCase().replace(/[^a-z0-9]/g, "")}`}
-                        >
-                          <span className="inline-block ">{word}</span>
-                        </ViewTransition>
-                      ))}
-                    </h2>
-                    <p className="text-xs">
+                    <ViewTransition
+                      name={`post-title-${post.slug}`}
+                      share="text-morph"
+                    >
+                      <h2 className="inline-block text-xl font-semibold group-hover:bg-primary group-hover:text-background transition-colors">
+                        {post.title}
+                      </h2>
+                    </ViewTransition>
+                    <p className="text-xs text-muted-foreground">
                       {format(new Date(post.createdAt), "dd MMM yyyy")}
                     </p>
                     {post.excerpt && (

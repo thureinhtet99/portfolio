@@ -158,7 +158,10 @@ export function HomeView({
               </React.Fragment>
             ))}
             {socialItems.length > 0 && (
-              <span aria-hidden="true" className="text-muted-foreground/30">
+              <span
+                aria-hidden="true"
+                className="text-muted-foreground/30 hidden sm:inline"
+              >
                 |
               </span>
             )}
@@ -195,22 +198,19 @@ export function HomeView({
       <section id="projects-section" className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl space-y-10">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-3xl font-bold text-muted-foreground tracking-[-0.02em] sm:text-4xl">
-              Featured Projects
-            </h2>
+            <h2 className="section-heading">Featured Projects</h2>
+
             {featuredProjects.length > 0 && (
-              <div className="flex items-center gap-1">
-                <Link
-                  href="/projects"
-                  transitionTypes={["nav-forward"]}
-                  className="group flex items-center gap-1.5"
-                >
-                  <span className="transition-colors group-hover:bg-primary group-hover:text-background">
-                    View all
-                  </span>
-                  <MoveRight className="h-4 w-4 group-hover:text-primary" />
-                </Link>
-              </div>
+              <Link
+                href="/projects"
+                transitionTypes={["nav-forward"]}
+                className="group inline-flex w-fit items-center gap-1.5"
+              >
+                <span className="text-sm transition-colors group-hover:bg-primary group-hover:text-background sm:text-lg">
+                  View all
+                </span>
+                <MoveRight className="h-4 w-4 transition-colors group-hover:text-primary" />
+              </Link>
             )}
           </div>
 

@@ -93,21 +93,18 @@ export default function NotFound() {
         <div className="space-y-3 px-3 py-4 text-sm leading-relaxed sm:px-5 sm:py-6">
           <p className="flex flex-wrap gap-2">
             <span className="shrink-0 text-accent">guest@thureinhtet:~$</span>
-            <span>cd {typedPath}</span>
           </p>
 
           {isTypingComplete && (
             <>
-              <p>bash: cd: {pathname}: No such file or directory</p>
+              <div className="mb-10">
+                <p>No such file or directory</p>
 
-              <p>
-                404 — this page doesn&apos;t exist, was moved, or never did.
-              </p>
-
-              <p className="flex flex-wrap gap-2 pt-2">
-                <span className="shrink-0 text-accent">
-                  guest@thureinhtet:~$
-                </span>
+                <p>
+                  404 — this page doesn&apos;t exist, was moved, or never did.
+                </p>
+              </div>
+              <p className="flex flex-wrap items-center justify-center my-4">
                 <span>ls ./routes</span>
               </p>
 
@@ -123,11 +120,7 @@ export default function NotFound() {
                 ))}
               </div>
 
-              <p className="flex flex-wrap items-center gap-2 pt-2">
-                <span className="shrink-0 text-accent">
-                  guest@thureinhtet:~$
-                </span>
-
+              <p className="flex flex-wrap items-center justify-center my-4">
                 <button
                   type="button"
                   onClick={navigateBack}
@@ -145,17 +138,9 @@ export default function NotFound() {
                 ) : (
                   <>
                     auto-redirecting in{" "}
-                    <span className="tabular-nums text-white text-sm sm:text-base">
+                    <span className="tabular-nums text-primary text-sm sm:text-base">
                       {remainingSeconds}s
-                    </span>{" "}
-                    —{" "}
-                    <button
-                      type="button"
-                      onClick={() => setIsRedirectCancelled(true)}
-                      className="hover:bg-primary hover:text-background cursor-pointer"
-                    >
-                      kill --redirect
-                    </button>
+                    </span>
                   </>
                 )}
               </p>

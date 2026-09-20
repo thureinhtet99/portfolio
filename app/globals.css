@@ -115,7 +115,7 @@
     @apply mx-auto w-full max-w-[90rem] space-y-20;
   }
   .section-heading {
-    @apply text-3xl font-extrabold tracking-[-0.03em] sm:text-4xl text-foreground;
+    @apply text-3xl font-bold tracking-[-0.02em] text-muted-foreground sm:text-4xl;
   }
 }
 

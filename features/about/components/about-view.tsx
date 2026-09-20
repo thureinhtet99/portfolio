@@ -16,9 +16,7 @@ export function AboutView({
       {/* About */}
       <section className="px-6 py-16 sm:py-20">
         <div className="mx-auto max-w-4xl space-y-6">
-          <h1 className="text-4xl font-bold tracking-[-0.03em] sm:text-5xl">
-            About me
-          </h1>
+          <h1 className="text-4xl font-bold tracking-[-0.02em]">About me</h1>
 
           <div className="flex flex-col gap-8 md:flex-row">
             {/* Portrait */}

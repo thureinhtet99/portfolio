@@ -18,7 +18,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
+import { FaCode, FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
 import { MdOutlineTimeline } from "react-icons/md";
 import { imageCards, navLinks, routeLabels } from "./data/nav-links";
 
@@ -300,6 +300,15 @@ export function TopNavbar({
                       <FaEnvelope className="h-5 w-5" aria-hidden="true" />
                     </Link>
                   )}
+                  <Link
+                    href="https://github.com/thureinhtet99/portfolio"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="View source code on GitHub"
+                    className="hover:text-primary transition-colors"
+                  >
+                    <FaCode className="h-5 w-5" aria-hidden="true" />
+                  </Link>
                 </div>
               </div>
             </div>

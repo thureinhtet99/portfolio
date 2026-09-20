@@ -57,9 +57,18 @@ export function TimelineYearRail({
     return positions.sort((a, b) => b.year.localeCompare(a.year));
   }, [experiences, entryHeights]);
 
-  if (isMobile) {
-    return null;
-  }
+  const findEntryIdx = (year: string) =>
+    experiences.findIndex((exp) =>
+      exp.positions.some((pos) => {
+        const startYear = extractYear(pos.employmentPeriod.start);
+        const endYear = pos.employmentPeriod.end
+          ? extractYear(pos.employmentPeriod.end)
+          : startYear;
+        return year >= startYear && year <= endYear;
+      }),
+    );
+
+  if (isMobile) return null;
 
   // Line endpoints: centered on first and last circle
   const lineTop = yearPositions.length > 0 ? yearPositions[0].y + 12 : 0;
@@ -83,15 +92,7 @@ export function TimelineYearRail({
       {/* Year labels */}
       {yearPositions.map(({ year, y }) => {
         // Find the first experience that has this year
-        const entryIdx = experiences.findIndex((exp) =>
-          exp.positions.some((pos) => {
-            const startYear = extractYear(pos.employmentPeriod.start);
-            const endYear = pos.employmentPeriod.end
-              ? extractYear(pos.employmentPeriod.end)
-              : startYear;
-            return year >= startYear && year <= endYear;
-          }),
-        );
+        const entryIdx = findEntryIdx(year);
         return (
           <button
             key={year}
@@ -106,9 +107,6 @@ export function TimelineYearRail({
           >
             <span className="tabular-nums text-3xl leading-none text-muted-foreground/60 hover:text-primary">
               {year}
-            </span>
-            <span className="relative z-10 flex h-6 w-6 items-center justify-center">
-              <span className="h-4 w-4 rounded-full bg-muted-foreground group-hover/year:bg-primary transition-colors" />
             </span>
           </button>
         );

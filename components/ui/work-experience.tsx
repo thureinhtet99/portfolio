@@ -99,7 +99,7 @@ export function ExperienceItem({ experience }: ExperienceItemProps) {
           )}
         </div>
 
-        <h3 className="text-lg leading-snug text-white">
+        <h3 className="min-w-0 text-base leading-snug text-white break-words sm:text-lg">
           {experience.companyWebsite ? (
             <a
               className="hover:bg-primary hover:text-background"
@@ -173,7 +173,7 @@ export function ExperiencePositionItem({
             />
             {/* {position.icon ?? <BriefcaseBusinessIcon />} */}
 
-            <h3 className="flex-1 text-lg text-balance text-foreground">
+            <h3 className="min-w-0 flex-1 text-base break-words text-balance text-foreground sm:text-lg">
               {position.title}
             </h3>
 
@@ -182,7 +182,7 @@ export function ExperiencePositionItem({
             </div>
           </div>
 
-          <dl className="relative z-1 flex items-center gap-2 pl-9 text-sm text-muted-foreground divide-x divide-muted-foreground/30">
+          <dl className="relative z-1 flex flex-wrap items-center gap-x-2 gap-y-1 pl-9 text-sm text-muted-foreground divide-x divide-muted-foreground/30">
             {position.employmentType && (
               <div className="pr-2">
                 <dt className="sr-only">Employment Type</dt>
@@ -217,7 +217,7 @@ export function ExperiencePositionItem({
 
         <CollapsibleContent className="overflow-hidden">
           {position.description && (
-            <Prose className="pt-2 pl-9 text-muted-foreground">
+            <Prose className="pt-2 pl-9 text-sm break-words text-muted-foreground sm:text-base">
               <ReactMarkdown>{position.description}</ReactMarkdown>
             </Prose>
           )}
