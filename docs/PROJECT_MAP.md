@@ -16,6 +16,7 @@ A personal portfolio site with an authenticated admin panel, built on Next.js Ap
 - **Maps:** `leaflet`/`react-leaflet`, dynamically imported (`ssr: false`) for the homepage "Currently Based In" widget; residence city is geocoded server-side via the Nominatim API.
 - **Comments:** `@giscus/react` powers `/leave-a-note` (backed by GitHub Discussions).
 - **Config:** `config/app-config.ts` for app-wide route constants and base URL, `types/index.type.ts` for shared types.
+- **Other libraries:** forms via `react-hook-form` + `@hookform/resolvers` + `zod`; animation via `framer-motion` (imported as `motion/react`); icons via `lucide-react` and `react-icons`; Markdown via `react-markdown`; toasts via `sonner`; analytics via `@vercel/analytics`; Tailwind plugins `tailwindcss-animate` and `@tailwindcss/typography`.
 
 **High-level shape**
 
@@ -205,6 +206,46 @@ App Router, file-based. Route groups don't affect URLs.
 7. **New global static data goes in `data/`.** Feature-specific data goes in `features/<name>/data/`. If in doubt: "does anything outside this feature use it?" — if no, it's feature-local.
 8. **Auth checks live in `app/admin/page.tsx`** (inline), not in `layout.tsx`. The `(public)` layout is a passthrough.
 9. **No new global state library** without discussion — TanStack Query for server state, local `useState` for UI state.
+
+## 10. Local Development
+
+Prerequisites: Node 24.22.0 (the only pin, in `Dockerfile`), npm. No Docker or Turso needed: locally the app uses a SQLite file via `better-sqlite3`; Turso (`@libsql/client`) is used only when `VERCEL=1`, so never set `VERCEL` or `TURSO_*` locally.
+
+```bash
+npm ci                      # honours .npmrc legacy-peer-deps
+cp .env.example .env.local  # then fill in (see table); generate the auth secret: openssl rand -base64 32
+npm run db:migrate          # creates ./local.db from drizzle/
+npm run db:seed             # optional: fake "[SAMPLE]" content (local-only, idempotent)
+npm run dev                 # http://localhost:3000 (must be port 3000: auth baseURL is pinned there in dev)
+```
+
+Every route reads the DB (the root layout reads `setting`), so migrate before first run. `drizzle.config.ts` reads `.env.local` only.
+
+| Variable                                                                                                    | Needed for                             | Local value / source                                                                                    |
+| ----------------------------------------------------------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `BETTER_AUTH_SECRET`                                                                                        | session signing                        | random; required in production (the server throws without it), dev falls back to a public placeholder   |
+| `BETTER_AUTH_URL`, `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_SITE_URL`                                           | URLs                                   | `http://localhost:3000`                                                                                 |
+| `SQLITE_DB_PATH`                                                                                            | local DB file                          | `./local.db`                                                                                            |
+| `GMAIL_EMAIL`, `GMAIL_APP_PASSWORD`                                                                         | contact form                           | Google app password                                                                                     |
+| `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `NEXT_PUBLIC_CLOUDINARY_API_KEY/_SECRET`, `CLOUDINARY_API_KEY/_SECRET` | admin uploads and asset cleanup        | Cloudinary dashboard (same key/secret in both pairs; the `NEXT_PUBLIC_` secret is a known naming smell) |
+| `NEXT_PUBLIC_GISCUS_REPO/_REPO_ID/_CATEGORY/_CATEGORY_ID`                                                   | `/leave-a-note`                        | https://giscus.app                                                                                      |
+| `GITHUB_TOKEN`, `GITHUB_CONTRIBUTIONS_API_URL`                                                              | optional GitHub rate limits / override | optional                                                                                                |
+
+Everything except the DB and auth secret is optional for the app to boot; features that lack their keys degrade (contact form 500s, uploads fail, Giscus shows nothing). Katib, GitHub, Nominatim and map tiles need network but fall back gracefully; `next/font/google` needs network at build and dev start.
+
+**DB commands:** `db:generate` (new migration from `db/schema.ts`), `db:migrate`, `db:push`, `db:studio`, `db:seed`, and `db:reset` (deletes `local.db`, re-migrates, re-seeds). `scripts/check-turso.ts` and `scripts/test-apis.ts` hit Turso when credentials exist: do not run them locally.
+
+**Admin access:** there is no OAuth. With `npm run dev` running, create the first user in your own terminal (the endpoint is disabled when `NODE_ENV=production`, i.e. under `next build`/`next start`):
+
+```bash
+read -s "pw?Admin password (min 8): " && curl -s -X POST http://localhost:3000/api/admin/create-user \
+  -H 'content-type: application/json' \
+  -d "{\"name\":\"Admin\",\"email\":\"you@example.com\",\"password\":\"$pw\"}"; unset pw
+```
+
+Then sign in at `/admin`. Any signed-in user passes `requireAdminSession`, so public sign-up is disabled when `NODE_ENV=production` (`lib/auth.ts`) and stays open in dev only so `create-user` works. Add production admins by inserting them into the production DB yourself.
+
+**Checks:** `npm run typecheck`, `npm run lint` (`next lint` no longer exists in Next 16). A local `next build` needs a non-localhost URL because `lib/base-url.ts` rejects localhost in production mode, e.g. `NEXT_PUBLIC_BASE_URL=https://portfolio.example npm run build` (do not persist that value).
 
 ---
 

@@ -17,18 +17,11 @@ import axios from "axios";
 import { Send } from "lucide-react";
 import { ControllerRenderProps, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import * as z from "zod";
-
-const formSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Please enter a valid email"),
-  subject: z.string().min(1, "Subject is required"),
-  message: z.string().min(1, "Message is required"),
-});
+import { contactSchema, type ContactInput } from "../schema";
 
 export function ContactView() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<ContactInput>({
+    resolver: zodResolver(contactSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -38,7 +31,7 @@ export function ContactView() {
   });
 
   const { isPending, mutate } = useMutation({
-    mutationFn: async (data: z.infer<typeof formSchema>) => {
+    mutationFn: async (data: ContactInput) => {
       const response = await axios.post("/api/send", data);
       return response.data;
     },
@@ -54,7 +47,7 @@ export function ContactView() {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
+  const onSubmit = (data: ContactInput) => {
     mutate(data);
   };
 
@@ -81,7 +74,7 @@ export function ContactView() {
                   render={({
                     field,
                   }: {
-                    field: ControllerRenderProps<z.infer<typeof formSchema>>;
+                    field: ControllerRenderProps<ContactInput>;
                   }) => (
                     <FormItem>
                       <FormLabel>Name</FormLabel>
@@ -114,7 +107,7 @@ export function ContactView() {
                 render={({
                   field,
                 }: {
-                  field: ControllerRenderProps<z.infer<typeof formSchema>>;
+                  field: ControllerRenderProps<ContactInput>;
                 }) => (
                   <FormItem>
                     <FormLabel>Subject</FormLabel>
