@@ -56,7 +56,6 @@ Never:
 - fetch directly inside a UI component when a hook or server fetch already exists
 - reach across features (`features/x` importing from `features/y`)
 - install new dependencies without justification
-- reintroduce descoped features: theme/accent picker, light/dark toggle, `/pics`, `/tutorials`, webring, novelty click counter (see `docs/DESIGN_SYSTEM.md` §9)
 
 ## Workflow
 

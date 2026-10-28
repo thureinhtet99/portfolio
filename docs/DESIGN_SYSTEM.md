@@ -2,17 +2,13 @@
 
 This document is the single source of truth for spacing, type, color, motion, and component rules across the site. Every new component or page should be checkable against this file. It reflects `app/globals.css` and the components that consume it as they currently exist.
 
----
-
 ## 1. Design Principles
 
 1. **One voice, not a theme picker.** The site locks to a **single fixed dark theme**. No light mode, no accent picker, no background-effect toggle.
-2. **Terminal-adjacent, all the way through.** Unlike a typical "monospace for metadata only" pattern, this site sets its primary UI font to a monospace face site-wide (see §3) and leans into developer-tool visual cues: a `~ / route / path` breadcrumb in the navbar, traffic-light dots on project preview cards, monospace status/footer text. It's a professional/backend-leaning portfolio, not a novelty terminal-cosplay site — the motif is consistent but restrained.
+2. **Terminal-adjacent, all the way through.** Unlike a typical "monospace for metadata only" pattern, this site sets its primary UI font to a monospace face site-wide and leans into developer-tool visual cues: a `~ / route / path` breadcrumb in the navbar, traffic-light dots on project preview cards, monospace status/footer text. It's a professional/backend-leaning portfolio, not a novelty terminal-cosplay site — the motif is consistent but restrained.
 3. **Content is the hero, chrome is quiet.** Cards, borders exist to organize, not decorate. Prefer whitespace over heavy borders where possible; borders are always low-opacity (`border-muted-foreground/20`).
 4. **Motion signals hierarchy, not decoration.** Entrance animation communicates "this is now in view" — nothing loops or draws attention for its own sake except the intentional loading-screen scramble and the availability-dot ping.
 5. **Everything degrades to plain text or a calm fallback.** Live widgets (GitHub activity, contributions heatmap, location map) must not block first paint and must fail quietly (empty state or "Activity unavailable" text), never a broken UI.
-
----
 
 ## 2. Color System
 
@@ -93,8 +89,6 @@ Stick to opacity steps already in use in the codebase (`/20`, `/30`, `/50`, `/60
 
 Note: `--muted-foreground` is used as the default body text color (`body { @apply text-muted-foreground }`), not a "secondary only" tone — most running text on the site is `muted-foreground`, with `foreground` reserved for a smaller set of headings.
 
----
-
 ## 3. Typography
 
 **Font:** JetBrains Mono, loaded via `next/font/google` as `--font-jetbrains-mono` and mapped to `--font-sans` in `@theme` — this is the site's only typeface, used for everything (headings, body, UI chrome), not reserved for metadata. Geist Mono is also loaded (`--font-geist-mono`) but is **not wired into the Tailwind theme** and is effectively unused — don't build on it; either remove the font load or wire it up deliberately if a second mono face is actually needed.
@@ -116,8 +110,6 @@ Note: `--muted-foreground` is used as the default body text color (`body { @appl
 ### 3.2 Line-length
 
 Prose blocks (bio, intro) stay readable via `prose` + a `max-w-*` wrapper on their containing section — don't let Markdown content stretch full-width on large screens.
-
----
 
 ## 4. Spacing & Layout
 
@@ -151,8 +143,6 @@ Defined once in `globals.css` `@layer components`:
 
 `--radius: 0.625rem` (10px), exposed as `--radius-sm/md/lg/xl` via `@theme inline`. Components use Tailwind's derived scale directly (`rounded-md`, `rounded-lg`, `rounded-sm`) — there is **no** oversized `rounded-[1.5rem]` card treatment in the current codebase; the card uses `rounded-md`, badges use `rounded-sm`, buttons use `rounded-md`/`rounded-full` (icon size). Keep new components on this same small scale; don't introduce a larger radius.
 
----
-
 ## 5. Elevation & Surface
 
 - **Flat** — text sections, no card, no shadow (about intro, contact copy).
@@ -164,8 +154,6 @@ Defined once in `globals.css` `@layer components`:
 **Texture:** a fixed, full-viewport SVG noise overlay (`body::before`, `feTurbulence`, `opacity: 0.08`) sits above everything (`z-index: 9999`, `pointer-events: none`) to add grain to the flat dark background. This is a deliberate global effect — don't add competing background textures per-page.
 
 **View transitions:** `next.config.ts` enables `experimental.viewTransition`. `app/globals.css` disables the default root cross-fade and explicitly isolates `site-header`/`site-footer` (named via `viewTransitionName` in `top-navbar.tsx`/`footer.tsx`) so nav/footer never re-animate between pages. Named per-item transitions are also used for project cards (`project-image-{slug}`, `project-title-{slug}`) via React's `<ViewTransition>` and `<Link transitionTypes={[...]}>`. New shared chrome should follow the same isolation pattern; new per-item transitions should use a unique, ID-suffixed `viewTransitionName`/`<ViewTransition name>`.
-
----
 
 ## 6. Component-Specific Rules
 
@@ -208,8 +196,6 @@ Defined once in `globals.css` `@layer components`:
 
 - `/labs`: centered `Construction` icon + "coming soon" text — follow this exact minimal pattern for any other stub page rather than leaving a route empty.
 
----
-
 ## 7. Accessibility Checklist (apply to every new component)
 
 - [ ] Contrast checked against `--dark-gray` background for any new color — `--primary` (`#40a9ff`) on `--dark-gray` should be re-measured before reuse in a new context; don't assume it clears body-text contrast.
@@ -219,13 +205,9 @@ Defined once in `globals.css` `@layer components`:
 - [ ] Status/footer information isn't conveyed by color alone — pair dots/icons with text
 - [ ] New `Skeleton` states added for GitHub Activity Widget and Latest Posts Widget — **not yet implemented, still open**
 
----
-
 ## 8. What We're Explicitly Not Building
 
 No theme/accent picker, no per-accent-color picker UI, no user-facing "background effect" toggle, and **no light/dark toggle** — the site locks to a single fixed dark theme with zero visitor-controlled visual variables. Also out of scope unless explicitly requested: a novelty click counter, a webring and a `/pics` gallery.
-
----
 
 ## 9. Known Gaps / Open Items
 

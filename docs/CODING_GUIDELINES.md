@@ -178,8 +178,6 @@ This is the current folder structure:
 └── .env.example
 ```
 
----
-
 ## Coding Standards
 
 **Components**
@@ -228,8 +226,6 @@ This is the current folder structure:
 - Use async/await
 - Return early
 - Run `npm run lint` and `npm run typecheck` before considering a change done
-
----
 
 ## Naming Conventions
 

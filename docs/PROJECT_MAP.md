@@ -35,8 +35,6 @@ Request → app/ (routing, layout, API routes)
 
 Public-facing features are extracted into `features/`. Pages in `app/(public)/` are thin server wrappers that fetch data and render the corresponding feature view.
 
----
-
 ## 2. Folder Responsibilities
 
 | Folder                          | Responsibility                                                                                                                                                                                                                                                                                                                                                                     |
@@ -89,8 +87,6 @@ Public-facing features are extracted into `features/`. Pages in `app/(public)/` 
 6. **Homepage widgets:** `WidgetSection` (server component) fetches recent commits/streak/languages from the Katib API (`https://katib.jasoncameron.dev`, keyed off the GitHub URL in settings) and the 4 latest published posts directly from the DB, then renders `<GitHubActivityWidget>` and `<LatestPostsWidget>`. `ContributionsSection` separately fetches a full contribution-calendar (`github-contributions-api.jogruber.de`, cached 24h via `unstable_cache`) and renders it with `<GitHubContributions>` / `<ContributionGraph>`.
 7. **Location widget:** the homepage geocodes `settings.residence` via the Nominatim API (cached 7 days) and renders a live Leaflet map (`LocationMapClient` → dynamically-imported `LocationMap`) pinned to that city, falling back to a hardcoded lat/lng if geocoding fails.
 8. **View counter:** incremented directly against the DB (`setting` table, `siteViews` key) on every homepage render; `footer.tsx` and `layout.tsx` read the same key to display it.
-
----
 
 ## 4. Feature Flow
 
@@ -147,8 +143,6 @@ features/admin/
 └── data/menu-items.tsx                # admin sidebar menu items
 ```
 
----
-
 ## 5. Routing
 
 App Router, file-based. Route groups don't affect URLs.
@@ -168,8 +162,6 @@ App Router, file-based. Route groups don't affect URLs.
 | `/admin`           | `app/admin/page.tsx` (+ `layout.tsx`)   | Protected; inline login form or `<AdminView />` depending on session      |
 | `/api/*`           | `app/api/**/route.ts`                   | REST-style handlers, no pages                                             |
 
----
-
 ## 6. Authentication
 
 - Powered by **Better Auth**, email/password only.
@@ -179,16 +171,12 @@ App Router, file-based. Route groups don't affect URLs.
 - `app/admin/page.tsx` — the entire auth gate: shows a login form when `useSession()` has no session, `<AdminView />` once authenticated. No middleware-based route protection.
 - `app/api/admin/create-user/route.ts` — privileged endpoint for provisioning admin accounts; must itself verify the caller is an authenticated admin.
 
----
-
 ## 7. State Management
 
 - **Server state** (data from the DB/API): TanStack Query, initialized once via `components/providers/query-provider.tsx` wrapping the app in `app/layout.tsx`. Admin list sections share one hook shape via `useCrudResource`; there is no global store for server data.
 - **Local/UI state:** plain React state (`useState`) inside view and section components — tab switching (`AdminView`), dialog open/close, form fields, delete confirmation.
 - **Session state:** derived from `lib/auth-client.ts`'s `useSession()`, not duplicated into another store.
 - No global client state library (Redux/Zustand) — state stays as local as possible, scoped to the feature that needs it.
-
----
 
 ## 8. Important Files
 
@@ -206,8 +194,6 @@ App Router, file-based. Route groups don't affect URLs.
 | `config/app-config.ts`                    | Route-name constants and base URL — check here before hardcoding a route string elsewhere.                                                 |
 | `components/providers/query-provider.tsx` | TanStack Query client setup; if admin data isn't refreshing, check the config here first.                                                  |
 | `drizzle.config.ts`                       | Points Drizzle Kit at `db/schema.ts` and the migrations output folder — needed for any `db:generate`/`db:push` command.                    |
-
----
 
 ## 9. Coding Rules
 
