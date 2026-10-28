@@ -77,7 +77,6 @@ This is the current folder structure:
 │   │       ├── timeline-view.tsx
 │   │       ├── work-experience-with-rail.tsx
 │   │       ├── timeline-year-rail.tsx
-│   │       └── experience-year-timeline.tsx     -> unused/superseded, do not extend
 │   │
 │   ├── posts/
 │   │   └── components/
@@ -143,7 +142,6 @@ This is the current folder structure:
 │   └── meta/
 │
 ├── data/                                         # only cross-feature/global static data
-│   ├── skills.tsx                                # currently unreferenced, reserved for About rework
 │   └── countries.json                            # currently unreferenced, reserved for About rework
 │
 ├── types/
@@ -165,7 +163,6 @@ This is the current folder structure:
 │   ├── PROJECT_MAP.md
 │   ├── CODING_GUIDELINES.md
 │   ├── DESIGN_SYSTEM.md
-│   └── References.md                             -> structural inspiration + historical decision log (§12 superseded)
 │
 ├── AGENTS.md                                     -> root agent instructions
 ├── drizzle.config.ts

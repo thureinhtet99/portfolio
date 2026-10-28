@@ -2,10 +2,10 @@
 .PHONY: dev build start lint typecheck format
 
 # Db
-.PHONY: db-generate db-migrate db-push db-drop db-studio auth-generate
+.PHONY: db-generate db-migrate db-push db-drop db-studio db-seed db-reset auth-generate
 
 # Maintenance
-.PHONY: clean install reset format
+.PHONY: clean install format
 
 # Testing
 .PHONY: build check all help
@@ -47,6 +47,12 @@ db-drop: ## Drop a migration
 db-studio: ## Open Drizzle Studio
 	npm run db:studio
 
+db-seed: ## Seed data to db
+	npm run db:seed
+
+db-reset: ## Reset database
+	npm run db:reset
+
 auth-generate: ## Generate Better Auth types
 	npm run auth:generate
 
@@ -55,9 +61,6 @@ clean: ## Remove .next and node_modules
 
 install: ## Fresh install dependencies
 	npm install --legacy-peer-deps
-
-reset: clean install ## Clean + reinstall
-	@echo "Done — run 'make dev' to start"
 
 # All in one
 all: format typecheck build ## format + typecheck + build

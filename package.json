@@ -11,6 +11,8 @@
     "db:push": "drizzle-kit push",
     "db:drop": "drizzle-kit drop",
     "db:studio": "drizzle-kit studio",
+    "db:seed": "tsx scripts/seed-local.ts",
+    "db:reset": "rm -f local.db && drizzle-kit migrate && tsx scripts/seed-local.ts",
     "auth:generate": "npx @better-auth/cli generate",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -82,7 +84,7 @@
     "@types/react-dom": "^19.0.4",
     "drizzle-kit": "^0.31.10",
     "eslint": "^10.8.0",
-    "eslint-config-next": "^0.2.4",
+    "eslint-config-next": "^16.4.3",
     "prettier": "3.9.6",
     "tailwindcss": "^4",
     "typescript": "5.9.3"

@@ -149,8 +149,6 @@ Defined once in `globals.css` `@layer components`:
 - **Panel** — bordered `div` (`border border-muted-foreground/20 rounded-md p-4`/`p-5`) for widget-style blocks (location, message, quote, GitHub activity).
 - **Card component** — `components/ui/card.tsx`: `rounded-lg py-6 shadow-[0_18px_50px_-38px_rgba(34,34,34,0.38)] backdrop-blur-sm`, no border by default. Used for admin panels, the login form (with an added `border`).
 
-**Known inconsistency:** several admin components (`admin-view.tsx`, `app/admin/page.tsx`) apply a `surface-panel` class that is **not defined anywhere** in `globals.css` — it currently does nothing. Either define `.surface-panel` in `globals.css @layer components` or replace those usages with the standard `Card`/panel treatment above.
-
 **Texture:** a fixed, full-viewport SVG noise overlay (`body::before`, `feTurbulence`, `opacity: 0.08`) sits above everything (`z-index: 9999`, `pointer-events: none`) to add grain to the flat dark background. This is a deliberate global effect — don't add competing background textures per-page.
 
 **View transitions:** `next.config.ts` enables `experimental.viewTransition`. `app/globals.css` disables the default root cross-fade and explicitly isolates `site-header`/`site-footer` (named via `viewTransitionName` in `top-navbar.tsx`/`footer.tsx`) so nav/footer never re-animate between pages. Named per-item transitions are also used for project cards (`project-image-{slug}`, `project-title-{slug}`) via React's `<ViewTransition>` and `<Link transitionTypes={[...]}>`. New shared chrome should follow the same isolation pattern; new per-item transitions should use a unique, ID-suffixed `viewTransitionName`/`<ViewTransition name>`.
@@ -190,7 +188,7 @@ Defined once in `globals.css` `@layer components`:
 
 ### 6.7 Experiences (homepage)
 
-- `WorkExperienceWithRail` renders collapsible per-position entries (`components/ui/work-experience.tsx`) with a synced `TimelineYearRail` that highlights the year matching the currently-expanded/most-visible entry. Don't build a second version of this on top of `experience-year-timeline.tsx` — that file is superseded.
+- `WorkExperienceWithRail` renders collapsible per-position entries (`components/ui/work-experience.tsx`) with a synced `TimelineYearRail` that highlights the year matching the currently-expanded/most-visible entry
 
 ### 6.8 Placeholder pages
 
@@ -208,11 +206,3 @@ Defined once in `globals.css` `@layer components`:
 ## 8. What We're Explicitly Not Building
 
 No theme/accent picker, no per-accent-color picker UI, no user-facing "background effect" toggle, and **no light/dark toggle** — the site locks to a single fixed dark theme with zero visitor-controlled visual variables. Also out of scope unless explicitly requested: a novelty click counter, a webring and a `/pics` gallery.
-
-## 9. Known Gaps / Open Items
-
-| Item                                                          | Status                                                                                                                                   |
-| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| Geist Mono font load (`--font-geist-mono`)                    | Loaded in `layout.tsx` but not wired into the Tailwind theme — effectively unused.                                                       |
-| `Skeleton` shimmer for GitHub Activity / Latest Posts widgets | Not implemented — widgets show nothing/text until data resolves.                                                                         |
-| About page                                                    | "Techs" section is a placeholder (`<div>tech stacks</div>`) — `data/skills.tsx` and `data/countries.json` exist but aren't wired in yet. |

@@ -68,7 +68,7 @@ Public-facing features are extracted into `features/`. Pages in `app/(public)/` 
 | `lib/`                          | Core singletons and utilities: `auth.ts`/`auth-client.ts`, `base-url.ts` (resolves base URL for Vercel/production/local), `get-cached-contributions.ts` (cached GitHub contribution fetch), `utils.ts` (`cn()`).                                                                                                                                                                   |
 | `db/`                           | `schema.ts` (single source of truth for every table), `client.ts` (driver selector), `sqlite.ts`, `turso.ts`. The only place raw table definitions live.                                                                                                                                                                                                                           |
 | `drizzle/`                      | Auto-generated migration SQL and snapshots. Never hand-edited.                                                                                                                                                                                                                                                                                                                     |
-| `data/`                         | Global/cross-feature static data: `skills.tsx`, `countries.json`. Currently unreferenced in code — reserved for the upcoming About page rework (tech stack tags, country picker). Feature-specific data lives in `features/<name>/data/` where a feature still has any (currently only `features/admin/data/`).                                                                    |
+| `data/`                         | Global/cross-feature static data: `countries.json`.                                                                                                                                                                                                                                                                                                                                |
 | `types/`                        | Shared TypeScript types used across more than one feature (`ProjectType`, `WorkType`, `PostType`, `TimelineType`, plus Better Auth entity types).                                                                                                                                                                                                                                  |
 | `hooks/`                        | Global reusable hooks: `use-crud.ts` (`useCrudResource` — generic TanStack Query CRUD wrapper for admin list resources), `use-image-upload.ts` (wraps `/api/upload`), `use-mobile.ts`.                                                                                                                                                                                             |
 | `config/`                       | `app-config.ts` — route-name constants and base URL.                                                                                                                                                                                                                                                                                                                               |
@@ -118,7 +118,6 @@ features/timeline/
     ├── timeline-view.tsx              # entry point, imported by app/(public)/timeline/page.tsx
     ├── work-experience-with-rail.tsx  # homepage "Experiences" section, imported by home-view.tsx
     ├── timeline-year-rail.tsx         # year rail synced to work-experience-with-rail scroll position
-    └── experience-year-timeline.tsx   # unused/superseded draft — do not build on top of this
 
 features/posts/
 └── components/
@@ -206,7 +205,6 @@ App Router, file-based. Route groups don't affect URLs.
 7. **New global static data goes in `data/`.** Feature-specific data goes in `features/<name>/data/`. If in doubt: "does anything outside this feature use it?" — if no, it's feature-local.
 8. **Auth checks live in `app/admin/page.tsx`** (inline), not in `layout.tsx`. The `(public)` layout is a passthrough.
 9. **No new global state library** without discussion — TanStack Query for server state, local `useState` for UI state.
-10. **Don't build on `experience-year-timeline.tsx`.** It's superseded by `work-experience-with-rail.tsx` + `timeline-year-rail.tsx`; treat it as dead code pending removal.
 
 ---
 
