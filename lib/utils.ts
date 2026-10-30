@@ -5,14 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// export const formatDate = (dateString: string) => {
-//   const date = new Date(dateString);
-//   return date.toLocaleDateString("en-US", {
-//     month: "short",
-//     year: "numeric",
-//   });
-// };
-
 export const escapeHtml = (value: string) =>
   value
     .replace(/&/g, "&amp;")
@@ -21,7 +13,6 @@ export const escapeHtml = (value: string) =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 
-/** `https://github.com/octocat/` -> `octocat`; empty when there is no URL. */
 export const getGithubUsername = (githubUrl?: string | null) =>
   githubUrl?.replace(/\/+$/, "").split("/").pop() || "";
 

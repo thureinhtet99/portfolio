@@ -11,6 +11,9 @@ export const SETTINGS_KEYS = {
   INTRO: "intro",
   ROLES: "roles",
   SITE_VIEWS: "siteViews",
+  CHAT_ENABLED: "chatEnabled",
+  CHAT_MONTHLY_BUDGET_USD: "chatMonthlyBudgetUsd",
+  CHAT_DAILY_BUDGET_USD: "chatDailyBudgetUsd",
 } as const;
 
 export const DEMO_CREDENTIAL_ROLES = {

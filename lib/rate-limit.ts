@@ -27,3 +27,8 @@ export function isRateLimited(
   bucket.count += 1;
   return bucket.count > limit;
 }
+
+/** Best-effort client IP behind a proxy; Vercel sets `x-forwarded-for`. */
+export function getClientIp(req: Request): string {
+  return req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+}

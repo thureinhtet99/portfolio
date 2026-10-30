@@ -1,4 +1,5 @@
 import { Footer } from "@/components/layout/footer";
+import { getAssistantConfig } from "@/app/api/chat/config";
 import { TopNavbar } from "@/components/layout/top-navbar";
 import QueryProvider from "@/components/providers/query-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,6 +8,7 @@ import {
   getSiteViews,
 } from "@/features/admin/services/settings.service";
 import { getSiteUrl } from "@/lib/base-url";
+import { AssistantLauncher } from "@/features/assistant/components/assistant-launcher";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
@@ -89,14 +91,18 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const [settings, siteViews] = await Promise.all([
+  const [settings, siteViews, assistantConfig] = await Promise.all([
     getSettings(),
     // Read live (uncached) so the navbar reflects the latest count
     // immediately after the homepage has incremented it.
     getSiteViews(),
+    getAssistantConfig(),
   ]);
 
   const viewCount = siteViews.toLocaleString();
+  // Hidden unless a key is configured and the owner has switched it on.
+  const assistantAvailable =
+    Boolean(process.env.ANTHROPIC_API_KEY) && assistantConfig.enabled;
 
   return (
     <html lang="en">
@@ -117,6 +123,7 @@ export default async function RootLayout({
                 githubUrl={settings.githubUrl || ""}
                 linkedinUrl={settings.linkedinUrl || ""}
                 emailUrl={settings.emailUrl || ""}
+                assistant={assistantAvailable ? <AssistantLauncher /> : null}
               />
               <Suspense>
                 <TooltipProvider>

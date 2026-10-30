@@ -4,12 +4,14 @@ import fs from "fs";
 import path from "path";
 import * as schema from "./schema";
 
-export function createSqliteDb() {
+export function resolveSqlitePath() {
   const rawPath = process.env.SQLITE_DB_PATH || "./local.db";
 
-  const dbPath = path.isAbsolute(rawPath)
-    ? rawPath
-    : path.join(process.cwd(), rawPath);
+  return path.isAbsolute(rawPath) ? rawPath : path.join(process.cwd(), rawPath);
+}
+
+export function createSqliteDb() {
+  const dbPath = resolveSqlitePath();
 
   // Ensure directory exists
   const dir = path.dirname(dbPath);

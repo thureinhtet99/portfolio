@@ -1,5 +1,5 @@
 import { contactSchema } from "@/features/contact/schema";
-import { isRateLimited } from "@/lib/rate-limit";
+import { getClientIp, isRateLimited } from "@/lib/rate-limit";
 import { escapeHtml } from "@/lib/utils";
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
@@ -8,8 +8,7 @@ const RATE_LIMIT = 5;
 const RATE_WINDOW_MS = 10 * 60 * 1000;
 
 export async function POST(req: Request) {
-  const ip =
-    req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  const ip = getClientIp(req);
 
   if (isRateLimited(`send:${ip}`, RATE_LIMIT, RATE_WINDOW_MS)) {
     return NextResponse.json(

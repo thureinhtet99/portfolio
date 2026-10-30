@@ -50,6 +50,13 @@
       "when": 1785689399212,
       "tag": "0006_amazing_miracleman",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1793348705421,
+      "tag": "0007_previous_marvel_apes",
+      "breakpoints": true
     }
   ]
 }

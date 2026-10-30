@@ -44,6 +44,10 @@ const settings: Record<string, string> = {
   ),
   residence: "Thailand",
   available: "true",
+  // AI assistant: on locally so it works as soon as ANTHROPIC_API_KEY is set.
+  chatEnabled: "true",
+  chatMonthlyBudgetUsd: "3",
+  chatDailyBudgetUsd: "1",
   githubUrl: "https://github.com/octocat",
   emailUrl: "mailto:hello@example.com",
   bookingUrl: "https://example.com/book",

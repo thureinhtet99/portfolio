@@ -4,14 +4,10 @@ import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
 const TARGET = "loading...";
-const CHARS = "abcdefghijklmnopqrstuvwxyz.";
-const PAUSE_MS = 600; // how long to hold the fully-revealed text before restarting
+const CHARS = "abcdefghijklmnopqrstuvwxyz!@#$%^&*.";
+const PAUSE_MS = 600;
 
 type ScrambleLoadingProps = {
-  /**
-   * "full"  → text-primary (global loading screen, full accent colour)
-   * "muted" → text-primary/60 (inline section loaders, dimmed)
-   */
   variant?: "full" | "muted";
   className?: string;
 };
@@ -59,14 +55,12 @@ export function ScrambleLoading({
     };
   }, []);
 
-  const textColor = variant === "full" ? "text-primary" : "text-primary/60";
-
   return (
     <div className={cn("flex items-center justify-center gap-1", className)}>
       <span
         className={cn(
           "text-base hover:text-muted-foreground transition-colors shrink-0",
-          textColor,
+          variant === "full" ? "text-primary" : "text-primary/60",
         )}
       >
         ~
@@ -76,7 +70,7 @@ export function ScrambleLoading({
         <span
           className={cn(
             "text-base hover:text-muted-foreground transition-colors",
-            textColor,
+            variant === "full" ? "text-primary" : "text-primary/60",
           )}
         >
           {display}

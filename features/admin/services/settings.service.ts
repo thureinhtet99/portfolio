@@ -1,9 +1,8 @@
 import { db } from "@/db/client";
 import { setting } from "@/db/schema";
+import { SETTINGS_KEYS } from "@/features/admin/constants";
 import { eq } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
-
-import { SETTINGS_KEYS } from "@/features/admin/constants";
 
 export const getSettings = unstable_cache(
   async (): Promise<Record<string, string>> => {

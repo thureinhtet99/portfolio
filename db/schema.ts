@@ -117,3 +117,22 @@ export const timeline = sqliteTable("timeline", {
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
+
+// AI assistant: one row per UTC day, cost kept in integer micro-dollars so the
+// budget maths never touches floats.
+export const chatUsage = sqliteTable("chat_usage", {
+  day: text("day").primaryKey(), // YYYY-MM-DD (UTC)
+  requests: integer("requests").notNull().default(0),
+  inputTokens: integer("input_tokens").notNull().default(0),
+  outputTokens: integer("output_tokens").notNull().default(0),
+  costMicroUsd: integer("cost_micro_usd").notNull().default(0),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+});
+
+// Questions the assistant could not answer. Text only: no IP, no identifiers.
+export const chatUnanswered = sqliteTable("chat_unanswered", {
+  id: text("id").primaryKey(),
+  question: text("question").notNull(),
+  page: text("page"), // path the visitor was on, e.g. /projects/ledgerly
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+});

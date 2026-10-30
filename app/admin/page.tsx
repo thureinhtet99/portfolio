@@ -49,7 +49,6 @@ export default function AdminDashboard() {
   if (!session) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        {/* surface-panel removed — Card already provides the correct dark bg treatment */}
         <Card className="w-full max-w-md border border-muted-foreground/20">
           <CardHeader className="space-y-1">
             <CardTitle className="text-center text-2xl font-bold tracking-[-0.02em]">

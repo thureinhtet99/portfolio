@@ -92,6 +92,12 @@ This is the current folder structure:
 │   │   └── components/
 │   │       └── labs-view.tsx
 │   │
+│   ├── assistant/
+│   │   ├── components/                      -> launcher, panel, fit-check tab, markdown
+│   │   ├── hooks/                           -> use-assistant-chat.ts, use-fit-check.ts
+│   │   ├── services/                        -> usage.service.ts (cost, budget, unanswered log)
+│   │   └── constants.ts, schema.ts, types.ts, prompt.ts (server-only)
+│   │
 │   └── admin/
 │       ├── components/
 │       │   ├── admin-view.tsx
@@ -99,7 +105,8 @@ This is the current folder structure:
 │       │   ├── timeline-section.tsx
 │       │   ├── work-exp-section.tsx
 │       │   ├── project-section.tsx
-│       │   └── posts-section.tsx
+│       │   ├── posts-section.tsx
+│       │   └── assistant-section.tsx
 │       └── data/
 │           └── menu-items.tsx
 │

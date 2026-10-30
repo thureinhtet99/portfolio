@@ -5,10 +5,11 @@ Personal portfolio of **Thu Rein Htet** — a terminal-inspired website showcasi
 ## Features
 
 - Showcase featured projects
-- Publish blog posts with MDX
+- Publish blog posts written in Markdown
 - Display work experience
 - View resume
 - Contact form with email support
+- Optional AI assistant that answers questions about the portfolio, with source links and a job-description fit check
 - Admin dashboard for content management
 - Fully responsive design
 
@@ -37,7 +38,8 @@ features/     Feature-based modules
 components/   Shared UI components
 hooks/        Custom React hooks
 lib/          Utilities and shared helpers
-db/           Drizzle schema and migrations
+db/           Drizzle schema and database clients
+drizzle/      Generated SQL migrations
 public/       Static assets
 docs/         Project documentation
 ```
@@ -61,66 +63,45 @@ This repository includes documentation for developers and AI coding agents.
 
 ## Getting Started
 
-### Prerequisites
-
-- Node.js 22+
-- npm
-- Git
-
-### Clone the repository
+Requires Git, npm and Node `^20.19 || ^22.13 || >=24` (tested on 24.22.0).
 
 ```bash
-git clone https://github.com/thureinhtet99/portfolio.git
-cd portfolio
-```
-
-### Install dependencies
-
-```bash
-npm install --legacy-peer-deps
-```
-
-### Configure environment variables
-
-```bash
+git clone https://github.com/thureinhtet99/portfolio.git && cd portfolio
+npm ci
 cp .env.example .env.local
-```
-
-Fill in the required environment variables.
-
-### Prepare the database
-
-```bash
-npm run db:generate
 npm run db:migrate
-```
-
-### Start the development server
-
-```bash
+npm run db:seed          # optional demo content
+npm run db:create-admin  # prompts for an email and password
 npm run dev
 ```
 
-Open **http://localhost:3000** in your browser.
+Open **http://localhost:3000** (the port must be 3000) and sign in at **/admin**.
+
+No environment variable is required to boot in development. For the full setup guide (environment variables, database commands, resetting, admin access, troubleshooting), see [**PROJECT_MAP.md §10**](./docs/PROJECT_MAP.md#10-local-development).
 
 ## Available Scripts
 
-| Command            | Description                  |
-| ------------------ | ---------------------------- |
-| `make dev`         | Start the development server |
-| `make build`       | Create a production build    |
-| `make lint`        | Run ESLint                   |
-| `make typecheck`   | Run TypeScript type checking |
-| `make db:generate` | Generate Drizzle migrations  |
-| `make db:migrate`  | Apply database migrations    |
-| `make db:studio`   | Open Drizzle Studio          |
+Every `make` target wraps an `npm run` script.
+
+| Command                | Description                                            |
+| ---------------------- | ------------------------------------------------------ |
+| `make dev`             | Start the development server                           |
+| `make build`           | Create a production build                              |
+| `make lint`            | Run ESLint                                             |
+| `make typecheck`       | Run TypeScript type checking                           |
+| `make db-migrate`      | Apply database migrations                              |
+| `make db-seed`         | Add demo content to the local database                 |
+| `make db-create-admin` | Create a local admin user                              |
+| `make db-reset`        | Delete the local database, then re-migrate and re-seed |
+| `make db-studio`       | Open Drizzle Studio                                    |
+| `make db-generate`     | Generate a migration after changing `db/schema.ts`     |
 
 ## Roadmap
 
 ### Planned Features
 
-- [ ] Labs page showcasing skills and adventures
-- [ ] AI chat assistant
+- [ ] Labs page showcasing personal skills and life adventures
+- [x] AI chat assistant
 - [x] Portfolio analytics
 - [ ] Internationalization (i18n)
 

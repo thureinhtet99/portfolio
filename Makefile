@@ -2,13 +2,13 @@
 .PHONY: dev build start lint typecheck format
 
 # Db
-.PHONY: db-generate db-migrate db-push db-drop db-studio db-seed db-reset auth-generate
+.PHONY: db-generate db-migrate db-push db-drop db-studio db-seed db-reset db-create-admin auth-generate
 
 # Maintenance
 .PHONY: clean install format
 
 # Testing
-.PHONY: build check all help
+.PHONY: all help
 
 # ---------------------------------------------------------------------------- #
 #                                                                              #
@@ -50,8 +50,11 @@ db-studio: ## Open Drizzle Studio
 db-seed: ## Seed data to db
 	npm run db:seed
 
-db-reset: ## Reset database
+db-reset: ## Delete the local database, re-migrate and re-seed
 	npm run db:reset
+
+db-create-admin: ## Create a local admin user (prompts for email and password)
+	npm run db:create-admin
 
 auth-generate: ## Generate Better Auth types
 	npm run auth:generate

@@ -3,6 +3,7 @@ import {
   BriefcaseBusiness,
   FileText,
   FolderGit2,
+  Sparkles,
   User,
 } from "lucide-react";
 import { MdOutlineTimeline } from "react-icons/md";
@@ -29,5 +30,10 @@ export const adminMenuItems = [
     id: "posts",
     label: "Posts",
     icon: <FileText className="h-4 w-4" />,
+  },
+  {
+    id: "assistant",
+    label: "Assistant",
+    icon: <Sparkles className="h-4 w-4" />,
   },
 ];

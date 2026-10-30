@@ -14,5 +14,7 @@ export const APP_CONFIG = {
     TIMELINES: "timelines",
     WORK_EXPERIENCES: "work-experiences",
     LABS: "labs",
+    CHAT_QUESTIONS: "chat-questions",
+    CHAT_SETTINGS: "chat-settings",
   },
 };

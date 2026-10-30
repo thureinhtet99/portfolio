@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { FaCode, FaEnvelope, FaGithub, FaLinkedin } from "react-icons/fa";
 import { MdOutlineTimeline } from "react-icons/md";
 import { imageCards, navLinks, routeLabels } from "./data/nav-links";
@@ -42,11 +42,14 @@ export function TopNavbar({
   githubUrl = "",
   linkedinUrl = "",
   emailUrl = "",
+  assistant,
 }: {
   viewCount?: string;
   githubUrl?: string;
   linkedinUrl?: string;
   emailUrl?: string;
+  /** Optional AI assistant launcher, passed in so this shared layout stays feature-free. */
+  assistant?: ReactNode;
 }) {
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
@@ -97,51 +100,52 @@ export function TopNavbar({
           <span className="inline-block h-4 w-2 animate-pulse-slow bg-primary" />
         </div>
 
-        {/* Desktop nav */}
-        <div className="hidden items-center gap-10 sm:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "text-sm transition-colors hover:bg-primary hover:text-background",
-                isActive(link.href) ? "text-white" : "",
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
-
-          {/* More dropdown */}
-          <DropdownMenu open={moreOpen} onOpenChange={setMoreOpen}>
-            <DropdownMenuTrigger
-              className={cn(
-                "text-sm transition-colors hover:text-background hover:bg-primary flex items-center gap-1 border-none outline-none cursor-pointer",
-                isMoreActive ? "text-white" : "text-muted-foreground",
-              )}
-            >
-              More
-              <ChevronDown
+        <div className="flex items-center gap-6 sm:gap-10">
+          {/* Desktop nav */}
+          <div className="hidden items-center gap-10 sm:flex">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
                 className={cn(
-                  "h-4 w-4 transition-transform",
-                  moreOpen && "rotate-180",
+                  "text-sm transition-colors hover:bg-primary hover:text-background",
+                  isActive(link.href) ? "text-white" : "",
                 )}
-              />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              sideOffset={16}
-              className="flex w-auto h-50 gap-2 rounded-md border border-muted-foreground/10 p-2"
-            >
-              {/* Left: Image cards */}
-              <div className="flex gap-2">
-                {imageCards.map((card) => (
-                  <DropdownMenuItem key={card.href} asChild>
-                    <Link
-                      href={card.href}
-                      className="relative flex h-auto w-50 flex-col justify-end overflow-hidden rounded-md cursor-pointer group"
-                    >
-                      {/* <Image
+              >
+                {link.label}
+              </Link>
+            ))}
+
+            {/* More dropdown */}
+            <DropdownMenu open={moreOpen} onOpenChange={setMoreOpen}>
+              <DropdownMenuTrigger
+                className={cn(
+                  "text-sm transition-colors hover:text-background hover:bg-primary flex items-center gap-1 border-none outline-none cursor-pointer",
+                  isMoreActive ? "text-white" : "text-muted-foreground",
+                )}
+              >
+                More
+                <ChevronDown
+                  className={cn(
+                    "h-4 w-4 transition-transform",
+                    moreOpen && "rotate-180",
+                  )}
+                />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                sideOffset={16}
+                className="flex w-auto h-50 gap-2 rounded-md border border-muted-foreground/10 p-2"
+              >
+                {/* Left: Image cards */}
+                <div className="flex gap-2">
+                  {imageCards.map((card) => (
+                    <DropdownMenuItem key={card.href} asChild>
+                      <Link
+                        href={card.href}
+                        className="relative flex h-auto w-50 flex-col justify-end overflow-hidden rounded-md cursor-pointer group"
+                      >
+                        {/* <Image
                         src={card.image}
                         alt={card.label}
                         priority
@@ -149,77 +153,82 @@ export function TopNavbar({
                         sizes="200px"
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                       /> */}
-                      <div className="flex items-center justify-center transition-transform duration-300 group-hover:scale-150">
-                        <Construction />
-                      </div>
-                      <div className="absolute inset-0 bg-black/40" />
-                      <div
-                        className={`relative z-10 p-2 ${
-                          pathname === "/labs"
-                            ? "text-white"
-                            : "text-muted-foreground"
-                        }`}
-                      >
-                        <div className="text-sm font-medium">{card.label}</div>
-                        <div className="text-xs">{card.description}</div>
-                      </div>
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
-              </div>
+                        <div className="flex items-center justify-center transition-transform duration-300 group-hover:scale-150">
+                          <Construction />
+                        </div>
+                        <div className="absolute inset-0 bg-black/40" />
+                        <div
+                          className={`relative z-10 p-2 ${
+                            pathname === "/labs"
+                              ? "text-white"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          <div className="text-sm font-medium">
+                            {card.label}
+                          </div>
+                          <div className="text-xs">{card.description}</div>
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                </div>
 
-              {/* Right: Icon list */}
-              <div className="flex flex-col justify-start gap-3">
-                {moreLinks.map((link) => (
-                  <DropdownMenuItem
-                    key={link.href}
-                    asChild
-                    className="group data-highlighted:bg-transparent"
-                  >
-                    <Link
-                      href={link.href}
-                      className={cn(
-                        "flex items-center px-2 text-sm cursor-pointer",
-                        isActive(link.href)
-                          ? "text-white"
-                          : "text-muted-foreground",
-                      )}
+                {/* Right: Icon list */}
+                <div className="flex flex-col justify-start gap-3">
+                  {moreLinks.map((link) => (
+                    <DropdownMenuItem
+                      key={link.href}
+                      asChild
+                      className="group data-highlighted:bg-transparent"
                     >
-                      <link.icon
+                      <Link
+                        href={link.href}
                         className={cn(
-                          "h-6 w-6",
+                          "flex items-center px-2 text-sm cursor-pointer",
                           isActive(link.href)
                             ? "text-white"
                             : "text-muted-foreground",
                         )}
-                      />
-                      <div className="flex flex-col">
-                        <span className="w-fit transition-colors group-data-highlighted:bg-primary group-data-highlighted:text-background">
-                          {link.label}
-                        </span>
-                        <span className="text-xs">{link.description}</span>
-                      </div>
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+                      >
+                        <link.icon
+                          className={cn(
+                            "h-6 w-6",
+                            isActive(link.href)
+                              ? "text-white"
+                              : "text-muted-foreground",
+                          )}
+                        />
+                        <div className="flex flex-col">
+                          <span className="w-fit transition-colors group-data-highlighted:bg-primary group-data-highlighted:text-background">
+                            {link.label}
+                          </span>
+                          <span className="text-xs">{link.description}</span>
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
-        {/* Mobile toggle */}
-        <button
-          type="button"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="sm:hidden text-muted-foreground hover:text-foreground transition-colors"
-          aria-label="Toggle navigation"
-        >
-          {mobileOpen ? (
-            <X className="h-5 w-5" />
-          ) : (
-            <Menu className="h-5 w-5" />
-          )}
-        </button>
+          {assistant}
+
+          {/* Mobile toggle */}
+          <button
+            type="button"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="sm:hidden text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Toggle navigation"
+          >
+            {mobileOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Mobile nav */}

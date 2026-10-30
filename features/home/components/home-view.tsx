@@ -46,8 +46,6 @@ export function HomeView({
   children,
   contributionsSection,
 }: Props) {
-  // Build social link elements once so dividers can be safely interspersed
-  // without doubling up when an optional link is missing (R2).
   const socialItems = [
     socialLinks.github ? (
       <Link
