@@ -43,37 +43,37 @@ export default function SettingsSection() {
     return res.json();
   };
 
-  const loadSettings = async () => {
-    try {
-      const response = await fetch(`/api/${APP_CONFIG.ROUTE.SETTINGS}`);
-      const data = await response.json();
-
-      if (data.success && data.data) {
-        profileImageUpload.onSelectFile(null);
-        if (data.data.profileImage) {
-          profileImageUpload.onSelectFile(null);
-        }
-        setResumeUrl(data.data.resume || null);
-        setResidence(data.data.residence || "Myanmar");
-        setAvailable(
-          data.data.available === "true" || data.data.available === true,
-        );
-        setGithubUrl(data.data.githubUrl || "");
-        setFacebookUrl(data.data.facebookUrl || "");
-        setLinkedinUrl(data.data.linkedinUrl || "");
-        setAboutMe(data.data.aboutMe || "");
-        setIntro(data.data.intro || "");
-        setRoles(data.data.roles || "");
-      }
-    } catch (error) {
-      console.error("Failed to load settings:", error);
-    } finally {
-      setImageLoading(false);
-    }
-  };
-
   // Load settings on mount
   useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const response = await fetch(`/api/${APP_CONFIG.ROUTE.SETTINGS}`);
+        const data = await response.json();
+
+        if (data.success && data.data) {
+          profileImageUpload.onSelectFile(null);
+          if (data.data.profileImage) {
+            profileImageUpload.onSelectFile(null);
+          }
+          setResumeUrl(data.data.resume || null);
+          setResidence(data.data.residence || "Myanmar");
+          setAvailable(
+            data.data.available === "true" || data.data.available === true,
+          );
+          setGithubUrl(data.data.githubUrl || "");
+          setFacebookUrl(data.data.facebookUrl || "");
+          setLinkedinUrl(data.data.linkedinUrl || "");
+          setAboutMe(data.data.aboutMe || "");
+          setIntro(data.data.intro || "");
+          setRoles(data.data.roles || "");
+        }
+      } catch (error) {
+        console.error("Failed to load settings:", error);
+      } finally {
+        setImageLoading(false);
+      }
+    };
+
     loadSettings();
   }, []);
 

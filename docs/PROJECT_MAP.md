@@ -215,7 +215,7 @@ Prerequisites: Node 24.22.0 (the only pin, in `Dockerfile`), npm. No Docker or T
 npm ci                      # honours .npmrc legacy-peer-deps
 cp .env.example .env.local  # then fill in (see table); generate the auth secret: openssl rand -base64 32
 npm run db:migrate          # creates ./local.db from drizzle/
-npm run db:seed             # optional: fake "[SAMPLE]" content (local-only, idempotent)
+npm run db:seed             # optional: realistic fictional demo content (local-only; replaces only `seed_*` rows)
 npm run dev                 # http://localhost:3000 (must be port 3000: auth baseURL is pinned there in dev)
 ```
 

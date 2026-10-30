@@ -21,6 +21,10 @@ export const escapeHtml = (value: string) =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 
+/** `https://github.com/octocat/` -> `octocat`; empty when there is no URL. */
+export const getGithubUsername = (githubUrl?: string | null) =>
+  githubUrl?.replace(/\/+$/, "").split("/").pop() || "";
+
 export const generateSlug = (title: string) => {
   return title
     .toLowerCase()

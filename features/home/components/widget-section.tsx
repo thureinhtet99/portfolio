@@ -1,5 +1,6 @@
 import { getSettings } from "@/features/admin/services/settings.service";
 import { getPublishedPosts } from "@/features/posts/services/post.service";
+import { getGithubUsername } from "@/lib/utils";
 import { unstable_cache } from "next/cache";
 import {
   GitHubActivityWidget,
@@ -51,7 +52,7 @@ export async function WidgetSection() {
   ]);
 
   const githubUrl = settings.githubUrl || null;
-  const username = githubUrl?.split("/").pop() || "";
+  const username = getGithubUsername(githubUrl);
 
   const latestPosts = allPosts.slice(0, 4).map((p) => ({
     ...p,

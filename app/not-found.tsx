@@ -37,13 +37,14 @@ export default function NotFound() {
 
   // Typewriter animation
   useEffect(() => {
-    setTypedPath("");
-    setIsTypingComplete(false);
-
     let index = 0;
+    let interval: number | undefined;
 
     const start = window.setTimeout(() => {
-      const interval = window.setInterval(() => {
+      setTypedPath("");
+      setIsTypingComplete(false);
+
+      interval = window.setInterval(() => {
         index++;
 
         if (index > pathname.length) {
@@ -54,11 +55,12 @@ export default function NotFound() {
 
         setTypedPath(pathname.slice(0, index));
       }, TYPE_SPEED);
-
-      return () => clearInterval(interval);
     }, 300);
 
-    return () => clearTimeout(start);
+    return () => {
+      clearTimeout(start);
+      clearInterval(interval);
+    };
   }, [pathname]);
 
   // Redirect countdown

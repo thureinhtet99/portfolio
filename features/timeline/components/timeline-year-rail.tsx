@@ -3,7 +3,7 @@
 import type { ExperienceItemType } from "@/components/ui/work-experience";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 
 type Props = {
   experiences: ExperienceItemType[];
@@ -23,12 +23,12 @@ export function TimelineYearRail({
 }: Props) {
   const isMobile = useIsMobile();
   const railRef = useRef<HTMLDivElement>(null);
-  const [totalHeight, setTotalHeight] = useState(0);
 
   // Calculate total height from entry heights
-  useEffect(() => {
-    setTotalHeight(entryHeights.reduce((sum, h) => sum + h, 0));
-  }, [entryHeights]);
+  const totalHeight = useMemo(
+    () => entryHeights.reduce((sum, h) => sum + h, 0),
+    [entryHeights],
+  );
 
   // Calculate Y position for each year label (aligned with company name at top of entry)
   const yearPositions = useMemo(() => {
